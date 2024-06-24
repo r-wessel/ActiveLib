@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "6CC71931-9893-4B65-A29E-DAE348E2302B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:ActiveLib.xcodeproj",
+        "identifier" : "212A87EE2AE4868C001EAFE7",
+        "name" : "ActiveLib-test"
+      }
+    }
+  ],
+  "version" : 1
+}

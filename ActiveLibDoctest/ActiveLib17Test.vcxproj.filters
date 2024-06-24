@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\GeometryTests">
+      <UniqueIdentifier>{6453e9e0-4daf-4a75-a7f4-b2cf62dacd79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Serialisation">
+      <UniqueIdentifier>{569b5b9d-4611-4f68-a6f7-8313d688790c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SettingTests">
+      <UniqueIdentifier>{3a88f3bf-9116-4166-8194-1df55c72ed7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\EventTests">
+      <UniqueIdentifier>{b73fd6ae-36f9-4e8b-9aec-4cb47f431adc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\ActiveLibDoctest\GeometryTests\PolygonTests.cpp">
+      <Filter>Source Files\GeometryTests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\Serialisation\Base64Tests.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\Serialisation\DocumentTests.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\Serialisation\JSONTests.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\Serialisation\XMLTests.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\SettingTests\MeasurementTests.cpp">
+      <Filter>Source Files\SettingTests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\BufferInTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\ContainerTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\FileTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\GuidTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\StringTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ActiveLibDoctest\TimeTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialisation\SerialiseArrayTester.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialisation\SerialiseTester.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
+    <ClCompile Include="AttributeTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTests\Button.cpp">
+      <Filter>Source Files\EventTests</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTests\CalcApp.cpp">
+      <Filter>Source Files\EventTests</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTests\Calculation.cpp">
+      <Filter>Source Files\EventTests</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTests\CalculatorRPN.cpp">
+      <Filter>Source Files\EventTests</Filter>
+    </ClCompile>
+    <ClCompile Include="EventTests\EventTests.cpp">
+      <Filter>Source Files\EventTests</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\ActiveLibDoctest\TestingPlatforms.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialisation\SerialiseArrayTester.h">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialisation\SerialiseTester.h">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTests\Button.h">
+      <Filter>Source Files\EventTests</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTests\CalcApp.h">
+      <Filter>Source Files\EventTests</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTests\CalcIdentity.h">
+      <Filter>Source Files\EventTests</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTests\Calculation.h">
+      <Filter>Source Files\EventTests</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTests\CalculatorRPN.h">
+      <Filter>Source Files\EventTests</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

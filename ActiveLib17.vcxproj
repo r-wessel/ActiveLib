@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug16|Win32">
+      <Configuration>Debug16</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug16|x64">
+      <Configuration>Debug16</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug17|Win32">
+      <Configuration>Debug17</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release16|Win32">
+      <Configuration>Release16</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release16|x64">
+      <Configuration>Release16</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release17|Win32">
+      <Configuration>Release17</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug17|x64">
+      <Configuration>Debug17</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release17|x64">
+      <Configuration>Release17</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Active\Attribute\Colour.h" />
+    <ClInclude Include="Active\Attribute\Finish.h" />
+    <ClInclude Include="Active\Attribute\Pen.h" />
+    <ClInclude Include="Active\Attribute\TextStyle.h" />
+    <ClInclude Include="Active\Container\HashMap.h" />
+    <ClInclude Include="Active\Container\List.h" />
+    <ClInclude Include="Active\Container\Map.h" />
+    <ClInclude Include="Active\Container\Multimap.h" />
+    <ClInclude Include="Active\Container\Vector.h" />
+    <ClInclude Include="Active\Event\Event.h" />
+    <ClInclude Include="Active\Event\Message.h" />
+    <ClInclude Include="Active\Event\Participant.h" />
+    <ClInclude Include="Active\Event\PostBox.h" />
+    <ClInclude Include="Active\Event\Publisher.h" />
+    <ClInclude Include="Active\Event\Subscriber.h" />
+    <ClInclude Include="Active\File\Directory.h" />
+    <ClInclude Include="Active\File\File.h" />
+    <ClInclude Include="Active\File\Interface\FSNode.h" />
+    <ClInclude Include="Active\File\Interface\IOBase.h" />
+    <ClInclude Include="Active\File\Path.h" />
+    <ClInclude Include="Active\Geometry\Anchor2D.h" />
+    <ClInclude Include="Active\Geometry\Arc.h" />
+    <ClInclude Include="Active\Geometry\Box.h" />
+    <ClInclude Include="Active\Geometry\Faceter.h" />
+    <ClInclude Include="Active\Geometry\Leveller.h" />
+    <ClInclude Include="Active\Geometry\Line.h" />
+    <ClInclude Include="Active\Geometry\LinEquation.h" />
+    <ClInclude Include="Active\Geometry\Matrix3x3.h" />
+    <ClInclude Include="Active\Geometry\Matrix4x4.h" />
+    <ClInclude Include="Active\Geometry\Plane.h" />
+    <ClInclude Include="Active\Geometry\Point.h" />
+    <ClInclude Include="Active\Geometry\PolyEdge.h" />
+    <ClInclude Include="Active\Geometry\Polygon.h" />
+    <ClInclude Include="Active\Geometry\PolyPoint.h" />
+    <ClInclude Include="Active\Geometry\Position.h" />
+    <ClInclude Include="Active\Geometry\Rotater.h" />
+    <ClInclude Include="Active\Geometry\Rotation.h" />
+    <ClInclude Include="Active\Geometry\Vector3.h" />
+    <ClInclude Include="Active\Geometry\Vector4.h" />
+    <ClInclude Include="Active\Geometry\XInfo.h" />
+    <ClInclude Include="Active\Geometry\XList.h" />
+    <ClInclude Include="Active\Geometry\XPoint.h" />
+    <ClInclude Include="Active\Serialise\Cargo.h" />
+    <ClInclude Include="Active\Serialise\Document\Object.h" />
+    <ClInclude Include="Active\Serialise\Document\Shipper.h" />
+    <ClInclude Include="Active\Serialise\Document\Transportable.h" />
+    <ClInclude Include="Active\Serialise\Generic\Base64Transport.h" />
+    <ClInclude Include="Active\Serialise\Generic\HexTransport.h" />
+    <ClInclude Include="Active\Serialise\Inventory\Entry.h" />
+    <ClInclude Include="Active\Serialise\Inventory\Identity.h" />
+    <ClInclude Include="Active\Serialise\Inventory\Inventory.h" />
+    <ClInclude Include="Active\Serialise\Item\Encoding.h" />
+    <ClInclude Include="Active\Serialise\Item\Item.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\AnyValueWrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\BoolWrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\DoubleWrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\Int32Wrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ItemWrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\StringWrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ValueWrap.h" />
+    <ClInclude Include="Active\Serialise\JSON\JSONTransport.h" />
+    <ClInclude Include="Active\Serialise\Package\Package.h" />
+    <ClInclude Include="Active\Serialise\Package\PackageWrap.h" />
+    <ClInclude Include="Active\Serialise\Package\Pair.h" />
+    <ClInclude Include="Active\Serialise\Package\Unknown.h" />
+    <ClInclude Include="Active\Serialise\XML\Item\XMLDateTime.h" />
+    <ClInclude Include="Active\Serialise\XML\Item\XMLNumber.h" />
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.h" />
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolygon.h" />
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.h" />
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\XMLValueSetting.h" />
+    <ClInclude Include="Active\Serialise\XML\Package\XMLProlog.h" />
+    <ClInclude Include="Active\Serialise\XML\XMLTransport.h" />
+    <ClInclude Include="Active\Setting\Setting.h" />
+    <ClInclude Include="Active\Setting\SettingID.h" />
+    <ClInclude Include="Active\Setting\SettingList.h" />
+    <ClInclude Include="Active\Setting\ValueSetting.h" />
+    <ClInclude Include="Active\Setting\Values\BoolValue.h" />
+    <ClInclude Include="Active\Setting\Values\DoubleValue.h" />
+    <ClInclude Include="Active\Setting\Values\GuidValue.h" />
+    <ClInclude Include="Active\Setting\Values\Int32Value.h" />
+    <ClInclude Include="Active\Setting\Values\Int64Value.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\AngleValue.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\LengthValue.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\MeasuredValue.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\AngleUnit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\AreaUnit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\LengthUnit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\MassUnit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\Unit.h" />
+    <ClInclude Include="Active\Setting\Values\NullValue.h" />
+    <ClInclude Include="Active\Setting\Values\StringValue.h" />
+    <ClInclude Include="Active\Setting\Values\TimeValue.h" />
+    <ClInclude Include="Active\Setting\Values\UInt32Value.h" />
+    <ClInclude Include="Active\Setting\Values\Value.h" />
+    <ClInclude Include="Active\Setting\Values\ValueBase.h" />
+    <ClInclude Include="Active\Utility\BufferIn.h" />
+    <ClInclude Include="Active\Utility\BufferOut.h" />
+    <ClInclude Include="Active\Utility\Cloner.h" />
+    <ClInclude Include="Active\Utility\Defer.h" />
+    <ClInclude Include="Active\Utility\Guid.h" />
+    <ClInclude Include="Active\Utility\MathFunctions.h" />
+    <ClInclude Include="Active\Utility\Memory.h" />
+    <ClInclude Include="Active\Utility\Status.h" />
+    <ClInclude Include="Active\Utility\String.h" />
+    <ClInclude Include="Active\Utility\TextEncoding.h" />
+    <ClInclude Include="Active\Utility\Time.h" />
+    <ClInclude Include="Active\Utility\UniqueString.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Active\Attribute\Colour.cpp" />
+    <ClCompile Include="Active\Event\Publisher.cpp" />
+    <ClCompile Include="Active\File\Directory.cpp" />
+    <ClCompile Include="Active\File\File.cpp" />
+    <ClCompile Include="Active\File\Interface\FSNode.cpp" />
+    <ClCompile Include="Active\File\Path.cpp" />
+    <ClCompile Include="Active\Geometry\Anchor2D.cpp" />
+    <ClCompile Include="Active\Geometry\Arc.cpp" />
+    <ClCompile Include="Active\Geometry\Box.cpp" />
+    <ClCompile Include="Active\Geometry\Faceter.cpp" />
+    <ClCompile Include="Active\Geometry\Leveller.cpp" />
+    <ClCompile Include="Active\Geometry\Line.cpp" />
+    <ClCompile Include="Active\Geometry\LinEquation.cpp" />
+    <ClCompile Include="Active\Geometry\Matrix3x3.cpp" />
+    <ClCompile Include="Active\Geometry\Matrix4x4.cpp" />
+    <ClCompile Include="Active\Geometry\Plane.cpp" />
+    <ClCompile Include="Active\Geometry\Point.cpp" />
+    <ClCompile Include="Active\Geometry\PolyEdge.cpp" />
+    <ClCompile Include="Active\Geometry\Polygon.cpp" />
+    <ClCompile Include="Active\Geometry\PolyPoint.cpp" />
+    <ClCompile Include="Active\Geometry\Rotater.cpp" />
+    <ClCompile Include="Active\Geometry\Vector3.cpp" />
+    <ClCompile Include="Active\Geometry\Vector4.cpp" />
+    <ClCompile Include="Active\Geometry\XList.cpp" />
+    <ClCompile Include="Active\Geometry\XPoint.cpp" />
+    <ClCompile Include="Active\Serialise\Document\Object.cpp" />
+    <ClCompile Include="Active\Serialise\Generic\Base64Transport.cpp" />
+    <ClCompile Include="Active\Serialise\Generic\HexTransport.cpp" />
+    <ClCompile Include="Active\Serialise\Inventory\Inventory.cpp" />
+    <ClCompile Include="Active\Serialise\Item\Item.cpp" />
+    <ClCompile Include="Active\Serialise\Item\Wrapper\AnyValueWrap.cpp" />
+    <ClCompile Include="Active\Serialise\JSON\JSONTransport.cpp" />
+    <ClCompile Include="Active\Serialise\Package\Pair.cpp" />
+    <ClCompile Include="Active\Serialise\XML\Item\XMLDateTime.cpp" />
+    <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.cpp" />
+    <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.cpp" />
+    <ClCompile Include="Active\Serialise\XML\Package\Wrapper\XMLValueSetting.cpp" />
+    <ClCompile Include="Active\Serialise\XML\Package\XMLProlog.cpp" />
+    <ClCompile Include="Active\Serialise\XML\XMLTransport.cpp" />
+    <ClCompile Include="Active\Setting\SettingList.cpp" />
+    <ClCompile Include="Active\Setting\ValueSetting.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\AngleValue.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\AngleUnit.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\AreaUnit.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\LengthUnit.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\MassUnit.cpp" />
+    <ClCompile Include="Active\Setting\Values\Value.cpp" />
+    <ClCompile Include="Active\Utility\BufferIn.cpp" />
+    <ClCompile Include="Active\Utility\BufferOut.cpp" />
+    <ClCompile Include="Active\Utility\DataFormat.cpp" />
+    <ClCompile Include="Active\Utility\Guid.cpp" />
+    <ClCompile Include="Active\Utility\Memory.cpp" />
+    <ClCompile Include="Active\Utility\String.cpp" />
+    <ClCompile Include="Active\Utility\TextEncoding.cpp" />
+    <ClCompile Include="Active\Utility\Time.cpp" />
+    <ClCompile Include="Active\Utility\UniqueString.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Active\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Active\Event\Event.md" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{64EBDBC7-AB2D-4AE1-8E54-922B6FA6E1CC}</ProjectGuid>
+    <RootNamespace>ActiveLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug17|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release17|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <VCToolsVersion>
+    </VCToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release16|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug17|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <VCToolsVersion>
+    </VCToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <VCToolsVersion>
+    </VCToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release17|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <VCToolsVersion>
+    </VCToolsVersion>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release16|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <VCToolsVersion>
+    </VCToolsVersion>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug17|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release17|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release16|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug17|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release17|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release16|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug17|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release17|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release16|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug17|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <SourcePath>$(SourcePath)</SourcePath>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <SourcePath>$(SourcePath)</SourcePath>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release17|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release16|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug17|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release17|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release16|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug17|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WINDOWS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <PrecompiledHeaderOutputFile />
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StringPooling>true</StringPooling>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug16|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WINDOWS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>false</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StringPooling>true</StringPooling>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>Default</CompileAs>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release17|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WINDOWS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <StringPooling>true</StringPooling>
+      <PrecompiledHeaderOutputFile />
+      <ForceConformanceInForLoopScope />
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release16|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WINDOWS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>./</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <StringPooling>true</StringPooling>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
+      <ForceConformanceInForLoopScope>
+      </ForceConformanceInForLoopScope>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

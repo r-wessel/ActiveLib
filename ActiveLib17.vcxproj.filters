@@ -1,0 +1,590 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Active">
+      <UniqueIdentifier>{bacfd662-e289-4d32-925c-478df65d01ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Container">
+      <UniqueIdentifier>{fccb627d-9084-44a2-8668-12ace3efc5d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\File">
+      <UniqueIdentifier>{fce9ca8b-2049-4158-a66d-753d0db9624f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Geometry">
+      <UniqueIdentifier>{77038827-0b43-46c9-ba84-485ca6677995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise">
+      <UniqueIdentifier>{23bca613-7f6a-40bd-af6c-6da6288e6461}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Setting">
+      <UniqueIdentifier>{ce5a1f2f-a851-4b91-ad98-630bf6a4795c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Utility">
+      <UniqueIdentifier>{2872ccda-08d8-4a2e-9d0a-345ac5b63187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\File\Interface">
+      <UniqueIdentifier>{d4e29f94-8464-40d2-8712-5b07f08023bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Setting\Values">
+      <UniqueIdentifier>{99fa8353-03a8-4755-9514-83fd647435d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\Generic">
+      <UniqueIdentifier>{63e5ba37-04e3-4eb7-8507-3a544c3ebb68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\Inventory">
+      <UniqueIdentifier>{e3a44283-b6ad-4d23-9071-4b8316d10631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\Item">
+      <UniqueIdentifier>{f236a8b4-cbd3-4190-9f3b-5267ef7bf11f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\JSON">
+      <UniqueIdentifier>{16b2d4a1-c813-414f-a914-320eac070ea2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\Package">
+      <UniqueIdentifier>{3e1d167a-ab92-4fe4-8ca5-2e2b800dd425}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\XML">
+      <UniqueIdentifier>{807ffd4b-afbc-4ee1-997f-a9fca156a0c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\Item\Wrapper">
+      <UniqueIdentifier>{941563ed-cdc5-4a85-98ae-7073541fed68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\XML\Item">
+      <UniqueIdentifier>{c8bf5c99-230f-4330-8856-e524c301f594}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\XML\Package">
+      <UniqueIdentifier>{7779749e-242f-4775-8c64-d7052aa99d38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\XML\Package\Wrapper">
+      <UniqueIdentifier>{ebe91a04-7c60-4d76-a7ef-df2b4fdf23f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\XML\Package\Wrapper\Geometry">
+      <UniqueIdentifier>{053c9a32-3700-46f9-9631-3c84812bedfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Serialise\Document">
+      <UniqueIdentifier>{00955044-4ada-4263-875f-1c30895afd67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Setting\Values\Measurement">
+      <UniqueIdentifier>{63c0c992-09d4-4445-972c-4e726270ed4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Setting\Values\Measurement\Units">
+      <UniqueIdentifier>{663b795b-894e-4d4f-b388-18a88f1da3ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Attributes">
+      <UniqueIdentifier>{2c4d0103-93f0-48d5-b616-955e81ed86f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Active\Event">
+      <UniqueIdentifier>{6bf46721-5a13-4cc0-9645-dd25106baf93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Active\Container\HashMap.h">
+      <Filter>Active\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Container\List.h">
+      <Filter>Active\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Container\Map.h">
+      <Filter>Active\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Container\Multimap.h">
+      <Filter>Active\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Container\Vector.h">
+      <Filter>Active\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\File\Directory.h">
+      <Filter>Active\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\File\File.h">
+      <Filter>Active\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\File\Path.h">
+      <Filter>Active\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\File\Interface\FSNode.h">
+      <Filter>Active\File\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\File\Interface\IOBase.h">
+      <Filter>Active\File\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Anchor2D.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Arc.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Box.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Faceter.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Leveller.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Line.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\LinEquation.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Matrix3x3.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Matrix4x4.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Plane.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Point.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\PolyEdge.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Polygon.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\PolyPoint.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Position.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Rotater.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Rotation.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Vector3.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Vector4.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\BufferIn.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\BufferOut.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\Cloner.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\Defer.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\Guid.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\MathFunctions.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\Memory.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\Status.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\String.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\TextEncoding.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\Time.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\UniqueString.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Setting.h">
+      <Filter>Active\Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\SettingID.h">
+      <Filter>Active\Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\ValueSetting.h">
+      <Filter>Active\Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\BoolValue.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\DoubleValue.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\GuidValue.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Int32Value.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Int64Value.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\NullValue.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\StringValue.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\TimeValue.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\UInt32Value.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Value.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\ValueBase.h">
+      <Filter>Active\Setting\Values</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Cargo.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Generic\HexTransport.h">
+      <Filter>Active\Serialise\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Inventory\Entry.h">
+      <Filter>Active\Serialise\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Inventory\Identity.h">
+      <Filter>Active\Serialise\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Inventory\Inventory.h">
+      <Filter>Active\Serialise\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Encoding.h">
+      <Filter>Active\Serialise\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Item.h">
+      <Filter>Active\Serialise\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\BoolWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\DoubleWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\Int32Wrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ItemWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\StringWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ValueWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\JSON\JSONTransport.h">
+      <Filter>Active\Serialise\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\XMLTransport.h">
+      <Filter>Active\Serialise\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Item\XMLDateTime.h">
+      <Filter>Active\Serialise\XML\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Item\XMLNumber.h">
+      <Filter>Active\Serialise\XML\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Package\XMLProlog.h">
+      <Filter>Active\Serialise\XML\Package</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\XMLValueSetting.h">
+      <Filter>Active\Serialise\XML\Package\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.h">
+      <Filter>Active\Serialise\XML\Package\Wrapper\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolygon.h">
+      <Filter>Active\Serialise\XML\Package\Wrapper\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.h">
+      <Filter>Active\Serialise\XML\Package\Wrapper\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Package.h">
+      <Filter>Active\Serialise\Package</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\PackageWrap.h">
+      <Filter>Active\Serialise\Package</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Pair.h">
+      <Filter>Active\Serialise\Package</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Unknown.h">
+      <Filter>Active\Serialise\Package</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\AnyValueWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Document\Object.h">
+      <Filter>Active\Serialise\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Document\Shipper.h">
+      <Filter>Active\Serialise\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Document\Transportable.h">
+      <Filter>Active\Serialise\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\AngleUnit.h">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\AreaUnit.h">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\LengthUnit.h">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\MassUnit.h">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\Unit.h">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\AngleValue.h">
+      <Filter>Active\Setting\Values\Measurement</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\LengthValue.h">
+      <Filter>Active\Setting\Values\Measurement</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\MeasuredValue.h">
+      <Filter>Active\Setting\Values\Measurement</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Generic\Base64Transport.h">
+      <Filter>Active\Serialise\Generic</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\XInfo.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\XList.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\XPoint.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Attribute\Colour.h">
+      <Filter>Active\Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Attribute\Finish.h">
+      <Filter>Active\Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Attribute\Pen.h">
+      <Filter>Active\Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Attribute\TextStyle.h">
+      <Filter>Active\Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Event\Event.h">
+      <Filter>Active\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Event\Message.h">
+      <Filter>Active\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Event\Participant.h">
+      <Filter>Active\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Event\PostBox.h">
+      <Filter>Active\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Event\Publisher.h">
+      <Filter>Active\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Event\Subscriber.h">
+      <Filter>Active\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\SettingList.h">
+      <Filter>Active\Setting</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Active\File\Directory.cpp">
+      <Filter>Active\File</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\File\File.cpp">
+      <Filter>Active\File</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\File\Path.cpp">
+      <Filter>Active\File</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\File\Interface\FSNode.cpp">
+      <Filter>Active\File\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Arc.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Box.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Faceter.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Leveller.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Line.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\LinEquation.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Matrix3x3.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Matrix4x4.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Plane.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Point.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\PolyEdge.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Polygon.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\PolyPoint.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Rotater.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Vector3.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Vector4.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\BufferIn.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\BufferOut.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\Guid.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\Memory.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\String.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\TextEncoding.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\Time.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\UniqueString.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\ValueSetting.cpp">
+      <Filter>Active\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Generic\HexTransport.cpp">
+      <Filter>Active\Serialise\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Inventory\Inventory.cpp">
+      <Filter>Active\Serialise\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\JSON\JSONTransport.cpp">
+      <Filter>Active\Serialise\JSON</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\XML\XMLTransport.cpp">
+      <Filter>Active\Serialise\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\XML\Item\XMLDateTime.cpp">
+      <Filter>Active\Serialise\XML\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\XML\Package\XMLProlog.cpp">
+      <Filter>Active\Serialise\XML\Package</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\XML\Package\Wrapper\XMLValueSetting.cpp">
+      <Filter>Active\Serialise\XML\Package\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.cpp">
+      <Filter>Active\Serialise\XML\Package\Wrapper\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.cpp">
+      <Filter>Active\Serialise\XML\Package\Wrapper\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Package\Pair.cpp">
+      <Filter>Active\Serialise\Package</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Anchor2D.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Value.cpp">
+      <Filter>Active\Setting\Values</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Item\Item.cpp">
+      <Filter>Active\Serialise\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Item\Wrapper\AnyValueWrap.cpp">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Document\Object.cpp">
+      <Filter>Active\Serialise\Document</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\AngleUnit.cpp">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\AreaUnit.cpp">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\LengthUnit.cpp">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\MassUnit.cpp">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Measurement\AngleValue.cpp">
+      <Filter>Active\Setting\Values\Measurement</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Generic\Base64Transport.cpp">
+      <Filter>Active\Serialise\Generic</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\DataFormat.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\XList.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\XPoint.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Attribute\Colour.cpp">
+      <Filter>Active\Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Event\Publisher.cpp">
+      <Filter>Active\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\SettingList.cpp">
+      <Filter>Active\Setting</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Active\CMakeLists.txt">
+      <Filter>Active</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Active\Event\Event.md">
+      <Filter>Active\Event</Filter>
+    </None>
+  </ItemGroup>
+</Project>
