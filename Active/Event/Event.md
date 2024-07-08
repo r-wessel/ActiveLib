@@ -113,7 +113,7 @@ private:
 ```
 Clicking the button simply publishes the assigned `Event` through the `CalcApp`, i.e.:
 ```Cpp
-	calcApp->publish(Event{m_type, {{StringValue{m_action}, actionID}}});
+calcApp->publish(Event{m_type, {{StringValue{m_action}, actionID}}});
 ```
 
 ### Calculation <a name="calc"></a>

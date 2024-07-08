@@ -24,7 +24,7 @@ Where other modules focus on one specific problem domain, e.g. Geometry, Seriali
 Buffering is also used to optimise some string operations (e.g. eliminating the need to recalculate a starting position based on the character offset in bytes).
 
 `JSONTransport` (in the Serialisation module) is a good example. Both sending and receiving as JSON is expressed in terms of a buffer, e.g.:
-```{.cpp}
+```Cpp
 	///Send as JSON
 void send(Cargo&& cargo, const Identity& identity, BufferOut&& destination, bool isTabbed, bool isLineFeeds, bool isNameSpaces, bool isProlog) const override;
 	///Receive from JSON

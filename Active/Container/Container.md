@@ -41,35 +41,35 @@ Note that none of the container classes require non-null entries. It is entirely
 The following code creates a `Vector` of objects subclassed from a `Base` class, copies the vector into a new `Vector` and then prints messages demonstrating the content of both the original copied containers:
 
 ```Cpp
-	class Base : public Cloner {
-	public:
-		Base* clonePtr() const override = 0;
-		virtual void message() = 0;
-	};
-	
-	class Foo : public Base {
-	public:
-		Foo* clonePtr() const override { return new Foo{*this}; }
-		void message() override { std::cout << "Foo"; };
-	};
-	
-	class Bar : public Base {
-	public:
-		Bar* clonePtr() const override { return new Bar{*this}; }
-		void message() override { std::cout << "Bar"; };
-	};
-		//Populate a container with some subclass instances
-	Vector<Base> container;
-	container.emplace_back(std::make_unique<Foo>());
-	container.emplace_back(std::make_unique<Bar>());
-		//Make an independent copy of the container
-	auto copy = container;
-		//Print the original container messages
-	for (auto& item : container)
-		item->message();
-		//Print the copy container messages
-	for (auto& item : copy)
-		item->message();
+class Base : public Cloner {
+public:
+	Base* clonePtr() const override = 0;
+	virtual void message() = 0;
+};
+
+class Foo : public Base {
+public:
+	Foo* clonePtr() const override { return new Foo{*this}; }
+	void message() override { std::cout << "Foo"; };
+};
+
+class Bar : public Base {
+public:
+	Bar* clonePtr() const override { return new Bar{*this}; }
+	void message() override { std::cout << "Bar"; };
+};
+	//Populate a container with some subclass instances
+Vector<Base> container;
+container.emplace_back(std::make_unique<Foo>());
+container.emplace_back(std::make_unique<Bar>());
+	//Make an independent copy of the container
+auto copy = container;
+	//Print the original container messages
+for (auto& item : container)
+	item->message();
+	//Print the copy container messages
+for (auto& item : copy)
+	item->message();
 ```
 
 > Prints:
