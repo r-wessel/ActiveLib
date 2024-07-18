@@ -272,6 +272,12 @@ namespace active::geometry {
 		*/
 		vertex_index edgeSize() const { return isClosed ? vertSize() : vertSize() - 1; }
 		/*!
+			Get the number of arc edges in the polygon
+			@param isOuter True to count the outer polygon edges only (exclude holes)
+			@return The number of arc edges
+		*/
+		vertex_index arcSize(bool isOuter = true) const;
+		/*!
 			Get the number of holes in the polygon
 			@return The number of holes in the polygon
 		*/

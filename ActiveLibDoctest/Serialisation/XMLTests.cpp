@@ -17,7 +17,7 @@ using namespace active::utility;
 
 namespace {
 
-		///Make a report for the specified JSON tranport status
+		///Make a report for the specified XML transport status
 	String makeReportFor(const XMLTransport& transport, const String& errorMessage) {
 		return errorMessage + " at row: " +String{transport.getLastRow()} + ", column: " + String{transport.getLastColumn()};
 	}
@@ -153,9 +153,9 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 			transporter.send(SerialiseArrayWrapper{arrayTesterOut}, SerialiseArrayWrapper::tag, collector);
 			CHECK_MESSAGE(!collector.empty(), TEST_MESSAGE(XML send produced no output));
 		} catch(...) {
-			FAIL_CHECK(TEST_MESSAGE(JSON send failed));
+			FAIL_CHECK(TEST_MESSAGE(XML send failed));
 		}
-			//Receive the JSON data from the collection string into another object
+			//Receive the XML data from the collection string into another object
 		try {
 			transporter.receive(SerialiseArrayWrapper{arrayTesterIn}, SerialiseArrayWrapper::tag, collector);
 			CHECK_MESSAGE(arrayTesterOut == arrayTesterIn, TEST_MESSAGE(Array received via XML does not match the array sent));
@@ -165,11 +165,11 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 		
 			//Negative tests (handle bad data)
 
-		SerialiseTester dummy;
+		SerialiseTester testObject;
 		String report;
 			//Read XML with mismatching tag
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, badXMLTag);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, badXMLTag);
 			FAIL_CHECK(TEST_MESSAGE(XML reader accepted input with mismatching tags));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "A closing tag is missing at row: 12, column: 9",
@@ -177,7 +177,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 		}
 			//Read XML with missing attribute quote
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, missingQuote);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, missingQuote);
 			FAIL_CHECK(TEST_MESSAGE(XML reader accepted attribute with missing quote));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "The equals character is missing in an attribute at row: 11, column: 32",
@@ -185,7 +185,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 		}
 			//Read XML with a bad XML character
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, badCharacter);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, badCharacter);
 			FAIL_CHECK(TEST_MESSAGE(XML reader accepted a bad XML character));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "Found an unknown or invalid escaped character at row: 2, column: 72",
@@ -193,7 +193,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 		}
 			//Read XML with corrupt data (null char)
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, corrupt);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, corrupt);
 			FAIL_CHECK(TEST_MESSAGE(XML reader accepted XML containing corrupt data));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "The closing brace for a tag is missing (>) at row: 11, column: 29",
@@ -201,7 +201,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 		}
 			//Read XML with bad utf8 encoding
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, badEncoding);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, badEncoding);
 			FAIL_CHECK(TEST_MESSAGE(XML reader accepted XML with bad UTF8 encoding));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "The closing brace for a tag is missing (>) at row: 2, column: 19",
@@ -209,7 +209,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 		}
 			//Read XML with an invalid char in tag
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, badNameChar);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, badNameChar);
 			FAIL_CHECK(TEST_MESSAGE(XML reader accepted XML with an invalid char in tag));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An invalid XML tag was processed at row: 4, column: 20",
