@@ -32,39 +32,25 @@ namespace active::geometry {
 		// MARK: Factory functions
 		
 		/*!
-			Create a rotation matrix about the x axis
+			Create a rotation matrix 
 			@param angle The rotation angle
 			@return The requested rotation matrix
 		*/
-		static Matrix3x3 createXRotate(double angle);
-		/*!
-			Create a rotation matrix about the y axis
-			@param angle The rotation angle
-			@return The requested rotation matrix
-		*/
-		static Matrix3x3 createYRotate(double angle);
-		/*!
-			Create a rotation matrix about the z axis
-			@param angle The rotation angle
-			@return The requested rotation matrix
-		*/
-		static Matrix3x3 createZRotate(double angle);
+		static Matrix3x3 createRotate(double angle);
 		/*!
 			Create a scaling matrix
 			@param x The scale in the x axis
 			@param y The scale in the y axis
-			@param z The scale in the z axis
 			@return The requested scaling matrix
 		*/
-		static Matrix3x3 createScale(double x, double y, double z);
+		static Matrix3x3 createScale(double x, double y);
 		/*!
 			Create a translation matrix
 			@param x The offset in the x axis
 			@param y The offset in the y axis
-			@param z The offset in the z axis
 			@return The requested transformation matrix
 		*/
-		static Matrix3x3 createTranslate(double x, double y, double z);
+		static Matrix3x3 createTranslate(double x, double y);
 		/*!
 			Create an identity matrix
 			@return The requested identity matrix
@@ -149,6 +135,10 @@ namespace active::geometry {
 			@return The matrix determinant
 		*/
 		double getDeterminant() const;
+		/*!
+			Clear the matrix transformation (set to 0.0)
+		*/
+		void clearTransform();
 
 	private:
 			///The 3x3 matrix

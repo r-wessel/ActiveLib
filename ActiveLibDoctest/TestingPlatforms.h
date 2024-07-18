@@ -3,7 +3,7 @@ Copyright 2024 Ralph Wessel and Hugh Wessel
 Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
 */
 
-/**
+/*!
 	Macros that adapt test code to relevant platforms
 	
 	Currently targeting:

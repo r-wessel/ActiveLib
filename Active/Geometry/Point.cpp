@@ -154,6 +154,18 @@ Point Point::operator* (const double& mult) const {
 
 /*--------------------------------------------------------------------
 	Multiplication operator
+ 
+	mult: The x/y/z factors to multiply the point by
+ 
+	return: The result of the multiplication of this and the specified factor
+  --------------------------------------------------------------------*/
+Point Point::operator* (const Point& mult) const {
+	return Point(*this) *= mult;
+} //Point::operator*
+
+
+/*--------------------------------------------------------------------
+	Multiplication operator
 	
 	matrix: The matrix to multiply the point by
 	
@@ -187,6 +199,21 @@ Point& Point::operator*= (const double& mult) {
 	x *= mult;
 	y *= mult;
 	z *= mult;
+	return *this;
+} //Point::operator*=
+
+
+/*--------------------------------------------------------------------
+	Multiplication and assignment operator
+ 
+	mult: The x/y/z factors to multiply the point by
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Point& Point::operator*= (const Point& mult) {
+	x *= mult.x;
+	y *= mult.y;
+	z *= mult.z;
 	return *this;
 } //Point::operator*=
 

@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active::attribute {
 	
-	/**
+	/*!
 		Representation of a colour (for 2D/3D rendering)
 	*/
 	struct Colour {
@@ -26,15 +26,15 @@ namespace active::attribute {
 
 		// MARK: - Constructors
 
-		/**
+		/*!
 			Default constructor
 		*/
 		Colour() = default;
-		/**
+		/*!
 			Default constructor
 		*/
 		Colour(char8_t red, char8_t green = 0, char8_t blue = 0, float alpha = 1.0) : r{red}, g{green}, b{blue}, a{alpha} {}
-		/**
+		/*!
 			Constructor
 			@param hex A colour in hex digits
 		*/
@@ -55,7 +55,7 @@ namespace active::attribute {
 
 			///True if the colour is transparent
 		bool isTransparent() const { return math::isZero(a); }
-		/**
+		/*!
 			Get the colour in hex digits
 			@param isAlpha True to include the alpha value
 			@return The colour as hex

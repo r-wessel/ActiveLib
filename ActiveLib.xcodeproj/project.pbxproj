@@ -304,6 +304,15 @@
 		215F91562BCC93580052BFC8 /* AreaUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AreaUnit.cpp; sourceTree = "<group>"; };
 		215F915D2BCDD5E30052BFC8 /* MassUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MassUnit.cpp; sourceTree = "<group>"; };
 		2160AAAF2B96E02500B885BE /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		2167E2762C4911C4000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E2772C4911DA000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E2782C4911E2000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E2792C4911EB000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E27A2C4911FA000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E27B2C491205000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E27C2C49121F000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E27D2C491229000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		2167E27E2C49123E000827D3 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		216DFF502AE7D6B7009110CF /* GuidValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GuidValue.h; sourceTree = "<group>"; };
 		216DFFAB2AE87766009110CF /* UInt32Value.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UInt32Value.h; sourceTree = "<group>"; };
 		217AE6422BEA5CF6004CC2B0 /* Transport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transport.h; sourceTree = "<group>"; };
@@ -386,8 +395,8 @@
 		212A83422AE47AD9001EAFE7 /* Active */ = {
 			isa = PBXGroup;
 			children = (
-				214EA4C52BA374FD008E5358 /* CMakeLists.txt */,
 				214661982C263C550048BBA7 /* Attribute */,
+				214EA4C52BA374FD008E5358 /* CMakeLists.txt */,
 				212A837E2AE47AD9001EAFE7 /* Container */,
 				21F93AE82B2F406D009A2C5B /* Environment */,
 				21F93ACC2B2B67FC009A2C5B /* Event */,
@@ -404,6 +413,7 @@
 		212A83432AE47AD9001EAFE7 /* File */ = {
 			isa = PBXGroup;
 			children = (
+				2167E27A2C4911FA000827D3 /* CMakeLists.txt */,
 				212A834A2AE47AD9001EAFE7 /* Directory.cpp */,
 				212A834B2AE47AD9001EAFE7 /* Directory.h */,
 				212A834C2AE47AD9001EAFE7 /* File.cpp */,
@@ -429,6 +439,7 @@
 		212A834E2AE47AD9001EAFE7 /* Serialise */ = {
 			isa = PBXGroup;
 			children = (
+				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				212A834F2AE47AD9001EAFE7 /* Cargo.h */,
 				214EA4D12BA488DA008E5358 /* Document */,
 				212A83752AE47AD9001EAFE7 /* Generic */,
@@ -566,6 +577,7 @@
 		212A837E2AE47AD9001EAFE7 /* Container */ = {
 			isa = PBXGroup;
 			children = (
+				2167E2772C4911DA000827D3 /* CMakeLists.txt */,
 				21329F622BFCE89000B5C7AF /* Container.md */,
 				215106B82AE96EFF0022CD24 /* HashMap.h */,
 				212A83812AE47AD9001EAFE7 /* List.h */,
@@ -579,6 +591,7 @@
 		212A83832AE47AD9001EAFE7 /* Geometry */ = {
 			isa = PBXGroup;
 			children = (
+				2167E27B2C491205000827D3 /* CMakeLists.txt */,
 				2158D6EE2B5C6FDC00E40F38 /* Anchor2D.cpp */,
 				212A839E2AE47AD9001EAFE7 /* Anchor2D.h */,
 				212A83882AE47AD9001EAFE7 /* Arc.cpp */,
@@ -628,6 +641,7 @@
 		212A83AC2AE47AD9001EAFE7 /* Setting */ = {
 			isa = PBXGroup;
 			children = (
+				2167E27D2C491229000827D3 /* CMakeLists.txt */,
 				212A83BA2AE47AD9001EAFE7 /* Setting.h */,
 				21C23D002C11144900E40710 /* Setting.md */,
 				21F93AD32B2B8678009A2C5B /* SettingList.cpp */,
@@ -667,6 +681,7 @@
 				212A83CB2AE47AD9001EAFE7 /* BufferOut.cpp */,
 				212A83C42AE47AD9001EAFE7 /* BufferOut.h */,
 				212A83C32AE47AD9001EAFE7 /* Cloner.h */,
+				2167E27E2C49123E000827D3 /* CMakeLists.txt */,
 				21257AC52C1C881F00B710AC /* DataFormat.cpp */,
 				21257AB32C19D10C00B710AC /* DataFormat.h */,
 				212A83C82AE47AD9001EAFE7 /* Defer.h */,
@@ -715,6 +730,7 @@
 		214661982C263C550048BBA7 /* Attribute */ = {
 			isa = PBXGroup;
 			children = (
+				2167E2762C4911C4000827D3 /* CMakeLists.txt */,
 				214661912C263C550048BBA7 /* Colour.cpp */,
 				214661922C263C550048BBA7 /* Colour.h */,
 				214661942C263C550048BBA7 /* Finish.h */,
@@ -839,6 +855,7 @@
 		21F93ACC2B2B67FC009A2C5B /* Event */ = {
 			isa = PBXGroup;
 			children = (
+				2167E2792C4911EB000827D3 /* CMakeLists.txt */,
 				21F93ACD2B2B67FC009A2C5B /* Event.h */,
 				21329F642BFD457000B5C7AF /* Event.md */,
 				21F93AD72B2C6BFD009A2C5B /* Message.h */,
@@ -854,6 +871,7 @@
 		21F93AE82B2F406D009A2C5B /* Environment */ = {
 			isa = PBXGroup;
 			children = (
+				2167E2782C4911E2000827D3 /* CMakeLists.txt */,
 				21F93AEA2B2F406D009A2C5B /* App.cpp */,
 				21F93AE92B2F406D009A2C5B /* App.h */,
 				21329F632BFD452C00B5C7AF /* Environment.md */,

@@ -19,39 +19,11 @@ using namespace active::math;
 	
 	return: The requested rotation matrix
   --------------------------------------------------------------------*/
-Matrix3x3 Matrix3x3::createXRotate(double angle) {
-	return Matrix3x3(	1.0, 0.0, 0.0,
-						0.0, cos(angle), -sin(angle),
-						0.0, sin(angle), cos(angle));
-} //Matrix3x3::createXRotate
-
-
-/*--------------------------------------------------------------------
-	Create a rotation matrix around the y axis
-	
-	angle: The rotation angle
-	
-	return: The requested rotation matrix
-  --------------------------------------------------------------------*/
-Matrix3x3 Matrix3x3::createYRotate(double angle) {
-	return Matrix3x3(	cos(angle), 0.0, sin(angle),
-						0.0, 1.0, 0.0,
-						-sin(angle), 0, cos(angle));
-} //Matrix3x3::createYRotate
-
-
-/*--------------------------------------------------------------------
-	Create a rotation matrix around the z axis
-	
-	angle: The rotation angle
-	
-	return: The requested rotation matrix
-  --------------------------------------------------------------------*/
-Matrix3x3 Matrix3x3::createZRotate(double angle) {
-	return Matrix3x3(	cos(angle), -sin(angle), 0.0,
-						sin(angle), cos(angle), 0.0,
-						0.0, 0.0, 1.0);
-} //Matrix3x3::createZRotate
+Matrix3x3 Matrix3x3::createRotate(double angle) {
+	return Matrix3x3{cos(angle), -sin(angle), 0.0,
+					 sin(angle), cos(angle), 0.0,
+					 0.0, 0.0, 1.0};
+} //Matrix3x3::createRotate
 
 
 /*--------------------------------------------------------------------
@@ -63,11 +35,11 @@ Matrix3x3 Matrix3x3::createZRotate(double angle) {
 	
 	return: The requested scaling matrix
   --------------------------------------------------------------------*/
-Matrix3x3 Matrix3x3::createScale(double x, double y, double z) {
+Matrix3x3 Matrix3x3::createScale(double x, double y) {
 	Matrix3x3 result;
 	result.m_matrix[0][0] = x;
 	result.m_matrix[1][1] = y;
-	result.m_matrix[2][2] = z;
+	result.m_matrix[2][2] = 1;
 	return result;
 } //Matrix3x3::createScale
 
@@ -77,18 +49,16 @@ Matrix3x3 Matrix3x3::createScale(double x, double y, double z) {
 	
 	x: The offset in the x axis
 	y: The offset in the y axis
-	z: The offset in the z axis
 	
 	return: The requested transformation matrix
   --------------------------------------------------------------------*/
-Matrix3x3 Matrix3x3::createTranslate(double x, double y, double z) {
+Matrix3x3 Matrix3x3::createTranslate(double x, double y) {
 	Matrix3x3 result;
-	result.m_matrix[0][0] = 1;
-	result.m_matrix[1][1] = 1;
-	result.m_matrix[2][2] = 1;
-	result.m_matrix[2][0] = x;
-	result.m_matrix[2][1] = y;
-	result.m_matrix[2][2] = z;
+	result.m_matrix[0][0] = 1.0;
+	result.m_matrix[1][1] = 1.0;
+	result.m_matrix[2][2] = 1.0;
+	result.m_matrix[0][2] = x;
+	result.m_matrix[1][2] = y;
 	return result;
 } //Matrix3x3::createTranslate
 
@@ -98,9 +68,9 @@ Matrix3x3 Matrix3x3::createTranslate(double x, double y, double z) {
   --------------------------------------------------------------------*/
 Matrix3x3 Matrix3x3::createIdentity() {
 	Matrix3x3 result;
-	result.m_matrix[0][0] = 1;
-	result.m_matrix[1][1] = 1;
-	result.m_matrix[2][2] = 1;
+	result.m_matrix[0][0] = 1.0;
+	result.m_matrix[1][1] = 1.0;
+	result.m_matrix[2][2] = 1.0;
 	return result;
 } //Matrix3x3::createIdentity
 		
@@ -224,3 +194,11 @@ double Matrix3x3::getDeterminant() const {
 			(m_matrix[0][1] * (m_matrix[1][0] * m_matrix[2][2] - m_matrix[2][0] * m_matrix[1][2])) +
 			(m_matrix[0][2] * (m_matrix[1][0] * m_matrix[2][1] - m_matrix[2][0] * m_matrix[1][1]));
 } //Matrix3x3::getDeterminant
+
+
+/*--------------------------------------------------------------------
+	Clear the matrix transformation (set to 0.0)
+  --------------------------------------------------------------------*/
+void Matrix3x3::clearTransform() {
+	m_matrix[0][2] = m_matrix[1][2] = 0.0;
+} //Matrix3x3::clearTransform

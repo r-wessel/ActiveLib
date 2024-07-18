@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_ATTRIBUTE_PEN
 
 #include <array>
+#include <optional>
 
 namespace active::attribute {
 	
@@ -19,6 +20,7 @@ namespace active::attribute {
 		
 			///Enumerator for standard pen weights
 		enum Weight {
+			hairline,	///< Always displays as a hairline at any zoom level
 			thinnest,
 			thinner,
 			thin,
@@ -39,7 +41,8 @@ namespace active::attribute {
 		// MARK: - Static variables
 		
 			///Standard architectural pen weights
-		static inline std::array standard{
+		static inline std::array standard {
+			0.0,	///< Nominally the minimum renderable thickness, not literally zero
 			0.18,
 			0.25,
 			0.35,

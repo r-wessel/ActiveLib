@@ -116,7 +116,7 @@ namespace active::geometry {
 			@param offset The point to add
 			@return The sum of this and the specified points
 		*/
-		virtual Point operator+ (const Point& offset) const;
+		Point operator+ (const Point& offset) const;
 		/*!
 			Addition and assignment operator
 			@param offset The point to add
@@ -128,7 +128,7 @@ namespace active::geometry {
 			@param offset The point to substract
 			@return The result of this less the specified point
 		*/
-		virtual Point operator- (const Point& offset) const;
+		Point operator- (const Point& offset) const;
 		/*!
 			Substraction and assignment operator
 			@param offset The point to substract
@@ -140,25 +140,37 @@ namespace active::geometry {
 			@param mult The factor to multiply the point by
 			@return The result of the multiplication of this and the specified factor
 		*/
-		virtual Point operator* (const double& mult) const;
+		Point operator* (const double& mult) const;
+		/*!
+			Multiplication operator
+			@param mult The x/y/z factors to multiply the point by
+			@return The result of the multiplication of this and the specified factor
+		*/
+		Point operator* (const Point& mult) const;
 		/*!
 			Multiplication operator
 			@param matrix The matrix to multiply the point by
 			@return The result of the multiplication
 		*/
-		virtual Point operator* (const Matrix3x3& matrix) const;
+		Point operator* (const Matrix3x3& matrix) const;
 		/*!
 			Multiplication operator
 			@param matrix The matrix to multiply the point by
 			@return The result of the multiplication
 		*/
-		virtual Point operator* (const Matrix4x4& matrix) const;
+		Point operator* (const Matrix4x4& matrix) const;
 		/*!
 			Multiplication and assignment operator
 			@param mult The factor to multiply the point by
 			@return A reference to this
 		*/
 		virtual Point& operator*= (const double& mult);
+		/*!
+			Multiplication and assignment operator
+			@param mult The x/y/z factors to multiply the point by
+			@return A reference to this
+		*/
+		virtual Point& operator*= (const Point& mult);
 		/*!
 			Multiplication and assignment operator
 			@param matrix The matrix to multiply the point by
@@ -176,7 +188,7 @@ namespace active::geometry {
 			@param mult The factor to divide the point by
 			@return The result of the division of this by the specified factor
 		*/
-		virtual Point operator/ (const double& mult) const;
+		Point operator/ (const double& mult) const;
 		/*!
 			Division and assignment operator
 			@param mult The factor to divide the point by
