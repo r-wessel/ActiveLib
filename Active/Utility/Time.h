@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_UTILITY_TIME
 
 #include <chrono>
+#include <cmath>
 #include <compare>
 #include <filesystem>
 #include <optional>
