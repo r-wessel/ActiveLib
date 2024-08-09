@@ -7,7 +7,7 @@ set(HeaderFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/List.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Map.h
 	${CMAKE_CURRENT_SOURCE_DIR}/MultiMap.h
-	${CMAKE_CURRENT_SOURCE_DIR}/vector.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Vector.h
 )
 set(ModuleFiles
 	${SourceFiles}

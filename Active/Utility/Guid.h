@@ -42,7 +42,6 @@ namespace active::utility {
 			@param autoGenerate True to generate a guid value on construction
 		*/
 		Guid(bool autoGenerate = false);
-		
 		/*!
 			Constructor
 			@param uuidString The guid in string form

@@ -9,11 +9,13 @@ add_library(
     ActiveLib
 )
 
+	#Add the sources for a module
 function(addModule moduleName)
 	add_subdirectory(${moduleName})
 	source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/${moduleName} PREFIX ${moduleName} FILES ${ModuleFiles})
 endfunction()
 
+	#Module sources
 addModule(Attribute)
 addModule(Container)
 addModule(Environment)
@@ -23,6 +25,27 @@ addModule(Geometry)
 addModule(Serialise)
 addModule(Setting)
 addModule(Utility)
+	#Add sources at the root
+set(SourceFiles
+)
+set(HeaderFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/Version.h
+)
+target_sources(ActiveLib
+	PRIVATE
+		${SourceFiles}
+	PUBLIC
+	FILE_SET HEADERS
+	BASE_DIRS ${PROJECT_SOURCE_DIR}
+	FILES
+		${HeaderFiles}
+)
+set(ModuleFiles
+	${SourceFiles}
+	${HeaderFiles}
+)
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ModuleFiles})
 
 add_library(${namespace}ActiveLib ALIAS ActiveLib)
 
