@@ -78,7 +78,7 @@ install(
     DESTINATION "lib/cmake/${PROJECT_NAME}"
 )
 
-# ---- pkg-config instllation ----
+# ---- pkg-config installation ----
 install(
     FILES "${project_pkgconfig}"
     DESTINATION "${pkgconfig_install_dir}"

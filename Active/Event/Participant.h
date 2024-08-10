@@ -46,7 +46,6 @@ namespace active::event {
 		*/
 		bool operator!= (const Participant& ref) const { return !(*this == ref); }
 		
-	protected:
 		/*!
 			Audit the participant environment to ensure it can function
 			@return True if the participant is able to function

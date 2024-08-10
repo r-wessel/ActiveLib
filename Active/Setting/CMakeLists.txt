@@ -1,0 +1,52 @@
+set(SourceFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/SettingList.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/AngleValue.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/AngleUnit.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/AreaUnit.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/LengthUnit.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/MassUnit.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Value.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/ValueSetting.cpp
+)
+set(HeaderFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/Setting.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Setting.md
+	${CMAKE_CURRENT_SOURCE_DIR}/SettingList.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/BoolValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/DoubleValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/GuidValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Int32Value.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Int64Value.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/AngleValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/AreaValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/LengthValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/MassValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/MeasuredValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/AngleUnit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/AreaUnit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/LengthUnit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/MassUnit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/Unit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/NullValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/StringValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/TimeValue.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/UInt32Value.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Value.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/ValueBase.h
+	${CMAKE_CURRENT_SOURCE_DIR}/ValueSetting.h
+)
+set(ModuleFiles
+	${SourceFiles}
+	${HeaderFiles}
+	PARENT_SCOPE
+)
+target_sources(ActiveLib
+	PRIVATE
+		${SourceFiles}
+	PUBLIC
+	FILE_SET HEADERS
+	BASE_DIRS ${PROJECT_SOURCE_DIR}
+	FILES
+		${HeaderFiles}
+)

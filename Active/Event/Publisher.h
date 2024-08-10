@@ -99,8 +99,6 @@ namespace active::event {
 			@return True if subscriber was removed
 		*/
 		bool remove(const utility::Guid& id);
-	
-	protected:
 		/*!
 			Audit the participant environment to ensure it can function
 			@return True if the participant is able to function

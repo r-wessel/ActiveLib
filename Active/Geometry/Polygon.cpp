@@ -993,6 +993,26 @@ vertex_index Polygon::vertSize(bool isOuter) const {
 
 
 /*--------------------------------------------------------------------
+	Get the number of arc edges in the polygon
+ 
+	isOuter: True to count the outer polygon edges only (exclude holes)
+ 
+	return: The number of arc edges
+  --------------------------------------------------------------------*/
+vertex_index Polygon::arcSize(bool isOuter) const {
+	auto result = 0;
+	for (auto index = isOuter ? 1 : getHoleSize(); index--; ) {
+		auto shape = getShape(index);
+		for (auto edge = 1; edge <= shape.edgeSize(); ++edge) {
+			if (shape[edge]->isArc())
+				++result;
+		}
+	}
+	return result;
+} //Polygon::arcSize
+
+
+/*--------------------------------------------------------------------
 	Get the number of holes in the polygon
 	
 	isOuter: True if only the outer polygon is counted (not holes)

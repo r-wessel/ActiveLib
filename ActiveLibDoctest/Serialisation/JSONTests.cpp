@@ -194,7 +194,7 @@ String missingBrace =
 	///Tests for JSON serialisation
 TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	
-		///Tests for sending and receiving data via XML
+		///Tests for sending and receiving data via JSON
 	TEST_CASE(TESTQ(testJSONSendReceive)) {
 			//Initialise sample test data
 		active::geometry::Polygon polyOut{PolyPoint{1.234, 2.345}, PolyPoint{3.456, 2.987, 0.0, math::pi / 8}, PolyPoint{1.876, 4.765}}, polyIn;
@@ -299,11 +299,11 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 
 			//Negative tests (handle bad data)
 
-		SerialiseTester dummy;
+		SerialiseTester testObject;
 		String report;
 			//Read JSON with an unknown name
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, unknownJSONName);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with an unknown name));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An unknown name was found in the JSON at row: 25, column: 12",
@@ -311,7 +311,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		}
 			//Read JSON with a missing quote
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, missingQuote);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, missingQuote);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with a missing quote));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "A scope has been started but not closed at row: 3, column: 4",
@@ -319,7 +319,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		}
 			//Read JSON with an invalid number
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, badNumber);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, badNumber);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with a bad numeric value));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An invalid value was found at row: 25, column: 12",
@@ -327,7 +327,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		}
 			//Read JSON with a missing closing brace
 		try {
-			transporter.receive(PackageWrap{dummy}, SerialiseTester::tag, missingBrace);
+			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, missingBrace);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with a missing closing brace));
 		} catch(std::system_error& error) {
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "A scope has been opened but not closed at row: 39, column: 0",

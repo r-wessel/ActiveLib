@@ -80,6 +80,9 @@
     <Filter Include="Active\Event">
       <UniqueIdentifier>{6bf46721-5a13-4cc0-9645-dd25106baf93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Active\Environment">
+      <UniqueIdentifier>{bbbec8f3-f3be-428c-b1d4-c99a56338645}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Active\Container\HashMap.h">
@@ -406,6 +409,9 @@
     <ClInclude Include="Active\Setting\SettingList.h">
       <Filter>Active\Setting</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Environment\App.h">
+      <Filter>Active\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -575,6 +581,9 @@
     </ClCompile>
     <ClCompile Include="Active\Setting\SettingList.cpp">
       <Filter>Active\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Environment\App.cpp">
+      <Filter>Active\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,44 @@
+set(SourceFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/BufferIn.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/BufferOut.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/DataFormat.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Guid.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Memory.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/String.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/TextEncoding.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Time.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/UniqueString.cpp
+)
+set(HeaderFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/BufferIn.h
+	${CMAKE_CURRENT_SOURCE_DIR}/BufferOut.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Cloner.h
+	${CMAKE_CURRENT_SOURCE_DIR}/DataFormat.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Defer.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Guid.h
+	${CMAKE_CURRENT_SOURCE_DIR}/MathFunctions.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Memory.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Mover.h
+	${CMAKE_CURRENT_SOURCE_DIR}/NameID.h
+	${CMAKE_CURRENT_SOURCE_DIR}/StackBufferOut.h
+	${CMAKE_CURRENT_SOURCE_DIR}/String.h
+	${CMAKE_CURRENT_SOURCE_DIR}/TextEncoding.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Time.h
+	${CMAKE_CURRENT_SOURCE_DIR}/UniqueString.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Utility.md
+)
+set(ModuleFiles
+	${SourceFiles}
+	${HeaderFiles}
+	PARENT_SCOPE
+)
+target_sources(ActiveLib
+	PRIVATE
+		${SourceFiles}
+	PUBLIC
+	FILE_SET HEADERS
+	BASE_DIRS ${PROJECT_SOURCE_DIR}
+	FILES
+		${HeaderFiles}
+)

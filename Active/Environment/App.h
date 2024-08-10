@@ -21,8 +21,9 @@ namespace active::environment {
 		/*!
 			Default constructor
 			@param identity Optional name/ID for the subscriber
+			@param isActiveInstance True if this object is the active instance (the primary application)
 		*/
-		App(const utility::NameID& identity = utility::NameID{}) : Publisher{identity} {}
+		App(const utility::NameID& identity = utility::NameID{}, bool isActiveInstance = false);
 		/*!
 			Copy constructor
 			@param source The object to copy
@@ -31,12 +32,15 @@ namespace active::environment {
 		/*!
 			Destructor
 		*/
-		virtual ~App() = default;
+		virtual ~App();
 	};
-	
-}
 
-	//An object representing the parent process/application
-extern active::environment::App* app;
+	/*!
+	 Get an object representing the parent process/application
+	 @return The active application instance (nullptr if the app is not running)
+	 */
+	 active::environment::App* app();
+
+}
 
 #endif	//ACTIVE_ENVIRONMENT_APP

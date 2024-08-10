@@ -342,7 +342,7 @@ bool Publisher::attach() {
 		if (!subscriber->attach())
 			allSuccessful = false;
 	return allSuccessful;
-} //Publisher::audit
+} //Publisher::attach
 
 
 /*--------------------------------------------------------------------
@@ -357,7 +357,7 @@ bool Publisher::start() {
 		if (!subscriber->start())
 			allSuccessful = false;
 	return allSuccessful;
-} //Publisher::audit
+} //Publisher::start
 
 
 /*--------------------------------------------------------------------
@@ -367,4 +367,4 @@ void Publisher::stop() {
 	auto subscribers = m_subscriber->filter();
 	for (auto& subscriber : subscribers)
 		subscriber->stop();
-} //Publisher::audit
+} //Publisher::stop

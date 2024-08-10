@@ -1,0 +1,29 @@
+set(SourceFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/Directory.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/File.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Interface/FSNode.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Path.cpp
+)
+set(HeaderFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/Directory.h
+	${CMAKE_CURRENT_SOURCE_DIR}/File.h
+	${CMAKE_CURRENT_SOURCE_DIR}/File.md
+	${CMAKE_CURRENT_SOURCE_DIR}/Interface/FSNode.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Interface/IOBase.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Path.h
+)
+set(ModuleFiles
+	${SourceFiles}
+	${HeaderFiles}
+	PARENT_SCOPE
+)
+target_sources(ActiveLib
+	PRIVATE
+		${SourceFiles}
+	PUBLIC
+	FILE_SET HEADERS
+	BASE_DIRS ${PROJECT_SOURCE_DIR}
+	FILES
+		${HeaderFiles}
+)

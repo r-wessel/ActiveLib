@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active::attribute {
 	
-	/**
+	/*!
 		Collection of attributes defining a text sryle, e.g. font, size etc
 	*/
 	struct TextStyle {
@@ -21,11 +21,11 @@ namespace active::attribute {
 
 		// MARK: - Constructors
 		
-		/**
+		/*!
 			Default constructor
 		*/
 		TextStyle() = default;
-		/**
+		/*!
 			Constructor
 			@param font Font
 			@param sz Text size

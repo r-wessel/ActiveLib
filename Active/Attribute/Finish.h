@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active::attribute {
 	
-	/**
+	/*!
 		Representation of a surface finish (for 3D rendering)
 	
 		NB: This structure is likely to expand over time as additiona attributes are added to the definition of a finish, e.g. texture-mapping
@@ -19,7 +19,7 @@ namespace active::attribute {
 
 		// MARK: Constructors
 
-		/**
+		/*!
 			Constructor
 			@param col The finish colour
 		*/

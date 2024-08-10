@@ -38,10 +38,15 @@ namespace active::geometry {
 		Box() {}
 		/*!
 			Constructor
+			@param point A point defining the box position/bounds
+		*/
+		Box(const Point& point) : origin(point), end(point) {}
+		/*!
+			Constructor
 			@param origin One corner of the box
 			@param end The opposite corner of the box
 		*/
-		Box(const Point &origin, const Point &end) : origin(origin),  end(end) {}
+		Box(const Point& origin, const Point& end) : origin(origin),  end(end) {}
 		/*!
 			Constructor
 			@param x1 Bounding coordinates of the box
