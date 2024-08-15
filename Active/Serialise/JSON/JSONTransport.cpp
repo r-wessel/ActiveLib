@@ -900,7 +900,8 @@ namespace {
 				throw std::system_error(makeJSONError(badValue));
 			if (item->type() == Item::text)
 				outgoing = "\"" + exporter.toJSONString(outgoing) + "\"";
-			return exporter.write(outgoing);
+			exporter.write(outgoing);
+			return;
 		}
 		if ((item != nullptr) && (inventory.size() != 1))	//An item can have multiple values but they must all be a homogenous type, e.g. an array
 			throw std::system_error(makeJSONError(badValue));

@@ -53,6 +53,12 @@ namespace active::serialise {
 		*/
 		virtual bool write(utility::String& dest) const = 0;
 		/*!
+			Write the cargo data to a specified setting
+			@param dest The setting to write to
+			@return True if the data was successfully written
+		*/
+		virtual bool write(setting::Value& dest) const;
+		/*!
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/

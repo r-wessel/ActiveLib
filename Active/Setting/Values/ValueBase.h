@@ -18,7 +18,7 @@ namespace active::setting {
 		Refer to the base Value class for more information about the purpose of this class
 	*/
 	template<class T>
-	class ValueBase : public Value {
+class ValueBase : public Value {
 	public:
 		
 		// MARK: - Constructors

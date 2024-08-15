@@ -50,7 +50,7 @@ namespace active::container {
 			Constructor
 			@param items The items to insert in the array
 		*/
-		template<class Derived>
+		template<class Derived> requires std::is_base_of_v<T, Derived>
 		explicit Vector(const std::initializer_list<Derived>& items) : base() {
 			for (const auto& item : items)
 				emplace_back(item);
