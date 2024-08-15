@@ -12,6 +12,19 @@ using namespace active::utility;
 using namespace active::setting;
 
 /*--------------------------------------------------------------------
+	Write the cargo data to a specified setting
+ 
+	dest: The setting to write to
+ 
+	return: True if the data was successfully written
+  --------------------------------------------------------------------*/
+bool Item::write(setting::Value& dest) const {
+	String text;
+	return write(text) && (dest = text);	//The default behaviour is to treat the outgoing data as a string - subclasses can override for exceptions
+} //Item::write
+
+
+/*--------------------------------------------------------------------
 	Read the cargo data from the specified setting
  
 	source: The setting to read

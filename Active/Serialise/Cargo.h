@@ -22,10 +22,6 @@ namespace active::serialise {
 		using Unique = std::unique_ptr<Cargo>;
 			///Shared pointer
 		using Shared = std::shared_ptr<Cargo>;
-			///Class size type
-		using size_type = std::string::size_type;
-			///Optional size type (used to indicate an unspecified or non-existant position)
-		using sizeOption = std::optional<size_type>;
 		
 		// MARK: - Constructors
 		
