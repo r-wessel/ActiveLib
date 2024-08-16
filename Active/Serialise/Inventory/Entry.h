@@ -21,6 +21,7 @@ namespace active::serialise {
 		enum class Type {
 			attribute,
 			element,
+			array,
 		};
 		
 		using enum Type;
