@@ -84,6 +84,12 @@ namespace active::serialise {
 		*/
 		Inventory& merge(const Inventory& inventory);
 		/*!
+			Merge an entry with this
+			@param entry The entry to merge
+			@return A reference to this
+		*/
+		Inventory& merge(const Entry& entry);
+		/*!
 			Register an incoming item in the inventory
 			@param identity The item identity
  			@return The registered item (nullopt == not found)

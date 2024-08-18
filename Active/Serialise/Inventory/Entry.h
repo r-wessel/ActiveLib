@@ -112,6 +112,15 @@ namespace active::serialise {
 		void setIdentity(Identity&& ident) { m_id = ID{std::move(ident)}; }
 		/*!
 			Set the entry owner type
+			@param type The The value type
+			@return A reference to this
+		*/
+		Entry& withType(Type type) {
+			m_type = type;
+			return *this;
+		}
+		/*!
+			Set the entry owner type
 			@param owner The owner type ID
 			@return A reference to this
 		*/

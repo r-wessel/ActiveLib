@@ -364,6 +364,7 @@
 		21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueSettingWrap.cpp; sourceTree = "<group>"; };
 		21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueSettingWrap.h; sourceTree = "<group>"; };
 		21F69F622C6D4AEE008B6A06 /* CargoHold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CargoHold.h; sourceTree = "<group>"; };
+		21F69F992C712F59008B6A06 /* ContainerWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContainerWrap.h; sourceTree = "<group>"; };
 		21F93AC92B2B5DA2009A2C5B /* NameID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameID.h; sourceTree = "<group>"; };
 		21F93ACD2B2B67FC009A2C5B /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
 		21F93AD12B2B81C6009A2C5B /* SettingList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingList.h; sourceTree = "<group>"; };
@@ -862,6 +863,7 @@
 		21F69F5B2C6CE8E2008B6A06 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				21F69F992C712F59008B6A06 /* ContainerWrap.h */,
 				21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */,
 				21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */,
 			);
