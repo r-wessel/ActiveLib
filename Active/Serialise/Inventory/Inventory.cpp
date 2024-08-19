@@ -72,6 +72,19 @@ Inventory& Inventory::merge(const Inventory& inventory) {
 
 
 /*--------------------------------------------------------------------
+	Merge an entry with this
+ 
+	entry: The entry to merge
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Inventory& Inventory::merge(const Entry& entry) {
+	insert(end(), entry);
+	return *this;
+} //Inventory::merge
+
+
+/*--------------------------------------------------------------------
 	Register an incoming item in the inventory
  
 	identity: The item identity

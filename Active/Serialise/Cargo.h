@@ -42,12 +42,16 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Get the recommended cargo entry type
+			@return The cargo entry type (nullopt = deduce automatically from cargo characteristics)
+		*/
+		virtual std::optional<Entry::Type> entryType() const { return m_type; }
+		/*!
 			Fill an inventory with the cargo items
 			@param inventory The inventory to receive the cargo items
 			@return True if items have been added to the inventory
 		*/
 		virtual bool fillInventory(Inventory& inventory) const = 0;
-
 		/*!
 			Get the specified cargo
 			@param item The inventory item to retrieve
@@ -57,6 +61,15 @@ namespace active::serialise {
 		
 		// MARK: - Functions (mutating)
 		
+		/*!
+			Set the recommended cargo type
+			@param type The cargo type, e.g. force an object to export as an array in JSON
+			@return A reference to this
+		*/
+		virtual Cargo& asType(Entry::Type type) {
+			m_type = type;
+			return *this;
+		}
 		/*!
 			Clear the data content (typically a reset to defaults)
 		*/
@@ -70,6 +83,12 @@ namespace active::serialise {
 			@return True if the data has been validated
 		*/
 		virtual bool validate() { return true; }
+		
+	private:
+		/*!
+		 Optional recommended cargo type - useful for some forms of transport which might incorrectly deduce it
+		 */
+		std::optional<Entry::Type> m_type;
 	};
 
 		///Transportable concept for classes/functions representing transportable cargo

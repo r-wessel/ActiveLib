@@ -21,6 +21,7 @@ namespace active::serialise {
 		enum class Type {
 			attribute,
 			element,
+			array,
 		};
 		
 		using enum Type;
@@ -109,6 +110,15 @@ namespace active::serialise {
 			return: True if the availability was bumped (false indicates no additional items are allowed)
 		*/
 		void setIdentity(Identity&& ident) { m_id = ID{std::move(ident)}; }
+		/*!
+			Set the entry owner type
+			@param type The The value type
+			@return A reference to this
+		*/
+		Entry& withType(Type type) {
+			m_type = type;
+			return *this;
+		}
 		/*!
 			Set the entry owner type
 			@param owner The owner type ID

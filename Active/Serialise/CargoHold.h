@@ -50,6 +50,14 @@ namespace active::serialise {
 		*/
 		virtual ~CargoHold() = default;
 		
+		// MARK: - Constructors
+		
+		/*!
+			Get a reference to the wrapped object
+			@return A reference to the wrapped object
+		*/
+		Obj& get() { return m_object; }
+		
 	private:
 		Obj m_object;
 	};
