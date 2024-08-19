@@ -79,6 +79,7 @@
     <ClInclude Include="Active\Geometry\XList.h" />
     <ClInclude Include="Active\Geometry\XPoint.h" />
     <ClInclude Include="Active\Serialise\Cargo.h" />
+    <ClInclude Include="Active\Serialise\CargoHold.h" />
     <ClInclude Include="Active\Serialise\Document\Object.h" />
     <ClInclude Include="Active\Serialise\Document\Shipper.h" />
     <ClInclude Include="Active\Serialise\Document\Transportable.h" />
@@ -97,10 +98,13 @@
     <ClInclude Include="Active\Serialise\Item\Wrapper\StringWrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\ValueWrap.h" />
     <ClInclude Include="Active\Serialise\JSON\JSONTransport.h" />
+    <ClInclude Include="Active\Serialise\Package\NullPackage.h" />
     <ClInclude Include="Active\Serialise\Package\Package.h" />
     <ClInclude Include="Active\Serialise\Package\PackageWrap.h" />
     <ClInclude Include="Active\Serialise\Package\Pair.h" />
     <ClInclude Include="Active\Serialise\Package\Unknown.h" />
+    <ClInclude Include="Active\Serialise\Package\Wrapper\ContainerWrap.h" />
+    <ClInclude Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.h" />
     <ClInclude Include="Active\Serialise\XML\Item\XMLDateTime.h" />
     <ClInclude Include="Active\Serialise\XML\Item\XMLNumber.h" />
     <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.h" />
@@ -180,6 +184,7 @@
     <ClCompile Include="Active\Serialise\Item\Wrapper\AnyValueWrap.cpp" />
     <ClCompile Include="Active\Serialise\JSON\JSONTransport.cpp" />
     <ClCompile Include="Active\Serialise\Package\Pair.cpp" />
+    <ClCompile Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.cpp" />
     <ClCompile Include="Active\Serialise\XML\Item\XMLDateTime.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.cpp" />
