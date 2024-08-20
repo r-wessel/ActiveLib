@@ -910,12 +910,12 @@ namespace {
 		bool isWrapper = (inventory.size() > 1) || (identity.stage == root) ||
 				(!identity.name.empty() && !inventory.begin()->identity().name.empty() && (inventory.begin()->identity() != identity));
 			//An array package will have a single item within more than one possible value
-		bool isArray = !isWrapper && (inventory.size() == 1) && !(inventory.begin()->maximum() == 1),
+		bool isArray = (inventory.size() == 1) && !(inventory.begin()->maximum() == 1),
 			 isFirstItem = true;
-		if (isWrapper)
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::objectStart, depth++);
-		else if (isArray)
+		if (isArray)
 			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::arrayStart, depth);
+		else if (isWrapper)
+			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::objectStart, depth++);
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
 			auto item = *entry.second;
@@ -946,10 +946,10 @@ namespace {
 			if (isItemArray)
 				exporter.writeTag(String{}, String{}, JSONIdentity::Type::arrayEnd, depth);
 		}
-		if (isWrapper)
-			exporter.writeTag(String{}, String{}, JSONIdentity::Type::objectEnd, --depth);
-		else if (isArray)
+		if (isArray)
 			exporter.writeTag(String{}, String{}, JSONIdentity::Type::arrayEnd, depth);
+		else if (isWrapper)
+			exporter.writeTag(String{}, String{}, JSONIdentity::Type::objectEnd, --depth);
 	} //doJSONExport
 
 }  // namespace
