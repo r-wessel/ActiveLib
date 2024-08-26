@@ -284,14 +284,14 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		arrayTesterOut.emplace_back(BarA{Guid{true}, "Whatever"});
 		arrayTesterOut.emplace_back(BarB{Guid{true}, 98.7654});
 		try {
-			transporter.send(SerialiseArrayWrapper{arrayTesterOut}, SerialiseArrayWrapper::tag, collector);
+			transporter.send(SerialiseArrayWrapper{arrayTesterOut}, Identity{}, collector);
 			CHECK_MESSAGE(!collector.empty(), TEST_MESSAGE(JSON send produced no output));
 		} catch(...) {
 			FAIL_CHECK(TEST_MESSAGE(JSON send failed));
 		}
 			//Receive the JSON data from the collection string into another object
 		try {
-			transporter.receive(SerialiseArrayWrapper{arrayTesterIn}, SerialiseArrayWrapper::tag, collector);
+			transporter.receive(SerialiseArrayWrapper{arrayTesterIn}, Identity{}, collector);
 			CHECK_MESSAGE(arrayTesterOut == arrayTesterIn, TEST_MESSAGE(Array received via JSON does not match the array sent));
 		} catch(...) {
 			FAIL_CHECK(TEST_MESSAGE(JSON receive failed));
@@ -306,7 +306,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with an unknown name));
 		} catch(std::system_error& error) {
-			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An unknown name was found in the JSON at row: 25, column: 12",
+			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An unknown name was found in the JSON at row: 24, column: 5",
 						  TEST_MESSAGE(Failure report for input with an incorrect name wrong));
 		}
 			//Read JSON with a missing quote

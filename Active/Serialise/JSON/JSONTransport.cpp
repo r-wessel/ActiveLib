@@ -708,19 +708,48 @@ namespace {
 	
 	
 	/*--------------------------------------------------------------------
-		Return specifed cargo in a wrapper
+		Get the identity of an incoming array item
 
-		cargo: The cargo to be wrapped
+		inventory: The cargo inventory to find the item from
+		identity: The identity of the item (set from the inventory details)
 
 		return: The wrapped cargo
 	  --------------------------------------------------------------------*/
-	Cargo::Unique wrapped(Cargo& cargo) {
+	void getArrayIdentity(Cargo& container, const Inventory& inventory, const JSONIdentity& containerIdentity, JSONIdentity& identity) {
+		if (!identity.name.empty())
+			return;	//It already has a name
+		auto type = identity.type;	//Preserve the original type
+		if ((containerIdentity.type == arrayStart) && !containerIdentity.name.empty())
+				//If the outer container is named, use that
+			identity = containerIdentity;
+		else {
+				//Seek an inventory item suited to an array (almost always the sole entry for a typical array container)
+			auto iter = std::find_if(inventory.begin(), inventory.end(), [&](auto& i) {
+				return i.isRepeating();
+			});
+			if (iter != inventory.end())
+				identity = iter->identity();
+		}
+		identity.type = type;
+	} //getArrayIdentity
+	
+	
+	/*--------------------------------------------------------------------
+		Make a wrapper for the  specifed cargo
+
+		cargo: The cargo to be wrapped
+		containerIdentity: The cargo identity
+		identity: The identity for the wrapped cargo (set from the container)
+
+		return: The wrapped cargo
+	  --------------------------------------------------------------------*/
+	Cargo::Unique makeWrapper(Cargo& cargo, const JSONIdentity& containerIdentity, const Inventory& inventory, JSONIdentity& identity) {
 		if (auto* package = dynamic_cast<Package*>(&cargo); package != nullptr)
 			return std::make_unique<PackageWrap>(*package);
 		if (auto* item = dynamic_cast<Item*>(&cargo); item != nullptr)
 			return std::make_unique<ItemWrap>(*item);
 		throw std::out_of_range("");	//Illegal cargo type
-	} //wrapped
+	} //makeWrapper
 	
 	
 	/*--------------------------------------------------------------------
@@ -792,23 +821,16 @@ namespace {
 						throw std::system_error(makeJSONError(unbalancedScope));
 					Cargo::Unique cargo;
 					Inventory::iterator incomingItem = inventory.end();
-					bool isArrayStart = (identity.type == arrayStart), isKnown = true;
-					if (identity.name.empty() || isArrayStart) {
-						if (identity.name.empty() && parsingStage == object)	//An element within an object must be identified with a name
-							throw std::system_error(makeJSONError(nameMissing));
-						cargo = wrapped(container);	//The next element is a child (for array) or instance (for root) of the parent container
-						if (identity.name.empty()) {
-							auto incomingType = identity.type;
-							identity = containerIdentity;	//If no name is specified, we adopt the identity specified by the container
-							identity.type = incomingType;
-							if (parsingStage == root)
-								identity.stage = isArrayStart ? array : object;
-						}
-						if (parsingStage == root)
-							cargo->setDefault();	//The root object is sourced externally, so has to be reset to the default separately
-					}
-					if (!identity.name.empty() && (parsingStage != root) && !isArrayStart) {	//Allocate new cargo when a new element is reached
-						if (incomingItem = inventory.registerIncoming(identity); incomingItem != inventory.end()) {	//Seek the incoming element in the inventory
+					
+					if (parsingStage == array)
+						getArrayIdentity(container, inventory, containerIdentity, identity);
+
+					if ((parsingStage == root) || (identity.type == arrayStart))
+							//At the root, we're simply importing to the container we already have - we only need to step one level into the JSON structure
+						cargo = makeWrapper(container, containerIdentity, inventory, identity);
+					else {
+						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
+						if (incomingItem != inventory.end()) {
 							if (isReadingAttribute && !incomingItem->isAttribute())
 								incomingItem = inventory.end();
 							else {
@@ -818,26 +840,25 @@ namespace {
 									--attributesRemaining;
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 							}
+							cargo->setDefault();
 						}
-							//Allow the parser to move beyond unknown/unwanted elements
-						if (!cargo) {
-							if (importer.isUnknownSkipped() || isReadingAttribute) {
-								isKnown = false;
-								cargo = makeUnknown(identity);
-								if (isReadingAttribute && !restorePoint)	//If not all attributes read, parse data twice (first for attributes only)
-									restorePoint = readPoint;	//If this is the first instance, set a restore point so reading can resume here
-							} else
-								throw std::system_error(makeJSONError(unknownName));
-						}
-						cargo->setDefault();
+					}
+						//Allow the parser to move beyond unknown/unwanted elements
+					bool isKnown = true;
+					if (!cargo) {
+						if (importer.isUnknownSkipped() || isReadingAttribute) {
+							isKnown = false;
+							cargo = makeUnknown(identity);
+							if (isReadingAttribute && !restorePoint)	//If not all attributes read, parse data twice (first for attributes only)
+								restorePoint = readPoint;	//If this is the first instance, set a restore point so reading can resume here
+						} else
+							throw std::system_error(makeJSONError(unknownName));
 					}
 					doJSONImport(*cargo, JSONIdentity{identity}.atStage((identity.type == arrayStart) ? array : object), importer, depth + 1);
 					if (incomingItem != inventory.end()) {
-						if (incomingItem->isRepeating()) {
-							if ((package != nullptr) && !package->insert(std::move(cargo), *incomingItem))
-								throw std::system_error(makeJSONError(invalidObject));
-						}
-					} else if (isKnown && !isArrayStart)
+						if (incomingItem->isRepeating() && (package != nullptr) && !package->insert(std::move(cargo), *incomingItem))
+							throw std::system_error(makeJSONError(invalidObject));
+					} else if (isKnown && (identity.type != arrayStart))
 						return;	//If there is no defined item, we're in an array or the root - we need to return the imported element now
 					parsingStage = complete;	//An element has been parsed - we either expect a delimiter or a terminator
 					break;
