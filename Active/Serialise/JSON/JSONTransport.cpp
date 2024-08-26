@@ -791,12 +791,6 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
-		if (containerIdentity.type == valueStart) {
-			if (auto* item = dynamic_cast<active::serialise::Item*>(&container); item != nullptr) {
-				importer.getContent(*item);
-				return;
-			}
-		}
 		Inventory inventory = getImportInventoryFor(container);
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
@@ -821,12 +815,9 @@ namespace {
 						throw std::system_error(makeJSONError(unbalancedScope));
 					Cargo::Unique cargo;
 					Inventory::iterator incomingItem = inventory.end();
-					
 					if (parsingStage == array)
 						getArrayIdentity(container, inventory, containerIdentity, identity);
-
-					if ((parsingStage == root) || (identity.type == arrayStart))
-							//At the root, we're simply importing to the container we already have - we only need to step one level into the JSON structure
+					if ((parsingStage == root) || (identity.type == arrayStart))	//Att root/array we're importing to the container we already have
 						cargo = makeWrapper(container, containerIdentity, inventory, identity);
 					else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
@@ -843,9 +834,8 @@ namespace {
 							cargo->setDefault();
 						}
 					}
-						//Allow the parser to move beyond unknown/unwanted elements
 					bool isKnown = true;
-					if (!cargo) {
+					if (!cargo) {	//Allow the parser to move beyond unknown/unwanted elements
 						if (importer.isUnknownSkipped() || isReadingAttribute) {
 							isKnown = false;
 							cargo = makeUnknown(identity);
@@ -854,7 +844,15 @@ namespace {
 						} else
 							throw std::system_error(makeJSONError(unknownName));
 					}
-					doJSONImport(*cargo, JSONIdentity{identity}.atStage((identity.type == arrayStart) ? array : object), importer, depth + 1);
+					do {	//Fake loop context allows first condition to escape when true
+						if (identity.type == valueStart) {
+							if (auto* item = dynamic_cast<active::serialise::Item*>(cargo.get()); item != nullptr) {
+								importer.getContent(*item);
+								break;
+							}
+						}
+						doJSONImport(*cargo, JSONIdentity{identity}.atStage((identity.type == arrayStart) ? array : object), importer, depth + 1);
+					} while (false);
 					if (incomingItem != inventory.end()) {
 						if (incomingItem->isRepeating() && (package != nullptr) && !package->insert(std::move(cargo), *incomingItem))
 							throw std::system_error(makeJSONError(invalidObject));
