@@ -1,8 +1,9 @@
 #include "ActiveLibDoctest/TestingPlatforms.h"
 
+#include "Active/Serialise/Item/Wrapper/ValueWrap.h"
+#include "Active/Serialise/JSON/JSONTransport.h"
 #include "Active/Serialise/Package/PackageWrap.h"
 #include "Active/Serialise/XML/Package/Wrapper/Geometry/XMLPolyPoint.h"
-#include "Active/Serialise/JSON/JSONTransport.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
 #include "ActiveLibDoctest/Serialisation/SerialiseArrayTester.h"
@@ -284,14 +285,14 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		arrayTesterOut.emplace_back(BarA{Guid{true}, "Whatever"});
 		arrayTesterOut.emplace_back(BarB{Guid{true}, 98.7654});
 		try {
-			transporter.send(SerialiseArrayWrapper{arrayTesterOut}, SerialiseArrayWrapper::tag, collector);
+			transporter.send(SerialiseArrayWrapper{arrayTesterOut}, Identity{}, collector);
 			CHECK_MESSAGE(!collector.empty(), TEST_MESSAGE(JSON send produced no output));
 		} catch(...) {
 			FAIL_CHECK(TEST_MESSAGE(JSON send failed));
 		}
 			//Receive the JSON data from the collection string into another object
 		try {
-			transporter.receive(SerialiseArrayWrapper{arrayTesterIn}, SerialiseArrayWrapper::tag, collector);
+			transporter.receive(SerialiseArrayWrapper{arrayTesterIn}, Identity{}, collector);
 			CHECK_MESSAGE(arrayTesterOut == arrayTesterIn, TEST_MESSAGE(Array received via JSON does not match the array sent));
 		} catch(...) {
 			FAIL_CHECK(TEST_MESSAGE(JSON receive failed));
@@ -306,7 +307,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with an unknown name));
 		} catch(std::system_error& error) {
-			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An unknown name was found in the JSON at row: 25, column: 12",
+			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An unknown name was found in the JSON at row: 24, column: 5",
 						  TEST_MESSAGE(Failure report for input with an incorrect name wrong));
 		}
 			//Read JSON with a missing quote
@@ -333,6 +334,18 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "A scope has been opened but not closed at row: 39, column: 0",
 						  TEST_MESSAGE(Failure report for input with a missing closing brace wrong));
 		}
-	}
+	} //testJSONSendReceive
 
-TEST_SUITE_CLOSE
+
+		///Tests for sending and receiving items via JSON
+	TEST_CASE(TESTQ(testJSONItem)) {
+		JSONTransport transport;
+		String importedText, inputText{"Some sample text"};
+		transport.receive(ValueWrap<String>{importedText}, Identity{}, "\"" + inputText + "\"");
+		CHECK_MESSAGE(importedText == inputText, TEST_MESSAGE(Text import from JSON does not match input));
+		double importedNum = 0.0, inputNum = 1.234;
+		transport.receive(ValueWrap<double>{importedNum}, Identity{}, String{inputNum});
+		CHECK_MESSAGE(isEqual(importedNum, inputNum), TEST_MESSAGE(Double-precision import from JSON does not match input));
+	} //testJSONItem
+
+TEST_SUITE_CLOSE //JSONTest

@@ -87,18 +87,15 @@ namespace active::serialise {
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
-		std::optional<Item::Type> type() const override  { return Item::Type::number; }	//Other types should specialise accordingly
+		std::optional<Item::Type> type() const override {
+			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T>)
+				return Item::Type::text;
+			else if constexpr (std::is_same_v<bool, T>)
+				return Item::Type::boolean;
+			return Item::Type::number;
+		}	//Other types should specialise accordingly
 	};
-	
-	// MARK: - Specialisations for string
 
-	/*!
-		Get the serialisation type for the item value (specialisation for string)
-		@return The item value serialisation type (JSON encoding requires specific type representations)
-	*/
-	template<> inline
-	std::optional<Item::Type> ValueWrap<utility::String>::type() const { return Item::Type::text; }
-	
 	// MARK: - Specialisations for guid
 
 	/*!
@@ -111,13 +108,6 @@ namespace active::serialise {
 		dest = base::get();
 		return true;
 	}
-
-	/*!
-		Get the serialisation type for the item value (specialisation for guid)
-		@return The item value serialisation type (JSON encoding requires specific type representations)
-	*/
-	template<> inline
-	std::optional<Item::Type> ValueWrap<utility::Guid>::type() const { return Item::Type::text; }
 	
 	// MARK: - Specialisations for bool
 
@@ -149,14 +139,6 @@ namespace active::serialise {
 		dest = get() ? "true" : "false";
 		return true;
 	} //ValueWrap<bool>::write
-	
-	
-	/*!
-		Get the serialisation type for the item value (specialisation for bool)
-		@return The item value serialisation type (JSON encoding requires specific type representations)
-	*/
-	template<> inline
-	std::optional<Item::Type> ValueWrap<bool>::type() const { return Item::Type::boolean; }
 	
 		///Convenience wrapper names
 	using BoolWrap = ValueWrap<bool>;
