@@ -792,7 +792,7 @@ namespace {
 						throw std::system_error(makeJSONError(unbalancedScope));
 					Cargo::Unique cargo;
 					Inventory::iterator incomingItem = inventory.end();
-					bool isArrayStart = ((identity.type == arrayStart) && !identity.name.empty()), isKnown = true;
+					bool isArrayStart = (identity.type == arrayStart), isKnown = true;
 					if (identity.name.empty() || isArrayStart) {
 						if (identity.name.empty() && parsingStage == object)	//An element within an object must be identified with a name
 							throw std::system_error(makeJSONError(nameMissing));
@@ -928,7 +928,7 @@ namespace {
 			auto entryNameSpace{item.identity().group.value_or(String())};
 				//Each package item may have multiple available cargo items to export
 			auto limit = item.available;
-			bool isItemArray = item.isRepeating(),
+			bool isItemArray = item.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray)
 				exporter.writeTag(item.identity().name, entryNameSpace, JSONIdentity::Type::arrayStart, depth);
@@ -940,7 +940,7 @@ namespace {
 					isFirstValue = false;
 				else
 					exporter.write(",");
-				doJSONExport(*content, isItemArray ? item.identity() : JSONIdentity{item.identity()}.atStage(object),
+				doJSONExport(*content, isItemArray || isArray ? item.identity() : JSONIdentity{item.identity()}.atStage(object),
 							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
