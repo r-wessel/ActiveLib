@@ -856,7 +856,8 @@ namespace {
 									--attributesRemaining;
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 							}
-							cargo->setDefault();
+							if (cargo)
+								cargo->setDefault();
 						}
 					}
 					bool isKnown = true;
