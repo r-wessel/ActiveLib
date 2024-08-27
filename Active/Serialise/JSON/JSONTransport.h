@@ -38,6 +38,7 @@ namespace active::serialise::json {
 			inventoryBoundsExceeded,	///<The source contains more items of a specific type than the inventory maximum permits
 			invalidObject,	///<Insertion of an incoming object was rejected, indicating invalid content
 			unknownName,	///<An unknown name was found in the JSON
+			instanceMissing,	///<A required instance value is missing
 		};
 		
 		// MARK: - Constructors

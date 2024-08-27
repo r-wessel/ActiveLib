@@ -20,6 +20,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/Value.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
+#include "Active/Utility/Defer.h"
 #include "Active/Utility/TextEncoding.h"
 
 #include <unordered_map>
@@ -127,6 +128,8 @@ namespace {
 					return "An invalid object instance was found";
 				case unknownName:
 					return "An unknown name was found in the JSON";
+				case instanceMissing:
+					return "A required JSON instance value is missing";
 				default:
 					return "Unknown/invalid error";
 			}
@@ -258,14 +261,15 @@ namespace {
 			@param dest The data destination
 			@param glossary The JSON entity glossary
 		*/
-		JSONExporter(BufferOut& dest, JSONGlossary& glossary, JSONTransport::TimeFormat format) : m_buffer(dest), m_glossary(glossary) {
-			timeFormat = format;
+		JSONExporter(BufferOut& dest, JSONGlossary& glossary, JSONTransport::TimeFormat format, bool everyEntryRequired) :
+				m_buffer(dest), m_glossary(glossary), timeFormat{format}, isEveryEntryRequired{everyEntryRequired} {
 		}
 			///No copy constructor
 		JSONExporter(const JSONExporter& source) = delete;
 		
 		// MARK: Public variables
 		
+		bool isEveryEntryRequired = false;
 			///True if the exported JSON should be indented with tabs
 		bool isTabbed = false;
 			///True if lines in the exported JSON should be terminated with line-feeds
@@ -343,8 +347,10 @@ namespace {
 			@param glossary The JSON entity glossary
 			@param isUnknownNameSkipped True if unknown names found in the JSON should be skipped
 		*/
-		JSONImporter(BufferIn& source, JSONGlossary& glossary, bool isUnknownNameSkipped) :
-				m_buffer(source), m_glossary(glossary), m_isUnknownNameSkipped(isUnknownNameSkipped) {}
+		JSONImporter(BufferIn& source, JSONGlossary& glossary,
+					 bool isUnknownNameSkipped, bool isEveryEntryRequired, bool isMissingEntryFailed) :
+				m_buffer(source), m_glossary(glossary), m_isUnknownNameSkipped(isUnknownNameSkipped),
+				m_isEveryEntryRequired(isEveryEntryRequired), m_isMissingEntryFailed(isMissingEntryFailed) {}
 			///No copy constructor
 		JSONImporter(const JSONImporter& source) = delete;
 		
@@ -355,6 +361,16 @@ namespace {
 		 	@return True if unknown names should be skipped
 		*/
 		bool isUnknownSkipped() const { return m_isUnknownNameSkipped; }
+		/*!
+			Determine if all inventory entries should be treated as 'required'
+			@return True if all inventory entries should be treated as 'required'
+		*/
+		bool isEveryEntryRequired() const noexcept { return m_isEveryEntryRequired; }
+		/*!
+			Determine if a receive operation should be failed if an entry marked 'required' is not found
+			@return True if a receive operation should be failed if an entry marked 'required' is not found
+		*/
+		bool isMissingEntryFailed() const noexcept { return m_isMissingEntryFailed; }
 		/*!
 			Convert an JSON string to a regular string, i.e. translating special chars etc
 			@param source The string to convert
@@ -434,6 +450,10 @@ namespace {
 		JSONGlossary& m_glossary;
 			//True if unknown tags should be skipped over
 		bool m_isUnknownNameSkipped = false;
+			//True if all inventory entries should be treated as 'required'
+		bool m_isEveryEntryRequired = false;
+			//True if a receive operation should be failed if an entry marked 'required' is not found
+		bool m_isMissingEntryFailed = false;
 	};
 	
 	
@@ -770,14 +790,17 @@ namespace {
 		Get the inventory for a container to receive imported data
 	 
 		container: The cargo container
+		isEveryEntryRequired: True if all inventory items should be marked as 'required'
 	 
 		return: The completed inventory
 	  --------------------------------------------------------------------*/
-	Inventory getImportInventoryFor(Cargo& container) {
+	Inventory getImportInventoryFor(Cargo& container, bool isEveryEntryRequired) {
 		Inventory inventory;
 		if (!container.fillInventory(inventory) && (dynamic_cast<Item*>(&container) == nullptr))
 			throw std::system_error(makeJSONError(missingInventory));
 		inventory.resetAvailable();	//Reset the availability of each entry to zero so we can count incoming items
+		if (isEveryEntryRequired)
+			inventory.setAllRequired();
 		return inventory;
 	} //getImportInventoryFor
 	
@@ -791,12 +814,16 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
-		Inventory inventory = getImportInventoryFor(container);
+		Inventory inventory = getImportInventoryFor(container, importer.isEveryEntryRequired());
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
 		auto* package = dynamic_cast<Package*>(&container);
 		auto isReadingAttribute = (package != nullptr) && package->isAttributeFirst();
 		std::optional<Memory::size_type> restorePoint;
+		auto loopScope = defer([&importer, &inventory]{
+			if (importer.isMissingEntryFailed() && (inventory.countRequired() > 0))
+				throw std::system_error(makeJSONError(unbalancedScope));
+		});
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
 			Memory::size_type readPoint = importer.getPosition();
 			auto identity = importer.getIdentity(parsingStage);	//Get the identity of the next item in the JSON source
@@ -827,6 +854,7 @@ namespace {
 							else {
 								if (!incomingItem->bumpAvailable())
 									throw std::system_error(makeJSONError(inventoryBoundsExceeded));
+								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
 								if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
 									--attributesRemaining;
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
@@ -871,7 +899,7 @@ namespace {
 						attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
 						if (!package->finaliseAttributes())
 							throw std::system_error(makeJSONError(invalidObject));
-						inventory = getImportInventoryFor(container);	//Having finalised attributes, the container inventory will probably change
+						inventory = getImportInventoryFor(container, importer.isEveryEntryRequired());	//The inventory will probably change here
 						parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 						break;
 					}
@@ -938,7 +966,7 @@ namespace {
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
 			auto item = *entry.second;
-			if (!item.required || (item.available == 0))
+			if (!exporter.isEveryEntryRequired && (!item.required || (item.available == 0)))
 				continue;
 			if (isFirstItem)
 				isFirstItem = false;
@@ -988,7 +1016,7 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
 	if (!isLineFeeds)
 		isTabbed = false;	//Tabs would be pointless without line-feeds
 	JSONGlossary glossary;
-	JSONExporter exporter(destination, glossary, getTimeFormat());
+	JSONExporter exporter(destination, glossary, getTimeFormat(), isEveryEntryRequired());
 	exporter.isTabbed = isTabbed;
 	exporter.isLineFeeds = isLineFeeds;
 	exporter.isNameSpaces = isNameSpaces;
@@ -1006,7 +1034,7 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
   --------------------------------------------------------------------*/
 void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& source) const {
 	JSONGlossary glossary;
-	JSONImporter importer(source, glossary, isUnknownNameSkipped());
+	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed());
 	try {
 		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);
 	} catch(...) {
