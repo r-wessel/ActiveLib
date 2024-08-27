@@ -25,6 +25,16 @@ Inventory::size_type Inventory::attributeSize(bool isRequiredOnly) const {
 
 
 /*--------------------------------------------------------------------
+	Count the number of required entries in the inventory
+ 
+	return: The number of required entries
+  --------------------------------------------------------------------*/
+Inventory::size_type Inventory::countRequired() const {
+	return std::count_if(base::begin(), base::end(), [](const auto& i) { return i.required; });
+} //Inventory::countRequired
+
+
+/*--------------------------------------------------------------------
 	Get the inventory handling sequence, e.g. to package in the correct order for transport
  
 	return: The inventory handling sequence (ordered by entry.index)
@@ -156,3 +166,11 @@ bool Inventory::setRequired(bool mustHave, int16_t ind, const std::type_info* ow
 	}
 	return false;
 } //Inventory::setRequired
+
+
+/*--------------------------------------------------------------------
+	Mark all the entries as 'required'
+  --------------------------------------------------------------------*/
+void Inventory::setAllRequired() {
+	std::for_each(base::begin(), base::end(), [](auto& i){ i.required = true; });
+} //Inventory::setAllRequired

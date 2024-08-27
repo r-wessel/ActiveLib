@@ -64,6 +64,11 @@ namespace active::serialise {
 			@return The number of attributes */
 		size_type attributeSize(bool isRequiredOnly = false) const;
 		/*!
+			Count the number of required entries in the inventory
+			@return The number of required entries
+		*/
+		size_type countRequired() const;
+		/*!
 			Get the inventory handling sequence, e.g. to package in the correct order for transport
 			@return The inventory handling sequence (ordered by entry.index). Invalidated if the inventory changes
 		*/
@@ -121,6 +126,10 @@ namespace active::serialise {
 			@return True if the field was found
 		*/
 		bool setRequired(bool mustHave, int16_t ind, const std::type_info* owner = nullptr);
+		/*!
+			Mark all the entries as 'required'
+		*/
+		void setAllRequired();
 		
 	private:
 			///True if entries have been filled into the inventory

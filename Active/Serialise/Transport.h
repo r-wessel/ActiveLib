@@ -37,15 +37,35 @@ namespace active::serialise {
 		using size_type = utility::Memory::size_type;
 		using enum xml::XMLDateTime::Format;
 		
+			///Policy for adherence to schema
+		enum Policy {
+			relaxed,	///<No constraints, skips unknown items and does not impose content requirements
+			moderate,	///<Unknown items not accepted, but does not impose content requirements
+			strict,	///<Schema adherence fully implemented - no unknown instances and all required instances must be found
+			verbose,	///<Schema adherence fully implemented - no unknown instances and requirement imposed on all instances
+		};
+		
 		// MARK: - Constructors
 		
 		/*!
 			Default constructor
-			@param isUnknownNameSkipped True if unknown tags should be skipped (false = stop parsing with an error)
+			@param policy Content policy, i.e. unknown instances and requirements policy
 			@param timeFormat The serialisation date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		Transport(bool isUnknownNameSkipped = false, TimeFormat timeFormat = iso8601) noexcept {
-			m_isUnknownNameSkipped = isUnknownNameSkipped;
+		Transport(Policy policy = moderate, TimeFormat timeFormat = iso8601) noexcept {
+			switch (policy) {
+				case verbose:
+					m_isEveryEntryRequired = true;
+					[[fallthrough]];
+				case strict:
+					m_isMissingEntryFailed = true;
+					[[fallthrough]];
+				case moderate:
+					m_isUnknownNameSkipped = false;
+					break;
+				default:
+					break;	//NB: Default member variable settings equate to relaxed policy
+			}
 			m_timeFormat = timeFormat;
 		}
 		/*!
@@ -97,6 +117,16 @@ namespace active::serialise {
 			@return True if unknown names are skipped
 		*/
 		bool isUnknownNameSkipped() const noexcept { return m_isUnknownNameSkipped; }
+		/*!
+			Determine if all inventory entries should be treated as 'required'
+			@return True if all inventory entries should be treated as 'required'
+		*/
+		bool isEveryEntryRequired() const noexcept { return m_isEveryEntryRequired; }
+		/*!
+			Determine if a receive operation should be failed if an entry marked 'required' is not found
+			@return True if a receive operation should be failed if an entry marked 'required' is not found
+		*/
+		bool isMissingEntryFailed() const noexcept { return m_isMissingEntryFailed; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -110,6 +140,16 @@ namespace active::serialise {
 			@param state True if unknown names are skipped
 		*/
 		void setUnknownNameSkipped(bool state) noexcept { m_isUnknownNameSkipped = state; }
+		/*!
+			Set whether all inventory entries should be treated as 'required'
+			@param state True if all inventory entries should be treated as 'required'
+		*/
+		void setEveryEntryRequired(bool state) noexcept { m_isEveryEntryRequired = state; }
+		/*!
+			Set whether a receive operation should be failed if an entry marked 'required' is not found
+			@param state True if a receive operation should be failed if an entry marked 'required' is not found
+		*/
+		void setMissingEntryFailed(bool state) noexcept { m_isMissingEntryFailed = state; }
 		
 	protected:
 		/*!
@@ -131,7 +171,11 @@ namespace active::serialise {
 			//The last column read from the data source (can be useful for error diagnostics)
 		mutable size_type m_lastColumn = 0;
 			//True if unknown tags should be skipped over
-		bool m_isUnknownNameSkipped = false;
+		bool m_isUnknownNameSkipped = true;
+			//True if all inventory entries should be treated as 'required'
+		bool m_isEveryEntryRequired = false;
+			//True if a receive operation should be failed if an entry marked 'required' is not found
+		bool m_isMissingEntryFailed = false;
 	};
 	
 }
