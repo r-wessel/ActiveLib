@@ -938,7 +938,6 @@ namespace {
 				exporter.write(nullValue);
 				return;
 			}
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
 			String outgoing;
 				//Check for a time item not matching the current output spec
 			if (const auto* timeItem = dynamic_cast<const xml::XMLDateTime*>(item);
