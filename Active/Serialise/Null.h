@@ -23,7 +23,7 @@ namespace active::serialise {
 			@param inventory The inventory to receive the cargo items
 			@return True if items have been added to the inventory
 		*/
-		bool fillInventory(Inventory& inventory) const { return true; }
+		bool fillInventory(Inventory& inventory) const override { return true; }
 		/*!
 			Get the specified cargo
 			@param item The inventory item to retrieve
