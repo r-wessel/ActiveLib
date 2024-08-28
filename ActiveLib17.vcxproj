@@ -98,6 +98,7 @@
     <ClInclude Include="Active\Serialise\Item\Wrapper\StringWrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\ValueWrap.h" />
     <ClInclude Include="Active\Serialise\JSON\JSONTransport.h" />
+    <ClInclude Include="Active\Serialise\Null.h" />
     <ClInclude Include="Active\Serialise\Package\NullPackage.h" />
     <ClInclude Include="Active\Serialise\Package\Package.h" />
     <ClInclude Include="Active\Serialise\Package\PackageWrap.h" />

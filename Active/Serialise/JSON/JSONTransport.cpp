@@ -9,6 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Item.h"
 #include "Active/Serialise/Item/UnknownItem.h"
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
+#include "Active/Serialise/Null.h"
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Serialise/Package/PackageWrap.h"
 #include "Active/Serialise/Package/Unknown.h"
@@ -930,8 +931,13 @@ namespace {
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
-			if (item == nullptr)
-				throw std::system_error(makeJSONError(badValue));	//But if anything other than a single-value item lands here, it's an error
+			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
+			if (item == nullptr) {
+				if (dynamic_cast<const Null*>(&cargo) == nullptr)
+					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
+				exporter.write(nullValue);
+				return;
+			}
 			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
 			String outgoing;
 				//Check for a time item not matching the current output spec
