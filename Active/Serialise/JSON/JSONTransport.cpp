@@ -407,6 +407,11 @@ namespace {
 		*/
 		bool isMissingEntryFailed() const noexcept { return m_isMissingEntryFailed; }
 		/*!
+			Determine if an error has occurred
+			@return True if an error has occurred
+		*/
+		bool isError() const noexcept { return m_status != nominal; }
+		/*!
 			Get the current read position in the source data (not the read position in the buffer)
 			@return The read position (e.g. the read position in a source file)
 		*/
@@ -431,6 +436,11 @@ namespace {
 			@param pos The read position (e.g. the read position in a source file)
 		*/
 		void setPosition(Memory::size_type pos) const { m_buffer.setPosition(pos); }
+		/*!
+			Get the transport status
+			@return The transport status (nominal = no errors)
+		*/
+		JSONTransport::Status getStatus() const { return m_status; }
 		
 		// MARK: Functions (mutating)
 		
@@ -466,12 +476,19 @@ namespace {
 		 	@param format The source data format
 		*/
 		void setFormat(DataFormat format) { m_buffer.setFormat(format); }
+		/*!
+			Set the transport status
+			@param status The transport status (nominal = no errors)
+		*/
+		void setStatus(JSONTransport::Status status) { m_status = status; }
 		
 	private:
 			///The JSON source buffer
 		BufferIn& m_buffer;
 			///Glossary of JSON entities
 		JSONGlossary& m_glossary;
+			//The current transport status
+		JSONTransport::Status m_status = nominal;
 			//True if unknown tags should be skipped over
 		bool m_isUnknownNameSkipped = false;
 			//True if all inventory entries should be treated as 'required'
@@ -820,7 +837,7 @@ namespace {
 		std::optional<Memory::size_type> restorePoint;
 		auto loopScope = defer([&importer, &inventory]{
 			if (importer.isMissingEntryFailed() && (inventory.countRequired() > 0))
-				throw std::system_error(makeJSONError(unbalancedScope));
+				importer.setStatus(instanceMissing);
 		});
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
 			Memory::size_type readPoint = importer.getPosition();
@@ -1068,6 +1085,8 @@ void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& 
 	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed());
 	try {
 		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);
+		if (importer.isError())
+			throw std::system_error(makeJSONError(importer.getStatus()));
 	} catch(...) {
 			//In the event of an error, capturing the row/column where parsing ended can help disgnostics
 		setLastRow(source.getLastRow());
