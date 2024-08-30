@@ -41,6 +41,21 @@ namespace active::serialise::json {
 			instanceMissing,	///<A required instance value is missing
 		};
 		
+		// MARK: - Static functions
+		
+		/*!
+			Convert a regular string to an JSON string, i.e. translating special chars etc
+			@param source The string to convert
+			@return The converted string
+		*/
+		static utility::String convertToJSONString(const utility::String& source);
+		/*!
+			Convert an JSON string to a regular string, i.e. translating special chars etc
+			@param source The string to convert
+			@return The converted string
+		*/
+		static utility::String convertFromJSONString(const utility::String& source);
+		
 		// MARK: - Constructors
 		
 		using Transport::Transport;

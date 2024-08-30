@@ -35,16 +35,22 @@ namespace active::serialise {
 		/*!
 			Constructor
 		*/
-		CargoHold(const Obj& obj) : m_object{obj}, Wrap{m_object} {}
+		CargoHold(const Obj& obj) : m_object{obj}, Wrap{m_object} {
+			Wrap::operator=(m_object);
+		}
 		/*!
 			Constructor
 		*/
-		CargoHold(Obj&& obj) : m_object{std::move(obj)}, Wrap{m_object} {}
+		CargoHold(Obj&& obj) : m_object{std::move(obj)}, Wrap{m_object} {
+			Wrap::operator=(m_object);
+		}
 		/*!
 			Copy constructor
 			@param source The cargo to copy
 		*/
-		CargoHold(const CargoHold& source) : m_object{source.m_object}, Wrap{m_object} {}
+		CargoHold(const CargoHold& source) : m_object{source.m_object}, Wrap{m_object} {
+			Wrap::operator=(m_object);
+		}
 		/*!
 			Destructor
 		*/

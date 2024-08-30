@@ -9,6 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Item.h"
 #include "Active/Serialise/Item/UnknownItem.h"
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
+#include "Active/Serialise/Null.h"
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Serialise/Package/PackageWrap.h"
 #include "Active/Serialise/Package/Unknown.h"
@@ -136,6 +137,27 @@ namespace {
 		}
 	};
 
+
+	/*!
+		A glossary of reserved JSON symbols and the equivalent long-form representation in plain text, e.g. '&' = '&amp'
+	*/
+	class JSONGlossary : public std::unordered_map<String, String> {
+	public:
+		typedef std::unordered_map<String, String> base;
+		
+		/*!
+			Default constructor
+		*/
+		JSONGlossary();
+		
+		/*!
+			Get a replacement for a specified entity
+			@param entity The entity to replace
+			@return The replacement
+		*/
+		String getReplacement(const String& entity) const;
+	};
+	
 	
 		///JSON processing category error instance
 	static JSONCategory instance;
@@ -145,6 +167,49 @@ namespace {
 	inline std::error_code makeJSONError(JSONTransport::Status code) {
 		return std::error_code(static_cast<int>(code), instance);
 	}
+	
+	
+	/*--------------------------------------------------------------------
+		Convert a string to a JSON string, i.e. translating special chars etc
+
+		source: The string to convert
+	 
+		return: A reference to the converted string
+	  --------------------------------------------------------------------*/
+	String& toJSONString(String& source, JSONGlossary& glossary) {
+			//We need to replace the JSON escape char first (and separately) to ensure subsequent escaped chars aren't affected
+		source.replaceAll(escapeStr, escapeCharSymbol);
+		for (auto& i : glossary)
+			if (i.second != escapeStr)
+				source.replaceAll(i.second, i.first);
+		return source;
+	} //toJSONString
+	
+	
+	/*--------------------------------------------------------------------
+		Convert an JSON string to a regular string, i.e. translating special chars etc
+
+		source: The string to convert
+	 
+		return: A reference to the converted string
+	  --------------------------------------------------------------------*/
+	String& fromJSONString(String& source, JSONGlossary& glossary) {
+		String::sizeOption index = 0;
+		if (!source.find(escapeStr, *index))
+			return source;
+		BufferIn sourceBuffer{source};
+		String output;
+		output.reserve(source.dataSize());
+		while (sourceBuffer.find(escapeChar, &output, true)) {
+			String entity;
+			sourceBuffer.getString(entity, 1);
+			if ((entity == "u") && !sourceBuffer.getString(entity, 4))	//Hex char code
+				throw std::system_error(makeJSONError(badEncoding));
+			output += glossary.getReplacement(entity);
+		}
+		source = std::move(output);
+		return source;
+	} //fromJSONString
 	
 	
 		///Identification type for JSON elements
@@ -223,30 +288,6 @@ namespace {
 	using enum JSONIdentity::Type;
 	using enum JSONIdentity::Stage;
 
-
-	/*!
-		A glossary of reserved JSON symbols and the equivalent long-form representation in plain text, e.g. '&' = '&amp'
-	*/
-	class JSONGlossary : public std::unordered_map<String, String> {
-	public:
-		typedef std::unordered_map<String, String> base;
-		
-		/*!
-			Constructor
-		*/
-		JSONGlossary() : base() {
-				//Standard JSON entities
-			(*this)["\\\\"] = "\\";
-			(*this)["\\\""] = "\"";
-			(*this)["\\/"] = "/";
-			(*this)["\\b"] = "\b";
-			(*this)["\\f"] = "\f";
-			(*this)["\\n"] = "\n";
-			(*this)["\\r"] = "\r";
-			(*this)["\\t"] = "\t";
-		}
-	};
-
 	
 	/*!
 		Utility class to write data in JSON format, e.g. tags, namespaces, entity insertion
@@ -286,12 +327,6 @@ namespace {
 			@return The JSON glossary
 		*/
 		JSONGlossary& glossary() const { return m_glossary; }
-		/*!
-			Convert a regular string to an JSON string, i.e. translating special chars etc
-			@param source The string to convert
-			@return A reference to the converted string
-		*/
-		String& toJSONString(String& source) const;
 		
 		// MARK: Functions (mutating)
 		
@@ -372,16 +407,10 @@ namespace {
 		*/
 		bool isMissingEntryFailed() const noexcept { return m_isMissingEntryFailed; }
 		/*!
-			Convert an JSON string to a regular string, i.e. translating special chars etc
-			@param source The string to convert
-			@return A reference to the converted string
+			Determine if an error has occurred
+			@return True if an error has occurred
 		*/
-		String& fromJSONString(String& source) const;
-		/*!
-			Add an entity to the glossary
-			@param entity The entity to add (nullopt on error)
-		*/
-		String getReplacement(const String& entity) const;
+		bool isError() const noexcept { return m_status != nominal; }
 		/*!
 			Get the current read position in the source data (not the read position in the buffer)
 			@return The read position (e.g. the read position in a source file)
@@ -407,6 +436,11 @@ namespace {
 			@param pos The read position (e.g. the read position in a source file)
 		*/
 		void setPosition(Memory::size_type pos) const { m_buffer.setPosition(pos); }
+		/*!
+			Get the transport status
+			@return The transport status (nominal = no errors)
+		*/
+		JSONTransport::Status getStatus() const { return m_status; }
 		
 		// MARK: Functions (mutating)
 		
@@ -442,12 +476,19 @@ namespace {
 		 	@param format The source data format
 		*/
 		void setFormat(DataFormat format) { m_buffer.setFormat(format); }
+		/*!
+			Set the transport status
+			@param status The transport status (nominal = no errors)
+		*/
+		void setStatus(JSONTransport::Status status) { m_status = status; }
 		
 	private:
 			///The JSON source buffer
 		BufferIn& m_buffer;
 			///Glossary of JSON entities
 		JSONGlossary& m_glossary;
+			//The current transport status
+		JSONTransport::Status m_status = nominal;
 			//True if unknown tags should be skipped over
 		bool m_isUnknownNameSkipped = false;
 			//True if all inventory entries should be treated as 'required'
@@ -458,39 +499,30 @@ namespace {
 	
 	
 	/*--------------------------------------------------------------------
-		Convert an JSON string to a regular string, i.e. translating special chars etc
-
-		source: The string to convert
-	 
-		return: A reference to the converted string
+		Default constructor
 	  --------------------------------------------------------------------*/
-	String& JSONImporter::fromJSONString(String& source) const {
-		String::sizeOption index = 0;
-		if (!source.find(escapeStr, *index))
-			return source;
-		BufferIn sourceBuffer{source};
-		String output;
-		output.reserve(source.dataSize());
-		while (sourceBuffer.find(escapeChar, &output, true)) {
-			String entity;
-			sourceBuffer.getString(entity, 1);
-			if ((entity == "u") && !sourceBuffer.getString(entity, 4))	//Hex char code
-				throw std::system_error(makeJSONError(badEncoding));
-			output += getReplacement(entity);
-		}
-		source = std::move(output);
-		return source;
-	} //JSONImporter::fromJSONString
-
+	JSONGlossary::JSONGlossary() : base() {
+			//Standard JSON entities
+		(*this)["\\\\"] = "\\";
+		(*this)["\\\""] = "\"";
+		(*this)["\\/"] = "/";
+		(*this)["\\b"] = "\b";
+		(*this)["\\f"] = "\f";
+		(*this)["\\n"] = "\n";
+		(*this)["\\r"] = "\r";
+		(*this)["\\t"] = "\t";
+	} //JSONGlossary::JSONGlossary
+	
 	
 	/*--------------------------------------------------------------------
-		Add an entity to the glossary
+		Get a replacement for a specified entity
 	 
-		entity: The entity to add
-		text: The replacement text for the entity (nullopt on error)
+		entity: The entity to replace
+	 
+		return: The replacement
 	  --------------------------------------------------------------------*/
-	String JSONImporter::getReplacement(const String& entity) const {
-		if (auto i = m_glossary.find(escapeStr + entity); i != m_glossary.end())
+	String JSONGlossary::getReplacement(const String& entity) const {
+		if (auto i = find(escapeStr + entity); i != end())
 			return i->second;
 		uint32_t charCode = 0;
 		if (entity[0] == U'u') {	//Hex char code
@@ -503,7 +535,7 @@ namespace {
 		if (result.empty())
 			throw std::system_error(makeJSONError(badEncoding));
 		return result;
-	} //JSONImporter::getReplacement
+	} //JSONGlossary::getReplacement
 	
 
 	/*--------------------------------------------------------------------
@@ -548,7 +580,7 @@ namespace {
 				if (!m_buffer.findFirstOf("\"", &identity.name, false, false, true, false, escapeChar) || identity.name.empty() ||
 						!m_buffer.findFirstOf(":", nullptr, false, false, true))
 					throw std::system_error(makeJSONError(nameMissing));
-				fromJSONString(identity.name);
+				fromJSONString(identity.name, m_glossary);
 					//Check if the tag includes a namespace
 				if (auto dividerPos = identity.name.rfind(":"); dividerPos) {
 					identity.group = identity.name.substr(0, *dividerPos);
@@ -590,7 +622,7 @@ namespace {
 				//Search for the closing quotes and extract string content
 			if (!m_buffer.findFirstOf(textLeaderStr, &text, false, false, true, false, escapeChar))
 				throw std::system_error(makeJSONError(closingQuoteMissing));
-			value = std::make_unique<StringValue>(fromJSONString(text));
+			value = std::make_unique<StringValue>(fromJSONString(text, m_glossary));
 		} else {
 			text.append(content.first);
 			m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
@@ -624,23 +656,6 @@ namespace {
 		if (!item.read(*value))
 			throw std::system_error(makeJSONError(badValue));
 	} //JSONImporter::getContent
-	
-	
-	/*--------------------------------------------------------------------
-		Convert a string to a JSON string, i.e. translating special chars etc
-
-		source: The string to convert
-	 
-		return: A reference to the converted string
-	  --------------------------------------------------------------------*/
-	String& JSONExporter::toJSONString(String& source) const {
-			//We need to replace the JSON escape char first (and separately) to ensure subsequent escaped chars aren't affected
-		source.replaceAll(escapeStr, escapeCharSymbol);
-		for (auto& i : m_glossary)
-			if (i.second != escapeStr)
-				source.replaceAll(i.second, i.first);
-		return source;
-	} //JSONExporter::toJSONString
 
 	
 	/*--------------------------------------------------------------------
@@ -666,10 +681,10 @@ namespace {
 				jsonStr.append("\"");
 				if (nameSpace && !nameSpace->empty()) {
 					auto namespaceOut = *nameSpace;
-					jsonStr.append(toJSONString(namespaceOut)).append(":");
+					jsonStr.append(toJSONString(namespaceOut, m_glossary)).append(":");
 				}
 				auto tagOut = tag;
-				jsonStr.append(toJSONString(tagOut)).append("\": ");
+				jsonStr.append(toJSONString(tagOut, m_glossary)).append("\": ");
 			}
 		}
 		switch (type) {
@@ -713,7 +728,7 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void JSONExporter::writePhrase(const String& phrase) {
 		String jsonStr(phrase);
-		write(toJSONString(jsonStr));
+		write(toJSONString(jsonStr, m_glossary));
 	} //JSONExporter::writePhrase
 
 	
@@ -822,7 +837,7 @@ namespace {
 		std::optional<Memory::size_type> restorePoint;
 		auto loopScope = defer([&importer, &inventory]{
 			if (importer.isMissingEntryFailed() && (inventory.countRequired() > 0))
-				throw std::system_error(makeJSONError(unbalancedScope));
+				importer.setStatus(instanceMissing);
 		});
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
 			Memory::size_type readPoint = importer.getPosition();
@@ -859,7 +874,8 @@ namespace {
 									--attributesRemaining;
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 							}
-							cargo->setDefault();
+							if (cargo)
+								cargo->setDefault();
 						}
 					}
 					bool isKnown = true;
@@ -932,9 +948,13 @@ namespace {
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
-			if (item == nullptr)
-				throw std::system_error(makeJSONError(badValue));	//But if anything other than a single-value item lands here, it's an error
 			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
+			if (item == nullptr) {
+				if (dynamic_cast<const Null*>(&cargo) == nullptr)
+					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
+				exporter.write(nullValue);
+				return;
+			}
 			String outgoing;
 				//Check for a time item not matching the current output spec
 			if (const auto* timeItem = dynamic_cast<const xml::XMLDateTime*>(item);
@@ -946,7 +966,7 @@ namespace {
 			} else if (!item->write(outgoing))
 				throw std::system_error(makeJSONError(badValue));
 			if (item->type() == Item::text)
-				outgoing = "\"" + exporter.toJSONString(outgoing) + "\"";
+				outgoing = "\"" + toJSONString(outgoing, exporter.glossary()) + "\"";
 			exporter.write(outgoing);
 			return;
 		}
@@ -1002,6 +1022,34 @@ namespace {
 }  // namespace
 
 /*--------------------------------------------------------------------
+	Convert a regular string to an JSON string, i.e. translating special chars etc
+ 
+	source: The string to convert
+ 
+	return: The converted string
+  --------------------------------------------------------------------*/
+String JSONTransport::convertToJSONString(const String& source) {
+	JSONGlossary glossary;
+	String result{source};
+	return toJSONString(result, glossary);
+} //JSONTransport::convertToJSONString
+
+
+/*--------------------------------------------------------------------
+	Convert an JSON string to a regular string, i.e. translating special chars etc
+ 
+	source: The string to convert
+ 
+	return: The converted string
+  --------------------------------------------------------------------*/
+String JSONTransport::convertFromJSONString(const String& source) {
+	JSONGlossary glossary;
+	String result{source};
+	return fromJSONString(result, glossary);
+} //JSONTransport::convertFromJSONString
+
+
+/*--------------------------------------------------------------------
 	Send cargo as JSON to a specified destination
  
 	cargo: The cargo to be sent as JSON
@@ -1037,6 +1085,8 @@ void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& 
 	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed());
 	try {
 		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);
+		if (importer.isError())
+			throw std::system_error(makeJSONError(importer.getStatus()));
 	} catch(...) {
 			//In the event of an error, capturing the row/column where parsing ended can help disgnostics
 		setLastRow(source.getLastRow());

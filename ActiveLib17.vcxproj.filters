@@ -427,6 +427,9 @@
     <ClInclude Include="Active\Serialise\CargoHold.h">
       <Filter>Active\Serialise</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\Null.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
