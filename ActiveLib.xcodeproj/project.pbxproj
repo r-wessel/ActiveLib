@@ -110,6 +110,8 @@
 		2199881E2BD833830035E5EA /* libActiveLib.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21379E082AE47A6400A1584C /* libActiveLib.a */; };
 		21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C2535F2B92ECF7003B2F63 /* UnknownItem.h */; };
 		21C253622B94578F003B2F63 /* Value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C253612B94578F003B2F63 /* Value.cpp */; };
+		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; };
+		21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD102C86EC8F0077E104 /* sqlite3.c */; };
 		21F69F5E2C6CE911008B6A06 /* ValueSettingWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */; };
 		21F69F632C6D4AEE008B6A06 /* CargoHold.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F69F622C6D4AEE008B6A06 /* CargoHold.h */; };
 		21F93ACB2B2B5DA2009A2C5B /* NameID.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F93AC92B2B5DA2009A2C5B /* NameID.h */; };
@@ -361,6 +363,16 @@
 		21C23D022C11147200E40710 /* Geometry.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Geometry.md; sourceTree = "<group>"; };
 		21C2535F2B92ECF7003B2F63 /* UnknownItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnknownItem.h; sourceTree = "<group>"; };
 		21C253612B94578F003B2F63 /* Value.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Value.cpp; sourceTree = "<group>"; };
+		21D0BCF72C84AC560077E104 /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
+		21D0BCF92C84AC560077E104 /* Storage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Storage.h; sourceTree = "<group>"; };
+		21D0BD022C84B1400077E104 /* Index.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
+		21D0BD042C84B1400077E104 /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Link.h; sourceTree = "<group>"; };
+		21D0BD092C8668CE0077E104 /* DBaseEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBaseEngine.h; sourceTree = "<group>"; };
+		21D0BD0E2C866A590077E104 /* SQLiteEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SQLiteEngine.h; sourceTree = "<group>"; };
+		21D0BD0F2C86EC8F0077E104 /* shell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = shell.c; sourceTree = "<group>"; };
+		21D0BD102C86EC8F0077E104 /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		21D0BD112C86EC8F0077E104 /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
+		21D0BD122C86EC8F0077E104 /* sqlite3ext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3ext.h; sourceTree = "<group>"; };
 		21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueSettingWrap.cpp; sourceTree = "<group>"; };
 		21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueSettingWrap.h; sourceTree = "<group>"; };
 		21F69F622C6D4AEE008B6A06 /* CargoHold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CargoHold.h; sourceTree = "<group>"; };
@@ -405,6 +417,7 @@
 				214661982C263C550048BBA7 /* Attribute */,
 				214EA4C52BA374FD008E5358 /* CMakeLists.txt */,
 				212A837E2AE47AD9001EAFE7 /* Container */,
+				21D0BCFB2C84AC560077E104 /* Database */,
 				21F93AE82B2F406D009A2C5B /* Environment */,
 				21F93ACC2B2B67FC009A2C5B /* Event */,
 				212A83432AE47AD9001EAFE7 /* File */,
@@ -721,6 +734,7 @@
 			children = (
 				212A83422AE47AD9001EAFE7 /* Active */,
 				219987FA2BD708BC0035E5EA /* ActiveLibDoctest */,
+				21D0BD132C86EC8F0077E104 /* SQLite */,
 				214EA4C62BA3762D008E5358 /* CMakeLists.txt */,
 				2160AAAF2B96E02500B885BE /* LICENSE.txt */,
 				21379E092AE47A6400A1584C /* Products */,
@@ -860,6 +874,54 @@
 				219988152BD7C5C10035E5EA /* MeasurementTests.cpp */,
 			);
 			path = SettingTests;
+			sourceTree = "<group>";
+		};
+		21D0BCF82C84AC560077E104 /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				21D0BCF72C84AC560077E104 /* Record.h */,
+			);
+			path = Content;
+			sourceTree = "<group>";
+		};
+		21D0BCFA2C84AC560077E104 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				21D0BD092C8668CE0077E104 /* DBaseEngine.h */,
+				21D0BD0E2C866A590077E104 /* SQLiteEngine.h */,
+				21D0BCF92C84AC560077E104 /* Storage.h */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
+		21D0BCFB2C84AC560077E104 /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				21D0BCF82C84AC560077E104 /* Content */,
+				21D0BD052C84B1400077E104 /* Identity */,
+				21D0BCFA2C84AC560077E104 /* Storage */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		21D0BD052C84B1400077E104 /* Identity */ = {
+			isa = PBXGroup;
+			children = (
+				21D0BD022C84B1400077E104 /* Index.h */,
+				21D0BD042C84B1400077E104 /* Link.h */,
+			);
+			path = Identity;
+			sourceTree = "<group>";
+		};
+		21D0BD132C86EC8F0077E104 /* SQLite */ = {
+			isa = PBXGroup;
+			children = (
+				21D0BD0F2C86EC8F0077E104 /* shell.c */,
+				21D0BD102C86EC8F0077E104 /* sqlite3.c */,
+				21D0BD112C86EC8F0077E104 /* sqlite3.h */,
+				21D0BD122C86EC8F0077E104 /* sqlite3ext.h */,
+			);
+			path = SQLite;
 			sourceTree = "<group>";
 		};
 		21F69F5B2C6CE8E2008B6A06 /* Wrapper */ = {
@@ -1086,6 +1148,7 @@
 				212A84362AE47AD9001EAFE7 /* Memory.cpp in Sources */,
 				212A84452AE47AD9001EAFE7 /* BufferIn.cpp in Sources */,
 				212A840F2AE47AD9001EAFE7 /* Matrix4x4.cpp in Sources */,
+				21D0BD142C86EC8F0077E104 /* shell.c in Sources */,
 				212A841D2AE47AD9001EAFE7 /* Point.cpp in Sources */,
 				212A84162AE47AD9001EAFE7 /* Matrix3x3.cpp in Sources */,
 				212A84212AE47AD9001EAFE7 /* Rotater.cpp in Sources */,
@@ -1099,6 +1162,7 @@
 				214661992C263C550048BBA7 /* Colour.cpp in Sources */,
 				212A83DB2AE47AD9001EAFE7 /* XMLDateTime.cpp in Sources */,
 				2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */,
+				21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */,
 				21F93AE22B2C8282009A2C5B /* Publisher.cpp in Sources */,
 				215F91552BCBCFAE0052BFC8 /* AngleValue.cpp in Sources */,
 				212A84192AE47AD9001EAFE7 /* XPoint.cpp in Sources */,
