@@ -37,6 +37,7 @@ namespace active::database {
 		using base::base;
 		using active::setting::SettingList::SettingList;
 
+		Link() = default;
 		/*!
 		 Constructor
 		 @param index A database index

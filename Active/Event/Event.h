@@ -50,14 +50,6 @@ namespace active::event {
 		*/
 		Event(const utility::NameID& nameID, PostBox* postBox = nullptr) : utility::NameID{nameID}, setting::SettingList{} { m_postBox = postBox; }
 		/*!
-			Constructor
-			@param nameID The event identity
-			@param settings Setting to attach to the event
-			@param postBox Optional postbox for the published event author to receive messages from subscribers
-		*/
-		Event(const NameID& nameID, setting::SettingList&& settings, PostBox* postBox = nullptr) :
-				utility::NameID{nameID}, setting::SettingList{std::move(settings)} { m_postBox = postBox; }
-		/*!
 			Destructor
 		*/
 		virtual ~Event() {}

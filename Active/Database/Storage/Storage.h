@@ -42,7 +42,7 @@ namespace active::database {
 		 @return The requested object (nullptr on failure)
 		 */
 		template<typename T = Obj>
-		std::unique_ptr<T> getObject(const Obj::Index& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+		std::unique_ptr<T> getObject(const ObjID& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			return m_engine->getObject(index, tableID, documentID);
 		}
 		/*!

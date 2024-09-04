@@ -11,14 +11,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <type_traits>
 
 namespace active::setting {
-	
+
 	/*!
 		Template class for all single-item setting values, implementing some of the base Value functions
 	 
 		Refer to the base Value class for more information about the purpose of this class
 	*/
 	template<class T>
-class ValueBase : public Value {
+	class ValueBase : public Value {
 	public:
 		
 		// MARK: - Constructors
@@ -202,9 +202,6 @@ class ValueBase : public Value {
 		/*!	Set a default value */
 		void setDefault() override	{ data = T{}; }
 	};
-	
-	//template<> inline
-	//Item::Type ValueWrap<utility::String>::type() const { return Item::Type::text; }
 
 	template<> inline
 	Value& ValueBase<utility::Guid>::operator=(const Value& val) {
@@ -212,7 +209,6 @@ class ValueBase : public Value {
 		return *this;
 	}
 
-	
 }
 
 #endif	//ACTIVE_SETTING_VALUE_BASE
