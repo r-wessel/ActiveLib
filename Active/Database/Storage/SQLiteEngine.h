@@ -32,7 +32,7 @@ namespace active::database {
 		 @param path Path to the SQLite dbase
 		 @param schema Database schema
 		 */
-		SQLiteEngine(file::Path path, SQLiteSchema&& schema) : SQLiteCore{path, std::move(schema)} {}
+		SQLiteEngine(const file::Path& path, SQLiteSchema&& schema) : SQLiteCore{path, std::move(schema)} {}
 		/*!
 			Object cloning
 			@return A clone of this object
@@ -74,24 +74,25 @@ namespace active::database {
 		return: The requested object (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires std::is_base_of_v<serialise::Cargo, Obj > && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
 	std::unique_ptr<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObject(const ObjID& ID, utility::String::Option tableID,
 																						   std::optional<DocID> documentID)  const {
 		auto table = getTable(tableID);
-		auto keyFieldIndex = documentID && table->documentIndex ? table->documentIndex : table->globalIndex;
-		auto something = (*table)[keyFieldIndex];
-		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name + " = " + ID + ";");
+		auto keyFieldIndex = documentID && table->documentIndex ? *table->documentIndex : table->globalIndex;
+		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = " + ID + ";");
+			//Get the selected table row
 		auto row = ++transaction;
 		if (!row)
 			return nullptr;
-		if (row->size() < table->contentIndex)
+		auto content = table->getContent(*row);
+		if (content == nullptr)
 			throw std::system_error(makeError(Status::contentNotFound));
 		serialise::Cargo::Unique wrapper;
 		if constexpr (std::is_same_v<ObjWrapper, Obj>)
 			wrapper = std::make_unique<serialise::CargoHold<serialise::PackageWrap, Obj>>();
 		else
 			wrapper = std::make_unique<ObjWrapper>();
-		Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, (*row)[table->contentIndex]->string());
+		Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, content->operator utility::String());
 		if constexpr (std::is_same_v<ObjWrapper, Obj>)
 			return std::make_unique<Obj>(dynamic_cast<serialise::CargoHold<serialise::PackageWrap, Obj>*>(wrapper.get())->get());
 		else
@@ -115,17 +116,19 @@ namespace active::database {
 		auto transaction = makeTransaction("SELECT * FROM " + table->ID + ";");
 		container::Vector<Obj> result;
 		do {
+				//Get the next row in the table
 			auto row = ++transaction;
 			if (!row)
 				break;
-			if (row->size() < table->contentIndex)
+			auto content = table->getContent(*row);
+			if (content == nullptr)
 				throw std::system_error(makeError(Status::contentNotFound));
 			serialise::Cargo::Unique wrapper;
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
 				wrapper = std::make_unique<serialise::CargoHold<serialise::PackageWrap, Obj>>();
 			else
 				wrapper = std::make_unique<ObjWrapper>();
-			Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, (*row)[table->contentIndex]->string());
+			Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, content->operator utility::String());
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
 				result.emplace_back(std::make_unique<Obj>(dynamic_cast<serialise::CargoHold<serialise::PackageWrap, Obj>*>(wrapper.get())->get()));
 			else

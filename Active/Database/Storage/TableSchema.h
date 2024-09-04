@@ -10,8 +10,11 @@ namespace active::database {
 	 Class describing the schema of a database table including fields and primary indices
 	 */
 	template<typename TableID = active::utility::String>
-	class TableSchema : active::setting::SettingList {
+	class TableSchema : public active::setting::SettingList {
 	public:
+		
+		// MARK: - Constructors
+		
 		/*!
 		 Constructor
 		 @param tabID The table identifier
@@ -33,8 +36,9 @@ namespace active::database {
 		TableSchema(const TableID& tabID, size_t globIndex, size_t contIndex, size_t docIndex, size_t docID,
 					const std::initializer_list<active::setting::ValueSetting> fields) :
 				ID{tabID}, globalIndex{globIndex}, contentIndex{contIndex}, documentIndex{docIndex}, documentID{docID}, SettingList{fields} {}
-
-
+		
+		// MARK: - Public variables
+		
 			//Table identifier
 		TableID ID;
 			//Index of the primary global index column
@@ -45,6 +49,20 @@ namespace active::database {
 		std::optional<size_t> documentIndex;
 			//Index of the document ID column (nullopt = no document column)
 		std::optional<size_t> documentID;
+		
+		// MARK: - Functions (const)
+		
+		/*!
+		 Get the content setting from a database table row
+		 @param row The settings from a database table row
+		 @return The content setting
+		 */
+		const setting::ValueSetting* getContent(const setting::SettingList& row) const {
+			if (row.size() < contentIndex)
+				return nullptr;
+			return dynamic_cast<const setting::ValueSetting*>(row[contentIndex].get());
+		}
+		
 	};
 	
 }

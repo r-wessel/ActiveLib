@@ -42,7 +42,9 @@ namespace active::database {
 		 @return The requested object (nullptr on failure)
 		 */
 		template<typename T = Obj>
-		std::unique_ptr<T> getObject(const Obj::Index& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const;
+		std::unique_ptr<T> getObject(const Obj::Index& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			return m_engine->getObject(index, tableID, documentID);
+		}
 		/*!
 		 Get all objects
 		 @param tableID Optional table ID (defaults to the first table)
@@ -50,7 +52,9 @@ namespace active::database {
 		 @return The requested objects (nullptr on failure)
 		 */
 		template<typename T = Obj>
-		active::container::Vector<std::unique_ptr<T>> getObjects(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const;
+		active::container::Vector<T> getObjects(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			return m_engine->getObjects(tableID, documentID);
+		}
 
 	private:
 		std::unique_ptr<Engine> m_engine;

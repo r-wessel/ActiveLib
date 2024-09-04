@@ -95,7 +95,7 @@ namespace active::database {
 		 @param path Path to the SQLite dbase
 		 @param schema Database schema
 		 */
-		SQLiteCore(active::file::Path path, SQLiteSchema&& schema) : m_path(path), m_schema(schema) {}
+		SQLiteCore(const active::file::Path& path, SQLiteSchema&& schema) : m_path(path), m_schema(schema) {}
 		/*!
 		 Destructor
 		 */
