@@ -100,22 +100,27 @@ SettingList::Unique SQLiteCore::Transaction::operator++() {
 		case SQLITE_DONE:
 			m_isDone = true;
 			[[fallthrough]];
-		case SQLITE_OK: {
+		case SQLITE_ROW: case SQLITE_OK: {
 			auto row = std::make_unique<SettingList>();
 			bool isMore = true;
 			for (int i = 0; isMore; ++i) {
 					//Build an identifying name from the table and column names
-				NameID name{String{sqlite3_column_table_name((sqlite3_stmt*) m_handle, i)} + "::" +
-						String{sqlite3_column_origin_name((sqlite3_stmt*) m_handle, i)}};
+				NameID identifier;
+				auto tableName = sqlite3_column_table_name((sqlite3_stmt*)m_handle, i);
+				if (tableName != nullptr)
+					identifier.name = String{tableName} + "::";
+				auto columnName = sqlite3_column_origin_name((sqlite3_stmt*)m_handle, i);
+				if (columnName != nullptr)
+					identifier.name += columnName;
 				switch (sqlite3_column_type((sqlite3_stmt*) m_handle, i)) {
 					case SQLITE_INTEGER:
-						row->emplace_back(std::make_unique<ValueSetting>(Int64Value{sqlite3_column_int64((sqlite3_stmt*) m_handle, i)}));
+						row->emplace_back(std::make_unique<ValueSetting>(Int64Value{sqlite3_column_int64((sqlite3_stmt*) m_handle, i)}, identifier));
 						break;
 					case SQLITE_FLOAT:
-						row->emplace_back(std::make_unique<ValueSetting>(DoubleValue{sqlite3_column_double((sqlite3_stmt*) m_handle, i)}));
+						row->emplace_back(std::make_unique<ValueSetting>(DoubleValue{sqlite3_column_double((sqlite3_stmt*) m_handle, i)}, identifier));
 						break;
 					case SQLITE_TEXT:
-						row->emplace_back(std::make_unique<ValueSetting>(StringValue{(const char*) sqlite3_column_text((sqlite3_stmt*) m_handle, i)}));
+						row->emplace_back(std::make_unique<ValueSetting>(StringValue{(const char*) sqlite3_column_text((sqlite3_stmt*) m_handle, i)}, identifier));
 						break;
 					default:
 						isMore = false;
