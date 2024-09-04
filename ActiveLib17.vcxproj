@@ -163,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\Attribute\Colour.cpp" />
+    <ClCompile Include="Active\Database\Content\Record.cpp" />
     <ClCompile Include="Active\Database\Storage\SQLiteCore.cpp" />
     <ClCompile Include="Active\Environment\App.cpp" />
     <ClCompile Include="Active\Event\Publisher.cpp" />

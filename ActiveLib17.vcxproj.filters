@@ -663,6 +663,9 @@
     <ClCompile Include="SQLite\sqlite3.c">
       <Filter>SQLite</Filter>
     </ClCompile>
+    <ClCompile Include="Active\Database\Content\Record.cpp">
+      <Filter>Active\Database\Content</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Active\CMakeLists.txt">
