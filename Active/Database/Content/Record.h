@@ -39,11 +39,18 @@ namespace active::database {
 		 Constructor
 		 @param ID The object document identifier
 		 */
-		Record(active::utility::Guid ID) : m_ID{ID} {}
+		Record(const ObjID& ID) : m_ID{ID} {}
+		Record(const Record&) = default;
 		/*!
 		 Destructor
 		 */
 		virtual ~Record() {}
+		
+		/*!
+			Object cloning
+			@return A clone of this object
+		*/
+		Record* clonePtr() const override { return new Record{*this}; }
 		
 		// MARK: - Functions (const)
 		
@@ -74,17 +81,17 @@ namespace active::database {
 		 Set the object document identifier
 		 @param ID The object document ID
 		 */
-		virtual void setID(const ObjID& ID) const { m_ID = ID; }
+		virtual void setID(const ObjID& ID) { m_ID = ID; }
 		/*!
 		 Set the object global identifier
 		 @param ID The object global ID
 		 */
-		virtual void setGlobalID(const ObjID& ID) const { return m_globalID; }
+		virtual void setGlobalID(const ObjID& ID) { m_globalID = ID; }
 		/*!
 		 Get the object document index
 		 @param index The object index
 		 */
-		virtual void setIndex(const Index& index) const {
+		virtual void setIndex(const Index& index) {
 			m_ID = index;
 			m_dbaseID = index.dbaseID;
 			m_tableID = index.tableID;
@@ -115,7 +122,7 @@ namespace active::database {
 		bool validate() override;
 		
 	private:
-			///The object document ID (NB: this may not be globally unique)
+			///The object document identifier (NB: this may not be globally unique)
 		ObjID m_ID;
 			///The object global identifier (NB: intended to be globally unique)
 		ObjID m_globalID;
@@ -134,7 +141,8 @@ namespace active::database {
 		@param inventory The inventory to receive the package items
 		@return True if the package has added items to the inventory
 	  --------------------------------------------------------------------*/
-	bool Record::fillInventory(Inventory& inventory) const {
+	template<typename ObjID, typename DBaseID, typename TableID>
+	bool Record<ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
 			//TODO: Complete
 		return true;
 	} //Record::fillInventory
@@ -145,7 +153,8 @@ namespace active::database {
 		@param item The inventory item to retrieve
 		@return The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
-	Cargo::Unique Record::getCargo(const Inventory::Item& item) const {
+	template<typename ObjID, typename DBaseID, typename TableID>
+	active::serialise::Cargo::Unique Record<ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
 			//TODO: Complete
 		return nullptr;
 	} //Record::getCargo
@@ -154,7 +163,8 @@ namespace active::database {
 	/*--------------------------------------------------------------------
 		Set to the default package content
 	  --------------------------------------------------------------------*/
-	void Record::setDefault() {
+	template<typename ObjID, typename DBaseID, typename TableID>
+	void Record<ObjID, DBaseID, TableID>::setDefault() {
 		//TODO: Complete
 	} //Record::setDefault
 
@@ -164,7 +174,8 @@ namespace active::database {
 	 
 		return: True if the data has been validated
 	  --------------------------------------------------------------------*/
-	bool Record::validate() {
+	template<typename ObjID, typename DBaseID, typename TableID>
+	bool Record<ObjID, DBaseID, TableID>::validate() {
 		//TODO: Complete
 		return true;
 	} //Record::validate

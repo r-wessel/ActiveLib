@@ -23,6 +23,8 @@ namespace active::file {
 		using Unique = std::unique_ptr<Path>;
 			///Unique pointer
 		using Shared = std::shared_ptr<Path>;
+			///Optional
+		using Option = std::optional<Path>;
 		
 		// MARK: - Constants
 		

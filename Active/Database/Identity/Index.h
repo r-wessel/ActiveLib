@@ -30,7 +30,7 @@ namespace active::database {
 		 @param table The table identifier (nullopt = undefined - can be valid where there is a single database or universal search is available)
 		 */
 		Index(const ObjID& object = ObjID{}, std::optional<DBaseID> dbase = std::nullopt, std::optional<TableID> table = std::nullopt) :
-				ObjID{object}, databaseID{dbase}, tableID{table} {}
+				ObjID{object}, dbaseID{dbase}, tableID{table} {}
 		
 		// MARK: - Public variables
 		
