@@ -52,7 +52,7 @@ namespace active::serialise {
 			@param policy Content policy, i.e. unknown instances and requirements policy
 			@param timeFormat The serialisation date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		Transport(Policy policy = moderate, TimeFormat timeFormat = iso8601) noexcept {
+		Transport(Policy policy = relaxed, TimeFormat timeFormat = iso8601) noexcept {
 			switch (policy) {
 				case verbose:
 					m_isEveryEntryRequired = true;

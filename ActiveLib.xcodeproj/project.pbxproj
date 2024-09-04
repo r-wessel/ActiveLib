@@ -113,6 +113,7 @@
 		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD102C86EC8F0077E104 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		21D0BD362C8727CE0077E104 /* SQLiteCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD352C8727CE0077E104 /* SQLiteCore.cpp */; };
+		21D0BD4A2C88F4EE0077E104 /* Record.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD492C88F4EE0077E104 /* Record.cpp */; };
 		21F69F5E2C6CE911008B6A06 /* ValueSettingWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */; };
 		21F69F632C6D4AEE008B6A06 /* CargoHold.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F69F622C6D4AEE008B6A06 /* CargoHold.h */; };
 		21F93ACB2B2B5DA2009A2C5B /* NameID.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F93AC92B2B5DA2009A2C5B /* NameID.h */; };
@@ -378,6 +379,7 @@
 		21D0BD352C8727CE0077E104 /* SQLiteCore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteCore.cpp; sourceTree = "<group>"; };
 		21D0BD402C874FD30077E104 /* TableSchema.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableSchema.h; sourceTree = "<group>"; };
 		21D0BD412C8754460077E104 /* DBaseSchema.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBaseSchema.h; sourceTree = "<group>"; };
+		21D0BD492C88F4EE0077E104 /* Record.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Record.cpp; sourceTree = "<group>"; };
 		21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueSettingWrap.cpp; sourceTree = "<group>"; };
 		21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueSettingWrap.h; sourceTree = "<group>"; };
 		21F69F622C6D4AEE008B6A06 /* CargoHold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CargoHold.h; sourceTree = "<group>"; };
@@ -884,6 +886,7 @@
 		21D0BCF82C84AC560077E104 /* Content */ = {
 			isa = PBXGroup;
 			children = (
+				21D0BD492C88F4EE0077E104 /* Record.cpp */,
 				21D0BCF72C84AC560077E104 /* Record.h */,
 			);
 			path = Content;
@@ -1143,6 +1146,7 @@
 				212A83D62AE47AD9001EAFE7 /* File.cpp in Sources */,
 				21F93AEC2B2F406E009A2C5B /* App.cpp in Sources */,
 				215F915E2BCDD5E30052BFC8 /* MassUnit.cpp in Sources */,
+				21D0BD4A2C88F4EE0077E104 /* Record.cpp in Sources */,
 				212A83D12AE47AD9001EAFE7 /* FSNode.cpp in Sources */,
 				212A83E32AE47AD9001EAFE7 /* XMLPoint.cpp in Sources */,
 				212A84092AE47AD9001EAFE7 /* Vector3.cpp in Sources */,

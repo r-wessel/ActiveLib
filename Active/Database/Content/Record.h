@@ -3,8 +3,30 @@
 
 #include "Active/Database/Identity/Link.h"
 #include "Active/Serialise/Package/Package.h"
+#include "Active/Serialise/Item/Wrapper/ValueWrap.h"
+#include "Active/Serialise/XML/Item/XMLDateTime.h"
 
 namespace active::database {
+	
+	namespace record {
+		
+			///Record serialisation fields
+		enum FieldIndex {
+			idIndex,
+			globIndex,
+			createIndex,
+			editIndex,
+		};
+		
+		
+		/*!
+			Get the identity of a specified field
+			@param index the field index
+			@return The field identity
+		*/
+		const serialise::Identity& getIdentity(FieldIndex index);
+		
+	}
 
 	/*!
 	 Base class for any object stored in a database
@@ -12,7 +34,7 @@ namespace active::database {
 	 The object has to support some form of portability and be clonable to support storage and database operations. Note that objects may have 2
 	 identifiers:
 	 - One for the ID within a document. This remains constant in copies when a document is duplicated, and is therefore not globally unique
-	 - One as a gloablly unique identifier - this must not remain the same in copies
+	 - One as a globally unique identifier - this must not remain the same in copies
 	 @tparam ObjID The object identifier type
 	 @tparam DBaseID The database identifier type
 	 @tparam TableID The table identifier type
@@ -32,7 +54,7 @@ namespace active::database {
 		using Index = active::database::Index<ObjID, DBaseID, TableID>;
 			///Record link type
 		using Link = active::database::Link<ObjID, DBaseID, TableID>;
-
+		
 		// MARK: - Constructors
 		
 		/*!
@@ -115,11 +137,6 @@ namespace active::database {
 			Set to the default package content
 		*/
 		void setDefault() override;
-		/*!
-			Validate the cargo data
-			@return True if the data has been validated
-		*/
-		bool validate() override;
 		
 	private:
 			///The object document identifier (NB: this may not be globally unique)
@@ -131,9 +148,9 @@ namespace active::database {
 			///The object database ID (nullopt = unspecified)
 		std::optional<TableID> m_tableID;
 			///The time the object wasor created
-		active::utility::Time createTime = active::utility::Time{};
+		active::utility::Time m_createTime = active::utility::Time{};
 			///The time the object was last edited
-		active::utility::Time editTime = active::utility::Time{};
+		active::utility::Time m_editTime = active::utility::Time{};
 	};
 
 	/*--------------------------------------------------------------------
@@ -143,7 +160,16 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename ObjID, typename DBaseID, typename TableID>
 	bool Record<ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
-			//TODO: Complete
+		using enum serialise::Entry::Type;
+		using enum record::FieldIndex;
+		inventory.merge(serialise::Inventory{
+			{
+				{ getIdentity(idIndex), idIndex, element },
+				{ getIdentity(globIndex), globIndex, element },
+				{ getIdentity(createIndex), createIndex, element },
+				{ getIdentity(editIndex), editIndex, element },
+			},
+		}.withType(&typeid(Record<ObjID, DBaseID, TableID>)));
 		return true;
 	} //Record::fillInventory
 
@@ -155,8 +181,22 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename ObjID, typename DBaseID, typename TableID>
 	active::serialise::Cargo::Unique Record<ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
-			//TODO: Complete
-		return nullptr;
+		if (item.ownerType != &typeid(Record<ObjID, DBaseID, TableID>))
+			return nullptr;
+		using namespace active::serialise;
+		using enum record::FieldIndex;
+		switch (item.index) {
+			case idIndex:
+				return std::make_unique<ValueWrap<ObjID>>(m_ID);
+			case globIndex:
+				return std::make_unique<ValueWrap<ObjID>>(m_globalID);
+			case createIndex:
+				return std::make_unique<xml::XMLDateTime>(m_createTime);
+			case editIndex:
+				return std::make_unique<xml::XMLDateTime>(m_editTime);
+			default:
+				return nullptr;	//Requested an unknown index
+		}
 	} //Record::getCargo
 
 
@@ -165,20 +205,13 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename ObjID, typename DBaseID, typename TableID>
 	void Record<ObjID, DBaseID, TableID>::setDefault() {
-		//TODO: Complete
+		m_ID.clear();
+		m_globalID.clear();
+		m_createTime.resetDate();
+		m_createTime.resetTime();
+		m_editTime.resetDate();
+		m_editTime.resetTime();
 	} //Record::setDefault
-
-
-	/*--------------------------------------------------------------------
-		Validate the cargo data
-	 
-		return: True if the data has been validated
-	  --------------------------------------------------------------------*/
-	template<typename ObjID, typename DBaseID, typename TableID>
-	bool Record<ObjID, DBaseID, TableID>::validate() {
-		//TODO: Complete
-		return true;
-	} //Record::validate
 	
 }
 
