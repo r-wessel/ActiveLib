@@ -44,6 +44,15 @@
     <ClInclude Include="Active\Container\Map.h" />
     <ClInclude Include="Active\Container\Multimap.h" />
     <ClInclude Include="Active\Container\Vector.h" />
+    <ClInclude Include="Active\Database\Content\Record.h" />
+    <ClInclude Include="Active\Database\Identity\Index.h" />
+    <ClInclude Include="Active\Database\Identity\Link.h" />
+    <ClInclude Include="Active\Database\Storage\DBaseEngine.h" />
+    <ClInclude Include="Active\Database\Storage\DBaseSchema.h" />
+    <ClInclude Include="Active\Database\Storage\SQLiteCore.h" />
+    <ClInclude Include="Active\Database\Storage\SQLiteEngine.h" />
+    <ClInclude Include="Active\Database\Storage\Storage.h" />
+    <ClInclude Include="Active\Database\Storage\TableSchema.h" />
     <ClInclude Include="Active\Environment\App.h" />
     <ClInclude Include="Active\Event\Event.h" />
     <ClInclude Include="Active\Event\Message.h" />
@@ -149,9 +158,13 @@
     <ClInclude Include="Active\Utility\TextEncoding.h" />
     <ClInclude Include="Active\Utility\Time.h" />
     <ClInclude Include="Active\Utility\UniqueString.h" />
+    <ClInclude Include="SQLite\sqlite3.h" />
+    <ClInclude Include="SQLite\sqlite3ext.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\Attribute\Colour.cpp" />
+    <ClCompile Include="Active\Database\Content\Record.cpp" />
+    <ClCompile Include="Active\Database\Storage\SQLiteCore.cpp" />
     <ClCompile Include="Active\Environment\App.cpp" />
     <ClCompile Include="Active\Event\Publisher.cpp" />
     <ClCompile Include="Active\File\Directory.cpp" />
@@ -209,6 +222,8 @@
     <ClCompile Include="Active\Utility\TextEncoding.cpp" />
     <ClCompile Include="Active\Utility\Time.cpp" />
     <ClCompile Include="Active\Utility\UniqueString.cpp" />
+    <ClCompile Include="SQLite\shell.c" />
+    <ClCompile Include="SQLite\sqlite3.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Active\CMakeLists.txt" />
@@ -429,7 +444,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>
       </SDLCheck>
-      <PreprocessorDefinitions>WINDOWS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;SQLITE_ENABLE_COLUMN_METADATA;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -464,7 +479,7 @@
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>
       </SDLCheck>
-      <PreprocessorDefinitions>WINDOWS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;SQLITE_ENABLE_COLUMN_METADATA;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -501,7 +516,7 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WINDOWS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;SQLITE_ENABLE_COLUMN_METADATA;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -532,7 +547,7 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WINDOWS;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;SQLITE_ENABLE_COLUMN_METADATA;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>

@@ -15,7 +15,7 @@ namespace active::event {
 	 
 		This is essentially an interface that makes no assumptions about the message content etc. and should be implemented as required
 	*/
-	class PostBox : public container::List<Message> {
+	class PostBox : public container::Vector<Message> {
 	public:
 		
 		/*!

@@ -41,6 +41,15 @@ namespace active::serialise::xml {
 			@param prec The seconds precision (e.g. 1e-6 for microsecond precision, 1.0 for whole seconds only)
 		*/
 		XMLDateTime(utility::Time& time, Content content = Content::dateTimeWithOffset, double prec = 1e-6);
+		/*!
+			Constructor
+		 	@param time A time
+			@param content The date/time content
+			@param prec The seconds precision (e.g. 1e-6 for microsecond precision, 1.0 for whole seconds only)
+		*/
+			//NB: Value is only mutated within import processes, in which case the object must be mutable (i.e. const discard is safe)
+		XMLDateTime(const utility::Time& time, Content content = Content::dateTimeWithOffset, double prec = 1e-6) :
+				XMLDateTime(const_cast<utility::Time&>(time), content, prec) {}
 		
 		// MARK: - Functions (const)
 		

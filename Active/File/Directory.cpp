@@ -5,6 +5,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/File/Directory.h"
 
+#ifdef WINDOWS
+#include "shlobj_core.h"
+#endif
+#ifdef __APPLE__
+#include <sysdir.h>
+#include <glob.h>
+#endif
+
 using namespace active::file;
 using namespace active::utility;
 
@@ -70,6 +78,30 @@ Directory Directory::current() {
 Directory Directory::temporary() {
 	return Directory(std::filesystem::temp_directory_path());
 }
+
+
+/*--------------------------------------------------------------------
+	Get a directory for application data
+ 
+	return: The directory for application data
+  --------------------------------------------------------------------*/
+Directory::Option Directory::appData() {
+	Directory::Option result;
+#ifdef WINDOWS
+	wchar_t* directorypath = nullptr;
+	if (SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &directorypath) == S_OK)
+		result = Directory{String{reinterpret_cast<char16_t*>(directorypath)}};
+	CoTaskMemFree(static_cast<void*>(directorypath));
+#endif
+#ifdef __APPLE__
+	char directorypath[PATH_MAX];
+	auto state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT,
+													  SYSDIR_DOMAIN_MASK_USER);
+	if ((state = sysdir_get_next_search_path_enumeration(state, directorypath)))
+		result = Directory{String{directorypath}};
+#endif
+	return result;
+} //Directory::appData
 
 
 /*--------------------------------------------------------------------

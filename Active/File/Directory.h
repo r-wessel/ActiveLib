@@ -19,6 +19,8 @@ namespace active::file {
 		
 			///Unique pointer
 		using Unique = std::unique_ptr<Directory>;
+			///Optional
+		using Option = std::optional<Directory>;
 		
 		using iterator = std::filesystem::directory_iterator;
 		
@@ -72,6 +74,11 @@ namespace active::file {
 			@return The directory for temporary files
 		*/
 		static Directory temporary();
+		/*!
+			Get a directory for application data
+			@return The directory for application data
+		*/
+		static Directory::Option appData();
 		
 		// MARK: Functions (const)
 		

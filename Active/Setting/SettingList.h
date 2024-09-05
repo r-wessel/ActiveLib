@@ -6,25 +6,27 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_SETTING_SETTING_LIST
 #define ACTIVE_SETTING_SETTING_LIST
 
-#include "Active/Container/List.h"
+#include "Active/Container/Vector.h"
 #include "Active/Setting/ValueSetting.h"
 
 namespace active::setting {
 
 		///A list of settings
-	class SettingList : public container::List<Setting>, public utility::Cloner {
+	class SettingList : public container::Vector<Setting>, public utility::Cloner {
 	public:
 		
 		// MARK: - Types
 		
 			///Base storage class
-		using base = container::List<Setting>;
+		using base = container::Vector<Setting>;
 			///Storage iterator
 		using iterator = typename base::iterator;
 			///Storage iterator
 		using const_iterator = typename base::const_iterator;
 			///Shared pointer
 		using Shared = std::shared_ptr<SettingList>;
+			///Shared pointer
+		using Unique = std::unique_ptr<SettingList>;
 			///Optional
 		using Option = std::optional<SettingList>;
 		
