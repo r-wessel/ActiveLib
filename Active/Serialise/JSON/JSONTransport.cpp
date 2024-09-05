@@ -223,6 +223,7 @@ namespace {
 			objectStart,	///<Object start brace, i.e. {
 			arrayStart,		///<Array start brace, [
 			valueStart,		///<An item value, e.g. "Ralph"
+			nullItem,		///<A 'null' for value/object/array content
 			delimiter,		///<Value delimiter, i.e. ,
 			objectEnd,		///<Object end brace, i.e. }
 			arrayEnd,		///<Array end brace, i.e. ]
@@ -567,6 +568,14 @@ namespace {
 				}
 				if (valueLeaders.find(leader.first) == std::u32string::npos)
 					throw std::system_error(makeJSONError(badValue));
+					//Check for a null item
+				if (leader.first == nullLeader) {
+					String text{"n"};
+					m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
+					if (text != nullValue)
+						throw std::system_error(makeJSONError(badValue));
+					return nullItem;
+				}
 				m_buffer.rewind(leader.second);	//Put the leading value back into the buffer
 				return valueStart;
 			case object: {	//In an object
@@ -610,7 +619,6 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void JSONImporter::getContent(Item& item) {
 		m_buffer.findIf([](char32_t uniChar){ return !isWhiteSpace(uniChar); });
-		//m_buffer.findFirstNotOf(String::allWhiteSpace, nullptr);
 			//First attempt to find a valid JSON value, determining the type according to JSON conventions
 		auto content = m_buffer.getEncodedChar();	//Get the first character from the buffer
 		if (content.second == 0)
@@ -846,6 +854,8 @@ namespace {
 				case undefined:	//End of file
 					if (depth != 0)	//Failure if tags haven't been balanced correctly
 						throw std::system_error(makeJSONError(unbalancedScope));
+					return;
+				case nullItem:
 					return;
 				case delimiter:
 					if (parsingStage != complete)	//A delimiter has been found before anything was read
