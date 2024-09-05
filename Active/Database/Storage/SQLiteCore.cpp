@@ -99,7 +99,7 @@ SettingList::Unique SQLiteCore::Transaction::operator++() {
 	switch (status) {
 		case SQLITE_DONE:
 			m_isDone = true;
-			[[fallthrough]];
+			break;
 		case SQLITE_ROW: case SQLITE_OK: {
 			auto row = std::make_unique<SettingList>();
 			bool isMore = true;
