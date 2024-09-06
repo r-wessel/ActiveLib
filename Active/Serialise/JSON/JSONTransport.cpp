@@ -692,7 +692,7 @@ namespace {
 					jsonStr.append(toJSONString(namespaceOut, m_glossary)).append(":");
 				}
 				auto tagOut = tag;
-				jsonStr.append(toJSONString(tagOut, m_glossary)).append("\": ");
+				jsonStr.append(toJSONString(tagOut, m_glossary)).append("\":");
 			}
 		}
 		switch (type) {
