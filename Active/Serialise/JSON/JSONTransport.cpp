@@ -702,6 +702,9 @@ namespace {
 			case arrayStart:
 				jsonStr.append("[");
 				break;
+			case nullItem:
+				jsonStr.append(nullValue);
+				break;
 			case objectEnd:
 				jsonStr.append("}");
 				break;
@@ -946,6 +949,7 @@ namespace {
 		exporter: The JSON exporter
 	  --------------------------------------------------------------------*/
 	void doJSONExport(const Cargo& cargo, const JSONIdentity& identity, JSONExporter& exporter, int32_t depth = 0) {
+		using enum JSONIdentity::Type;
 		String tag, nameSpace;
 		if (identity.stage != root) {
 			if (identity.name.empty())	//Non-root values, i.e. values embedded in an object, must have an identifying name
@@ -959,9 +963,9 @@ namespace {
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
+			exporter.writeTag(tag, nameSpace, valueStart, depth);
 			if ((item == nullptr) || item->isNull()) {
-				if (dynamic_cast<const Null*>(&cargo) == nullptr)
+				if ((item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
 				return;
@@ -990,14 +994,14 @@ namespace {
 			//An array package will have a single item within more than one possible value
 		bool isArray = (inventory.size() == 1) && !(inventory.begin()->maximum() == 1),
 			 isFirstItem = true;
-		if (isArray)
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::arrayStart, depth);
-		else if (isWrapper)
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::objectStart, depth++);
 		if (cargo.isNull()) {
-			exporter.write(nullValue);
+			exporter.writeTag(tag, nameSpace, nullItem, depth);
 			return;
 		}
+		if (isArray)
+			exporter.writeTag(tag, nameSpace, arrayStart, depth);
+		else if (isWrapper)
+			exporter.writeTag(tag, nameSpace, objectStart, depth++);
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
 			auto item = *entry.second;
@@ -1013,7 +1017,7 @@ namespace {
 			bool isItemArray = item.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray)
-				exporter.writeTag(item.identity().name, entryNameSpace, JSONIdentity::Type::arrayStart, depth);
+				exporter.writeTag(item.identity().name, entryNameSpace, arrayStart, depth);
 			for (item.available = 0; item.available < limit; ++item.available) {
 				auto content = cargo.getCargo(item);
 				if (!content)
@@ -1026,12 +1030,12 @@ namespace {
 							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
-				exporter.writeTag(String{}, String{}, JSONIdentity::Type::arrayEnd, depth);
+				exporter.writeTag(String{}, String{}, arrayEnd, depth);
 		}
 		if (isArray)
-			exporter.writeTag(String{}, String{}, JSONIdentity::Type::arrayEnd, depth);
+			exporter.writeTag(String{}, String{}, arrayEnd, depth);
 		else if (isWrapper)
-			exporter.writeTag(String{}, String{}, JSONIdentity::Type::objectEnd, --depth);
+			exporter.writeTag(String{}, String{}, objectEnd, --depth);
 	} //doJSONExport
 
 }  // namespace
@@ -1044,7 +1048,7 @@ namespace {
 	return: The converted string
   --------------------------------------------------------------------*/
 String JSONTransport::convertToJSONString(const String& source) {
-	JSONGlossary glossary;
+	JSONGlossary glossary;	
 	String result{source};
 	return toJSONString(result, glossary);
 } //JSONTransport::convertToJSONString

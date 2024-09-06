@@ -68,6 +68,17 @@ namespace active::serialise {
 		void setDefault() override	{
 			base::get().reset();	//The default for an optional value is null
 		}
+		/*!
+			Get the serialisation type for the item value
+			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
+		*/
+		std::optional<Item::Type> type() const override {
+			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T>)
+				return Item::Type::text;
+			else if constexpr (std::is_same_v<bool, T>)
+				return Item::Type::boolean;
+			return Item::Type::number;
+		}	//Other types should specialise accordingly
 	};
 
 	// MARK: - Specialisations for String
