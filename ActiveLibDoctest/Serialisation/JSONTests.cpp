@@ -302,12 +302,13 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 
 		SerialiseTester testObject;
 		String report;
-			//Read JSON with an unknown name
+			//Read JSON with an unknown name - use policy that rejects unknown names
+		JSONTransport checkedTransport(Transport::Policy::moderate);
 		try {
-			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
+			checkedTransport.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with an unknown name));
 		} catch(std::system_error& error) {
-			CHECK_MESSAGE(makeReportFor(transporter, error.code().message()) == "An unknown name was found in the JSON at row: 24, column: 5",
+			CHECK_MESSAGE(makeReportFor(checkedTransport, error.code().message()) == "An unknown name was found in the JSON at row: 24, column: 5",
 						  TEST_MESSAGE(Failure report for input with an incorrect name wrong));
 		}
 			//Read JSON with a missing quote

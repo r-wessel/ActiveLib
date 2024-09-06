@@ -60,8 +60,7 @@ namespace active::setting {
 			@param nameID The setting identifier
 		*/
 		template<typename T> requires std::copyable<T>
-		ValueSetting(const std::vector<T>& values, const utility::NameID::Option nameID = std::nullopt) :
-				setting::Setting(nameID) {
+		ValueSetting(const std::vector<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
 			for (auto& value: values)
 				emplace_back(ValueBase<T>(value));
 		}
@@ -71,8 +70,7 @@ namespace active::setting {
 			@param nameID The setting identifier
 		*/
 		template<typename T> requires std::copyable<T>
-		ValueSetting(const std::set<T>& values, const utility::NameID::Option nameID = std::nullopt) :
-				setting::Setting(nameID) {
+		ValueSetting(const std::set<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
 			for (auto& value: values)
 				emplace_back(ValueBase<T>(value));
 		}
