@@ -11,7 +11,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
 #include "Active/Serialise/Null.h"
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Package/Unknown.h"
 #include "Active/Setting/Values/BoolValue.h"
 #include "Active/Setting/Values/DoubleValue.h"
@@ -937,7 +937,7 @@ namespace {
 		}
 	} //doJSONImport
 	
-		
+	
 	/*--------------------------------------------------------------------
 		Export cargo to JSON
 	
@@ -960,7 +960,7 @@ namespace {
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
-			if (item == nullptr) {
+			if ((item == nullptr) || item->isNull()) {
 				if (dynamic_cast<const Null*>(&cargo) == nullptr)
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
@@ -994,6 +994,10 @@ namespace {
 			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::arrayStart, depth);
 		else if (isWrapper)
 			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::objectStart, depth++);
+		if (cargo.isNull()) {
+			exporter.write(nullValue);
+			return;
+		}
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
 			auto item = *entry.second;

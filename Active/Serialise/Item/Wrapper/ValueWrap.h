@@ -8,6 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/Item/Item.h"
 #include "Active/Setting/Values/Value.h"
+#include "Active/Utility/Concepts.h"
 #include "Active/Utility/Guid.h"
 #include "Active/Utility/String.h"
 
@@ -52,8 +53,12 @@ namespace active::serialise {
 			@return True if the data was successfully written
 		*/
 		bool write(utility::String& dest) const override {
-			dest = utility::String{base::get()};
-			return true;
+			if constexpr (active::utility::Dereferenceable<T>) {
+				return false;	//Should not be attempting to write a null value to a string (null != "")
+			} else {
+				dest = utility::String{base::get()};
+				return true;
+			}
 		}
 		
 		// MARK: - Functions (mutating)

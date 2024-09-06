@@ -2,11 +2,11 @@
 #define ACTIVE_DATABASE_SQLITE_ENGINE
 
 #include "Active/Database/Storage/DBaseEngine.h"
-#include "Active/Database/Storage/SQLiteCore.h"
+#include "Active/Database/Storage/SQLite/SQLiteCore.h"
 #include "Active/File/Path.h"
 #include "Active/Serialise/Cargo.h"
 #include "Active/Serialise/CargoHold.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Transport.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/Guid.h"
@@ -17,13 +17,15 @@ namespace active::database {
 	/*!
 	 An SQLite database engine template
 	 
-	 @tparam Obj Interface for the stored object
-	 @tparam Transport The transport mechanism for objects
-	 @tparam DocID The document identifier type
-	 @tparam ObjID The object identifier type
+	 @tparam Obj Interface for the stored object. NB: This can be a base class for an object hierarchy, not necessarily a concrete class
+	 @tparam Transport The serialisation transport mechanism for objects
+	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
+	 @tparam ObjID The object identifier type, e.g. Guid
 	 */
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID = utility::Guid, typename ObjID = utility::Guid>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires std::is_base_of_v<serialise::Cargo, Obj> &&
+			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
+			std::is_base_of_v<serialise::Transport, Transport>
 	class SQLiteEngine : public SQLiteCore, public DBaseEngine<Obj, ObjID, DocID, utility::String>  {
 	public:
 

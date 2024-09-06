@@ -114,6 +114,9 @@
 		21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD102C86EC8F0077E104 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
 		21D0BD362C8727CE0077E104 /* SQLiteCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD352C8727CE0077E104 /* SQLiteCore.cpp */; };
 		21D0BD4A2C88F4EE0077E104 /* Record.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD492C88F4EE0077E104 /* Record.cpp */; };
+		21D0BD832C8B4E790077E104 /* ValueOptionWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */; };
+		21D0BD852C8B56530077E104 /* Concepts.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D0BD842C8B56530077E104 /* Concepts.h */; };
+		21D0BD872C8B68850077E104 /* PackageUnoWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D0BD862C8B68850077E104 /* PackageUnoWrap.h */; };
 		21F69F5E2C6CE911008B6A06 /* ValueSettingWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */; };
 		21F69F632C6D4AEE008B6A06 /* CargoHold.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F69F622C6D4AEE008B6A06 /* CargoHold.h */; };
 		21F93ACB2B2B5DA2009A2C5B /* NameID.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F93AC92B2B5DA2009A2C5B /* NameID.h */; };
@@ -380,6 +383,9 @@
 		21D0BD402C874FD30077E104 /* TableSchema.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableSchema.h; sourceTree = "<group>"; };
 		21D0BD412C8754460077E104 /* DBaseSchema.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBaseSchema.h; sourceTree = "<group>"; };
 		21D0BD492C88F4EE0077E104 /* Record.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Record.cpp; sourceTree = "<group>"; };
+		21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueOptionWrap.h; sourceTree = "<group>"; };
+		21D0BD842C8B56530077E104 /* Concepts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Concepts.h; sourceTree = "<group>"; };
+		21D0BD862C8B68850077E104 /* PackageUnoWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PackageUnoWrap.h; sourceTree = "<group>"; };
 		21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueSettingWrap.cpp; sourceTree = "<group>"; };
 		21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueSettingWrap.h; sourceTree = "<group>"; };
 		21F69F622C6D4AEE008B6A06 /* CargoHold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CargoHold.h; sourceTree = "<group>"; };
@@ -563,6 +569,7 @@
 				21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */,
 				21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */,
 				212A836D2AE47AD9001EAFE7 /* ItemWrap.h */,
+				21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */,
 				212A836B2AE47AD9001EAFE7 /* ValueWrap.h */,
 			);
 			path = Wrapper;
@@ -595,7 +602,6 @@
 			children = (
 				21F69FA72C736E69008B6A06 /* NullPackage.h */,
 				212A837B2AE47AD9001EAFE7 /* Package.h */,
-				212A837A2AE47AD9001EAFE7 /* PackageWrap.h */,
 				212A837D2AE47AD9001EAFE7 /* Pair.cpp */,
 				212A837C2AE47AD9001EAFE7 /* Pair.h */,
 				212A83792AE47AD9001EAFE7 /* Unknown.h */,
@@ -712,6 +718,7 @@
 				212A83C42AE47AD9001EAFE7 /* BufferOut.h */,
 				212A83C32AE47AD9001EAFE7 /* Cloner.h */,
 				2167E27E2C49123E000827D3 /* CMakeLists.txt */,
+				21D0BD842C8B56530077E104 /* Concepts.h */,
 				21257AC52C1C881F00B710AC /* DataFormat.cpp */,
 				21257AB32C19D10C00B710AC /* DataFormat.h */,
 				212A83C82AE47AD9001EAFE7 /* Defer.h */,
@@ -897,11 +904,9 @@
 			children = (
 				21D0BD092C8668CE0077E104 /* DBaseEngine.h */,
 				21D0BD412C8754460077E104 /* DBaseSchema.h */,
-				21D0BD402C874FD30077E104 /* TableSchema.h */,
-				21D0BD352C8727CE0077E104 /* SQLiteCore.cpp */,
-				21D0BD342C8727460077E104 /* SQLiteCore.h */,
-				21D0BD0E2C866A590077E104 /* SQLiteEngine.h */,
+				21D0BD6E2C8B16D30077E104 /* SQLite */,
 				21D0BCF92C84AC560077E104 /* Storage.h */,
+				21D0BD402C874FD30077E104 /* TableSchema.h */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -936,10 +941,22 @@
 			path = SQLite;
 			sourceTree = "<group>";
 		};
+		21D0BD6E2C8B16D30077E104 /* SQLite */ = {
+			isa = PBXGroup;
+			children = (
+				21D0BD352C8727CE0077E104 /* SQLiteCore.cpp */,
+				21D0BD342C8727460077E104 /* SQLiteCore.h */,
+				21D0BD0E2C866A590077E104 /* SQLiteEngine.h */,
+			);
+			path = SQLite;
+			sourceTree = "<group>";
+		};
 		21F69F5B2C6CE8E2008B6A06 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
 				21F69F992C712F59008B6A06 /* ContainerWrap.h */,
+				21D0BD862C8B68850077E104 /* PackageUnoWrap.h */,
+				212A837A2AE47AD9001EAFE7 /* PackageWrap.h */,
 				21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */,
 				21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */,
 			);
@@ -981,6 +998,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2146619F2C263C550048BBA7 /* Pen.h in Headers */,
+				21D0BD832C8B4E790077E104 /* ValueOptionWrap.h in Headers */,
 				2146619A2C263C550048BBA7 /* Colour.h in Headers */,
 				21F93ADC2B2C6E9C009A2C5B /* Subscriber.h in Headers */,
 				21932D4F2BE29C69005DB06E /* SerialiseArrayTester.h in Headers */,
@@ -1001,7 +1019,9 @@
 				218484C62AF92D7300280FEF /* UniqueString.h in Headers */,
 				21F93AD82B2C6BFD009A2C5B /* Message.h in Headers */,
 				2146619E2C263C550048BBA7 /* TextStyle.h in Headers */,
+				21D0BD872C8B68850077E104 /* PackageUnoWrap.h in Headers */,
 				21F93ACB2B2B5DA2009A2C5B /* NameID.h in Headers */,
+				21D0BD852C8B56530077E104 /* Concepts.h in Headers */,
 				215F914E2BC9DA1E0052BFC8 /* MassUnit.h in Headers */,
 				214EA4D32BA488DA008E5358 /* Object.h in Headers */,
 				214EA4D52BA488DA008E5358 /* Handler.h in Headers */,

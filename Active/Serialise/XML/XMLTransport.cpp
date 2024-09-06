@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Item.h"
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Package/Unknown.h"
 #include "Active/Serialise/XML/Package/XMLProlog.h"
 #include "Active/Setting/Values/StringValue.h"

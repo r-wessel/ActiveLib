@@ -1,0 +1,114 @@
+/*!
+Copyright 2024 Ralph Wessel and Hugh Wessel
+Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
+*/
+
+#ifndef ACTIVE_SERIALISE_VALUE_OPTION_WRAP
+#define ACTIVE_SERIALISE_VALUE_OPTION_WRAP
+
+#include "Active/Serialise/Item/Wrapper/ValueWrap.h"
+
+namespace active::serialise {
+	
+	/*!
+		Interface for a lightweight wrapper for passing a reference to optional item data into (de)serialise functions
+	 
+		Template parameters are:
+		T: Value native type
+	*/
+	template<class T>
+	class ValueOptionWrap : public ValueWrap<std::optional<T>> {
+	public:
+		
+		// MARK: - Types
+		
+			///Optional value type
+		using value_t = std::optional<T>;
+			///Base type
+		using base = ValueWrap<value_t>;
+		
+		// MARK: - Constructors
+		
+		/*!
+			Constructor
+			@param val The optional item value
+		*/
+		ValueOptionWrap(value_t& val) : base(val) {}
+		/*!
+			Constructor
+			@param val The item value
+		*/
+			//NB: Value is only mutated within import processes, in which case the object must be mutable (i.e. const discard is safe)
+		ValueOptionWrap(const value_t& val) : base(const_cast<value_t&>(val)) {}
+		
+		// MARK: - Functions (const)
+
+		/*!
+			Determine if the cargo has a null value (undefined)
+			@return True if the cargo data is undefined
+		*/
+		bool isNull() const override { return !base::get().operator bool(); }
+		/*!
+			Write the item to a string
+			@param dest The string to write the data to
+			@return True if the data was successfully written
+		*/
+		bool write(utility::String& dest) const override {
+			if (isNull())
+				return false;	//Should not be attempting to write a null value to a string (null != "")
+			dest = utility::String{*base::get()};
+			return true;
+		}
+		
+		// MARK: - Functions (mutating)
+
+		/*!
+			Set to the default package content
+		*/
+		void setDefault() override	{
+			base::get().reset();	//The default for an optional value is null
+		}
+	};
+
+	// MARK: - Specialisations for String
+
+	/*!
+		Write the item to a string (specialisation for guid)
+		@param dest The string to write the data to
+		@return True if the data was successfully written
+	*/
+	template<> inline
+	bool ValueOptionWrap<utility::Guid>::write(utility::String& dest) const {
+		if (isNull())
+			return false;	//Should not be attempting to write a null value to a string (null != "")
+		dest = *base::get();
+		return true;
+	}
+	
+	// MARK: - Specialisations for bool
+
+	/*!
+		Export the object to the specified string (specialisation for bool)
+		@param dest The string to write the data to
+		@return True if the data was successfully written
+	*/
+	template<> inline
+	bool ValueOptionWrap<bool>::write(utility::String& dest) const {
+		if (isNull())
+			return false;	//Should not be attempting to write a null value to a string (null != "")
+		dest = *get() ? "true" : "false";
+		return true;
+	} //ValueOptionWrap<bool>::write
+	
+		///Convenience wrapper names
+	using BoolOptWrap = ValueOptionWrap<bool>;
+	using DoubleOptWrap = ValueOptionWrap<double>;
+	using FloatOptWrap = ValueOptionWrap<float>;
+	using Int32OptWrap = ValueOptionWrap<int32_t>;
+	using Int64OptWrap = ValueOptionWrap<int64_t>;
+	using StringOptWrap = ValueOptionWrap<utility::String>;
+	using UInt32OptWrap = ValueOptionWrap<uint32_t>;
+
+}  // namespace active::serialise
+
+#endif	//ACTIVE_SERIALISE_VALUE_OPTION_WRAP

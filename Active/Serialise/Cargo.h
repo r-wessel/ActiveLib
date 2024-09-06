@@ -42,6 +42,11 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the cargo has a null value (undefined)
+			@return True if the cargo data is undefined
+		*/
+		virtual bool isNull() const { return false; }
+		/*!
 			Get the recommended cargo entry type
 			@return The cargo entry type (nullopt = deduce automatically from cargo characteristics)
 		*/
