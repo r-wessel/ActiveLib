@@ -101,6 +101,9 @@
     <Filter Include="SQLite">
       <UniqueIdentifier>{454892f9-98b3-4c5d-a113-84fb2b7ad18e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Active\Database\Storage\SQLite">
+      <UniqueIdentifier>{a67b791e-0c73-4a7e-b1f4-1142f36d7024}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Active\Container\HashMap.h">
@@ -209,9 +212,6 @@
       <Filter>Active\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Active\Utility\Memory.h">
-      <Filter>Active\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Active\Utility\Status.h">
       <Filter>Active\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Active\Utility\String.h">
@@ -460,12 +460,6 @@
     <ClInclude Include="Active\Database\Storage\DBaseSchema.h">
       <Filter>Active\Database\Storage</Filter>
     </ClInclude>
-    <ClInclude Include="Active\Database\Storage\SQLiteCore.h">
-      <Filter>Active\Database\Storage</Filter>
-    </ClInclude>
-    <ClInclude Include="Active\Database\Storage\SQLiteEngine.h">
-      <Filter>Active\Database\Storage</Filter>
-    </ClInclude>
     <ClInclude Include="Active\Database\Storage\Storage.h">
       <Filter>Active\Database\Storage</Filter>
     </ClInclude>
@@ -477,6 +471,12 @@
     </ClInclude>
     <ClInclude Include="SQLite\sqlite3ext.h">
       <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Database\Storage\SQLite\SQLiteCore.h">
+      <Filter>Active\Database\Storage\SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Database\Storage\SQLite\SQLiteEngine.h">
+      <Filter>Active\Database\Storage\SQLite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -654,9 +654,6 @@
     <ClCompile Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.cpp">
       <Filter>Active\Serialise\Package\Wrapper</Filter>
     </ClCompile>
-    <ClCompile Include="Active\Database\Storage\SQLiteCore.cpp">
-      <Filter>Active\Database\Storage</Filter>
-    </ClCompile>
     <ClCompile Include="SQLite\shell.c">
       <Filter>SQLite</Filter>
     </ClCompile>
@@ -665,6 +662,9 @@
     </ClCompile>
     <ClCompile Include="Active\Database\Content\Record.cpp">
       <Filter>Active\Database\Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Database\Storage\SQLite\SQLiteCore.cpp">
+      <Filter>Active\Database\Storage\SQLite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

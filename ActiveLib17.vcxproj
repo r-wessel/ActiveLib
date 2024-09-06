@@ -49,8 +49,8 @@
     <ClInclude Include="Active\Database\Identity\Link.h" />
     <ClInclude Include="Active\Database\Storage\DBaseEngine.h" />
     <ClInclude Include="Active\Database\Storage\DBaseSchema.h" />
-    <ClInclude Include="Active\Database\Storage\SQLiteCore.h" />
-    <ClInclude Include="Active\Database\Storage\SQLiteEngine.h" />
+    <ClInclude Include="Active\Database\Storage\SQLite\SQLiteCore.h" />
+    <ClInclude Include="Active\Database\Storage\SQLite\SQLiteEngine.h" />
     <ClInclude Include="Active\Database\Storage\Storage.h" />
     <ClInclude Include="Active\Database\Storage\TableSchema.h" />
     <ClInclude Include="Active\Environment\App.h" />
@@ -153,7 +153,6 @@
     <ClInclude Include="Active\Utility\Guid.h" />
     <ClInclude Include="Active\Utility\MathFunctions.h" />
     <ClInclude Include="Active\Utility\Memory.h" />
-    <ClInclude Include="Active\Utility\Status.h" />
     <ClInclude Include="Active\Utility\String.h" />
     <ClInclude Include="Active\Utility\TextEncoding.h" />
     <ClInclude Include="Active\Utility\Time.h" />
@@ -164,7 +163,7 @@
   <ItemGroup>
     <ClCompile Include="Active\Attribute\Colour.cpp" />
     <ClCompile Include="Active\Database\Content\Record.cpp" />
-    <ClCompile Include="Active\Database\Storage\SQLiteCore.cpp" />
+    <ClCompile Include="Active\Database\Storage\SQLite\SQLiteCore.cpp" />
     <ClCompile Include="Active\Environment\App.cpp" />
     <ClCompile Include="Active\Event\Publisher.cpp" />
     <ClCompile Include="Active\File\Directory.cpp" />

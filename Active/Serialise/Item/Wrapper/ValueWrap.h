@@ -117,22 +117,50 @@ namespace active::serialise {
 	// MARK: - Specialisations for bool
 
 	/*!
+		Read a boolean value from the specified string
+		@param source The string to read
+		@return True if the data was successfully read
+	*/
+	inline std::pair<bool, bool> readBoolRefValue(const utility::String& source) {
+		bool incoming = false;
+		utility::String value = source.lowercase();
+		if ((value == "true") || (value == "1"))
+			incoming = true;
+		else if ((value == "false") || (value == "0"))
+			incoming = false;
+		else
+			return {incoming, false};
+		return {incoming, true};
+	} //ValueWrap<bool>::read
+
+
+	/*!
 		Import the object from the specified string (specialisation for bool)
 		@param source The string to read
 		@return True if the data was successfully read
 	*/
 	template<> inline
 	bool ValueWrap<bool>::read(const utility::String& source) {
-		utility::String value = source.lowercase();
-		if ((value == "true") || (value == "1"))
-			base::get() = true;
-		else if ((value == "false") || (value == "0"))
-			base::get() = false;
-		else
-			return false;
-		return true;
+		auto result = readBoolRefValue(source);
+		if (result.second)
+			base::get() = result.first;
+		return result.second;
 	} //ValueWrap<bool>::read
 	
+
+	/*!
+		Import the object from the specified string (specialisation for bool)
+		@param source The string to read
+		@return True if the data was successfully read
+	*/
+	template<> inline
+		bool ValueWrap<std::optional<bool>>::read(const utility::String& source) {
+		auto result = readBoolRefValue(source);
+		if (result.second)
+			base::get() = result.first;
+		return result.second;
+	} //ValueWrap<bool>::read
+
 	
 	/*!
 		Export the object to the specified string (specialisation for bool)
