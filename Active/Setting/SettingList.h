@@ -50,7 +50,7 @@ namespace active::setting {
 			Move constructor
 			@param source The object to move
 		*/
-		SettingList(SettingList&& source) : base(std::move(source)) {}
+		SettingList(SettingList&& source) noexcept : base(std::move(source)) {}
 
 		/*!
 			Clone method

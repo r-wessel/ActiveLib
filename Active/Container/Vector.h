@@ -64,7 +64,7 @@ namespace active::container {
 			Move constructor
 			@param source The object to move
 		*/
-		Vector(Vector&& source) : base(std::move(source)) {}
+		Vector(Vector&& source) noexcept : base(std::move(source)) {}
 		/*!
 			Destructor
 		*/

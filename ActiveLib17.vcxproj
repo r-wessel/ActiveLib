@@ -222,8 +222,18 @@
     <ClCompile Include="Active\Utility\TextEncoding.cpp" />
     <ClCompile Include="Active\Utility\Time.cpp" />
     <ClCompile Include="Active\Utility\UniqueString.cpp" />
-    <ClCompile Include="SQLite\shell.c" />
-    <ClCompile Include="SQLite\sqlite3.c" />
+    <ClCompile Include="SQLite\shell.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug16|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release16|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug17|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release17|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
+    <ClCompile Include="SQLite\sqlite3.c">
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug16|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release16|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug17|x64'">TurnOffAllWarnings</WarningLevel>
+      <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release17|x64'">TurnOffAllWarnings</WarningLevel>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Active\CMakeLists.txt" />

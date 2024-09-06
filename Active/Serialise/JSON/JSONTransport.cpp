@@ -856,7 +856,8 @@ namespace {
 						throw std::system_error(makeJSONError(unbalancedScope));
 					return;
 				case nullItem:
-					return;
+					parsingStage = complete;	//We're going to skip the null items completely
+					continue;
 				case delimiter:
 					if (parsingStage != complete)	//A delimiter has been found before anything was read
 						throw std::system_error(makeJSONError(unbalancedScope));
