@@ -139,6 +139,14 @@ SettingList::Unique SQLiteCore::Transaction::operator++() {
 
 
 /*--------------------------------------------------------------------
+	Execute a single-step process, e.g. erase, insert etc
+ --------------------------------------------------------------------*/
+void SQLiteCore::Transaction::execute() const {
+	
+} //SQLiteCore::Transaction::execute
+
+
+/*--------------------------------------------------------------------
 	Make an error code for SQLite processing
  
 	return: An STL error code

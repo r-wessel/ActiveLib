@@ -20,13 +20,20 @@ namespace active::database {
 			typename ObjID = active::utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
 	class Storage {
 	public:
+		
+		// MARK: - Types
+		
 			///The engine driving dbase operations. NB: This is independent of the Storage wrapper, i.e. one wrapper could employ multiple engines
 		using Engine = DBaseEngine<Obj, DocID, ObjID, TableID>;
 			///The database schema, including tables
 		using DBaseSchema = DBaseSchema<DBaseID, TableID>;
 			///Tables within the database, including a full description of member fields (names/types) and primary index/content fields
 		using TableSchema = DBaseSchema::TableSchema;
-
+			///Unary predicate for filtering records
+		using Filter = std::function<bool(const Obj&)>;
+		
+		// MARK: - Constructors
+		
 		/*!
 		 Constructor
 		 @param engine The database engine
@@ -41,6 +48,8 @@ namespace active::database {
 		 Destructor
 		 */
 		virtual ~Storage() {}
+		
+		// MARK: - Functions (const)
 		
 		/*!
 		 Get an object by index
@@ -71,6 +80,35 @@ namespace active::database {
 		 */
 		active::container::Vector<Obj> getObjects(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			return m_engine->getObjects(tableID, documentID);
+		}
+		/*!
+		 Get all objects from a database table
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
+		 @return The requested objects (nullptr on failure)
+		 */
+		active::container::Vector<Obj> getObjects(const Filter& filter, std::optional<TableID> tableID = std::nullopt,
+												  std::optional<DocID> documentID = std::nullopt) const {
+			return m_engine->getObjects(tableID, documentID);
+		}
+		/*!
+		 Erase an object by index
+		 @param index The object index
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @throw Exception thrown on error
+		 */
+		virtual void erase(const ObjID& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			m_engine->erase(index, tableID, documentID);
+		}
+		/*!
+		 Erase all objects
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @throw Exception thrown on error
+		 */
+		virtual void erase(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			m_engine->erase(tableID, documentID);
 		}
 
 	private:
