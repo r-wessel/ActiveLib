@@ -49,11 +49,16 @@ namespace active::database {
 			~Transaction();
 
 			/*!
-			 Increment operator
+			 Execute a single step in a running multi-step process, e.g. a query
 			 @return The current transaction row (nullptr = engine is busy: https://sqlite.org/rescode.html#busy)
 			 @throw Exception thrown on SQL error
 			 */
 			active::setting::SettingList::Unique operator++();
+			/*!
+			 Execute a single-step process, e.g. erase, insert etc
+			 @throw Exception thrown on SQL error
+			 */
+			void execute() const;
 			/*!
 			 Conversion operator
 			 @return True if the transaction is not done

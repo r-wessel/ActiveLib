@@ -17,7 +17,7 @@ namespace active::setting {
 	 
 		Refer to the base Value class for more information about the purpose of this class
 	*/
-	template<class T>
+	template<class T> requires std::copyable<T>
 	class ValueBase : public Value {
 	public:
 		

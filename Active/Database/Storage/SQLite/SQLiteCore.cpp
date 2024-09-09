@@ -1,4 +1,4 @@
-#include "Active/Database/Storage/SQLiteCore.h"
+#include "Active/Database/Storage/SQLite/SQLiteCore.h"
 
 #include "Active/Database/Storage/DBaseSchema.h"
 #include "Active/Setting/Values/DoubleValue.h"
@@ -136,6 +136,14 @@ SettingList::Unique SQLiteCore::Transaction::operator++() {
 	}
 	return nullptr;
 } //SQLiteCore::Transaction::operator++
+
+
+/*--------------------------------------------------------------------
+	Execute a single-step process, e.g. erase, insert etc
+ --------------------------------------------------------------------*/
+void SQLiteCore::Transaction::execute() const {
+	
+} //SQLiteCore::Transaction::execute
 
 
 /*--------------------------------------------------------------------

@@ -13,8 +13,13 @@ namespace active::database {
 	template<typename DBaseID = active::utility::String, typename TableID = active::utility::String>
 	class DBaseSchema : public std::vector<TableSchema<TableID>> {
 	public:
+		
+		// MARK: - Types
+		
 		using TableSchema = TableSchema<TableID>;
 		using base = std::vector<TableSchema>;
+		
+		// MARK: - Constructors
 		
 		DBaseSchema(const DBaseID& nm, const std::initializer_list<TableSchema> tables) : base{tables}, name{nm} {}
 		

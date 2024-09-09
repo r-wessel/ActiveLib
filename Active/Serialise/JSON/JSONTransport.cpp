@@ -11,7 +11,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
 #include "Active/Serialise/Null.h"
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Package/Unknown.h"
 #include "Active/Setting/Values/BoolValue.h"
 #include "Active/Setting/Values/DoubleValue.h"
@@ -223,6 +223,7 @@ namespace {
 			objectStart,	///<Object start brace, i.e. {
 			arrayStart,		///<Array start brace, [
 			valueStart,		///<An item value, e.g. "Ralph"
+			nullItem,		///<A 'null' for value/object/array content
 			delimiter,		///<Value delimiter, i.e. ,
 			objectEnd,		///<Object end brace, i.e. }
 			arrayEnd,		///<Array end brace, i.e. ]
@@ -567,6 +568,14 @@ namespace {
 				}
 				if (valueLeaders.find(leader.first) == std::u32string::npos)
 					throw std::system_error(makeJSONError(badValue));
+					//Check for a null item
+				if (leader.first == nullLeader) {
+					String text{"n"};
+					m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
+					if (text != nullValue)
+						throw std::system_error(makeJSONError(badValue));
+					return nullItem;
+				}
 				m_buffer.rewind(leader.second);	//Put the leading value back into the buffer
 				return valueStart;
 			case object: {	//In an object
@@ -610,7 +619,6 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void JSONImporter::getContent(Item& item) {
 		m_buffer.findIf([](char32_t uniChar){ return !isWhiteSpace(uniChar); });
-		//m_buffer.findFirstNotOf(String::allWhiteSpace, nullptr);
 			//First attempt to find a valid JSON value, determining the type according to JSON conventions
 		auto content = m_buffer.getEncodedChar();	//Get the first character from the buffer
 		if (content.second == 0)
@@ -684,7 +692,7 @@ namespace {
 					jsonStr.append(toJSONString(namespaceOut, m_glossary)).append(":");
 				}
 				auto tagOut = tag;
-				jsonStr.append(toJSONString(tagOut, m_glossary)).append("\": ");
+				jsonStr.append(toJSONString(tagOut, m_glossary)).append("\":");
 			}
 		}
 		switch (type) {
@@ -693,6 +701,9 @@ namespace {
 				break;
 			case arrayStart:
 				jsonStr.append("[");
+				break;
+			case nullItem:
+				jsonStr.append(nullValue);
 				break;
 			case objectEnd:
 				jsonStr.append("}");
@@ -847,6 +858,9 @@ namespace {
 					if (depth != 0)	//Failure if tags haven't been balanced correctly
 						throw std::system_error(makeJSONError(unbalancedScope));
 					return;
+				case nullItem:
+					parsingStage = complete;	//We're going to skip the null items completely
+					continue;
 				case delimiter:
 					if (parsingStage != complete)	//A delimiter has been found before anything was read
 						throw std::system_error(makeJSONError(unbalancedScope));
@@ -926,7 +940,7 @@ namespace {
 		}
 	} //doJSONImport
 	
-		
+	
 	/*--------------------------------------------------------------------
 		Export cargo to JSON
 	
@@ -935,6 +949,7 @@ namespace {
 		exporter: The JSON exporter
 	  --------------------------------------------------------------------*/
 	void doJSONExport(const Cargo& cargo, const JSONIdentity& identity, JSONExporter& exporter, int32_t depth = 0) {
+		using enum JSONIdentity::Type;
 		String tag, nameSpace;
 		if (identity.stage != root) {
 			if (identity.name.empty())	//Non-root values, i.e. values embedded in an object, must have an identifying name
@@ -948,9 +963,9 @@ namespace {
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::valueStart, depth);
-			if (item == nullptr) {
-				if (dynamic_cast<const Null*>(&cargo) == nullptr)
+			exporter.writeTag(tag, nameSpace, valueStart, depth);
+			if ((item == nullptr) || item->isNull()) {
+				if ((item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
 				return;
@@ -979,10 +994,14 @@ namespace {
 			//An array package will have a single item within more than one possible value
 		bool isArray = (inventory.size() == 1) && !(inventory.begin()->maximum() == 1),
 			 isFirstItem = true;
+		if (cargo.isNull()) {
+			exporter.writeTag(tag, nameSpace, nullItem, depth);
+			return;
+		}
 		if (isArray)
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::arrayStart, depth);
+			exporter.writeTag(tag, nameSpace, arrayStart, depth);
 		else if (isWrapper)
-			exporter.writeTag(tag, nameSpace, JSONIdentity::Type::objectStart, depth++);
+			exporter.writeTag(tag, nameSpace, objectStart, depth++);
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
 			auto item = *entry.second;
@@ -998,7 +1017,7 @@ namespace {
 			bool isItemArray = item.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray)
-				exporter.writeTag(item.identity().name, entryNameSpace, JSONIdentity::Type::arrayStart, depth);
+				exporter.writeTag(item.identity().name, entryNameSpace, arrayStart, depth);
 			for (item.available = 0; item.available < limit; ++item.available) {
 				auto content = cargo.getCargo(item);
 				if (!content)
@@ -1011,12 +1030,12 @@ namespace {
 							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
-				exporter.writeTag(String{}, String{}, JSONIdentity::Type::arrayEnd, depth);
+				exporter.writeTag(String{}, String{}, arrayEnd, depth);
 		}
 		if (isArray)
-			exporter.writeTag(String{}, String{}, JSONIdentity::Type::arrayEnd, depth);
+			exporter.writeTag(String{}, String{}, arrayEnd, depth);
 		else if (isWrapper)
-			exporter.writeTag(String{}, String{}, JSONIdentity::Type::objectEnd, --depth);
+			exporter.writeTag(String{}, String{}, objectEnd, --depth);
 	} //doJSONExport
 
 }  // namespace
@@ -1029,7 +1048,7 @@ namespace {
 	return: The converted string
   --------------------------------------------------------------------*/
 String JSONTransport::convertToJSONString(const String& source) {
-	JSONGlossary glossary;
+	JSONGlossary glossary;	
 	String result{source};
 	return toJSONString(result, glossary);
 } //JSONTransport::convertToJSONString

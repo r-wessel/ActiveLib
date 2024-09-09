@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Document/Object.h"
 
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/XML/Package/Wrapper/XMLValueSetting.h"
 
 #include <array>

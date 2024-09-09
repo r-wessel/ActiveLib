@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Container/Vector.h"
 #include "Active/Serialise/CargoHold.h"
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
 
 namespace active::serialise {
