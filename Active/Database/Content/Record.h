@@ -96,6 +96,16 @@ namespace active::database {
 		 @return The object link
 		 */
 		virtual Link getLink() const { return Link{getIndex()}; }
+		/*!
+		 Get the last edit time
+		 @return The edit time
+		 */
+		const active::utility::Time& getEdited() const { return m_editTime; }
+		/*!
+		 Get the created time
+		 @return The created time
+		 */
+		const active::utility::Time& getCreated() const { return m_createTime; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -118,6 +128,11 @@ namespace active::database {
 			m_dbaseID = index.dbaseID;
 			m_tableID = index.tableID;
 		}
+		/*!
+		 Set the last edit time
+		 @param time The edit time
+		 */
+		void setEdited(const active::utility::Time& editTime) { m_editTime = editTime; }
 		
 		// MARK: - Serialisation
 		

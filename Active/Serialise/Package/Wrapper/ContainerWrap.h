@@ -51,6 +51,14 @@ namespace active::serialise {
 		ContainerWrap(value_type& vector, bool isEmptySent = false, const utility::String& tg = defaultTag) :
 				base{vector}, isEmptyRequired(isEmptySent), tag{tg} {}
 		/*!
+		 Constructor
+		 @param vector The vector to wrap
+		 @param isEmptySent True if the container is still required to be sent even when empty
+		 @param tg The default item tag
+		*/
+		ContainerWrap(const value_type& vector, bool isEmptySent = false, const utility::String& tg = defaultTag) :
+				ContainerWrap{const_cast<value_type&>(vector), isEmptySent, defaultTag} {}
+		/*!
 			Destructor
 		*/
 		virtual ~ContainerWrap() = default;

@@ -14,18 +14,22 @@
 
 namespace active::database {
 	
+		///Concept for the ability to store objects in an SQLite database
+	template<typename Obj, typename ObjWrapper, typename Transport>
+	concept SQLiteStorable = std::is_base_of_v<serialise::Cargo, Obj> &&
+			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
+			std::is_base_of_v<serialise::Transport, Transport>;
+
 	/*!
 	 An SQLite database engine template
 	 
 	 @tparam Obj Interface for the stored object. NB: This can be a base class for an object hierarchy, not necessarily a concrete class
 	 @tparam Transport The serialisation transport mechanism for objects
-	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
 	 @tparam ObjID The object identifier type, e.g. Guid
+	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
 	 */
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID = utility::Guid, typename ObjID = utility::Guid>
-	requires std::is_base_of_v<serialise::Cargo, Obj> &&
-			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
-			std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	class SQLiteEngine : public SQLiteCore, public DBaseEngine<Obj, ObjID, DocID, utility::String>  {
 	public:
 		
@@ -121,7 +125,7 @@ namespace active::database {
 		return: The requested object (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	std::unique_ptr<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObject(const ObjID& ID, utility::String::Option tableID,
 																						   std::optional<DocID> documentID)  const {
 		auto table = getTable(tableID);
@@ -141,7 +145,7 @@ namespace active::database {
 		return: The requested objects (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	container::Vector<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjects(utility::String::Option tableID,
 																											   std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
@@ -160,7 +164,7 @@ namespace active::database {
 		return: The requested objects (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	container::Vector<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjects(const Filter& filter, utility::String::Option tableID,
 																							  std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
@@ -179,7 +183,7 @@ namespace active::database {
 		return: True if the object was successfully erased
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase(const ObjID& ID, utility::String::Option tableID,
 																	   std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
@@ -195,7 +199,7 @@ namespace active::database {
 		documentID: Optional document ID (filter for this document only - nullopt = all objects)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase(utility::String::Option tableID, std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
 		makeTransaction("SELECT * FROM " + table->ID + ";").execute();;
@@ -212,7 +216,7 @@ namespace active::database {
 		return: The collected objects
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	container::Vector<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::runTransaction(SQLiteCore::Transaction& transaction,
 																								  const TableSchema<utility::String>& table,
 																								  const Filter* filter) const {
@@ -248,7 +252,7 @@ namespace active::database {
 		return: An iterator pointing to the requested table
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	SQLiteSchema::const_iterator SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getTable(utility::String::Option tableID) const {
 		const auto& schema = getSchema();
 		SQLiteSchema::const_iterator table = schema.end();
