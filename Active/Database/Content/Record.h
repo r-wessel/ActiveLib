@@ -130,7 +130,7 @@ namespace active::database {
 		}
 		/*!
 		 Set the last edit time
-		 @param time The edit time
+		 @param editTime The edit time
 		 */
 		void setEdited(const active::utility::Time& editTime) { m_editTime = editTime; }
 		
