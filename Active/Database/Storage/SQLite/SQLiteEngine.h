@@ -226,8 +226,10 @@ namespace active::database {
 				auto row = ++transaction;
 				if (!row)
 					break;
-				if (auto idSetting = dynamic_cast<const setting::ValueSetting*>((*row)[0].get()); idSetting != nullptr)
-					tableIDs.emplace_back(*idSetting);
+				if (auto idSetting = dynamic_cast<const setting::ValueSetting*>((*row)[0].get()); idSetting != nullptr) {
+					ObjID temp = *idSetting;
+					tableIDs.emplace_back(temp);
+				}
 			} while (transaction);
 				//Add the table name and index column to the outline
 			result.emplace_back(std::make_pair(table.ID, tableIDs));
