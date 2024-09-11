@@ -73,11 +73,14 @@ namespace active::event {
 		bool add(std::shared_ptr<Subscriber> subscriber);
 		/*!
 			Add a managed subscriber, i.e. the subscription continues until the publisher is explicitly instructed to end it
-			@return True if subscriber was added
-		 	@tparam T The type of subscriber to add
+			@return The new subscriber on success, nullptr on failure
+			@tparam T The type of subscriber to add
 		*/
 		template<typename T> requires std::is_base_of_v<Subscriber, T>
-		bool add() { return add(std::make_shared<T>()); }
+		std::shared_ptr<T> add() {
+			auto subscriber = std::make_shared<T>();
+			return add(subscriber) ? subscriber : nullptr;
+		}
 		/*!
 			Add a casual subscriber, i.e. the subscription ends as soon as the subscriber disappears
 			@param subscriber The new subscriber

@@ -2,7 +2,7 @@
 
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Serialise/JSON/JSONTransport.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/XML/Package/Wrapper/Geometry/XMLPolyPoint.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"

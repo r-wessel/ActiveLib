@@ -9,7 +9,9 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/Cloner.h"
 #include "Active/Utility/Mover.h"
 
+#include <algorithm>
 #include <map>
+#include <vector>
 
 namespace active::container {
 
