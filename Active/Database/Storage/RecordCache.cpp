@@ -25,6 +25,6 @@ namespace {
 	return: The field identity
 		const serialise::Identity& getIdentity(FieldIndex index);
   --------------------------------------------------------------------*/
-const Identity& record::getIdentity(FieldIndex index) {
+const Identity& active::database::cache::getIdentity(FieldIndex index) {
 	return fieldID[index];
-} //record::getIdentity
+} //active::database::cache::getIdentity

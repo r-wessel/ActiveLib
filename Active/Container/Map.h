@@ -104,6 +104,15 @@ namespace active::container {
 			@return An iterator pointing to the key/value pair (end() on failure)
 		*/
 		auto find(const Key& key) const { return base::find(key); }
+		/*!
+			Get the map keys
+			@return An array containing the map keys
+		*/
+		std::vector<Key> keys() const {
+			std::vector<Key> result;
+			std::for_each(base::begin(), base::end(), [&result](const auto& entry){ result.push_back(entry.first); });
+			return result;
+		}
 		
 		// MARK: Functions (mutating)
 		
@@ -153,15 +162,20 @@ namespace active::container {
 			@param pos An iterator pointing to the item to be removed
 			@return An iterator at the next value
 		*/
-		auto release(iterator& pos) { return release(const_iterator(pos)); }
+		auto release(iterator& pos) {
+			auto item = std::move(pos->second);
+			erase(pos);
+			return item;
+		}
 		/*!
 			Release the pointer held by the specified item and erase
 			@param pos An iterator pointing to the item to be removed
 		 	@return The released pointer from the map item
 		*/
 		auto release(const_iterator pos) {
-			auto item = std::move(pos.second);
-			erase(pos);
+			auto& val = const_cast<std::unique_ptr<T>&>(pos->second);
+			auto item = std::unique_ptr<T>{val.release()};
+			base::erase(pos);
 			return item;
 		}
 		

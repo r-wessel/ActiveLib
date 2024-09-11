@@ -37,7 +37,8 @@ namespace active::database {
 		
 		using base = DBaseEngine<Obj, ObjID, DocID, utility::String>;
 		using Filter = base::Filter;
-		
+		using Outline = base::Outline;
+
 		// MARK: - Constructors
 		
 		/*!
@@ -46,11 +47,6 @@ namespace active::database {
 		 @param schema Database schema
 		 */
 		SQLiteEngine(const file::Path& path, SQLiteSchema&& schema) : SQLiteCore{path, std::move(schema)} {}
-		/*!
-			Object cloning
-			@return A clone of this object
-		*/
-		SQLiteEngine* clonePtr() const override { return new SQLiteEngine{*this}; }
 		
 		// MARK: - Functions (const)
 		
@@ -93,6 +89,11 @@ namespace active::database {
 		 @throw Exception thrown on SQL error
 		 */
 		void erase(utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
+		 Get the database outline
+		 @return The database outline
+		 */
+		Outline getOutline() const override;
 		/*!
 		 Run a (multi-step) transaction and collect the results
 		 @param transaction The transaction to run
@@ -202,9 +203,39 @@ namespace active::database {
 	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase(utility::String::Option tableID, std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
-		makeTransaction("SELECT * FROM " + table->ID + ";").execute();;
+		makeTransaction("SELECT * FROM " + table->ID + ";").execute();
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase
 
+	
+	/*--------------------------------------------------------------------
+		Get the database outline
+	 
+		return: The database outline
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::Outline SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getOutline() const {
+		Outline result;
+			//Iterate through each database table
+		for (const auto& table : getSchema()) {
+				//And extract the index column from the table
+			auto indexField = table[table.globalIndex]->name();
+			auto transaction = makeTransaction("SELECT " + indexField + " FROM " + table.ID + ";");
+			std::vector<ObjID> tableIDs;
+			do {
+				auto row = ++transaction;
+				if (!row)
+					break;
+				if (auto idSetting = dynamic_cast<const setting::ValueSetting*>((*row)[0].get()); idSetting != nullptr)
+					tableIDs.emplace_back(*idSetting);
+			} while (transaction);
+				//Add the table name and index column to the outline
+			result.emplace_back(std::make_pair(table.ID, tableIDs));
+		}
+		return result;
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getOutline
+	
+	
 	
 	/*--------------------------------------------------------------------
 		Run a transaction and collect the results

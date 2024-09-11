@@ -3,6 +3,9 @@
 
 #include "Active/Container/Vector.h"
 #include "Active/Database/Storage/DBaseEngine.h"
+#include "Active/Database/Storage/DBaseSchema.h"
+#include "Active/Serialise/Item/Wrapper/ValueWrap.h"
+#include "Active/Serialise/Package/Package.h"
 #include "Active/Utility/String.h"
 
 namespace active::database {
@@ -24,13 +27,35 @@ namespace active::database {
 		// MARK: - Types
 		
 			///The engine driving dbase operations. NB: This is independent of the Storage wrapper, i.e. one wrapper could employ multiple engines
-		using Engine = DBaseEngine<Obj, DocID, ObjID, TableID>;
+		using Engine = DBaseEngine<Obj, ObjID, DocID, TableID>;
 			///The database schema, including tables
 		using DBaseSchema = DBaseSchema<DBaseID, TableID>;
 			///Tables within the database, including a full description of member fields (names/types) and primary index/content fields
 		using TableSchema = DBaseSchema::TableSchema;
 			///Unary predicate for filtering records
 		using Filter = std::function<bool(const Obj&)>;
+			///A serialisation wrapper for a Storage container
+		class Wrapper : public active::serialise::Package {
+		public:
+				///A serialisation wrapper for a Storage table
+			class Table : public active::serialise::Package {
+			public:
+				Table(const Storage& storage, const std::pair<TableID, std::vector<ObjID>>& table) : m_storage{storage}, m_table(table) {}
+				bool fillInventory(active::serialise::Inventory& inventory) const override;
+				active::serialise::Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+			private:
+				const Storage& m_storage;
+				const std::pair<TableID, std::vector<ObjID>>& m_table;
+			};
+			Wrapper(const Storage& storage) : m_storage{storage}, m_outline(storage.m_engine->getOutline()) {}
+			bool fillInventory(active::serialise::Inventory& inventory) const override;
+			active::serialise::Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+		private:
+			const Storage& m_storage;
+			Engine::Outline m_outline;
+		};
+		
+		friend class Wrapper;
 		
 		// MARK: - Constructors
 		
@@ -110,10 +135,77 @@ namespace active::database {
 		virtual void erase(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			m_engine->erase(tableID, documentID);
 		}
+		/*!
+		 Get a serialisation wrapper for the storage container (to serialise the content)
+		 @return A serialisation wrapper for the storage container
+		 */
+		std::unique_ptr<active::serialise::Cargo> wrapper() const { return std::make_unique<Wrapper>(*this); }
 
 	private:
 		std::unique_ptr<Engine> m_engine;
 	};
+	
+
+	/*--------------------------------------------------------------------
+		Fill an inventory with the cargo items
+	 
+		inventory: The inventory to receive the cargo items
+	 
+		return: True if items have been added to the inventory
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID>
+	bool Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::fillInventory(active::serialise::Inventory& inventory) const {
+		using enum active::serialise::Entry::Type;
+			//Each table becomes a serialisation object suing the table name
+		for (int16_t index = 0; index < m_outline.size(); ++index)
+			inventory.merge({ m_outline[index].first, index, element });
+		return true;
+	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::fillInventory
+	
+	
+	/*--------------------------------------------------------------------
+		Get the specified cargo
+	 
+		item: The inventory item to retrieve
+	 
+		return: The requested cargo (nullptr on failure)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID>
+	active::serialise::Cargo::Unique Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::getCargo(const active::serialise::Inventory::Item& item) const {
+		if (item.available >= m_outline.size())
+			return nullptr;
+		return std::make_unique<Wrapper::Table>(m_storage, m_outline[item.available]);
+	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::getCargo
+	
+
+	/*--------------------------------------------------------------------
+		Fill an inventory with the cargo items
+	 
+		inventory: The inventory to receive the cargo items
+	 
+		return: True if items have been added to the inventory
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID>
+	bool Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::Table::fillInventory(active::serialise::Inventory& inventory) const {
+		using enum active::serialise::Entry::Type;
+		inventory.merge({ m_table.first, 0, m_table.second.size(), std::nullopt });
+		return true;
+	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::fillInventory
+	
+	
+	/*--------------------------------------------------------------------
+		Get the specified cargo
+	 
+		item: The inventory item to retrieve
+	 
+		return: The requested cargo (nullptr on failure)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID>
+	active::serialise::Cargo::Unique Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::Table::getCargo(const active::serialise::Inventory::Item& item) const {
+		if (item.available >= m_table.second.size())
+			return nullptr;
+		return std::make_unique<active::serialise::ValueWrap<ObjID>>(m_table.second[item.available]);
+	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::getCargo
 	
 }
 

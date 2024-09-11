@@ -26,7 +26,11 @@ namespace active::database {
 		*/
 		const serialise::Identity& getIdentity(FieldIndex index);
 	}
-	
+
+		///Concept for the ability to store objects in a document
+	template<typename Obj, typename ObjID, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	concept IsRecordType = std::is_base_of_v<Record<ObjID, DBaseID, TableID>, Obj>;
+
 	/*!
 	 Interface for a in-memory record cache indexed by the primary key
 	 
@@ -37,7 +41,8 @@ namespace active::database {
 	 @tparam Obj Interface for the stored record
 	 @tparam ObjID The record identifier type (the primary index key)
 	 */
-	template<typename Obj, typename ObjID = utility::Guid> requires std::is_base_of_v<Record<ObjID>, Obj>
+	template<typename Obj, typename ObjID = utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
 	class RecordCache : public Record<ObjID>, private container::Map<ObjID, Obj> {
 	public:
 		
@@ -61,7 +66,7 @@ namespace active::database {
 			Record cloning
 			@return A clone of this record
 		*/
-		virtual RecordCache* clonePtr() const { return clone(*this); };
+		virtual RecordCache* clonePtr() const override { return new RecordCache(*this); };
 		
 		// MARK: - Functions (const)
 		
@@ -70,7 +75,7 @@ namespace active::database {
 		 @param objID The record ID
 		 @return The requested record (nullptr on failure). NB: The returned record is a clone of the original in storage
 		 */
-		virtual Obj::Unique read(const ObjID& objID) const;
+		virtual std::unique_ptr<Obj> read(const ObjID& objID) const;
 		/*!
 		 Read all records
 		 @return The requested records (nullptr on failure). NB: The returned records are cloned from storage
@@ -82,13 +87,18 @@ namespace active::database {
 		 @return The filtered records (nullptr on failure). NB: The returned records are cloned from storage
 		 */
 		virtual active::container::Vector<Obj> read(const Filter& filter) const;
+		/*!
+		 Get the cached object keys
+		 @return An array containing the cache keys
+		 */
+		auto keys() const { return base::keys(); }
 		
 		
 		/*!
 		 Write a record to storage
 		 @param record The record to write (adds if new, or overwrites any record with the same ID)
 		 */
-		virtual void write(const Obj& record) { (*this)[record.id] = clone(record); }
+		virtual void write(const Obj& record) { (*this)[record.getID()] = clone(record); }
 		/*!
 		 Erase an record by index
 		 @param objID The record ID
@@ -105,7 +115,7 @@ namespace active::database {
 		 @param store The store to merge (NB: the objects in this container are assumed to be expendable)
 		 @return True if the record was accepted
 		 */
-		virtual RecordCache<Obj, ObjID>& merge(RecordCache<Obj, ObjID>&& store);
+		virtual RecordCache<Obj, ObjID, DBaseID, TableID>& merge(RecordCache<Obj, ObjID, DBaseID, TableID>&& store);
 		
 		// MARK: - Serialisation
 		
@@ -135,10 +145,11 @@ namespace active::database {
 	 
 		return: The requested record (nullptr on failure). NB: The returned record is a clone of the original in storage
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID> requires std::is_base_of_v<Record<ObjID>, Obj>
-	typename Obj::Unique RecordCache<Obj, ObjID>::read(const ObjID& objID) const {
+	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	typename std::unique_ptr<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read(const ObjID& objID) const {
 		if (auto iter = base::find(objID); iter != base::end())
-			return clone(**iter);
+			return clone(*iter->second);
 		return nullptr;
 	} //RecordCache::<Obj, ObjID>::read
 	
@@ -148,12 +159,13 @@ namespace active::database {
 	 
 		return: The requested records (nullptr on failure). NB: The returned records are cloned from storage
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID> requires std::is_base_of_v<Record<ObjID>, Obj>
-	typename active::container::Vector<Obj> RecordCache<Obj, ObjID>::read() const {
+	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	typename active::container::Vector<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read() const {
 		active::container::Vector<Obj> result;
-		std::for_each(base::begin(), base::end(), [&result](const auto& item){ result.emplace_back(clone(*item->second)); });
+		std::for_each(base::begin(), base::end(), [&result](const auto& item){ result.emplace_back(clone(*item.second)); });
 		return result;
-	} //RecordCache<Obj, ObjID>::read
+	} //RecordCache<Obj, ObjID, DBaseID, TableID>::read
 	
 	
 	/*--------------------------------------------------------------------
@@ -163,15 +175,16 @@ namespace active::database {
 	 
 		return: The filtered records (nullptr on failure). NB: The returned records are cloned from storage
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID> requires std::is_base_of_v<Record<ObjID>, Obj>
-	typename active::container::Vector<Obj> RecordCache<Obj, ObjID>::read(const Filter& filter) const {
+	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	typename active::container::Vector<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read(const Filter& filter) const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&](const auto& item){
-			if (filter(*item->second))
-				result.emplace_back(clone(*item->second));
+			if (filter(*item.second))
+				result.emplace_back(clone(*item.second));
 		});
 		return result;
-	} //RecordCache<Obj, ObjID>::read
+	} //RecordCache<Obj, ObjID, DBaseID, TableID>::read
 	
 	
 	/*--------------------------------------------------------------------
@@ -181,46 +194,48 @@ namespace active::database {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID> requires std::is_base_of_v<Record<ObjID>, Obj>
-	RecordCache<Obj, ObjID>& RecordCache<Obj, ObjID>::merge(RecordCache<Obj, ObjID>&& store) {
-		auto startKeys = std::views::keys(*this),
-				endKeys = std::views::keys(store);
+	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	RecordCache<Obj, ObjID, DBaseID, TableID>& RecordCache<Obj, ObjID, DBaseID, TableID>::merge(RecordCache<Obj, ObjID, DBaseID, TableID>&& store) {
+		auto startKeys = base::keys();
+		auto endKeys = store.keys();
 		std::set<ObjID> startSet{startKeys.begin(), startKeys.end()},
 				endSet{endKeys.begin(), endKeys.end()};
 			//Find (potentially) edited records
 		std::set<ObjID> edited;
-		std::set_intersection(startSet.begin(), startSet.end(), endSet.begin(), endSet.end(), std::back_inserter(edited));
+		std::set_intersection(startSet.begin(), startSet.end(), endSet.begin(), endSet.end(), std::inserter(edited, edited.begin()));
 			//Find (potentially) added records
 		std::set<ObjID> added;
-		std::set_difference(endSet.begin(), endSet.end(), edited.begin(), edited.end(), std::back_inserter(added));
+		std::set_difference(endSet.begin(), endSet.end(), edited.begin(), edited.end(), std::inserter(added, added.begin()));
 			//Find (potentially) removed records
 		std::set<ObjID> removed;
-		std::set_difference(startSet.begin(), startSet.end(), edited.begin(), edited.end(), std::back_inserter(removed));
+		std::set_difference(startSet.begin(), startSet.end(), edited.begin(), edited.end(), std::inserter(removed, removed.begin()));
 			//Compare edited records to retain the most recent version in this cache
 		std::for_each(edited.begin(), edited.end(), [this, &store](const auto& key) {
-			auto mine = (*this)[key],
-				 theirs = store[key];
+			auto& mine = (*this)[key];
+			auto& theirs = store[key];
 				//If their record is more recent than mine, swap in the new data
 			if (theirs->getEdited() > mine->getEdited())
 				mine.reset(theirs.release());
 		});
 			//Merge added records, but only if they haven't been previously deleted from this cache
 		std::for_each(added.begin(), added.end(), [this, &store](const auto& key) {
-			auto theirs = store[key];
+			auto theirs = store.find(key);
 				//If this record was created after the last refresh of this data, add it to this
-			if (theirs->getEdited() > this->getEdited())
-				this->emplace(key, std::unique_ptr{theirs.release()});
+			if (theirs->second->getEdited() > this->getEdited())
+				this->emplace(key, store.release(theirs));
 		});
 			//Erase removed records, but only if they haven't been added in this container
 		std::for_each(removed.begin(), removed.end(), [this](const auto& key) {
-			auto mine = (*this)[key];
+			auto& mine = (*this)[key];
 				//If their record is more recent than mine, swap in the new data
 			if (mine->getCreated() < this->getEdited())
 				this->erase(key);
 			else
 				mine->setEdited(active::utility::Time{});	//Mark the time this record has merged
 		});
-	} //RecordCache<Obj, ObjID>::merge
+		return *this;
+	} //RecordCache<Obj, ObjID, DBaseID, TableID>::merge
 	
 
 	/*--------------------------------------------------------------------
@@ -230,18 +245,19 @@ namespace active::database {
 	 
 		return: True if the package has added items to the inventory
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID> requires std::is_base_of_v<Record<ObjID>, Obj>
-	bool RecordCache<Obj, ObjID>::fillInventory(active::serialise::Inventory& inventory) const {
+	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	bool RecordCache<Obj, ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
 		using enum serialise::Entry::Type;
 		using enum cache::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{
 				{ cache::getIdentity(object), object, element },
 			},
-		}.withType(&typeid(RecordCache<Obj, ObjID>)));
+		}.withType(&typeid(RecordCache<Obj, ObjID, DBaseID, TableID>)));
 		Record<ObjID>::fillInventory(inventory);
 		return true;
-	} //RecordCache<Obj, ObjID>::fillInventory
+	} //RecordCache<Obj, ObjID, DBaseID, TableID>::fillInventory
 	
 	
 	/*--------------------------------------------------------------------
@@ -251,8 +267,9 @@ namespace active::database {
 	 
 		return: The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID> requires std::is_base_of_v<Record<ObjID>, Obj>
-	serialise::Cargo::Unique RecordCache<Obj, ObjID>::getCargo(const active::serialise::Inventory::Item& item) const {
+	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	serialise::Cargo::Unique RecordCache<Obj, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.ownerType != &typeid(Record<ObjID>))
 			return Record<ObjID>::getCargo(item);
 		using namespace active::serialise;
@@ -262,13 +279,13 @@ namespace active::database {
 				if (item.available < base::size()) {
 					auto iter = base::begin();
 					std::advance(iter, item.available);
-					return std::make_unique<active::serialise::PackageWrap>(*iter);
+					return std::make_unique<active::serialise::PackageWrap>(*iter->second);
 				}
 				return std::make_unique<WrappedValue>();
 			default:
 				return nullptr;	//Requested an unknown index
 		}
-	} //RecordCache<Obj, ObjID>::getCargo
+	} //RecordCache<Obj, ObjID, DBaseID, TableID>::getCargo
 	
 }
 

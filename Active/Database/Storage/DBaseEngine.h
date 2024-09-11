@@ -2,7 +2,6 @@
 #define ACTIVE_DATABASE_DBASE_ENGINE
 
 #include "Active/Container/Vector.h"
-#include "Active/Utility/Cloner.h"
 #include "Active/Utility/Guid.h"
 
 namespace active::database {
@@ -17,13 +16,15 @@ namespace active::database {
 	 @tparam TableID The table identifier type
 	 */
 	template<typename Obj, typename ObjID = active::utility::Guid, typename DocID = active::utility::Guid, typename TableID = active::utility::Guid>
-	class DBaseEngine : public utility::Cloner {
+	class DBaseEngine {
 	public:
 		
 		// MARK: - Types
 		
 			///Unary predicate for filtering objects
 		using Filter = std::function<bool(const Obj&)>;
+			///Outline structure of the database (pairs a table identifier with an array of object identifiers for the table content)
+		using Outline = std::vector<std::pair<TableID, std::vector<ObjID>>>;
 		
 		// MARK: - Constructors
 		
@@ -31,11 +32,6 @@ namespace active::database {
 		 Destructor
 		 */
 		virtual ~DBaseEngine() {}
-		/*!
-			Object cloning
-			@return A clone of this object
-		*/
-		virtual DBaseEngine* clonePtr() const = 0;
 		
 		// MARK: - Functions (const)
 		
@@ -78,6 +74,11 @@ namespace active::database {
 		 @throw Exception thrown on error
 		 */
 		virtual void erase(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
+		/*!
+		 Get the database outline
+		 @return The database outline
+		 */
+		virtual Outline getOutline() const = 0;
 	};
 	
 }

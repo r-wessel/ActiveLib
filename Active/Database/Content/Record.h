@@ -58,6 +58,10 @@ namespace active::database {
 		// MARK: - Constructors
 		
 		/*!
+		 Default constructor
+		 */
+		Record() {}
+		/*!
 		 Constructor
 		 @param ID The object document identifier
 		 */
