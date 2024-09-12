@@ -478,6 +478,9 @@
     <ClInclude Include="Active\Database\Storage\SQLite\SQLiteEngine.h">
       <Filter>Active\Database\Storage\SQLite</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Database\Storage\RecordCache.h">
+      <Filter>Active\Database\Storage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -665,6 +668,9 @@
     </ClCompile>
     <ClCompile Include="Active\Database\Storage\SQLite\SQLiteCore.cpp">
       <Filter>Active\Database\Storage\SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Database\Storage\RecordCache.cpp">
+      <Filter>Active\Database\Storage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
