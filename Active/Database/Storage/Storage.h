@@ -126,7 +126,9 @@ namespace active::database {
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 */
 		void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
-				   std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const;
+				   std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			m_engine->write(object, objID, objDocID, tableID, documentID);
+		}
 		/*!
 		 Write a record-based object to the database
 		 @param record The record-based object to writes
