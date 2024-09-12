@@ -9,6 +9,7 @@
 #include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Transport.h"
 #include "Active/Utility/BufferIn.h"
+#include "Active/Utility/BufferOut.h"
 #include "Active/Utility/Guid.h"
 #include "SQLite/sqlite3.h"
 
@@ -24,6 +25,7 @@ namespace active::database {
 	 An SQLite database engine template
 	 
 	 @tparam Obj Interface for the stored object. NB: This can be a base class for an object hierarchy, not necessarily a concrete class
+	 @tparam ObjWrapper Wrapper type for (de)serialising objects
 	 @tparam Transport The serialisation transport mechanism for objects
 	 @tparam ObjID The object identifier type, e.g. Guid
 	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
@@ -74,6 +76,16 @@ namespace active::database {
 		 */
 		active::container::Vector<Obj> getObjects(const Filter& filter, utility::String::Option tableID = std::nullopt,
 														  std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
+		 Write an object to the database
+		 @param object The object to write
+		 @param objID The object ID
+		 @param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 */
+		virtual void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
 		 Erase an object by index
 		 @param ID The object ID
@@ -172,6 +184,35 @@ namespace active::database {
 		auto transaction = makeTransaction("SELECT * FROM " + table->ID + ";");
 		return runTransaction(transaction, *table, &filter);
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjects
+	
+	
+	/*--------------------------------------------------------------------
+		Write an object to the database
+	 
+		object: The object to write
+		objID: The object ID
+		objDocID: The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		tableID: Optional table ID (defaults to the first table)
+		documentID: Optional document ID (when the object is bound to a specific document)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write(const Obj& object,
+																	   const ObjID& objID, std::optional<ObjID> objDocID,
+																	   utility::String::Option tableID, std::optional<DocID> documentID) const {
+		utility::String content;
+		Transport{}.send(serialise::PackageWrap(object), serialise::Identity{}, content);
+		auto table = getTable(tableID);
+		bool isDocIndexed = objDocID && table->documentIndex;
+		utility::String statement{"INSERT INTO " + table->ID + " (" + (*table)[table->globalIndex]->name() + ", "};
+		if (isDocIndexed)
+			statement += (*table)[*table->documentIndex]->name() + ", ";
+		statement += (*table)[table->contentIndex]->name() + ") VALUES (" + toSQLiteString(objID) + ", ";
+		if (isDocIndexed)
+			statement += toSQLiteString(*objDocID) + ", ";
+		statement += toSQLiteString(content.data()) + ");";
+		makeTransaction(statement).execute();
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write
 	
 	
 	/*--------------------------------------------------------------------

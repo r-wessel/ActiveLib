@@ -2,6 +2,7 @@
 #define ACTIVE_DATABASE_STORAGE
 
 #include "Active/Container/Vector.h"
+#include "Active/Database/Content/Record.h"
 #include "Active/Database/Storage/DBaseEngine.h"
 #include "Active/Database/Storage/DBaseSchema.h"
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
@@ -19,8 +20,8 @@ namespace active::database {
 	 @tparam DBaseID The database identifier type, e.g. Guid (or String for named dbases)
 	 @tparam TableID The table identifier type, e.g. Guid (or String for named tables)
 	 */
-	template<typename Obj, typename Transport, typename DocID = active::utility::Guid,
-			typename ObjID = active::utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	template<typename Obj, typename Transport, typename DocID = active::utility::Guid, typename ObjID = active::utility::Guid,
+			typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
 	class Storage {
 	public:
 		
@@ -63,7 +64,7 @@ namespace active::database {
 		 Constructor
 		 @param engine The database engine
 		 */
-		Storage(std::unique_ptr<Engine> engine) : m_engine{std::move(engine)} {}
+		Storage(std::shared_ptr<Engine> engine) : m_engine{engine} {}
 		/*!
 		 Copy constructor
 		 @param source The object to copy
@@ -72,7 +73,7 @@ namespace active::database {
 		/*!
 		 Destructor
 		 */
-		virtual ~Storage() {}
+		~Storage() {}
 		
 		// MARK: - Functions (const)
 		
@@ -117,13 +118,33 @@ namespace active::database {
 			return m_engine->getObjects(tableID, documentID);
 		}
 		/*!
+		 Write an object to the database
+		 @param object The object to write
+		 @param objID The object ID
+		 @param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 */
+		void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+				   std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const;
+		/*!
+		 Write a record-based object to the database
+		 @param record The record-based object to writes
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 */
+		template<typename T>
+		void write(const T& record, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			write(record, record.getGlobalID(), record.getID(), tableID, documentID);
+		}
+		/*!
 		 Erase an object by index
 		 @param index The object index
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 @throw Exception thrown on error
 		 */
-		virtual void erase(const ObjID& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+		void erase(const ObjID& index, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			m_engine->erase(index, tableID, documentID);
 		}
 		/*!
@@ -132,7 +153,7 @@ namespace active::database {
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 @throw Exception thrown on error
 		 */
-		virtual void erase(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+		void erase(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			m_engine->erase(tableID, documentID);
 		}
 		/*!
@@ -142,7 +163,7 @@ namespace active::database {
 		std::unique_ptr<active::serialise::Cargo> wrapper() const { return std::make_unique<Wrapper>(*this); }
 
 	private:
-		std::unique_ptr<Engine> m_engine;
+		std::shared_ptr<Engine> m_engine;
 	};
 	
 
