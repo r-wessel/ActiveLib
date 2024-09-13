@@ -15,16 +15,14 @@ namespace active::database {
 	 - information about related objects
 	 - state information related to the object
 	 @tparam ObjID The object identifier type
-	 @tparam DBaseID The database identifier type
-	 @tparam TableID The table identifier type
 	 */
-	template<typename ObjID = active::utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
-	class Link : public active::database::Index<ObjID, DBaseID, TableID>, public active::setting::SettingList {
+	template<typename ObjID = active::utility::Guid>
+	class Link : public active::database::Index<ObjID>, public active::setting::SettingList {
 	public:
 
 		// MARK: - Types
 		
-		using base = active::database::Index<ObjID, DBaseID, TableID>;
+		using base = active::database::Index<ObjID>;
 			///Unique pointer
 		using Unique = std::unique_ptr<Link>;
 			///Shared pointer

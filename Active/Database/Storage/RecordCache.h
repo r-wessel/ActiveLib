@@ -28,8 +28,8 @@ namespace active::database {
 	}
 
 		///Concept for the ability to store objects in a document
-	template<typename Obj, typename ObjID, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
-	concept IsRecordType = std::is_base_of_v<Record<ObjID, DBaseID, TableID>, Obj>;
+	template<typename Obj, typename ObjID>
+	concept IsRecordType = std::is_base_of_v<Record<ObjID>, Obj>;
 
 	/*!
 	 Interface for a in-memory record cache indexed by the primary key
@@ -42,7 +42,7 @@ namespace active::database {
 	 @tparam ObjID The record identifier type (the primary index key)
 	 */
 	template<typename Obj, typename ObjID = utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	class RecordCache : public Record<ObjID>, private container::Map<ObjID, Obj> {
 	public:
 		
@@ -146,7 +146,7 @@ namespace active::database {
 		return: The requested record (nullptr on failure). NB: The returned record is a clone of the original in storage
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	typename std::unique_ptr<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read(const ObjID& objID) const {
 		if (auto iter = base::find(objID); iter != base::end())
 			return clone(*iter->second);
@@ -160,7 +160,7 @@ namespace active::database {
 		return: The requested records (nullptr on failure). NB: The returned records are cloned from storage
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	typename active::container::Vector<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read() const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&result](const auto& item){ result.emplace_back(clone(*item.second)); });
@@ -176,7 +176,7 @@ namespace active::database {
 		return: The filtered records (nullptr on failure). NB: The returned records are cloned from storage
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	typename active::container::Vector<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read(const Filter& filter) const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&](const auto& item){
@@ -195,7 +195,7 @@ namespace active::database {
 		return: A reference to this
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	RecordCache<Obj, ObjID, DBaseID, TableID>& RecordCache<Obj, ObjID, DBaseID, TableID>::merge(RecordCache<Obj, ObjID, DBaseID, TableID>&& store) {
 		auto startKeys = base::keys();
 		auto endKeys = store.keys();
@@ -246,7 +246,7 @@ namespace active::database {
 		return: True if the package has added items to the inventory
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	bool RecordCache<Obj, ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
 		using enum serialise::Entry::Type;
 		using enum cache::FieldIndex;
@@ -268,7 +268,7 @@ namespace active::database {
 		return: The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID, DBaseID, TableID>
+	requires IsRecordType<Obj, ObjID>
 	serialise::Cargo::Unique RecordCache<Obj, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.ownerType != &typeid(Record<ObjID>))
 			return Record<ObjID>::getCargo(item);
