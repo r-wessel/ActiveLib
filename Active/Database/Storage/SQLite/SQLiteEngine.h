@@ -1,6 +1,7 @@
 #ifndef ACTIVE_DATABASE_SQLITE_ENGINE
 #define ACTIVE_DATABASE_SQLITE_ENGINE
 
+#include "Active/Database/Concepts.h"
 #include "Active/Database/Storage/DBaseEngine.h"
 #include "Active/Database/Storage/SQLite/SQLiteCore.h"
 #include "Active/File/Path.h"
@@ -17,7 +18,8 @@ namespace active::database {
 	
 		///Concept for the ability to store objects in an SQLite database
 	template<typename Obj, typename ObjWrapper, typename Transport>
-	concept SQLiteStorable = std::is_base_of_v<serialise::Cargo, Obj> &&
+	concept SQLiteStorable = (CanWrap<Obj, ObjWrapper> || FlatType<Obj, ObjWrapper>) &&
+			std::is_base_of_v<serialise::Cargo, Obj> &&
 			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
 			std::is_base_of_v<serialise::Transport, Transport>;
 
@@ -30,7 +32,7 @@ namespace active::database {
 	 @tparam ObjID The object identifier type, e.g. Guid
 	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
 	 */
-	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID = utility::Guid, typename ObjID = utility::Guid>
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID = active::utility::Guid, typename ObjID = active::utility::Guid>
 	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	class SQLiteEngine : public SQLiteCore, public DBaseEngine<Obj, ObjID, DocID, utility::String>  {
 	public:
@@ -307,12 +309,14 @@ namespace active::database {
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
 				wrapper = std::make_unique<serialise::CargoHold<serialise::PackageWrap, Obj>>();
 			else
-				wrapper = std::make_unique<ObjWrapper>();
+				wrapper = std::make_unique<serialise::CargoHold<ObjWrapper, Obj>>();
 			Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, content->operator utility::String());
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
 				result.emplace_back(std::make_unique<Obj>(dynamic_cast<serialise::CargoHold<serialise::PackageWrap, Obj>*>(wrapper.get())->get()));
-			else
-				result.emplace(wrapper.release());
+			else {
+				if (auto incoming = wrapper.release(); incoming)
+					result.emplace(incoming);
+			}
 		} while (transaction);
 		return result;
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::runTransaction

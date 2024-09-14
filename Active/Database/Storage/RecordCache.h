@@ -2,6 +2,7 @@
 #define ACTIVE_DATABASE_RECORD_CACHE
 
 #include "Active/Container/Map.h"
+#include "Active/Database/Concepts.h"
 #include "Active/Database/Content/Record.h"
 #include "Active/Serialise/CargoHold.h"
 #include "Active/Serialise/Package/Wrapper/PackageWrap.h"
@@ -28,8 +29,8 @@ namespace active::database {
 	}
 
 		///Concept for the ability to store objects in a document
-	template<typename Obj, typename ObjID>
-	concept IsRecordType = std::is_base_of_v<Record<ObjID>, Obj>;
+	template<typename Obj, typename ObjWrapper, typename ObjID>
+	concept IsRecordType = std::is_base_of_v<Record<ObjID>, Obj> && (CanWrap<Obj, ObjWrapper> || FlatType<Obj, ObjWrapper>);
 
 	/*!
 	 Interface for a in-memory record cache indexed by the primary key
@@ -41,8 +42,8 @@ namespace active::database {
 	 @tparam Obj Interface for the stored record
 	 @tparam ObjID The record identifier type (the primary index key)
 	 */
-	template<typename Obj, typename ObjID = utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
-	requires IsRecordType<Obj, ObjID>
+	template<typename Obj, typename ObjWrapper, typename ObjID = utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
 	class RecordCache : public Record<ObjID>, private container::Map<ObjID, Obj> {
 	public:
 		
@@ -51,8 +52,6 @@ namespace active::database {
 		using base = container::Map<ObjID, Obj>;
 			///Unary predicate for filtering records
 		using Filter = std::function<bool(const Obj&)>;
-			
-		using WrappedValue = active::serialise::CargoHold<active::serialise::PackageWrap, Obj>;
 		
 		// MARK: - Constructors
 		
@@ -115,7 +114,7 @@ namespace active::database {
 		 @param store The store to merge (NB: the objects in this container are assumed to be expendable)
 		 @return True if the record was accepted
 		 */
-		virtual RecordCache<Obj, ObjID, DBaseID, TableID>& merge(RecordCache<Obj, ObjID, DBaseID, TableID>&& store);
+		virtual RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>& merge(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>&& store);
 		
 		// MARK: - Serialisation
 		
@@ -145,9 +144,9 @@ namespace active::database {
 	 
 		return: The requested record (nullptr on failure). NB: The returned record is a clone of the original in storage
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID>
-	typename std::unique_ptr<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read(const ObjID& objID) const {
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	typename std::unique_ptr<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read(const ObjID& objID) const {
 		if (auto iter = base::find(objID); iter != base::end())
 			return clone(*iter->second);
 		return nullptr;
@@ -159,13 +158,13 @@ namespace active::database {
 	 
 		return: The requested records (nullptr on failure). NB: The returned records are cloned from storage
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID>
-	typename active::container::Vector<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read() const {
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	typename active::container::Vector<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read() const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&result](const auto& item){ result.emplace_back(clone(*item.second)); });
 		return result;
-	} //RecordCache<Obj, ObjID, DBaseID, TableID>::read
+	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read
 	
 	
 	/*--------------------------------------------------------------------
@@ -175,16 +174,16 @@ namespace active::database {
 	 
 		return: The filtered records (nullptr on failure). NB: The returned records are cloned from storage
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID>
-	typename active::container::Vector<Obj> RecordCache<Obj, ObjID, DBaseID, TableID>::read(const Filter& filter) const {
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	typename active::container::Vector<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read(const Filter& filter) const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&](const auto& item){
 			if (filter(*item.second))
 				result.emplace_back(clone(*item.second));
 		});
 		return result;
-	} //RecordCache<Obj, ObjID, DBaseID, TableID>::read
+	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read
 	
 	
 	/*--------------------------------------------------------------------
@@ -194,9 +193,9 @@ namespace active::database {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID>
-	RecordCache<Obj, ObjID, DBaseID, TableID>& RecordCache<Obj, ObjID, DBaseID, TableID>::merge(RecordCache<Obj, ObjID, DBaseID, TableID>&& store) {
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>& RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::merge(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>&& store) {
 		auto startKeys = base::keys();
 		auto endKeys = store.keys();
 		std::set<ObjID> startSet{startKeys.begin(), startKeys.end()},
@@ -235,7 +234,7 @@ namespace active::database {
 				mine->setEdited(active::utility::Time{});	//Mark the time this record has merged
 		});
 		return *this;
-	} //RecordCache<Obj, ObjID, DBaseID, TableID>::merge
+	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::merge
 	
 
 	/*--------------------------------------------------------------------
@@ -245,19 +244,19 @@ namespace active::database {
 	 
 		return: True if the package has added items to the inventory
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID>
-	bool RecordCache<Obj, ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	bool RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
 		using enum serialise::Entry::Type;
 		using enum cache::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{
 				{ cache::getIdentity(object), object, element },
 			},
-		}.withType(&typeid(RecordCache<Obj, ObjID, DBaseID, TableID>)));
+		}.withType(&typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>)));
 		Record<ObjID>::fillInventory(inventory);
 		return true;
-	} //RecordCache<Obj, ObjID, DBaseID, TableID>::fillInventory
+	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::fillInventory
 	
 	
 	/*--------------------------------------------------------------------
@@ -267,9 +266,9 @@ namespace active::database {
 	 
 		return: The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
-	template<typename Obj, typename ObjID, typename DBaseID, typename TableID>
-	requires IsRecordType<Obj, ObjID>
-	serialise::Cargo::Unique RecordCache<Obj, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	serialise::Cargo::Unique RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.ownerType != &typeid(Record<ObjID>))
 			return Record<ObjID>::getCargo(item);
 		using namespace active::serialise;
@@ -281,11 +280,14 @@ namespace active::database {
 					std::advance(iter, item.available);
 					return std::make_unique<active::serialise::PackageWrap>(*iter->second);
 				}
-				return std::make_unique<WrappedValue>();
+				if constexpr (FlatType<Obj, ObjWrapper>)
+					return std::make_unique<active::serialise::CargoHold<active::serialise::PackageWrap, Obj>>();
+				else
+					return std::make_unique<active::serialise::CargoHold<ObjWrapper, Obj>>();
 			default:
 				return nullptr;	//Requested an unknown index
 		}
-	} //RecordCache<Obj, ObjID, DBaseID, TableID>::getCargo
+	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::getCargo
 	
 }
 
