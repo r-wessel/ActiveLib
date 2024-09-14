@@ -13,7 +13,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::serialise {
 	
 	/*!
-	 Wrapper to box/unbox objects during (de)serialisation, reading/writing a specified attribute to determine object type
+	 Wrapper to box/unbox objects during (de)serialisation, including reading/writing a specified attribute to determine object type
 	 
 	 This wrapper is intended to be used for serialisation of polymorphic objects, i.e. any number of objects derived from a common base. There
 	 are 4 different scenarios for using the wrapper:

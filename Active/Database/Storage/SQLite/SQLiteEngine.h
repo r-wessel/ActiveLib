@@ -7,6 +7,7 @@
 #include "Active/File/Path.h"
 #include "Active/Serialise/Cargo.h"
 #include "Active/Serialise/CargoHold.h"
+#include "Active/Serialise/Concepts.h"
 #include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Transport.h"
 #include "Active/Utility/BufferIn.h"
@@ -19,7 +20,7 @@ namespace active::database {
 		///Concept for the ability to store objects in an SQLite database
 	template<typename Obj, typename ObjWrapper, typename Transport>
 	concept SQLiteStorable = (CanWrap<Obj, ObjWrapper> || FlatType<Obj, ObjWrapper>) &&
-			std::is_base_of_v<serialise::Cargo, Obj> &&
+			serialise::IsCargo<Obj> &&
 			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
 			std::is_base_of_v<serialise::Transport, Transport>;
 
