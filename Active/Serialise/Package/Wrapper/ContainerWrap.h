@@ -180,12 +180,18 @@ namespace active::serialise {
 					} else {
 						using PackType = serialise::CargoHold<ObjWrapper, Obj>;
 						using ItemType = serialise::CargoHold<serialise::ItemWrap, Obj>;
+						using ValueType = serialise::CargoHold<serialise::ValueWrap<Obj>, Obj>;
 						if constexpr (std::is_base_of_v<Package, Obj>) {
 							if (auto holder = dynamic_cast<PackType*>(cargo.get()); holder != nullptr)
 								base::get().emplace_back(holder->get());
 						} else {
-							if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
-								base::get().emplace_back(holder->get());
+							if constexpr (IsWrappableValue<Obj>) {
+								if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr)
+									base::get().emplace_back(holder->get());
+							} else {
+								if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
+									base::get().emplace_back(holder->get());
+							}
 						}
 					}
 					break;

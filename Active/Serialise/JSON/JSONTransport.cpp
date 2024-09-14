@@ -965,7 +965,7 @@ namespace {
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			exporter.writeTag(tag, nameSpace, valueStart, depth);
 			if ((item == nullptr) || item->isNull()) {
-				if ((item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
+				if (!cargo.isNull() && (item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
 				return;
