@@ -305,6 +305,9 @@
 		215F08322C94FEBD00CD343B /* PackageUniqueWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PackageUniqueWrap.h; sourceTree = "<group>"; };
 		215F08382C9593B800CD343B /* ContainerWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContainerWrap.h; sourceTree = "<group>"; };
 		215F08392C95953800CD343B /* Concepts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Concepts.h; sourceTree = "<group>"; };
+		215F08472C97295700CD343B /* NullItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NullItem.h; sourceTree = "<group>"; };
+		215F08482C972BB100CD343B /* CargoType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CargoType.h; sourceTree = "<group>"; };
+		215F08492C97351700CD343B /* ValueItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueItem.h; sourceTree = "<group>"; };
 		215F910E2BC574790052BFC8 /* Base64Transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base64Transport.cpp; sourceTree = "<group>"; };
 		215F910F2BC574790052BFC8 /* Base64Transport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64Transport.h; sourceTree = "<group>"; };
 		215F91202BC6E0F10052BFC8 /* LengthValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LengthValue.h; sourceTree = "<group>"; };
@@ -483,6 +486,7 @@
 				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				212A834F2AE47AD9001EAFE7 /* Cargo.h */,
 				21F69F622C6D4AEE008B6A06 /* CargoHold.h */,
+				215F08482C972BB100CD343B /* CargoType.h */,
 				215F08392C95953800CD343B /* Concepts.h */,
 				214EA4D12BA488DA008E5358 /* Document */,
 				212A83752AE47AD9001EAFE7 /* Generic */,
@@ -566,6 +570,7 @@
 				212A836F2AE47AD9001EAFE7 /* Encoding.h */,
 				2138F9EE2BA303D400D3C90A /* Item.cpp */,
 				212A836E2AE47AD9001EAFE7 /* Item.h */,
+				215F08472C97295700CD343B /* NullItem.h */,
 				21C2535F2B92ECF7003B2F63 /* UnknownItem.h */,
 				212A83672AE47AD9001EAFE7 /* Wrapper */,
 			);
@@ -578,6 +583,7 @@
 				21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */,
 				21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */,
 				212A836D2AE47AD9001EAFE7 /* ItemWrap.h */,
+				215F08492C97351700CD343B /* ValueItem.h */,
 				21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */,
 				212A836B2AE47AD9001EAFE7 /* ValueWrap.h */,
 			);

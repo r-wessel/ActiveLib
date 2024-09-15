@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_UNIQUE_WRAPPER
 
 #include "Active/Serialise/Package/Package.h"
+#include "Active/Utility/Concepts.h"
 
 namespace active::serialise {
 	
@@ -45,8 +46,11 @@ namespace active::serialise {
 							incoming.release();
 						}
 					}
-				},
-				m_maker{[&](){ return std::make_unique<T>(); }} {}
+				} {
+					if constexpr (!utility::DefaultConstructable<T>) {
+						m_maker = [&](){ return std::make_unique<T>(); };
+					}
+				}
 		/*!
 		 Constructor
 		 @param var A reference to a unique pointer package member variable

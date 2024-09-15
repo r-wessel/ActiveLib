@@ -26,17 +26,22 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the cargo has a null value (undefined)
+			@return True if the cargo data is undefined
+		*/
+		bool isNull() const override { return true; }
+		/*!
 			Fill an inventory with the cargo items
 			@param inventory The inventory to receive the cargo items
 			@return True if items have been added to the inventory
 		*/
-		virtual bool fillInventory(Inventory& inventory) const { return true; }
+		bool fillInventory(Inventory& inventory) const override { return true; }
 		/*!
 			Get the specified cargo
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		virtual Cargo::Unique getCargo(const Inventory::Item& item) const { return nullptr; }
+		Cargo::Unique getCargo(const Inventory::Item& item) const override { return nullptr; }
 	};
 	
 }  // namespace active::serialise

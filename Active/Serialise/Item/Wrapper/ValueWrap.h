@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_VALUE_WRAP
 
 #include "Active/Serialise/Item/Item.h"
+#include "Active/Serialise/Item/Wrapper/ValueItem.h"
 #include "Active/Setting/Values/Value.h"
 #include "Active/Utility/Concepts.h"
 #include "Active/Utility/Guid.h"
@@ -23,14 +24,16 @@ namespace active::serialise {
 		T: Value native type
 	*/
 	template<class T>
-	class ValueWrap : public Item, public std::reference_wrapper<T> {
+	class ValueWrap : public virtual ValueItem, public Item, public std::reference_wrapper<T> {
 	public:
 		
 		// MARK: - Types
 		
 			///Item reference base
 		using base = std::reference_wrapper<T>;
-		
+			///Item value type
+		using value_t = T;
+
 		// MARK: - Constructors
 		
 		/*!

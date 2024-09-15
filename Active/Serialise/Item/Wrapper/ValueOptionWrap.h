@@ -22,10 +22,10 @@ namespace active::serialise {
 		
 		// MARK: - Types
 		
-			///Optional value type
-		using value_t = std::optional<T>;
 			///Base type
-		using base = ValueWrap<value_t>;
+		using base = ValueWrap<std::optional<T>>;
+			///Optional value type
+		using value_t = base::value_t;
 		
 		// MARK: - Constructors
 		
