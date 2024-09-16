@@ -481,6 +481,21 @@
     <ClInclude Include="Active\Database\Storage\RecordCache.h">
       <Filter>Active\Database\Storage</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Utility\Concepts.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Wrapper\Handler.h">
+      <Filter>Active\Serialise\Package\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Wrapper\Mover.h">
+      <Filter>Active\Serialise\Package\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Wrapper\PackageUniqueWrap.h">
+      <Filter>Active\Serialise\Package\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Package\Wrapper\PackageWrap.h">
+      <Filter>Active\Serialise\Package\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -671,6 +686,9 @@
     </ClCompile>
     <ClCompile Include="Active\Database\Storage\RecordCache.cpp">
       <Filter>Active\Database\Storage</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Package\Wrapper\Mover.cpp">
+      <Filter>Active\Serialise\Package\Wrapper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_UTILITY_CONCEPTS
 #define ACTIVE_UTILITY_CONCEPTS
 
+#include "Active/Utility/String.h"
+
 #include <type_traits>
 #include <memory>
 
@@ -21,6 +23,12 @@ namespace active::utility {
 	template<typename T>
 	concept Dereferenceable = requires(const T& t) {
 		*t;
+	};
+
+		///String can be constructed from type
+	template<typename T>
+	concept StringConstructable = requires(T t, String test) {
+		test = String{t};
 	};
 
 }  // namespace active::utility

@@ -58,8 +58,11 @@ namespace active::serialise {
 		bool write(utility::String& dest) const override {
 			if constexpr (active::utility::Dereferenceable<T>) {
 				return false;	//Should not be attempting to write a null value to a string (null != "")
+			} else  if constexpr (std::is_convertible_v<T, active::utility::String>) {
+				dest = base::get();
+				return true;
 			} else {
-				dest = utility::String{base::get()};
+				dest = active::utility::String{base::get()};
 				return true;
 			}
 		}
@@ -71,7 +74,12 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override	{ base::get() = T{source}; return true; }
+		bool read(const utility::String& source) override {
+			if constexpr (active::utility::Dereferenceable<T>)
+				return false;	//Should not be attempting to read into a null value to a string (null != "")
+			else
+				base::get() = T{source}; return true;
+		}
 		/*!
 			Read the cargo data from the specified setting
 			@param source The setting to read
@@ -81,6 +89,8 @@ namespace active::serialise {
 				//If Value supports conversion to this type, assign directly
 			if constexpr(requires (setting::Value& v) { v.operator T(); })
 				base::get() = source;
+			else if constexpr (active::utility::Dereferenceable<T>)
+				return false;	//Should not be attempting to read into a null value to a string (null != "")
 			else {
 				utility::String text = source;
 				return read(text);	//Otherwise use a string as an intermediate value

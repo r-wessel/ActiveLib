@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_CONCEPTS
 
 #include "Active/Serialise/Cargo.h"
+#include "Active/Serialise/Concepts.h"
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Serialise/Package/Package.h"
 
@@ -30,8 +31,9 @@ namespace active::serialise {
 	
 		///Concept for wrappable values, e.g. double, int32_t, String
 	template<typename Obj>
-	concept IsWrappableValue = requires(Obj obj) {
-		ValueWrap<Obj>(obj).read(active::utility::String{});
+	concept IsWrappableValue = requires(Obj obj, active::utility::String& str) {
+		{ !utility::Dereferenceable<Obj> };
+		{ ValueWrap<Obj>(obj).read(str) };
 	};
 
 }  // namespace active::serialise
