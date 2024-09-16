@@ -63,6 +63,16 @@ namespace active::serialise {
 		// MARK: - Functions (mutating)
 
 		/*!
+			Read the item from a string
+			@param source The string to read
+			@return True if the data was successfully read
+		*/
+		bool read(const utility::String& source) override {
+			if (isNull())
+				base::get() = T{};	//If we're reading into an unassigned optional, we need to assign a value so it doesn't register as null
+			return base::read(source);
+		}
+		/*!
 			Set to the default package content
 		*/
 		void setDefault() override	{

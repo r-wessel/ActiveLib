@@ -1004,29 +1004,29 @@ namespace {
 			exporter.writeTag(tag, nameSpace, objectStart, depth++);
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
-			auto item = *entry.second;
-			if (!exporter.isEveryEntryRequired && (!item.required || (item.available == 0)))
+			auto entryItem = *entry.second;
+			if (!exporter.isEveryEntryRequired && (!entryItem.required || (entryItem.available == 0)))
 				continue;
-			if (isFirstItem)
-				isFirstItem = false;
-			else
+			if (!isFirstItem)
 				exporter.write(",");
-			auto entryNameSpace{item.identity().group.value_or(String())};
+			auto entryNameSpace{entryItem.identity().group.value_or(String())};
 				//Each package item may have multiple available cargo items to export
-			auto limit = item.available;
-			bool isItemArray = item.isRepeating() && !isArray,
+			auto limit = entryItem.available;
+			bool isItemArray = entryItem.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray)
-				exporter.writeTag(item.identity().name, entryNameSpace, arrayStart, depth);
-			for (item.available = 0; item.available < limit; ++item.available) {
-				auto content = cargo.getCargo(item);
+				exporter.writeTag(entryItem.identity().name, entryNameSpace, arrayStart, depth);
+			for (entryItem.available = 0; entryItem.available < limit; ++entryItem.available) {
+				auto content = cargo.getCargo(entryItem);
 				if (!content)
 					break;	//Discontinue an inventory item when the supply runs out
+				if (isFirstItem)
+					isFirstItem = false;	//This has been delayed until a first value is actually written
 				if (isFirstValue)
 					isFirstValue = false;
 				else
 					exporter.write(",");
-				doJSONExport(*content, isItemArray || isArray ? item.identity() : JSONIdentity{item.identity()}.atStage(object),
+				doJSONExport(*content, isItemArray || isArray ? entryItem.identity() : JSONIdentity{entryItem.identity()}.atStage(object),
 							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)

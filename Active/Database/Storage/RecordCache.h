@@ -251,7 +251,7 @@ namespace active::database {
 		using enum cache::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{
-				{ cache::getIdentity(object), object, element },
+				{ cache::getIdentity(object), object, array },
 			},
 		}.withType(&typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>)));
 		Record<ObjID>::fillInventory(inventory);
@@ -269,7 +269,7 @@ namespace active::database {
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
 	serialise::Cargo::Unique RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
-		if (item.ownerType != &typeid(Record<ObjID>))
+		if (item.ownerType != &typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>))
 			return Record<ObjID>::getCargo(item);
 		using namespace active::serialise;
 		using enum cache::FieldIndex;

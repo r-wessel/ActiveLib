@@ -9,10 +9,7 @@ namespace {
 
 		///Serialisation field IDs
 	static std::array fieldID = {
-		Identity{"id"},
-		Identity{"globID"},
-		Identity{"created"},
-		Identity{"edited"},
+		Identity{"object"},
 	};
 
 }

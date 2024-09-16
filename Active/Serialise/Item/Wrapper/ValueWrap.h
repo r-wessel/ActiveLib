@@ -75,10 +75,18 @@ namespace active::serialise {
 			@return True if the data was successfully read
 		*/
 		bool read(const utility::String& source) override {
-			if constexpr (active::utility::Dereferenceable<T>)
-				return false;	//Should not be attempting to read into a null value to a string (null != "")
-			else
-				base::get() = T{source}; return true;
+				//If Value supports conversion to this type, assign directly
+			if constexpr(requires (setting::Value& v) { base::get() = T{v}; }) {
+				base::get() = T{source};
+				return true;
+			}
+			if constexpr (active::utility::Dereferenceable<T>) {
+				if (!isNull()) {
+					base::get() = T{source};
+					return true;
+				}
+			}
+			return false;
 		}
 		/*!
 			Read the cargo data from the specified setting
@@ -87,15 +95,16 @@ namespace active::serialise {
 		*/
 		bool read(const setting::Value& source) override {
 				//If Value supports conversion to this type, assign directly
-			if constexpr(requires (setting::Value& v) { v.operator T(); })
+			if constexpr(requires (setting::Value& v) { base::get() = v; }) {
 				base::get() = source;
-			else if constexpr (active::utility::Dereferenceable<T>)
-				return false;	//Should not be attempting to read into a null value to a string (null != "")
-			else {
-				utility::String text = source;
-				return read(text);	//Otherwise use a string as an intermediate value
+				return true;
 			}
-			return true;
+			if constexpr (active::utility::Dereferenceable<T>) {
+				if (isNull())
+					return false;	//Should not be attempting to read into a null value to a string (null != "")
+			}
+			utility::String text = source;
+			return read(text);	//Otherwise use a string as an intermediate value
 		}
 		/*!
 			Set to the default package content
