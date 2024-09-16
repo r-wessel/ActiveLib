@@ -34,9 +34,7 @@ namespace active::serialise {
 		/*!
 			Constructor
 		*/
-		CargoHold() : Wrap{m_nullCargo} {
-			Wrap::operator=(m_nullCargo);
-		}
+		CargoHold() : Wrap{m_nullCargo} {}
 		/*!
 			Constructor
 		*/
@@ -64,11 +62,15 @@ namespace active::serialise {
 		const Obj& get() const { return *m_object; }
 		
 	private:
-		CargoPicker<Wrap>::CargoType m_nullCargo;
+		static CargoPicker<Wrap>::CargoType m_nullCargo;
 		Obj* m_object = nullptr;
 		std::unique_ptr<Obj> m_cache;
 	};
 	
+	
+	template<typename Wrap, typename Obj> requires std::is_base_of_v<Cargo, Wrap>
+	typename CargoPicker<Wrap>::CargoType CargoHold<Wrap, Obj>::m_nullCargo;
+
 }
 
 #endif	//ACTIVE_SERIALISE_CARGO_HOLD

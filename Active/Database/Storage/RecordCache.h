@@ -278,7 +278,7 @@ namespace active::database {
 				if (item.available < base::size()) {
 					auto iter = base::begin();
 					std::advance(iter, item.available);
-					return std::make_unique<active::serialise::PackageWrap>(*iter->second);
+					return std::make_unique<active::serialise::CargoHold<ObjWrapper, Obj>>(*iter->second);
 				}
 				if constexpr (FlatType<Obj, ObjWrapper>)
 					return std::make_unique<active::serialise::CargoHold<active::serialise::PackageWrap, Obj>>();
