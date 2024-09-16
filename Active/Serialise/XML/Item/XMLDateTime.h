@@ -84,6 +84,11 @@ namespace active::serialise::xml {
 			@return True if the data was successfully written
 		*/
 		bool write(utility::String& dest) const override;
+		/*!
+			Get the serialisation type for the item value
+			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
+		*/
+		std::optional<Type> type() const override { return (m_format == Format::iso8601) ? text : number; }
 		
 		// MARK: - Functions (mutating)
 		

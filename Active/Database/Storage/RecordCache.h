@@ -251,7 +251,7 @@ namespace active::database {
 		using enum cache::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{
-				{ cache::getIdentity(object), object, array },
+				{ cache::getIdentity(object), object, base::size(), std::nullopt },
 			},
 		}.withType(&typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>)));
 		Record<ObjID>::fillInventory(inventory);
