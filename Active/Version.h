@@ -10,6 +10,6 @@ static const unsigned int versionMajor = 0;
 
 static const unsigned int versionMinor = 9;
 
-static const unsigned int versionPatch = 8;
+static const unsigned int versionPatch = 9;
 
 #endif	//ACTIVE_VERSION
