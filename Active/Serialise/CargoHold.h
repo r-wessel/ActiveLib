@@ -34,7 +34,13 @@ namespace active::serialise {
 		/*!
 			Constructor
 		*/
-		CargoHold() : Wrap{m_nullCargo} {}
+		CargoHold() : Wrap{m_nullCargo} {	//Use the static member as a placeholder for constructing a valiud reference
+			if constexpr (std::is_default_constructible_v<Obj>) {	//Make an object instance when possible - other cases rely on an object maker
+				m_cache = std::make_unique<Obj>();	//Then create a new instance to populate
+				m_object = m_cache.get();
+				Wrap::operator=(*m_cache);	//And point the reference to the new instance
+			}
+		}
 		/*!
 			Constructor
 		*/

@@ -873,7 +873,7 @@ namespace {
 					Inventory::iterator incomingItem = inventory.end();
 					if (parsingStage == array)
 						getArrayIdentity(container, inventory, containerIdentity, identity);
-					if ((parsingStage == root) || (identity.type == arrayStart))	//Att root/array we're importing to the container we already have
+					if ((parsingStage == root) || (identity.type == arrayStart))	//At root level we're importing to the container we already have
 						cargo = makeWrapper(container, containerIdentity, inventory, identity);
 					else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
@@ -883,9 +883,9 @@ namespace {
 							else {
 								if (!incomingItem->bumpAvailable())
 									throw std::system_error(makeJSONError(inventoryBoundsExceeded));
-								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
 								if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
 									--attributesRemaining;
+								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 							}
 							if (cargo)

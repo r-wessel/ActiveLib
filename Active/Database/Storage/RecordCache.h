@@ -134,6 +134,13 @@ namespace active::database {
 			Set to the default package content
 		*/
 		void setDefault() override { base::clear(); }
+		/*!
+			Insert specified cargo into the package - used for cargo with many instances sharing the same ID (e.g. from an array/map)
+			@param cargo The cargo to insert
+			@param item The inventory item linked with the cargo
+			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
+		*/
+		bool insert(serialise::Cargo::Unique&& cargo, const serialise::Inventory::Item& item) override;
 	};
 
 	
@@ -288,6 +295,37 @@ namespace active::database {
 				return nullptr;	//Requested an unknown index
 		}
 	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::getCargo
+
+	
+	/*--------------------------------------------------------------------
+		Insert specified cargo into the package - used for cargo with many instances sharing the same ID (e.g. from an array/map)
+	 
+		cargo: The cargo to insert
+		item: The inventory item linked with the cargo
+	 
+		return: True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	bool RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::insert(serialise::Cargo::Unique&& cargo, const serialise::Inventory::Item& item) {
+		if (item.ownerType != &typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>))
+			return true;
+		using namespace active::serialise;
+		using enum cache::FieldIndex;
+		switch (item.index) {
+			case object:
+				auto source = dynamic_cast<active::serialise::CargoHold<ObjWrapper, Obj>*>(cargo.get());
+				if (source != nullptr) {
+					auto incoming = source->releaseIncoming();
+					if (auto record = dynamic_cast<Obj*>(incoming.get()); record != nullptr) {
+						incoming.release();
+						base::emplace(record->getID(), std::unique_ptr<Obj>{record});
+					}
+				}
+				break;
+		}
+		return true;
+	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::insert
 	
 }
 

@@ -124,7 +124,9 @@ void Mover::setDefault() {
 	return: True if the data has been validated
   --------------------------------------------------------------------*/
 bool Mover::validate() {
-	if (!m_unique || !m_wrapper || !m_wrapper->validate())
+	if (!m_wrapper)
+		return true;
+	if (!m_wrapper->validate())
 		return false;
 	if (m_unique)
 		m_unique->set(std::move(m_wrapper));
