@@ -22,10 +22,10 @@ namespace active::serialise {
 		
 		// MARK: - Types
 		
-			///Optional value type
-		using value_t = std::optional<T>;
 			///Base type
-		using base = ValueWrap<value_t>;
+		using base = ValueWrap<std::optional<T>>;
+			///Optional value type
+		using value_t = base::value_t;
 		
 		// MARK: - Constructors
 		
@@ -62,6 +62,16 @@ namespace active::serialise {
 		
 		// MARK: - Functions (mutating)
 
+		/*!
+			Read the item from a string
+			@param source The string to read
+			@return True if the data was successfully read
+		*/
+		bool read(const utility::String& source) override {
+			if (isNull())
+				base::get() = T{};	//If we're reading into an unassigned optional, we need to assign a value so it doesn't register as null
+			return base::read(source);
+		}
 		/*!
 			Set to the default package content
 		*/

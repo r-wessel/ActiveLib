@@ -2,7 +2,8 @@
 
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Serialise/JSON/JSONTransport.h"
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/ContainerWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/XML/Package/Wrapper/Geometry/XMLPolyPoint.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
@@ -348,5 +349,25 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		transport.receive(ValueWrap<double>{importedNum}, Identity{}, String{inputNum});
 		CHECK_MESSAGE(isEqual(importedNum, inputNum), TEST_MESSAGE(Double-precision import from JSON does not match input));
 	} //testJSONItem
+
+
+	///Tests for sending and receiving items via JSON
+   TEST_CASE(TESTQ(testContainer)) {
+	   JSONTransport transport;
+	   std::vector<String> test1{"Something", "Whatever", "more", "Testing"};
+	   String json;
+	   try {
+		   transport.send(ContainerWrap{test1}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<String>));
+	   }
+	   std::vector<String> test1In;
+	   try {
+		   transport.receive(ContainerWrap{test1In}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<String>));
+	   }
+	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive failed));
+   } //testContainer
 
 TEST_SUITE_CLOSE //JSONTest

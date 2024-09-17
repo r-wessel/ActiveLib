@@ -7,6 +7,9 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_CARGO_HOLD
 
 #include "Active/Serialise/Cargo.h"
+#include "Active/Serialise/CargoType.h"
+#include "Active/Serialise/Item/UnknownItem.h"
+#include "Active/Serialise/Package/NullPackage.h"
 
 #include <type_traits>
 
@@ -31,26 +34,26 @@ namespace active::serialise {
 		/*!
 			Constructor
 		*/
-		CargoHold() : Wrap{m_object} {}
-		/*!
-			Constructor
-		*/
-		CargoHold(const Obj& obj) : m_object{obj}, Wrap{m_object} {
-			Wrap::operator=(m_object);
+		CargoHold() : Wrap{m_nullCargo} {	//Use the static member as a placeholder for constructing a valiud reference
+			if constexpr (std::is_default_constructible_v<Obj>) {	//Make an object instance when possible - other cases rely on an object maker
+				m_cache = std::make_unique<Obj>();	//Then create a new instance to populate
+				m_object = m_cache.get();
+				Wrap::operator=(*m_cache);	//And point the reference to the new instance
+			}
 		}
 		/*!
 			Constructor
 		*/
-		CargoHold(Obj&& obj) : m_object{std::move(obj)}, Wrap{m_object} {
-			Wrap::operator=(m_object);
+		CargoHold(const Obj& obj) : Wrap{obj} {
+			if constexpr (std::is_default_constructible_v<Obj>) {	//Make an object instance when possible - other cases rely on an object maker
+				m_cache = std::make_unique<Obj>(obj);
+				m_object = m_cache.get();
+				Wrap::operator=(*m_cache);	//And point the reference to the new instance
+			} else {
+				m_object = const_cast<Obj*>(&obj);
+			}
 		}
-		/*!
-			Copy constructor
-			@param source The cargo to copy
-		*/
-		CargoHold(const CargoHold& source) : m_object{source.m_object}, Wrap{m_object} {
-			Wrap::operator=(m_object);
-		}
+		CargoHold(const CargoHold&) = delete;
 		/*!
 			Destructor
 		*/
@@ -62,12 +65,23 @@ namespace active::serialise {
 			Get a reference to the wrapped object
 			@return A reference to the wrapped object
 		*/
-		Obj& get() { return m_object; }
+		Obj& get() { return *m_object; }
+		/*!
+			Get a reference to the wrapped object
+			@return A reference to the wrapped object
+		*/
+		const Obj& get() const { return *m_object; }
 		
 	private:
-		Obj m_object;
+		static CargoPicker<Wrap>::CargoType m_nullCargo;
+		Obj* m_object = nullptr;
+		std::unique_ptr<Obj> m_cache;
 	};
 	
+	
+	template<typename Wrap, typename Obj> requires std::is_base_of_v<Cargo, Wrap>
+	typename CargoPicker<Wrap>::CargoType CargoHold<Wrap, Obj>::m_nullCargo;
+
 }
 
 #endif	//ACTIVE_SERIALISE_CARGO_HOLD

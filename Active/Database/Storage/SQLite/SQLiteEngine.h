@@ -1,31 +1,40 @@
 #ifndef ACTIVE_DATABASE_SQLITE_ENGINE
 #define ACTIVE_DATABASE_SQLITE_ENGINE
 
+#include "Active/Database/Concepts.h"
 #include "Active/Database/Storage/DBaseEngine.h"
 #include "Active/Database/Storage/SQLite/SQLiteCore.h"
 #include "Active/File/Path.h"
 #include "Active/Serialise/Cargo.h"
 #include "Active/Serialise/CargoHold.h"
+#include "Active/Serialise/Concepts.h"
 #include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/Transport.h"
 #include "Active/Utility/BufferIn.h"
+#include "Active/Utility/BufferOut.h"
 #include "Active/Utility/Guid.h"
 #include "SQLite/sqlite3.h"
 
 namespace active::database {
 	
+		///Concept for the ability to store objects in an SQLite database
+	template<typename Obj, typename ObjWrapper, typename Transport>
+	concept SQLiteStorable = (CanWrap<Obj, ObjWrapper> || FlatType<Obj, ObjWrapper>) &&
+			serialise::IsCargo<Obj> &&
+			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
+			std::is_base_of_v<serialise::Transport, Transport>;
+
 	/*!
 	 An SQLite database engine template
 	 
 	 @tparam Obj Interface for the stored object. NB: This can be a base class for an object hierarchy, not necessarily a concrete class
+	 @tparam ObjWrapper Wrapper type for (de)serialising objects
 	 @tparam Transport The serialisation transport mechanism for objects
-	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
 	 @tparam ObjID The object identifier type, e.g. Guid
+	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
 	 */
-	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID = utility::Guid, typename ObjID = utility::Guid>
-	requires std::is_base_of_v<serialise::Cargo, Obj> &&
-			std::is_base_of_v<serialise::Cargo, ObjWrapper> &&
-			std::is_base_of_v<serialise::Transport, Transport>
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID = active::utility::Guid, typename ObjID = active::utility::Guid>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	class SQLiteEngine : public SQLiteCore, public DBaseEngine<Obj, ObjID, DocID, utility::String>  {
 	public:
 		
@@ -33,7 +42,8 @@ namespace active::database {
 		
 		using base = DBaseEngine<Obj, ObjID, DocID, utility::String>;
 		using Filter = base::Filter;
-		
+		using Outline = base::Outline;
+
 		// MARK: - Constructors
 		
 		/*!
@@ -42,11 +52,6 @@ namespace active::database {
 		 @param schema Database schema
 		 */
 		SQLiteEngine(const file::Path& path, SQLiteSchema&& schema) : SQLiteCore{path, std::move(schema)} {}
-		/*!
-			Object cloning
-			@return A clone of this object
-		*/
-		SQLiteEngine* clonePtr() const override { return new SQLiteEngine{*this}; }
 		
 		// MARK: - Functions (const)
 		
@@ -75,6 +80,16 @@ namespace active::database {
 		active::container::Vector<Obj> getObjects(const Filter& filter, utility::String::Option tableID = std::nullopt,
 														  std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
+		 Write an object to the database
+		 @param object The object to write
+		 @param objID The object ID
+		 @param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 */
+		virtual void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
 		 Erase an object by index
 		 @param ID The object ID
 		 @param tableID Optional table ID (defaults to the first table)
@@ -89,6 +104,11 @@ namespace active::database {
 		 @throw Exception thrown on SQL error
 		 */
 		void erase(utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
+		 Get the database outline
+		 @return The database outline
+		 */
+		Outline getOutline() const override;
 		/*!
 		 Run a (multi-step) transaction and collect the results
 		 @param transaction The transaction to run
@@ -121,7 +141,7 @@ namespace active::database {
 		return: The requested object (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	std::unique_ptr<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObject(const ObjID& ID, utility::String::Option tableID,
 																						   std::optional<DocID> documentID)  const {
 		auto table = getTable(tableID);
@@ -141,7 +161,7 @@ namespace active::database {
 		return: The requested objects (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	container::Vector<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjects(utility::String::Option tableID,
 																											   std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
@@ -160,13 +180,42 @@ namespace active::database {
 		return: The requested objects (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	container::Vector<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjects(const Filter& filter, utility::String::Option tableID,
 																							  std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
 		auto transaction = makeTransaction("SELECT * FROM " + table->ID + ";");
 		return runTransaction(transaction, *table, &filter);
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjects
+	
+	
+	/*--------------------------------------------------------------------
+		Write an object to the database
+	 
+		object: The object to write
+		objID: The object ID
+		objDocID: The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		tableID: Optional table ID (defaults to the first table)
+		documentID: Optional document ID (when the object is bound to a specific document)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write(const Obj& object,
+																	   const ObjID& objID, std::optional<ObjID> objDocID,
+																	   utility::String::Option tableID, std::optional<DocID> documentID) const {
+		utility::String content;
+		Transport{}.send(serialise::PackageWrap(object), serialise::Identity{}, content);
+		auto table = getTable(tableID);
+		bool isDocIndexed = objDocID && table->documentIndex;
+		utility::String statement{"INSERT INTO " + table->ID + " (" + (*table)[table->globalIndex]->name() + ", "};
+		if (isDocIndexed)
+			statement += (*table)[*table->documentIndex]->name() + ", ";
+		statement += (*table)[table->contentIndex]->name() + ") VALUES (" + toSQLiteString(objID) + ", ";
+		if (isDocIndexed)
+			statement += toSQLiteString(*objDocID) + ", ";
+		statement += toSQLiteString(content.data()) + ");";
+		makeTransaction(statement).execute();
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write
 	
 	
 	/*--------------------------------------------------------------------
@@ -179,7 +228,7 @@ namespace active::database {
 		return: True if the object was successfully erased
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase(const ObjID& ID, utility::String::Option tableID,
 																	   std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
@@ -195,12 +244,44 @@ namespace active::database {
 		documentID: Optional document ID (filter for this document only - nullopt = all objects)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase(utility::String::Option tableID, std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
-		makeTransaction("SELECT * FROM " + table->ID + ";").execute();;
+		makeTransaction("SELECT * FROM " + table->ID + ";").execute();
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase
 
+	
+	/*--------------------------------------------------------------------
+		Get the database outline
+	 
+		return: The database outline
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::Outline SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getOutline() const {
+		Outline result;
+			//Iterate through each database table
+		for (const auto& table : getSchema()) {
+				//And extract the index column from the table
+			auto indexField = table[table.globalIndex]->name();
+			auto transaction = makeTransaction("SELECT " + indexField + " FROM " + table.ID + ";");
+			std::vector<ObjID> tableIDs;
+			do {
+				auto row = ++transaction;
+				if (!row)
+					break;
+				if (auto idSetting = dynamic_cast<const setting::ValueSetting*>((*row)[0].get()); idSetting != nullptr) {
+					ObjID temp = *idSetting;
+					tableIDs.emplace_back(temp);
+				}
+			} while (transaction);
+				//Add the table name and index column to the outline
+			result.emplace_back(std::make_pair(table.ID, tableIDs));
+		}
+		return result;
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getOutline
+	
+	
 	
 	/*--------------------------------------------------------------------
 		Run a transaction and collect the results
@@ -212,7 +293,7 @@ namespace active::database {
 		return: The collected objects
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	container::Vector<Obj> SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::runTransaction(SQLiteCore::Transaction& transaction,
 																								  const TableSchema<utility::String>& table,
 																								  const Filter* filter) const {
@@ -229,12 +310,14 @@ namespace active::database {
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
 				wrapper = std::make_unique<serialise::CargoHold<serialise::PackageWrap, Obj>>();
 			else
-				wrapper = std::make_unique<ObjWrapper>();
+				wrapper = std::make_unique<serialise::CargoHold<ObjWrapper, Obj>>();
 			Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, content->operator utility::String());
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
 				result.emplace_back(std::make_unique<Obj>(dynamic_cast<serialise::CargoHold<serialise::PackageWrap, Obj>*>(wrapper.get())->get()));
-			else
-				result.emplace(wrapper.release());
+			else {
+				if (auto incoming = wrapper.release(); incoming)
+					result.emplace(incoming);
+			}
 		} while (transaction);
 		return result;
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::runTransaction
@@ -248,7 +331,7 @@ namespace active::database {
 		return: An iterator pointing to the requested table
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
-	requires std::is_base_of_v<serialise::Cargo, Obj> && std::is_base_of_v<serialise::Cargo, ObjWrapper> && std::is_base_of_v<serialise::Transport, Transport>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
 	SQLiteSchema::const_iterator SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getTable(utility::String::Option tableID) const {
 		const auto& schema = getSchema();
 		SQLiteSchema::const_iterator table = schema.end();

@@ -873,7 +873,7 @@ namespace {
 					Inventory::iterator incomingItem = inventory.end();
 					if (parsingStage == array)
 						getArrayIdentity(container, inventory, containerIdentity, identity);
-					if ((parsingStage == root) || (identity.type == arrayStart))	//Att root/array we're importing to the container we already have
+					if ((parsingStage == root) || (identity.type == arrayStart))	//At root level we're importing to the container we already have
 						cargo = makeWrapper(container, containerIdentity, inventory, identity);
 					else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
@@ -883,9 +883,9 @@ namespace {
 							else {
 								if (!incomingItem->bumpAvailable())
 									throw std::system_error(makeJSONError(inventoryBoundsExceeded));
-								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
 								if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
 									--attributesRemaining;
+								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 							}
 							if (cargo)
@@ -965,7 +965,7 @@ namespace {
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			exporter.writeTag(tag, nameSpace, valueStart, depth);
 			if ((item == nullptr) || item->isNull()) {
-				if ((item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
+				if (!cargo.isNull() && (item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
 				return;
@@ -1004,29 +1004,29 @@ namespace {
 			exporter.writeTag(tag, nameSpace, objectStart, depth++);
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
-			auto item = *entry.second;
-			if (!exporter.isEveryEntryRequired && (!item.required || (item.available == 0)))
+			auto entryItem = *entry.second;
+			if (!exporter.isEveryEntryRequired && (!entryItem.required || (entryItem.available == 0)))
 				continue;
-			if (isFirstItem)
-				isFirstItem = false;
-			else
+			if (!isFirstItem)
 				exporter.write(",");
-			auto entryNameSpace{item.identity().group.value_or(String())};
+			auto entryNameSpace{entryItem.identity().group.value_or(String())};
 				//Each package item may have multiple available cargo items to export
-			auto limit = item.available;
-			bool isItemArray = item.isRepeating() && !isArray,
+			auto limit = entryItem.available;
+			bool isItemArray = entryItem.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray)
-				exporter.writeTag(item.identity().name, entryNameSpace, arrayStart, depth);
-			for (item.available = 0; item.available < limit; ++item.available) {
-				auto content = cargo.getCargo(item);
+				exporter.writeTag(entryItem.identity().name, entryNameSpace, arrayStart, depth);
+			for (entryItem.available = 0; entryItem.available < limit; ++entryItem.available) {
+				auto content = cargo.getCargo(entryItem);
 				if (!content)
 					break;	//Discontinue an inventory item when the supply runs out
+				if (isFirstItem)
+					isFirstItem = false;	//This has been delayed until a first value is actually written
 				if (isFirstValue)
 					isFirstValue = false;
 				else
 					exporter.write(",");
-				doJSONExport(*content, isItemArray || isArray ? item.identity() : JSONIdentity{item.identity()}.atStage(object),
+				doJSONExport(*content, isItemArray || isArray ? entryItem.identity() : JSONIdentity{entryItem.identity()}.atStage(object),
 							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)

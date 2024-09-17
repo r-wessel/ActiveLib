@@ -2,7 +2,6 @@
 #define ACTIVE_DATABASE_DBASE_ENGINE
 
 #include "Active/Container/Vector.h"
-#include "Active/Utility/Cloner.h"
 #include "Active/Utility/Guid.h"
 
 namespace active::database {
@@ -17,13 +16,15 @@ namespace active::database {
 	 @tparam TableID The table identifier type
 	 */
 	template<typename Obj, typename ObjID = active::utility::Guid, typename DocID = active::utility::Guid, typename TableID = active::utility::Guid>
-	class DBaseEngine : public utility::Cloner {
+	class DBaseEngine {
 	public:
 		
 		// MARK: - Types
 		
 			///Unary predicate for filtering objects
 		using Filter = std::function<bool(const Obj&)>;
+			///Outline structure of the database (pairs a table identifier with an array of object identifiers for the table content)
+		using Outline = std::vector<std::pair<TableID, std::vector<ObjID>>>;
 		
 		// MARK: - Constructors
 		
@@ -31,11 +32,6 @@ namespace active::database {
 		 Destructor
 		 */
 		virtual ~DBaseEngine() {}
-		/*!
-			Object cloning
-			@return A clone of this object
-		*/
-		virtual DBaseEngine* clonePtr() const = 0;
 		
 		// MARK: - Functions (const)
 		
@@ -64,6 +60,16 @@ namespace active::database {
 		virtual active::container::Vector<Obj> getObjects(const Filter& filter, std::optional<TableID> tableID = std::nullopt,
 														  std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
+		 Write an object to the database
+		 @param object The object to write
+		 @param objID The object ID (globally unique)
+		 @param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 */
+		virtual void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+						   std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
+		/*!
 		 Erase an object by index
 		 @param objID The object ID
 		 @param tableID Optional table ID (defaults to the first table)
@@ -78,6 +84,11 @@ namespace active::database {
 		 @throw Exception thrown on error
 		 */
 		virtual void erase(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
+		/*!
+		 Get the database outline
+		 @return The database outline
+		 */
+		virtual Outline getOutline() const = 0;
 	};
 	
 }

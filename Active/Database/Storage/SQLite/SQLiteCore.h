@@ -92,6 +92,12 @@ namespace active::database {
 		 @return An STL error code
 		 */
 		static std::error_code makeError(SQLiteCore::Status code);
+		/*!
+		 Convert a string to an SQLite string literal (escape single-quotes, e.g. ' -> '')
+		 @param text The string to convert
+		 @return An SQLite string literal
+		 */
+		static utility::String toSQLiteString(const utility::String& text);
 
 		// MARK: - Constructors
 		

@@ -157,6 +157,20 @@ std::error_code SQLiteCore::makeError(SQLiteCore::Status code) {
 
 
 /*--------------------------------------------------------------------
+	Convert a string to an SQLite string literal (escape single-quotes, e.g. ' -> '')
+ 
+	text: The string to convert
+ 
+	return: An SQLite string literal
+ --------------------------------------------------------------------*/
+String SQLiteCore::toSQLiteString(const String& text) {
+	String result{text};
+	result.replaceAll("'", "''");
+	return result;
+} //SQLiteCore::toSQLiteString
+
+
+/*--------------------------------------------------------------------
 	Destructor
  --------------------------------------------------------------------*/
 SQLiteCore::~SQLiteCore() {

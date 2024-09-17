@@ -49,6 +49,7 @@
     <ClInclude Include="Active\Database\Identity\Link.h" />
     <ClInclude Include="Active\Database\Storage\DBaseEngine.h" />
     <ClInclude Include="Active\Database\Storage\DBaseSchema.h" />
+    <ClInclude Include="Active\Database\Storage\RecordCache.h" />
     <ClInclude Include="Active\Database\Storage\SQLite\SQLiteCore.h" />
     <ClInclude Include="Active\Database\Storage\SQLite\SQLiteEngine.h" />
     <ClInclude Include="Active\Database\Storage\Storage.h" />
@@ -114,6 +115,10 @@
     <ClInclude Include="Active\Serialise\Package\Pair.h" />
     <ClInclude Include="Active\Serialise\Package\Unknown.h" />
     <ClInclude Include="Active\Serialise\Package\Wrapper\ContainerWrap.h" />
+    <ClInclude Include="Active\Serialise\Package\Wrapper\Handler.h" />
+    <ClInclude Include="Active\Serialise\Package\Wrapper\Mover.h" />
+    <ClInclude Include="Active\Serialise\Package\Wrapper\PackageUniqueWrap.h" />
+    <ClInclude Include="Active\Serialise\Package\Wrapper\PackageWrap.h" />
     <ClInclude Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.h" />
     <ClInclude Include="Active\Serialise\XML\Item\XMLDateTime.h" />
     <ClInclude Include="Active\Serialise\XML\Item\XMLNumber.h" />
@@ -149,6 +154,7 @@
     <ClInclude Include="Active\Utility\BufferIn.h" />
     <ClInclude Include="Active\Utility\BufferOut.h" />
     <ClInclude Include="Active\Utility\Cloner.h" />
+    <ClInclude Include="Active\Utility\Concepts.h" />
     <ClInclude Include="Active\Utility\Defer.h" />
     <ClInclude Include="Active\Utility\Guid.h" />
     <ClInclude Include="Active\Utility\MathFunctions.h" />
@@ -163,6 +169,7 @@
   <ItemGroup>
     <ClCompile Include="Active\Attribute\Colour.cpp" />
     <ClCompile Include="Active\Database\Content\Record.cpp" />
+    <ClCompile Include="Active\Database\Storage\RecordCache.cpp" />
     <ClCompile Include="Active\Database\Storage\SQLite\SQLiteCore.cpp" />
     <ClCompile Include="Active\Environment\App.cpp" />
     <ClCompile Include="Active\Event\Publisher.cpp" />
@@ -197,6 +204,7 @@
     <ClCompile Include="Active\Serialise\Item\Wrapper\AnyValueWrap.cpp" />
     <ClCompile Include="Active\Serialise\JSON\JSONTransport.cpp" />
     <ClCompile Include="Active\Serialise\Package\Pair.cpp" />
+    <ClCompile Include="Active\Serialise\Package\Wrapper\Mover.cpp" />
     <ClCompile Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.cpp" />
     <ClCompile Include="Active\Serialise\XML\Item\XMLDateTime.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.cpp" />

@@ -6,6 +6,8 @@
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Serialise/XML/Item/XMLDateTime.h"
 
+#include <any>
+
 namespace active::database {
 	
 	namespace record {
@@ -36,10 +38,8 @@ namespace active::database {
 	 - One for the ID within a document. This remains constant in copies when a document is duplicated, and is therefore not globally unique
 	 - One as a globally unique identifier - this must not remain the same in copies
 	 @tparam ObjID The object identifier type
-	 @tparam DBaseID The database identifier type
-	 @tparam TableID The table identifier type
 	 */
-	template<typename ObjID = active::utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	template<typename ObjID = active::utility::Guid>
 	class Record : public active::serialise::Package, public active::utility::Cloner {
 	public:
 
@@ -51,17 +51,22 @@ namespace active::database {
 			///Optional
 		using Option = std::optional<Record>;
 			///Record index type
-		using Index = active::database::Index<ObjID, DBaseID, TableID>;
+		using Index = active::database::Index<ObjID>;
 			///Record link type
-		using Link = active::database::Link<ObjID, DBaseID, TableID>;
+		using Link = active::database::Link<ObjID>;
 		
 		// MARK: - Constructors
 		
 		/*!
+		 Default constructor
+		 */
+		Record() {}
+		/*!
 		 Constructor
 		 @param ID The object document identifier
+		 @param globID The global identifier
 		 */
-		Record(const ObjID& ID) : m_ID{ID} {}
+		Record(const ObjID& ID, const ObjID& globID) : m_ID{ID}, m_globalID(globID) {}
 		Record(const Record&) = default;
 		/*!
 		 Destructor
@@ -90,12 +95,22 @@ namespace active::database {
 		 Get the object document index
 		 @return The object index
 		 */
-		virtual Index getIndex() const { return Index{m_ID, m_dbaseID, m_tableID}; }
+		virtual Index getIndex() const { return Index{m_ID, m_ownerID}; }
 		/*!
 		 Get the object document link
 		 @return The object link
 		 */
 		virtual Link getLink() const { return Link{getIndex()}; }
+		/*!
+		 Get the last edit time
+		 @return The edit time
+		 */
+		const active::utility::Time& getEdited() const { return m_editTime; }
+		/*!
+		 Get the created time
+		 @return The created time
+		 */
+		const active::utility::Time& getCreated() const { return m_createTime; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -115,9 +130,13 @@ namespace active::database {
 		 */
 		virtual void setIndex(const Index& index) {
 			m_ID = index;
-			m_dbaseID = index.dbaseID;
-			m_tableID = index.tableID;
+			m_ownerID = index.ownerID;
 		}
+		/*!
+		 Set the last edit time
+		 @param editTime The edit time
+		 */
+		void setEdited(const active::utility::Time& editTime) { m_editTime = editTime; }
 		
 		// MARK: - Serialisation
 		
@@ -143,10 +162,8 @@ namespace active::database {
 		ObjID m_ID;
 			///The object global identifier (NB: intended to be globally unique)
 		ObjID m_globalID;
-			///The object database ID (nullopt = unspecified)
-		std::optional<DBaseID> m_dbaseID;
-			///The object database ID (nullopt = unspecified)
-		std::optional<TableID> m_tableID;
+			///An optional runtime identifier for the object owner in memory - can be used as required for a target application
+		std::any m_ownerID;
 			///The time the object wasor created
 		active::utility::Time m_createTime = active::utility::Time{};
 			///The time the object was last edited
@@ -155,11 +172,13 @@ namespace active::database {
 
 	/*--------------------------------------------------------------------
 		Fill an inventory with the package items
-		@param inventory The inventory to receive the package items
-		@return True if the package has added items to the inventory
+	 
+		inventory: The inventory to receive the package items
+	 
+		return: True if the package has added items to the inventory
 	  --------------------------------------------------------------------*/
-	template<typename ObjID, typename DBaseID, typename TableID>
-	bool Record<ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
+	template<typename ObjID>
+	bool Record<ObjID>::fillInventory(active::serialise::Inventory& inventory) const {
 		using enum serialise::Entry::Type;
 		using enum record::FieldIndex;
 		inventory.merge(serialise::Inventory{
@@ -169,7 +188,7 @@ namespace active::database {
 				{ getIdentity(createIndex), createIndex, element },
 				{ getIdentity(editIndex), editIndex, element },
 			},
-		}.withType(&typeid(Record<ObjID, DBaseID, TableID>)));
+		}.withType(&typeid(Record<ObjID>)));
 		return true;
 	} //Record::fillInventory
 
@@ -179,9 +198,9 @@ namespace active::database {
 		@param item The inventory item to retrieve
 		@return The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
-	template<typename ObjID, typename DBaseID, typename TableID>
-	active::serialise::Cargo::Unique Record<ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
-		if (item.ownerType != &typeid(Record<ObjID, DBaseID, TableID>))
+	template<typename ObjID>
+	active::serialise::Cargo::Unique Record<ObjID>::getCargo(const active::serialise::Inventory::Item& item) const {
+		if (item.ownerType != &typeid(Record<ObjID>))
 			return nullptr;
 		using namespace active::serialise;
 		using enum record::FieldIndex;
@@ -203,8 +222,8 @@ namespace active::database {
 	/*--------------------------------------------------------------------
 		Set to the default package content
 	  --------------------------------------------------------------------*/
-	template<typename ObjID, typename DBaseID, typename TableID>
-	void Record<ObjID, DBaseID, TableID>::setDefault() {
+	template<typename ObjID>
+	void Record<ObjID>::setDefault() {
 		m_ID.clear();
 		m_globalID.clear();
 		m_createTime.resetDate();

@@ -1,6 +1,6 @@
 #include "ActiveLibDoctest/TestingPlatforms.h"
 
-#include "Active/Serialise/Package/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/XML/Package/Wrapper/Geometry/XMLPolyPoint.h"
 #include "Active/Serialise/XML/XMLTransport.h"
 #include "Active/Utility/BufferIn.h"

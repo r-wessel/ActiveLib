@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_VALUE_WRAP
 
 #include "Active/Serialise/Item/Item.h"
+#include "Active/Serialise/Item/Wrapper/ValueItem.h"
 #include "Active/Setting/Values/Value.h"
 #include "Active/Utility/Concepts.h"
 #include "Active/Utility/Guid.h"
@@ -23,14 +24,16 @@ namespace active::serialise {
 		T: Value native type
 	*/
 	template<class T>
-	class ValueWrap : public Item, public std::reference_wrapper<T> {
+	class ValueWrap : public virtual ValueItem, public Item, public std::reference_wrapper<T> {
 	public:
 		
 		// MARK: - Types
 		
 			///Item reference base
 		using base = std::reference_wrapper<T>;
-		
+			///Item value type
+		using value_t = T;
+
 		// MARK: - Constructors
 		
 		/*!
@@ -53,12 +56,17 @@ namespace active::serialise {
 			@return True if the data was successfully written
 		*/
 		bool write(utility::String& dest) const override {
-			if constexpr (active::utility::Dereferenceable<T>) {
-				return false;	//Should not be attempting to write a null value to a string (null != "")
-			} else {
-				dest = utility::String{base::get()};
+			if constexpr (requires (utility::String& v) { v = base::get(); }) {
+				dest = base::get();
 				return true;
 			}
+			if constexpr (requires (utility::String & v) { v = active::utility::String{base::get()}; }) {
+				dest = active::utility::String{base::get()};
+				return true;
+			}
+			if constexpr (active::utility::Dereferenceable<T>) {
+				return !isNull();	//Should not be attempting to write a null value to a string (null != "")
+			}	
 		}
 		
 		// MARK: - Functions (mutating)
@@ -68,7 +76,20 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override	{ base::get() = T{source}; return true; }
+		bool read(const utility::String& source) override {
+				//If Value supports conversion to this type, assign directly
+			if constexpr(requires (utility::String& v) { base::get() = T{v}; }) {
+				base::get() = T{source};
+				return true;
+			}
+			if constexpr (active::utility::Dereferenceable<T>) {
+				if (!isNull()) {
+						//TODO: Investigate if an object could use a string in some context
+					return true;
+				}
+			}
+			return false;
+		}
 		/*!
 			Read the cargo data from the specified setting
 			@param source The setting to read
@@ -76,13 +97,12 @@ namespace active::serialise {
 		*/
 		bool read(const setting::Value& source) override {
 				//If Value supports conversion to this type, assign directly
-			if constexpr(requires (setting::Value& v) { v.operator T(); })
+			if constexpr(requires (setting::Value& v) { base::get() = v; }) {
 				base::get() = source;
-			else {
-				utility::String text = source;
-				return read(text);	//Otherwise use a string as an intermediate value
+				return true;
 			}
-			return true;
+			utility::String text = source;
+			return read(text);	//Otherwise use a string as an intermediate value
 		}
 		/*!
 			Set to the default package content

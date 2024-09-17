@@ -3,6 +3,8 @@
 
 #include "Active/Utility/Guid.h"
 
+#include <any>
+
 namespace active::database {
 	
 	/*!
@@ -12,10 +14,8 @@ namespace active::database {
 	 an app) or a table identifier (where the database is divided into tables). The specific form of these identifies is generic to support alternate
 	 database engines. The database and table identifiers can be ignored for situations where this is not warranted
 	 @tparam ObjID The object identifier type
-	 @tparam DBaseID The database identifier type
-	 @tparam TableID The table identifier type
 	 */
-	template<typename ObjID = active::utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	template<typename ObjID = active::utility::Guid>
 	class Index : public ObjID {
 	public:
 
@@ -26,18 +26,14 @@ namespace active::database {
 		/*!
 		 Default constructor
 		 @param object The object identifier
-		 @param dbase The database identifier (nullopt = undefined - can be valid where there is a single database or universal search is available)
-		 @param table The table identifier (nullopt = undefined - can be valid where there is a single database or universal search is available)
+		 @param owner An optional runtime identifier for the object owner in memory
 		 */
-		Index(const ObjID& object = ObjID{}, std::optional<DBaseID> dbase = std::nullopt, std::optional<TableID> table = std::nullopt) :
-				ObjID{object}, dbaseID{dbase}, tableID{table} {}
+		Index(const ObjID& object = ObjID{}, std::any owner = std::any{}) : ObjID{object}, ownerID{owner} {}
 		
 		// MARK: - Public variables
 		
-			///Optional database identifier
-		std::optional<DBaseID> dbaseID;
-			///Optional table identifier (where the source database is divided into tables)
-		std::optional<TableID> tableID;
+			///An optional runtime identifier for the object owner in memory - can be used as required for a target application
+		std::any ownerID;
 	};
 	
 }
