@@ -71,6 +71,11 @@ namespace active::serialise {
 		 */
 		void set(std::unique_ptr<Package> incoming) const { m_writer(std::move(incoming)); }
 		/*!
+		 Determine if this package can make new object instances
+		 @return True if this package can make new object instances
+		 */
+		bool canMake() const { return m_maker.operator bool(); }
+		/*!
 		 Make a new instance of the object type
 		 @return The new object instance
 		 */

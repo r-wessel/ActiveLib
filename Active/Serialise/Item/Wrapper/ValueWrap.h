@@ -56,15 +56,17 @@ namespace active::serialise {
 			@return True if the data was successfully written
 		*/
 		bool write(utility::String& dest) const override {
-			if constexpr (active::utility::Dereferenceable<T>) {
-				return false;	//Should not be attempting to write a null value to a string (null != "")
-			} else  if constexpr (std::is_convertible_v<T, active::utility::String>) {
+			if constexpr (requires (utility::String& v) { v = base::get(); }) {
 				dest = base::get();
 				return true;
-			} else {
+			}
+			if constexpr (requires (utility::String & v) { v = active::utility::String{base::get()}; }) {
 				dest = active::utility::String{base::get()};
 				return true;
 			}
+			if constexpr (active::utility::Dereferenceable<T>) {
+				return !isNull();	//Should not be attempting to write a null value to a string (null != "")
+			}	
 		}
 		
 		// MARK: - Functions (mutating)
@@ -76,13 +78,13 @@ namespace active::serialise {
 		*/
 		bool read(const utility::String& source) override {
 				//If Value supports conversion to this type, assign directly
-			if constexpr(requires (setting::Value& v) { base::get() = T{v}; }) {
+			if constexpr(requires (utility::String& v) { base::get() = T{v}; }) {
 				base::get() = T{source};
 				return true;
 			}
 			if constexpr (active::utility::Dereferenceable<T>) {
 				if (!isNull()) {
-					base::get() = T{source};
+						//TODO: Investigate if an object could use a string in some context
 					return true;
 				}
 			}
@@ -98,10 +100,6 @@ namespace active::serialise {
 			if constexpr(requires (setting::Value& v) { base::get() = v; }) {
 				base::get() = source;
 				return true;
-			}
-			if constexpr (active::utility::Dereferenceable<T>) {
-				if (isNull())
-					return false;	//Should not be attempting to read into a null value to a string (null != "")
 			}
 			utility::String text = source;
 			return read(text);	//Otherwise use a string as an intermediate value
