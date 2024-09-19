@@ -45,7 +45,7 @@ namespace active::serialise {
 			Constructor
 		*/
 		CargoHold(const Obj& obj) : Wrap{obj} {
-			if constexpr (std::is_default_constructible_v<Obj>) {	//Make an object instance when possible - other cases rely on an object maker
+			if constexpr (std::is_default_constructible_v<Obj> && !std::has_virtual_destructor_v<Obj>) {	//Make an object instance when possible - other cases rely on an object maker
 				m_cache = std::make_unique<Obj>(obj);
 				m_object = m_cache.get();
 				Wrap::operator=(*m_cache);	//And point the reference to the new instance

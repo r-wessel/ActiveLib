@@ -1007,8 +1007,6 @@ namespace {
 			auto entryItem = *entry.second;
 			if (!exporter.isEveryEntryRequired && (!entryItem.required || (entryItem.available == 0)))
 				continue;
-			if (!isFirstItem)
-				exporter.write(",");
 			auto entryNameSpace{entryItem.identity().group.value_or(String())};
 				//Each package item may have multiple available cargo items to export
 			auto limit = entryItem.available;
@@ -1022,6 +1020,8 @@ namespace {
 					break;	//Discontinue an inventory item when the supply runs out
 				if (isFirstItem)
 					isFirstItem = false;	//This has been delayed until a first value is actually written
+				else
+					exporter.write(",");
 				if (isFirstValue)
 					isFirstValue = false;
 				else
