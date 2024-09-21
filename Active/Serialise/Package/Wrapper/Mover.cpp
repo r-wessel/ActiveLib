@@ -70,8 +70,7 @@ bool Mover::fillInventory(Inventory& inventory) const {
 				{ m_handler->attributeTag(), objectTypeID, attribute },
 			},
 		}.withType(&typeid(Mover)));
-	}
-	if (m_package != nullptr)
+	} else if (m_package != nullptr)
 		m_package->fillInventory(inventory);
 	return true;
 } //Mover::fillInventory

@@ -74,6 +74,13 @@ namespace active::serialise {
 		 */
 		Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
 		/*!
+		 Get the deserialised package
+		 @return The deserialised package (nullptr on failure)
+		 */
+		Package* getIncoming() const {
+			return m_wrapper.get();
+		}
+		/*!
 		 Release the deserialised package
 		 @return The deserialised package (nullptr on failure)
 		 */

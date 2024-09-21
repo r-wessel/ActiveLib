@@ -12,6 +12,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Package/NullPackage.h"
 #include "Active/Utility/Concepts.h"
 
+#include "Active/Serialise/Package/Wrapper/Mover.h"
+
 #include <type_traits>
 
 namespace active::serialise {
@@ -81,13 +83,19 @@ namespace active::serialise {
 		 Get a reference to the wrapped object
 		 @return A reference to the wrapped object
 		 */
-		Obj& get() { return *m_object; }
+		Obj& get() { return const_cast<Obj&>(const_cast<const CargoHold<Wrap, Obj>*>(this)->get()); }
 		/*!
 		 Get a reference to the wrapped object
 		 @return A reference to the wrapped object
 		 */
-		const Obj& get() const { return *m_object; }
-		
+		const Obj& get() const {
+			if (auto mover = dynamic_cast<const Mover*>(this); (mover != nullptr) && !mover->isNull()) {
+				if (auto obj = dynamic_cast<Obj*>(mover->getIncoming()); obj != nullptr)
+					return *obj;
+			}
+			return *m_object;
+		}
+
 	private:
 		static CargoPicker<Wrap>::CargoType m_nullCargo;
 		Obj* m_object = nullptr;

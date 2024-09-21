@@ -888,13 +888,13 @@ namespace {
 								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
 								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 							}
-							if (cargo)
-								cargo->setDefault();
 						}
 					}
 					bool isKnown = true;
-					if (!cargo) {	//Allow the parser to move beyond unknown/unwanted elements
-						if (importer.isUnknownSkipped() || isReadingAttribute) {
+					if (cargo)
+						cargo->setDefault();
+					else {
+						if (importer.isUnknownSkipped() || isReadingAttribute) {	//Allow the parser to move beyond unknown/unwanted elements
 							isKnown = false;
 							cargo = makeUnknown(identity);
 							if (isReadingAttribute && !restorePoint)	//If not all attributes read, parse data twice (first for attributes only)
@@ -1103,6 +1103,7 @@ void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& 
 	JSONGlossary glossary;
 	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed());
 	try {
+		cargo.setDefault();
 		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);
 		if (importer.isError())
 			throw std::system_error(makeJSONError(importer.getStatus()));
