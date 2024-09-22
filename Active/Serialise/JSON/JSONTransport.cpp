@@ -878,7 +878,7 @@ namespace {
 					else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
 						if (incomingItem != inventory.end()) {
-							if (isReadingAttribute && !incomingItem->isAttribute())
+							if (isReadingAttribute && !incomingItem->isAttribute() && (parsingStage != array))
 								incomingItem = inventory.end();
 							else {
 								if (!incomingItem->bumpAvailable())
@@ -886,14 +886,14 @@ namespace {
 								if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
 									--attributesRemaining;
 								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
-								cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
+								cargo = container.getCargo(*incomingItem);
+								if (cargo)
+									cargo->setDefault();
 							}
 						}
 					}
 					bool isKnown = true;
-					if (cargo)
-						cargo->setDefault();
-					else {
+					if (!cargo) {
 						if (importer.isUnknownSkipped() || isReadingAttribute) {	//Allow the parser to move beyond unknown/unwanted elements
 							isKnown = false;
 							cargo = makeUnknown(identity);
@@ -1012,16 +1012,25 @@ namespace {
 			auto limit = entryItem.available;
 			bool isItemArray = entryItem.isRepeating() && !isArray,
 				 isFirstValue = true;
-			if (isItemArray)
+			if (isItemArray) {
+				if (isFirstItem)
+					isFirstItem = false;	//This has been delayed until a first value is actually written
+				else {
+					exporter.write(",");
+					isFirstItem = true;
+				}
 				exporter.writeTag(entryItem.identity().name, entryNameSpace, arrayStart, depth);
+			}
 			for (entryItem.available = 0; entryItem.available < limit; ++entryItem.available) {
 				auto content = cargo.getCargo(entryItem);
 				if (!content)
 					break;	//Discontinue an inventory item when the supply runs out
 				if (isFirstItem)
 					isFirstItem = false;	//This has been delayed until a first value is actually written
-				else
+				else {
 					exporter.write(",");
+					isFirstValue = true;
+				}
 				if (isFirstValue)
 					isFirstValue = false;
 				else

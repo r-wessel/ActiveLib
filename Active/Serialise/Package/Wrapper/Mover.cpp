@@ -109,6 +109,8 @@ void Mover::setDefault() {
 	if (m_handler) {
 		m_wrapper.reset();	//This will be populated once the type and guid are deserialised
 		m_typeName.clear();
+		if (m_package != nullptr)
+			m_package->setDefault();
 	} else if ((m_package == nullptr) && m_unique && m_unique->canMake()) {
 			//Otherwise, we must be dealing with a fixed type and can get the wrapper to make an object (if we don't have one)
 		if (!m_wrapper)
