@@ -72,7 +72,7 @@ bool Mover::fillInventory(Inventory& inventory) const {
 			},
 		}.withType(&typeid(Mover)));
 	}
-	if (!isNull() && ((m_transportPhase == writingEverything) || (m_transportPhase == readingElements)))
+	if (!isNull())
 		m_package->fillInventory(inventory);
 	return true;
 } //Mover::fillInventory
@@ -109,7 +109,6 @@ void Mover::setDefault() {
 	if (m_handler) {
 		m_wrapper.reset();	//This will be populated once the type and guid are deserialised
 		m_typeName.clear();
-		m_package = nullptr;
 	} else if ((m_package == nullptr) && m_unique && m_unique->canMake()) {
 			//Otherwise, we must be dealing with a fixed type and can get the wrapper to make an object (if we don't have one)
 		if (!m_wrapper)
