@@ -72,7 +72,7 @@ bool Mover::fillInventory(Inventory& inventory) const {
 			},
 		}.withType(&typeid(Mover)));
 	}
-	if ((m_transportPhase == writingEverything) || (m_transportPhase == readingElements))
+	if (!isNull() && ((m_transportPhase == writingEverything) || (m_transportPhase == readingElements)))
 		m_package->fillInventory(inventory);
 	return true;
 } //Mover::fillInventory
@@ -143,7 +143,7 @@ bool Mover::validate() {
   --------------------------------------------------------------------*/
 bool Mover::finaliseAttributes() {
 	if (!m_handler || (m_transportPhase != readingAttributes))
-		return false;
+		return true;	//Finalise not applicable
 	m_transportPhase = readingElements;
 		//Attempt to construct a new package based on the deserialised type name
 	m_wrapper.reset(m_handler->reconstruct(m_typeName));
