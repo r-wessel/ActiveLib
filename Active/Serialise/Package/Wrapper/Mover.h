@@ -32,6 +32,15 @@ namespace active::serialise {
 	class Mover : public active::serialise::Package {
 	public:
 
+		//MARK: - Types
+		
+			///The transport phase during (de)serialisation
+		enum class TransportPhase {
+			writingEverything, ///<Writing elements and attributes during serialisation
+			readingAttributes, ///<Reading attributes only during deserialisation
+			readingElements, ///<Reading elements only during deserialisation
+		};
+		
 		// MARK: - Constructors
 		
 		/*!
@@ -59,8 +68,11 @@ namespace active::serialise {
 		 @return True if the cargo data is undefined
 		*/
 		bool isNull() const override { return m_package == nullptr; }
-			///The attributes for a serialised `Foo` identify its type and guid - these are tagged as attributes and must be deserialised first
-		bool isAttributeFirst() const override { return m_isReadingAttributes.value_or(false); }
+		/*!
+		 Determine if the package requires attributes to be imported first (primarily for unordered serialisation, e.g. JSON)
+		 @return True if the package requires attributes first
+		 */
+		bool isAttributeFirst() const override { return m_transportPhase == TransportPhase::readingAttributes; }
 		/*!
 		 Fill an inventory with the package items
 		 @param inventory The inventory to receive the package items
@@ -130,8 +142,8 @@ namespace active::serialise {
 		mutable Package::Unique m_wrapper;
 			///Pointer to to the target object (can be to an external object or one of the internal members above)
 		mutable Package* m_package = nullptr;
-			///Unused for serialisation - true when deserialising the type and guid attributes
-		std::optional<bool> m_isReadingAttributes;
+			///Transport phase for (de)serialisation - determines inventory content and some deserialisation workflows
+		TransportPhase m_transportPhase = TransportPhase::writingEverything;
 		
 		std::optional<PackageUniqueWrap> m_unique;
 	};
