@@ -2,6 +2,7 @@
 #define ACTIVE_DATABASE_DBASE_ENGINE
 
 #include "Active/Container/Vector.h"
+#include "Active/Serialise/Cargo.h"
 #include "Active/Utility/Guid.h"
 
 namespace active::database {
@@ -43,6 +44,14 @@ namespace active::database {
 		 @return: The requested object (nullptr on failure)
 		 */
 		virtual std::unique_ptr<Obj> getObject(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
+		/*!
+		 Get an object in a transportable form, e.g. packaged for serialisation
+		 @param objID The object ID
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @return: The requested wrapped cargo (nullptr on failure)
+		 */
+		virtual active::serialise::Cargo::Unique getObjectCargo(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
 		 Get all objects
 		 @param tableID Optional table ID (defaults to the first table)

@@ -64,6 +64,14 @@ namespace active::database {
 		 */
 		std::unique_ptr<Obj> getObject(const ObjID& ID, utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
+		 Get an object in a transportable form, e.g. packaged for serialisation
+		 @param ID The object ID
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @return: The requested wrapped cargo (nullptr on failure)
+		 */
+		active::serialise::Cargo::Unique getObjectCargo(const ObjID& ID, utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
 		 Get all objects
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
@@ -128,8 +136,7 @@ namespace active::database {
 		 */
 		SQLiteSchema::const_iterator getTable(utility::String::Option tableID) const;
 	};
-	
-	
+		
 	
 	/*--------------------------------------------------------------------
 		Get an object by index
@@ -149,6 +156,25 @@ namespace active::database {
 		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = " + ID + ";");
 		auto result = runTransaction(transaction, *table);
 		return result.empty() ? nullptr : result.release(result.begin());
+	} //SQLiteEngine<Obj, Transport, DocID, ObjID>::getObject
+		
+	
+	/*--------------------------------------------------------------------
+		Get an object in a transportable form, e.g. packaged for serialisation
+	 
+		index: The object index
+		tableID: Optional table ID (defaults to the first table)
+		documentID: Optional document ID (when the object is bound to a specific document)
+	 
+		return: The requested wrapped cargo (nullptr on failure)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	active::serialise::Cargo::Unique SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::getObjectCargo(const ObjID& ID, utility::String::Option tableID,
+																						   std::optional<DocID> documentID)  const {
+		if (auto object = getObject(ID, tableID, documentID); object)
+			return std::make_unique<active::serialise::CargoHold<ObjWrapper, Obj>>(std::move(object));
+		return nullptr;
 	} //SQLiteEngine<Obj, Transport, DocID, ObjID>::getObject
 	
 	
