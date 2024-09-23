@@ -844,7 +844,7 @@ namespace {
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
 		auto* package = dynamic_cast<Package*>(&container);
-		auto isReadingAttribute = (package != nullptr) && package->isAttributeFirst();
+		auto isReadingAttribute = (parsingStage == object) && (package != nullptr) && package->isAttributeFirst();
 		std::optional<Memory::size_type> restorePoint;
 		auto loopScope = defer([&importer, &inventory]{
 			if (importer.isMissingEntryFailed() && (inventory.countRequired() > 0))
