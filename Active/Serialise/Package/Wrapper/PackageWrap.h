@@ -47,6 +47,16 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the package is the outermost/root layer of a hierarchy
+			@return True if the package is the outermost/root layer of a hierarchy
+		*/
+		bool isRoot() const { return get().isRoot(); }
+		/*!
+			Determine if the package requires attributes to be imported first (primarily for unordered serialisation, e.g. JSON)
+			@return True if the package requires attributes first
+		*/
+		bool isAttributeFirst() const override { return get().isAttributeFirst(); }
+		/*!
 			Fill an inventory with the cargo items
 			@param inventory The inventory to receive the cargo items
 			@return True if items have been added to the inventory
@@ -86,6 +96,11 @@ namespace active::serialise {
 			@param item The inventory item linked with the cargo
 		*/
 		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override { return get().insert(std::move(cargo), item); }
+		/*!
+			Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
+			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
+		*/
+		bool finaliseAttributes() override { return get().finaliseAttributes(); }
 	};
 	
 }

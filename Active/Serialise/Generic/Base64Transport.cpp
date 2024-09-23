@@ -14,9 +14,6 @@ using namespace active::utility;
 
 namespace {
 	
-		///The base64 numerals
-	std::string base64Numerals{"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"};
-	
 	std::vector<int8_t> base64Lookup;
 
 } // namespace
@@ -31,6 +28,7 @@ namespace {
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
 bool Base64Transport::send(const BufferIn& source, const BufferOut& destination, Memory::sizeOption howMany) const {
+	const auto& base64Numerals = m_encodingTable.value_or(standardEncoding);
 	bool isOpen = (howMany == std::nullopt);
 	Memory::size_type written = 0;
 	while (!source.eof() && (isOpen || ((*howMany)-- > 0))) {
@@ -71,6 +69,7 @@ bool Base64Transport::send(const BufferIn& source, const BufferOut& destination,
 	return: True if the import was successful
   --------------------------------------------------------------------*/
 bool Base64Transport::receive(const BufferOut& destination, const BufferIn& source, Memory::sizeOption howMany) const {
+	const auto& base64Numerals = m_encodingTable.value_or(standardEncoding);
 	bool isOpen = howMany == std::nullopt;
 	if (!isOpen && (*howMany == 0))
 		return true;	//Nothing to read

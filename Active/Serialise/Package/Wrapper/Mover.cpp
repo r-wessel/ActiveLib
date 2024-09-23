@@ -12,6 +12,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::serialise;
 using namespace active::utility;
 
+using enum Mover::TransportPhase;
+
 namespace {
 	
 		///Serialisation fields
@@ -51,7 +53,6 @@ Mover::Mover(PackageUniqueWrap&& package, Handler::Shared handler) : m_handler{h
 	handler: A package handler to reconstruct incoming packages
   --------------------------------------------------------------------*/
 Mover::Mover(Handler::Shared handler) : m_handler{handler} {
-	m_isReadingAttributes = true;
 } //Mover::Mover
 
 
@@ -64,14 +65,14 @@ Mover::Mover(Handler::Shared handler) : m_handler{handler} {
   --------------------------------------------------------------------*/
 bool Mover::fillInventory(Inventory& inventory) const {
 	using enum Entry::Type;
-	if (m_handler && (!m_isReadingAttributes.has_value() || *m_isReadingAttributes)) {
+	if (m_handler && ((m_transportPhase == writingEverything) || (m_transportPhase == readingAttributes))) {
 		inventory.merge(Inventory{
 			{
 				{ m_handler->attributeTag(), objectTypeID, attribute },
 			},
 		}.withType(&typeid(Mover)));
 	}
-	if (m_package != nullptr)
+	if (!isNull())
 		m_package->fillInventory(inventory);
 	return true;
 } //Mover::fillInventory
@@ -103,12 +104,13 @@ Cargo::Unique Mover::getCargo(const Inventory::Item& item) const {
 	Set to the default package content
   --------------------------------------------------------------------*/
 void Mover::setDefault() {
+	m_transportPhase = readingAttributes;
 		//If we have a handler, we need to interpret the object type from the deserialised data
 	if (m_handler) {
-		m_isReadingAttributes = true;
 		m_wrapper.reset();	//This will be populated once the type and guid are deserialised
 		m_typeName.clear();
-		m_package = nullptr;
+		if (m_package != nullptr)
+			m_package->setDefault();
 	} else if ((m_package == nullptr) && m_unique && m_unique->canMake()) {
 			//Otherwise, we must be dealing with a fixed type and can get the wrapper to make an object (if we don't have one)
 		if (!m_wrapper)
@@ -130,6 +132,7 @@ bool Mover::validate() {
 		return false;
 	if (m_unique)
 		m_unique->set(std::move(m_wrapper));
+	m_transportPhase = writingEverything;
 	return true;
 } //Mover::validate
 
@@ -140,9 +143,9 @@ bool Mover::validate() {
 	return: True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
   --------------------------------------------------------------------*/
 bool Mover::finaliseAttributes() {
-	if (!m_handler || !m_isReadingAttributes.has_value() || !*m_isReadingAttributes || m_wrapper)
-		return false;
-	m_isReadingAttributes = false;
+	if (!m_handler || (m_transportPhase != readingAttributes))
+		return true;	//Finalise not applicable
+	m_transportPhase = readingElements;
 		//Attempt to construct a new package based on the deserialised type name
 	m_wrapper.reset(m_handler->reconstruct(m_typeName));
 	if (!m_wrapper)

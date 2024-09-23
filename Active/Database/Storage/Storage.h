@@ -227,7 +227,9 @@ namespace active::database {
 	active::serialise::Cargo::Unique Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::Table::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.available >= m_table.second.size())
 			return nullptr;
-		return std::make_unique<active::serialise::ValueWrap<ObjID>>(m_table.second[item.available]);
+		if (auto object = m_storage.m_engine->getObjectCargo(m_table.second[item.available]); object)
+			return std::move(object);
+		return nullptr;
 	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::getCargo
 	
 }
