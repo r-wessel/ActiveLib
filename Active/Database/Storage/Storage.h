@@ -137,7 +137,7 @@ namespace active::database {
 		 */
 		template<typename T>
 		void write(const T& record, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
-			write(record, record.getGlobalID(), record.getID(), tableID, documentID);
+			m_engine->write(record, ObjID{record.getGlobalID()}, ObjID{record.getID()}, tableID, documentID);
 		}
 		/*!
 		 Erase an object by index
