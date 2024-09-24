@@ -496,6 +496,15 @@
     <ClInclude Include="Active\Serialise\Package\Wrapper\PackageWrap.h">
       <Filter>Active\Serialise\Package\Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\Transport.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\UnboxedTransport.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Concepts.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
