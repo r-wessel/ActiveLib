@@ -505,6 +505,9 @@
     <ClInclude Include="Active\Serialise\Concepts.h">
       <Filter>Active\Serialise</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Geometry\Vertex.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -698,6 +701,9 @@
     </ClCompile>
     <ClCompile Include="Active\Serialise\Package\Wrapper\Mover.cpp">
       <Filter>Active\Serialise\Package\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Vertex.cpp">
+      <Filter>Active\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

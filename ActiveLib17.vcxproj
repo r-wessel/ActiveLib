@@ -85,6 +85,7 @@
     <ClInclude Include="Active\Geometry\Rotation.h" />
     <ClInclude Include="Active\Geometry\Vector3.h" />
     <ClInclude Include="Active\Geometry\Vector4.h" />
+    <ClInclude Include="Active\Geometry\Vertex.h" />
     <ClInclude Include="Active\Geometry\XInfo.h" />
     <ClInclude Include="Active\Geometry\XList.h" />
     <ClInclude Include="Active\Geometry\XPoint.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="Active\Geometry\Rotater.cpp" />
     <ClCompile Include="Active\Geometry\Vector3.cpp" />
     <ClCompile Include="Active\Geometry\Vector4.cpp" />
+    <ClCompile Include="Active\Geometry\Vertex.cpp" />
     <ClCompile Include="Active\Geometry\XList.cpp" />
     <ClCompile Include="Active\Geometry\XPoint.cpp" />
     <ClCompile Include="Active\Serialise\Document\Object.cpp" />
