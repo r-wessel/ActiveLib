@@ -15,6 +15,7 @@ namespace active::geometry {
 	class Line;
 	class Matrix4x4;
 	class Vector3;
+	class Vertex;
 	
 	///A 1x4 vector class
 	class Vector4 {
@@ -46,7 +47,12 @@ namespace active::geometry {
 			Constructor
 			@param source A point to construct the vector from
 		*/
-		Vector4(const Point& source);
+		explicit Vector4(const Point& source);
+		/*!
+			Constructor
+			@param source A vertex to construct the vector from
+		*/
+		explicit Vector4(const Vertex& source);
 		/*!
 			Constructor
 			@param source A line to construct the vector from
@@ -75,6 +81,12 @@ namespace active::geometry {
 			@return A reference to this
 		*/
 		Vector4& operator=(const Point& source);
+		/*!
+			Assignment operator
+			@param source The vertex to copy
+			@return A reference to this
+		*/
+		Vector4& operator=(const Vertex& source);
 		/*!
 			Assignment operator
 			@param source The object to copy
@@ -158,6 +170,11 @@ namespace active::geometry {
 			@return Point derived from this
 		*/
 		operator Point() const;
+		/*!
+			Conversion operator
+			@return Vertex derived from this
+		*/
+		operator Vertex() const;
 		
 		// MARK: - Functions (const)
 		

@@ -10,6 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Geometry/Matrix3x3.h"
 #include "Active/Geometry/Matrix4x4.h"
 #include "Active/Geometry/Vector4.h"
+#include "Active/Geometry/Vertex.h"
 
 using namespace active::geometry;
 using namespace active::math;
@@ -52,6 +53,16 @@ Vector3::Vector3(const Point& source) {
 /*--------------------------------------------------------------------
 	Constructor
 	
+	source: The vertex to copy
+  --------------------------------------------------------------------*/
+Vector3::Vector3(const Vertex& source) {
+	*this = source;
+} //Vector3::Vector3
+
+
+/*--------------------------------------------------------------------
+	Constructor
+	
 	source: The object to copy
   --------------------------------------------------------------------*/
 Vector3::Vector3(const Line& source) {
@@ -68,6 +79,7 @@ Vector3::Vector3(const Vector3& source) {
 	*this = source;
 } //Vector3::Vector3
 
+// MARK: - Operators
 
 /*--------------------------------------------------------------------
 	Assignment operator
@@ -83,7 +95,22 @@ Vector3& Vector3::operator=(const Point& source) {
 	return *this;
 } //Vector3::operator=
 
-// MARK: - Operators
+
+/*--------------------------------------------------------------------
+	Assignment operator
+	
+	source: The vertex to copy
+	
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Vector3& Vector3::operator=(const Vertex& source) {
+	m_vector[0] = source.x;
+	m_vector[1] = source.y;
+	m_vector[2] = source.z;
+	return *this;
+} //Vector3::operator=
+
+
 
 /*--------------------------------------------------------------------
 	Assignment operator
@@ -200,7 +227,7 @@ Vector3 Vector3::operator*(const Matrix3x3& matrix) const {
 	return: The resultant vector
   --------------------------------------------------------------------*/
 Vector3 Vector3::operator*(const Matrix4x4& matrix) const {
-	return Vector3(Vector4(*this) *= matrix);
+	return Vector3{Point{Vector4(*this) *= matrix}};
 } //Vector3::operator*
 
 
@@ -245,7 +272,7 @@ Vector3& Vector3::operator*=(const Matrix3x3& matrix) {
 	return: A reference to this
 --------------------------------------------------------------------*/
 Vector3& Vector3::operator*=(const Matrix4x4& matrix) {
-	return (*this = (Vector4(*this) *= matrix));
+	return (*this = Point{(Vector4(*this) *= matrix)});
 } //Vector3::operator*=
 
 
@@ -257,6 +284,16 @@ Vector3& Vector3::operator*=(const Matrix4x4& matrix) {
 Vector3::operator Point() const {
 	return Point(m_vector[0], m_vector[1], m_vector[2]);
 } //Vector3::operator Point
+
+
+/*--------------------------------------------------------------------
+	Conversion operator
+	
+	return: A vertex derived from this vector
+  --------------------------------------------------------------------*/
+Vector3::operator Vertex() const {
+	return Vertex(m_vector[0], m_vector[1], m_vector[2]);
+} //Vector3::operator Vertex
 
 // MARK: - Functions (const)
 

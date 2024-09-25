@@ -109,6 +109,8 @@
 		219988142BD7C4490035E5EA /* DocumentTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988132BD7C4490035E5EA /* DocumentTests.cpp */; };
 		219988172BD7C5C10035E5EA /* MeasurementTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988152BD7C5C10035E5EA /* MeasurementTests.cpp */; };
 		2199881E2BD833830035E5EA /* libActiveLib.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21379E082AE47A6400A1584C /* libActiveLib.a */; };
+		21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9AB2CA445C4000B8681 /* Vertex.h */; };
+		21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9AC2CA445C4000B8681 /* Vertex.cpp */; };
 		21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C2535F2B92ECF7003B2F63 /* UnknownItem.h */; };
 		21C253622B94578F003B2F63 /* Value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C253612B94578F003B2F63 /* Value.cpp */; };
 		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -372,6 +374,8 @@
 		219988112BD7C2EB0035E5EA /* Base64Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Base64Tests.cpp; sourceTree = "<group>"; };
 		219988132BD7C4490035E5EA /* DocumentTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = DocumentTests.cpp; sourceTree = "<group>"; };
 		219988152BD7C5C10035E5EA /* MeasurementTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MeasurementTests.cpp; sourceTree = "<group>"; };
+		21AEF9AB2CA445C4000B8681 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
+		21AEF9AC2CA445C4000B8681 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
 		21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnyValueWrap.h; sourceTree = "<group>"; };
 		21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnyValueWrap.cpp; sourceTree = "<group>"; };
 		21C23CFF2C11142400E40710 /* File.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = File.md; sourceTree = "<group>"; };
@@ -682,6 +686,8 @@
 				212A83AB2AE47AD9001EAFE7 /* Vector3.h */,
 				212A838A2AE47AD9001EAFE7 /* Vector4.cpp */,
 				212A83A32AE47AD9001EAFE7 /* Vector4.h */,
+				21AEF9AC2CA445C4000B8681 /* Vertex.cpp */,
+				21AEF9AB2CA445C4000B8681 /* Vertex.h */,
 				212A83852AE47AD9001EAFE7 /* XInfo.h */,
 				212A839F2AE47AD9001EAFE7 /* XList.cpp */,
 				212A83992AE47AD9001EAFE7 /* XList.h */,
@@ -1026,6 +1032,7 @@
 				21F93ADC2B2C6E9C009A2C5B /* Subscriber.h in Headers */,
 				21932D4F2BE29C69005DB06E /* SerialiseArrayTester.h in Headers */,
 				21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */,
+				21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */,
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
 				216DFFAC2AE87766009110CF /* UInt32Value.h in Headers */,
 				218953A42C0C9CB00078F182 /* Version.h in Headers */,
@@ -1199,6 +1206,7 @@
 				212A84252AE47AD9001EAFE7 /* Plane.cpp in Sources */,
 				214EA4D22BA488DA008E5358 /* Object.cpp in Sources */,
 				212A83D72AE47AD9001EAFE7 /* Path.cpp in Sources */,
+				21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */,
 				21932D4E2BE29C69005DB06E /* SerialiseArrayTester.cpp in Sources */,
 				215F91372BC82A150052BFC8 /* LengthUnit.cpp in Sources */,
 				212A84362AE47AD9001EAFE7 /* Memory.cpp in Sources */,
