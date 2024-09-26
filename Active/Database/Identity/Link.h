@@ -16,8 +16,8 @@ namespace active::database {
 	 - state information related to the object
 	 @tparam ObjID The object identifier type
 	 */
-	template<typename ObjID = active::utility::Guid>
-	class Link : public active::database::Index<ObjID>, public active::setting::SettingList {
+	template<typename ObjID = active::utility::Guid, typename TableID = active::utility::Guid, typename DocID = active::utility::Guid>
+	class Link : public active::database::Index<ObjID, TableID, DocID>, public active::setting::SettingList {
 	public:
 
 		// MARK: - Types
