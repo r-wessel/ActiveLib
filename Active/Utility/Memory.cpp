@@ -50,8 +50,8 @@ Memory::size_type Memory::copy(char* dest, const char* source, Memory::size_type
 	makeCopy: True to make a private (owned) copy of the data
 	takeOwnership: True for this object to take ownership of the data (ignored if makeCopy == true)
   --------------------------------------------------------------------*/
-Memory::Memory(void* location, size_type size, bool makeCopy, bool takeOwnership) {
-	m_location = reinterpret_cast<char*>(location);
+Memory::Memory(const void* location, size_type size, bool makeCopy, bool takeOwnership) {
+	m_location = reinterpret_cast<char*>(const_cast<void*>(location));
 	m_allocSize = (size == 0) ? String::getValidByteCount(m_location) : size;
 	if (makeCopy)
 		reallocate(m_allocSize);

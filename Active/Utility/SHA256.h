@@ -6,6 +6,7 @@
 #ifndef ACTIVE_UTILITY_SHA256
 #define ACTIVE_UTILITY_SHA256
 
+#include "Active/Utility/BufferIn.h"
 #include "Active/Utility/Memory.h"
 #include "Active/Utility/String.h"
 
@@ -30,6 +31,16 @@ namespace active::utility {
 		 @return A reference to this
 		 */
 		SHA256& operator<<(BufferIn&& source);
+		/*!
+		 Add a field to the hash (use this for data affected by endianness)
+		 @param field The field to add (will be hashed as big endian)
+		 @return A reference to this
+		 */
+		template<typename T> requires (std::is_arithmetic_v<T>)
+		inline SHA256& operator<<(const T& field) {
+			auto temp = field;
+			return *this << BufferIn{Memory{Memory::toBigEndian(temp)}};
+		}
 		/*!
 		 Get the data hash (NB: This does not prevent additional data from being written to the hash)
 		 @return The hash (as hex digits)

@@ -62,7 +62,7 @@ namespace active::utility {
 			@param val The target value
 			@return The integer as big-endian
 		*/
-		template<typename T> requires (std::is_integral_v<T>)
+		template<typename T> requires (std::is_arithmetic_v<T>)
 		static T toBigEndian(T val) {
 				//Return the given value unchanged if the processor is big-endian
 			if (defaultEndian)
@@ -75,7 +75,7 @@ namespace active::utility {
 			@param val The target value
 			@return The integer suited to the host processor
 		*/
-		template<typename T> requires (std::is_integral_v<T>)
+		template<typename T> requires (std::is_arithmetic_v<T>)
 		static T fromBigEndian(T val) {
 				//Return the given value unchanged if the processor is big-endian
 			if (defaultEndian)
@@ -87,7 +87,7 @@ namespace active::utility {
 			Byte-swap an integer value (reverse the order of bytes to change endianess)
 			@param val The target value
 		*/
-		template<typename T> requires (std::is_integral_v<T>)
+		template<typename T> requires (std::is_arithmetic_v<T>)
 		static void byteSwap(T& val) {
 			auto* data = reinterpret_cast<unsigned char*>(&val);
 			auto bytes = sizeof(T);
@@ -100,7 +100,7 @@ namespace active::utility {
 			@param howMany How many values are in the array
 			@param toBigEndian True if the end result should be big-endian
 		*/
-		template<typename T> requires (std::is_integral_v<T>)
+		template<typename T> requires (std::is_arithmetic_v<T>)
 		static void byteSwap(T* val, size_type howMany, bool toBigEndian) {
 			if ((howMany < 1) || (toBigEndian == defaultEndian))
 				return;
@@ -125,7 +125,7 @@ namespace active::utility {
 			@param takeOwnership True for this object to take ownership of the data (must be allocated with new char[] - ignored if makeCopy == true)
 		*/
 		template<typename T> requires (sizeof(T) > 1) && (!std::is_pointer<T>())
-		Memory(T& buffer, bool makeCopy = false, bool takeOwnership = false) : Memory{&buffer, sizeof(buffer), makeCopy, takeOwnership} {}
+		Memory(const T& buffer, bool makeCopy = false, bool takeOwnership = false) : Memory{&buffer, sizeof(buffer), makeCopy, takeOwnership} {}
 		/*!
 			Constructor
 		 	@param location A pointer to the data location
@@ -133,7 +133,7 @@ namespace active::utility {
 			@param makeCopy True to make a private (owned) copy of the data
 			@param takeOwnership True for this object to take ownership of the data (must be allocated with new char[] - ignored if makeCopy == true)
 		*/
-		Memory(void* location, size_type size, bool makeCopy = false, bool takeOwnership = false);
+		Memory(const void* location, size_type size, bool makeCopy = false, bool takeOwnership = false);
 		/*!
 			Copy constructor
 			@param source The object to copy
