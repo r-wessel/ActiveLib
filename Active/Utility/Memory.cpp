@@ -35,7 +35,7 @@ void Memory::fill(void* start, size_type size, char fillChar) {
  
 	return: The number of bytes copied
   --------------------------------------------------------------------*/
-Memory::size_type Memory::copy(char* dest, char* source, Memory::size_type destSize, Memory::size_type sourceSize) {
+Memory::size_type Memory::copy(char* dest, const char* source, Memory::size_type destSize, Memory::size_type sourceSize) {
 	auto copySize = std::min(sourceSize, destSize);
 	std::memcpy(dest, source, copySize);
 	return copySize;

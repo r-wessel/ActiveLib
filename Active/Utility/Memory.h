@@ -56,7 +56,7 @@ namespace active::utility {
 			@param sourceSize The source memory size
 			@return The number of bytes copied
 		*/
-		static size_type copy(char* dest, char* source, size_type destSize, size_type sourceSize);
+		static size_type copy(char* dest, const char* source, size_type destSize, size_type sourceSize);
 		/*!
 			Make an integer value big-endian (no action if the host processor is already big-endian)
 			@param val The target value

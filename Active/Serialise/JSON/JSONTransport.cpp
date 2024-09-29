@@ -303,8 +303,8 @@ namespace {
 			@param dest The data destination
 			@param glossary The JSON entity glossary
 		*/
-		JSONExporter(BufferOut& dest, JSONGlossary& glossary, JSONTransport::TimeFormat format, bool everyEntryRequired) :
-				m_buffer(dest), m_glossary(glossary), timeFormat{format}, isEveryEntryRequired{everyEntryRequired} {
+		JSONExporter(BufferOut& dest, JSONGlossary& glossary, JSONTransport::TimeFormat format, bool everyEntryRequired, Manager* manager) :
+				m_buffer(dest), m_glossary(glossary), timeFormat{format}, isEveryEntryRequired{everyEntryRequired}, m_manager{manager} {
 		}
 			///No copy constructor
 		JSONExporter(const JSONExporter& source) = delete;
@@ -328,6 +328,11 @@ namespace {
 			@return The JSON glossary
 		*/
 		JSONGlossary& glossary() const { return m_glossary; }
+		/*!
+			Get the cargo manager
+			@return The active manager
+		*/
+		Manager* getManager() const { return m_manager; }
 		
 		// MARK: Functions (mutating)
 		
@@ -368,6 +373,8 @@ namespace {
 		BufferOut& m_buffer;
 			///A glossary of JSON entities and replacement text encountered for faster lookup
 		JSONGlossary& m_glossary;
+			///Optional cargo manager (migration handling etc)
+		Manager* m_manager = nullptr;
 	};
 	
 	
@@ -384,7 +391,7 @@ namespace {
 			@param isUnknownNameSkipped True if unknown names found in the JSON should be skipped
 		*/
 		JSONImporter(BufferIn& source, JSONGlossary& glossary,
-					 bool isUnknownNameSkipped, bool isEveryEntryRequired, bool isMissingEntryFailed) :
+					 bool isUnknownNameSkipped, bool isEveryEntryRequired, bool isMissingEntryFailed, Manager* manager) :
 				m_buffer(source), m_glossary(glossary), m_isUnknownNameSkipped(isUnknownNameSkipped),
 				m_isEveryEntryRequired(isEveryEntryRequired), m_isMissingEntryFailed(isMissingEntryFailed) {}
 			///No copy constructor
@@ -442,6 +449,11 @@ namespace {
 			@return The transport status (nominal = no errors)
 		*/
 		JSONTransport::Status getStatus() const { return m_status; }
+		/*!
+			Get the cargo manager
+			@return The active manager
+		*/
+		Manager* getManager() const { return m_manager; }
 		
 		// MARK: Functions (mutating)
 		
@@ -488,6 +500,8 @@ namespace {
 		BufferIn& m_buffer;
 			///Glossary of JSON entities
 		JSONGlossary& m_glossary;
+			///Optional cargo manager (migration handling etc)
+		Manager* m_manager = nullptr;
 			//The current transport status
 		JSONTransport::Status m_status = nominal;
 			//True if unknown tags should be skipped over
@@ -840,6 +854,7 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
+		container.useManager(importer.getManager());
 		Inventory inventory = getImportInventoryFor(container, importer.isEveryEntryRequired());
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
@@ -950,6 +965,7 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void doJSONExport(const Cargo& cargo, const JSONIdentity& identity, JSONExporter& exporter, int32_t depth = 0) {
 		using enum JSONIdentity::Type;
+		cargo.useManager(exporter.getManager());
 		String tag, nameSpace;
 		if (identity.stage != root) {
 			if (identity.name.empty())	//Non-root values, i.e. values embedded in an object, must have an identifying name
@@ -1092,7 +1108,7 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
 	if (!isLineFeeds)
 		isTabbed = false;	//Tabs would be pointless without line-feeds
 	JSONGlossary glossary;
-	JSONExporter exporter(destination, glossary, getTimeFormat(), isEveryEntryRequired());
+	JSONExporter exporter(destination, glossary, getTimeFormat(), isEveryEntryRequired(), getManager());
 	exporter.isTabbed = isTabbed;
 	exporter.isLineFeeds = isLineFeeds;
 	exporter.isNameSpaces = isNameSpaces;
@@ -1110,7 +1126,7 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
   --------------------------------------------------------------------*/
 void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& source) const {
 	JSONGlossary glossary;
-	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed());
+	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed(), getManager());
 	try {
 		cargo.setDefault();
 		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);

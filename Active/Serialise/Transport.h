@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_TRANSPORT
 
 #include "Active/Serialise/XML/Item/XMLDateTime.h"
+#include "Active/Serialise/Manager.h"
 #include "Active/Utility/Memory.h"
 
 namespace active::utility {
@@ -103,6 +104,16 @@ namespace active::serialise {
 		*/
 		TimeFormat getTimeFormat() const noexcept { return m_timeFormat; }
 		/*!
+			Determine if the cargo is managed
+			@return True if the cargo is managed
+		*/
+		bool isManager() const { return m_manager.operator bool(); }
+		/*!
+			Get the acting manager
+			@return The acting manager (nullptr if no manager has been assigned) 
+		*/
+		Manager* getManager() const { return m_manager.get(); }
+		/*!
 			Get the last received character row position of the data source (after calling receive, for error diagnostics)
 			@return The last row position received from the data source
 		*/
@@ -136,6 +147,11 @@ namespace active::serialise {
 		*/
 		void setTimeFormat(TimeFormat format) noexcept { m_timeFormat = format; }
 		/*!
+			Use a manager in (de)serialisation processes
+			@param manager The manager to use
+		*/
+		void setManager(std::unique_ptr<Manager> manager) { m_manager = std::move(manager); }
+		/*!
 			Set whether unknown names are skipped
 			@param state True if unknown names are skipped
 		*/
@@ -166,6 +182,8 @@ namespace active::serialise {
 	private:
 			//The preferred date/time format
 		TimeFormat m_timeFormat = iso8601;
+			//An optional serialisation manager
+		std::unique_ptr<Manager> m_manager;
 			//The last row read from the data source (can be useful for error diagnostics)
 		mutable size_type m_lastRow = 0;
 			//The last column read from the data source (can be useful for error diagnostics)

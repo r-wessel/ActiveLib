@@ -202,6 +202,11 @@ namespace active::utility {
 			@return A reference to this
 		*/
 		const BufferOut& flush() const { return flushBuffer(); }
+		/*!
+			Get the data written by the buffer (flushed and buffered)
+			@return The written data (NB: treat this data as read-only and volatile, i.e. buffer operations may invalidate it)
+		*/
+		Memory getOutput() const;
 		
 		// MARK: - Functions (mutating)
 		

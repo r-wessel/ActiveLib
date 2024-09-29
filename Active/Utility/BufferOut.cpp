@@ -251,6 +251,40 @@ const BufferOut& BufferOut::write(unsigned char toWrite) const {
 	return write(reinterpret_cast<const char*>(&toWrite), 1);
 } //BufferOut::write
 
+
+/*--------------------------------------------------------------------
+	Get the data written by the buffer (flushed and buffered)
+ 
+	return: The written data
+  --------------------------------------------------------------------*/
+Memory BufferOut::getOutput() const {
+	if (m_file != nullptr) {
+		try {
+				//If no data has been written, we can simply return a wrapper to the buffer content
+			if (m_file->size() == 0)
+				return Memory{m_buffer.data(), m_buffer.size()};
+				//Otherwise we need to write the buffered data to the file and read the entire file content
+			flushBuffer();
+			m_file->setPosition(0, File::start);	//Read from the file start
+			Memory result;
+			result.resize(m_file->size());
+			m_file->read(result, m_file->size());
+			m_file->setPosition(0, File::end);	//Return to writing at the file end
+			return result;
+		} catch(...) {
+			setState(std::ios_base::failbit);
+		}
+	} else {
+			//String and memory buffers hold all the written data in memory, so return a wrapper to this data
+		flushBuffer();
+		if (m_memory != nullptr)
+			return Memory(const_cast<char*>(m_memory->data()), m_memory->size());
+		else if (m_str != nullptr)
+			return Memory(const_cast<char*>(m_str->data()), m_str->dataSize());
+	}
+	return Memory{};
+} //BufferOut::getOutput
+
 // MARK: - Functions (mutating)
 
 /*--------------------------------------------------------------------
