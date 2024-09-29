@@ -127,8 +127,10 @@ void SHA256::compress(const char* chunk, HashTable& hashOutput) const {
 		schedule[i] = Memory::toBigEndian(schedule[i]);
 		//Extend the 16 message words into the remaining 48 words
 	for (auto i = messageSize; i < scheduleSize; ++i) {
-		auto s0 = std::rotr(schedule[i - 15], 7) ^ std::rotr(schedule[i - 15], 18) ^ (schedule[i - 15] >> 3);
-		auto s1 = std::rotr(schedule[i - 2], 17) ^ std::rotr(schedule[i - 2], 19) ^ (schedule[i - 2] >> 10);
+		auto val = schedule[i - 15];
+		auto s0 = std::rotr(val, 7) ^ std::rotr(val, 18) ^ (val >> 3);
+		val = schedule[i - 2];
+		auto s1 = std::rotr(val, 17) ^ std::rotr(val, 19) ^ (val >> 10);
 		schedule[i] = schedule[i - 16] + s0 + schedule[i - 7] + s1;
 	}
 	auto a = hashOutput[0];
