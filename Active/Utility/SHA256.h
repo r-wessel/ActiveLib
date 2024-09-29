@@ -51,10 +51,10 @@ namespace active::utility {
 		 */
 		void compress(const char* chunk, HashTable& hashOutput) const;
 		/*!
-		 Calculate the final hash consuming whatever overflow data remains
+		 Calculate the final hash
 		 @return The final hash (NB: this value is not stored in the object and the overflow is not erased, so more data could be written)
 		 */
-		HashTable finaliseOverflow() const;
+		HashTable finalise() const;
 		/*!
 		 Get the resulting hash
 		 @return The hash (an array of bytes)
@@ -65,8 +65,10 @@ namespace active::utility {
 		HashTable m_hash;
 			///Number of hashed bytes
 		uint64_t m_hashedCount = 0;
-			///Overflow from 512-byte chunk processing
+			///Overflow from 512-bit chunk processing
 		Memory m_overflow;
+			///Number of bytes in overflow
+		Memory::size_type m_overflowSize = 0;
 	};
 	
 }

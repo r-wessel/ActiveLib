@@ -39,12 +39,6 @@ namespace {
 	constexpr uint32_t scheduleSize = 64;
 		///Size of chunk populated into schedule table
 	constexpr uint32_t messageSize = chunkSize / scheduleWordSize;
-		///Bits allocated for size of padded bytes
-	constexpr uint32_t paddedLengthBits = 64;
-		///Bits allocated for padding boundary
-	constexpr uint32_t paddingBoundaryBits = 8;
-		///Size available for padded bytes
-	constexpr uint32_t maxPaddedBytes = (chunkBits - paddedLengthBits - paddingBoundaryBits) / 8;
 }  // namespace
 
 /*--------------------------------------------------------------------
@@ -59,6 +53,7 @@ SHA256::SHA256() {
 	m_hash[5] = 0x9b05688c;
 	m_hash[6] = 0x1f83d9ab;
 	m_hash[7] = 0x5be0cd19;
+	m_overflow.resize(chunkSize);
 } //SHA256::SHA256
 
 
@@ -70,19 +65,26 @@ SHA256::SHA256() {
 	return: A reference to this
   --------------------------------------------------------------------*/
 SHA256& SHA256::operator<<(BufferIn&& source) {
-	Memory::size_type offset = m_overflow.size(), required = chunkSize - offset;
-	m_overflow.resize(chunkSize);
-	for (;;) {
-		Memory::size_type readSize = required;
+		//First use (or extend) any accumulated overflow
+	if (m_overflowSize != 0) {
+		Memory::size_type offset = m_overflowSize, readSize = chunkSize - offset;
 		source.read(m_overflow.data() + offset, readSize);
-		if (readSize < chunkSize) {
-			m_overflow.resize(offset + readSize);
-			break;
-		}
+		m_overflowSize += readSize;
+		if (m_overflowSize < chunkSize)
+			return *this;
 		compress(m_overflow.data(), m_hash);
-		required = chunkSize;
-		offset = 0;
+		m_hashedCount += chunkSize;
+		m_overflowSize = 0;
 	}
+		//Then compress as many full chunks as possible from the source
+	while (source && (source.bufferMin(chunkSize) >= chunkSize)) {
+		compress(source.data(), m_hash);
+		m_hashedCount += chunkSize;
+		source.skip(chunkSize);
+	}
+		//Finally assign any remainder to overflow
+	m_overflowSize = chunkSize;
+	source.read(m_overflow.data(), m_overflowSize);
 	return *this;
 } //SHA256::operator<<
 
@@ -166,44 +168,39 @@ void SHA256::compress(const char* chunk, HashTable& hashOutput) const {
 
 
 /*--------------------------------------------------------------------
-	Calculate the final hash consuming whatever overflow data remains
+	Calculate the final hash
  
 	return: The final hash (NB: this value is not stored in the object and the overflow is not erased, so more data could be written)
   --------------------------------------------------------------------*/
-SHA256::HashTable SHA256::finaliseOverflow() const {
-	
-	//TODO: Wrong assumption here - total message length must include "1" bit, padding and length as 64-bit integer in all cases
-	
-	if (m_overflow.empty())
-		return m_hash;
+SHA256::HashTable SHA256::finalise() const {
+		//NB: This process allows for the possibility that more data will be compressed into the hash, so copies are made of the hash etc
 	HashTable result{m_hash};
-	BufferIn buffer{m_overflow};
-	uint64_t totalBits = 8 * (m_hashedCount + m_overflow.size());
-	totalBits = Memory::toBigEndian(totalBits);
-	while (buffer) {
-			//Determine how many bytes we can copy into the next compressable "chuck"
-		auto toRead = std::min(buffer.dataSize(), static_cast<Memory::size_type>(maxPaddedBytes));
-		if (toRead == 0)
-			break;
-			//Copy the overflow data into the new chunk
-		Memory incoming;
-		BufferOut chunker{incoming};
-		chunker.write(buffer.data(), toRead);
-		buffer.skip(toRead);
-			//The 'message' must be immediately followed by a single '1' bit
-		chunker << '\x80';
-			//And then pad with zeros, leaving 64 bits unused at the end
-		for ( ; toRead < maxPaddedBytes; ++toRead)
-			chunker << '\0';
-			//Finally write the total number of bits in the entire data set as a 64-bit integer
-		chunker.write(reinterpret_cast<char*>(&totalBits), sizeof(totalBits));
-		chunker.flush();
-		incoming.resize(chunkSize);
-			//Compress the chunk
-		compress(incoming.data(), result);
-	}
+		//Calculate the total number of bits in the hash (as big endian)
+	auto totalBytes = Memory::toBigEndian(8 * (m_hashedCount + m_overflowSize));
+		//Copy the overflow data and append a single '1' bit
+	Memory overflow{m_overflow};
+	auto overflowSize = m_overflowSize;
+	overflow[overflowSize++] = '\x80';
+		//Zero the remaining overflow
+	for (auto i = overflowSize; i < chunkSize; ++i)
+		overflow[i] = '\x00';
+		//Add the total number of bits at the end of the overflow (if there is enough space)
+	constexpr uint32_t bitCountStart = chunkSize - sizeof(uint64_t);
+	if (overflowSize <= bitCountStart)
+		Memory::copy(overflow.data() + bitCountStart, reinterpret_cast<const char*>(&totalBytes), sizeof(totalBytes), sizeof(totalBytes));
+		//Compress the overflow into the result
+	compress(overflow.data(), result);
+		//If the bit count could be included in the overflow, we're done
+	if (overflowSize <= bitCountStart)
+		return result;
+		//Zero the overflow
+	Memory::fill(overflow.data(), chunkSize);
+		//Add the total number of bits at the end
+	Memory::copy(overflow.data() + bitCountStart, reinterpret_cast<const char*>(&totalBytes), sizeof(totalBytes), sizeof(totalBytes));
+		//Compress the overflow into the result
+	compress(overflow.data(), result);
 	return result;
-} //SHA256::finaliseOverflow
+} //SHA256::finalise
 
 
 /*--------------------------------------------------------------------
@@ -212,7 +209,7 @@ SHA256::HashTable SHA256::finaliseOverflow() const {
 	return: The hash (an array of bytes)
   --------------------------------------------------------------------*/
 Memory SHA256::getHash() const {
-	auto finalHash = finaliseOverflow();
+	auto finalHash = finalise();
 	Memory hash;
 	BufferOut buffer{hash};
 	for (auto i = 0; i < finalHash.size(); ++i)

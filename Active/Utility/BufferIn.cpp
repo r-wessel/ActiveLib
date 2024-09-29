@@ -438,7 +438,7 @@ const BufferIn& BufferIn::getLine(String& line, bool keepStop) const {
 const BufferIn& BufferIn::skip(Memory::size_type howMany) const {
 		//In case 'len' is bigger than the buffer size, we may need to bufferMin the buffer multiple times and skip the buffer size each time
 	while (good() && (howMany > 0)) {
-		auto batchSize = bufferMin(minVal(howMany, getCapacity()));
+		auto batchSize = minVal(howMany, bufferMin(minVal(howMany, getCapacity())));
 		bumpReadPos(batchSize);
 		howMany -= batchSize;
 	}
