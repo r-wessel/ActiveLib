@@ -384,6 +384,7 @@
 		21AEF9C82CA82393000B8681 /* SHA256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA256.cpp; sourceTree = "<group>"; };
 		21AEF9C92CA82393000B8681 /* SHA256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA256.h; sourceTree = "<group>"; };
 		21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SHA256Tests.cpp; sourceTree = "<group>"; };
+		21AEF9CE2CA9B263000B8681 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnyValueWrap.h; sourceTree = "<group>"; };
 		21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnyValueWrap.cpp; sourceTree = "<group>"; };
 		21C23CFF2C11142400E40710 /* File.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = File.md; sourceTree = "<group>"; };
@@ -815,9 +816,9 @@
 		214EA4D12BA488DA008E5358 /* Document */ = {
 			isa = PBXGroup;
 			children = (
+				214EA4CD2BA488DA008E5358 /* Handler.h */,
 				214EA4CA2BA488DA008E5358 /* Object.cpp */,
 				214EA4CB2BA488DA008E5358 /* Object.h */,
-				214EA4CD2BA488DA008E5358 /* Handler.h */,
 				214EA4CE2BA488DA008E5358 /* Transportable.h */,
 			);
 			path = Document;
@@ -904,6 +905,7 @@
 		219988072BD7B6370035E5EA /* Serialisation */ = {
 			isa = PBXGroup;
 			children = (
+				219988112BD7C2EB0035E5EA /* Base64Tests.cpp */,
 				219988132BD7C4490035E5EA /* DocumentTests.cpp */,
 				2199880F2BD7C1AE0035E5EA /* JSONTests.cpp */,
 				21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */,
@@ -911,7 +913,6 @@
 				212A87FD2AE486E3001EAFE7 /* SerialiseTester.cpp */,
 				212A87FF2AE486E3001EAFE7 /* SerialiseTester.h */,
 				219988062BD7B6370035E5EA /* XMLTests.cpp */,
-				219988112BD7C2EB0035E5EA /* Base64Tests.cpp */,
 			);
 			name = Serialisation;
 			path = ActiveLibDoctest/Serialisation;
@@ -951,6 +952,7 @@
 		21D0BCFB2C84AC560077E104 /* Database */ = {
 			isa = PBXGroup;
 			children = (
+				21AEF9CE2CA9B263000B8681 /* CMakeLists.txt */,
 				215F082B2C94A89B00CD343B /* Concepts.h */,
 				21D0BCF82C84AC560077E104 /* Content */,
 				21D0BD052C84B1400077E104 /* Identity */,
