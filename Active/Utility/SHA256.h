@@ -15,15 +15,28 @@
 namespace active::utility {
 		
 	/*!
-		A class representing a SHA256 type
-	*/
+	 A utility class providing SHA256 hashing
+	 
+	 See https://en.wikipedia.org/wiki/SHA-2
+	 This class can be used in a variety of ways:
+	 - Hashing a block of data in a string, file or memory
+	 - Hashing disparate fields together, e.g. for an object hash
+	 - Any combination of the above
+	 
+	 The finalised hash can be obtained as hex or base64 by calling hexHash() or base64Hash(). Note that it is still possible to keep feeding data
+	 into the hash even after a finalised hash has been obtained in order to obtain another hash.
+	 */
 	class SHA256 {
 	public:
+		
+		// MARK: Constructors
 		
 		/*!
 		 Default constructor
 		 */
 		SHA256();
+		
+		// MARK: Operators
 		
 		/*!
 		 Write data to the hash (NB: This does not prevent additional data from being written to the hash)
@@ -41,6 +54,9 @@ namespace active::utility {
 			auto temp = field;
 			return *this << BufferIn{Memory{Memory::toBigEndian(temp)}};
 		}
+		
+		// MARK: Functions (const)
+		
 		/*!
 		 Get the data hash (NB: This does not prevent additional data from being written to the hash)
 		 @return The hash (as hex digits)
@@ -51,6 +67,13 @@ namespace active::utility {
 		 @return The hash (as hex digits)
 		 */
 		String base64Hash() const;
+		
+		// MARK: Functions (mutating)
+		
+		/*!
+		 Reset the hashing data (as if starting from scratch)
+		 */
+		void reset();
 		
 	private:
 		using HashTable = std::array<uint32_t, 8>;
