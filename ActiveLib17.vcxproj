@@ -163,6 +163,7 @@
     <ClInclude Include="Active\Utility\Guid.h" />
     <ClInclude Include="Active\Utility\MathFunctions.h" />
     <ClInclude Include="Active\Utility\Memory.h" />
+    <ClInclude Include="Active\Utility\SHA256.h" />
     <ClInclude Include="Active\Utility\String.h" />
     <ClInclude Include="Active\Utility\TextEncoding.h" />
     <ClInclude Include="Active\Utility\Time.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="Active\Utility\DataFormat.cpp" />
     <ClCompile Include="Active\Utility\Guid.cpp" />
     <ClCompile Include="Active\Utility\Memory.cpp" />
+    <ClCompile Include="Active\Utility\SHA256.cpp" />
     <ClCompile Include="Active\Utility\String.cpp" />
     <ClCompile Include="Active\Utility\TextEncoding.cpp" />
     <ClCompile Include="Active\Utility\Time.cpp" />
