@@ -17,14 +17,15 @@ namespace active::utility {
 	/*!
 	 A utility class providing SHA256 hashing
 	 
-	 See https://en.wikipedia.org/wiki/SHA-2
+	 See https://en.wikipedia.org/wiki/SHA-2#Pseudocode
 	 This class can be used in a variety of ways:
 	 - Hashing a block of data in a string, file or memory
 	 - Hashing disparate fields together, e.g. for an object hash
 	 - Any combination of the above
 	 
 	 The finalised hash can be obtained as hex or base64 by calling hexHash() or base64Hash(). Note that it is still possible to keep feeding data
-	 into the hash even after a finalised hash has been obtained in order to obtain another hash.
+	 into the hash even after a finalised hash has been obtained in order to obtain another hash. The method for finalising a result works on a
+	 temporary copy of the hashing data and leaves the original untouched
 	 */
 	class SHA256 {
 	public:

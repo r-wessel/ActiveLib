@@ -368,6 +368,19 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<String>));
 	   }
 	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive failed));
+	   json.clear();
+	   std::vector<double> test2{1.0, 2.0, 3.14};
+	   try {
+		   transport.send(ContainerWrap{test2}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<double>));
+	   }
+	   std::vector<double> test2In;
+	   try {
+		   transport.receive(ContainerWrap{test2In}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<double>));
+	   }
    } //testContainer
 
 TEST_SUITE_CLOSE //JSONTest
