@@ -367,7 +367,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	   } catch(std::system_error& error) {
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<String>));
 	   }
-	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive failed));
+	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive strings failed));
 	   json.clear();
 	   std::vector<double> test2{1.0, 2.0, 3.14};
 	   try {
@@ -381,6 +381,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	   } catch(std::system_error& error) {
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<double>));
 	   }
+	   CHECK_MESSAGE(test2 == test2In, TEST_MESSAGE(String array JSON send/receive doubles failed));
    } //testContainer
 
 TEST_SUITE_CLOSE //JSONTest
