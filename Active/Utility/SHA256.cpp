@@ -226,5 +226,6 @@ Memory SHA256::getHash() const {
 	BufferOut buffer{hash};
 	for (auto i = 0; i < finalHash.size(); ++i)
 		buffer.writeBinary(Memory::toBigEndian(finalHash[i]));
+	buffer.flush();
 	return hash;
 } //SHA256::getHash
