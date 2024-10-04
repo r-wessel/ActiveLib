@@ -511,6 +511,9 @@
     <ClInclude Include="Active\Utility\SHA256.h">
       <Filter>Active\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ValueOptionWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
