@@ -174,7 +174,7 @@ namespace active::serialise {
 		@return True if the data was successfully read
 	*/
 	template<> inline
-		bool ValueWrap<std::optional<bool>>::read(const utility::String& source) {
+	bool ValueWrap<std::optional<bool>>::read(const utility::String& source) {
 		auto result = readBoolRefValue(source);
 		if (result.second)
 			base::get() = result.first;

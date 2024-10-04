@@ -68,7 +68,7 @@ namespace active::utility {
 			Conversion operator
 			@return True if the guid has a value (non-nil)
 		*/
-		operator bool() const { return (m_value.first != 0) || (m_value.second != 0); }
+		operator bool() const { return !empty(); }
 		
 		// MARK: - Functions (const)
 		
@@ -82,6 +82,11 @@ namespace active::utility {
 			@return A string representation
 		*/
 		String string() const;
+		/*!
+			Determine if the guid is an empty (nil) value
+			@return True if the guid is empty
+		*/
+		bool empty() const { return (m_value.first == 0) && (m_value.second == 0); }
 		
 		// MARK: - Functions (mutating)
 		
