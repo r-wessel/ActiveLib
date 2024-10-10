@@ -21,13 +21,15 @@ namespace active::utility {
 			@param val The integer to encode. Note that this could be any lesser integer type, e.g. char, short etc.
 			@return A guid - the lower 8 bytes are encoded from the integer and the remainder is zero (so guids from the same number are identical)
 		*/
-		static Guid fromInt(int64_t val);
+		static constexpr Guid fromInt(int64_t val) {
+			return Guid{ Raw{0, val} };
+		}
 		/*!
 			Decode an integer from a guid - niche support for systems that use integer IDs rather than Guids (don't use otherwise)
 			@param guid The guid to decode (it is assumed that 'fromInt' has been used to generate thus guid)
 			@return An integer decoded from the guid
 		*/
-		static int64_t toInt(const Guid& guid);
+		static constexpr int64_t toInt(const Guid& guid) { return guid.m_value.second; }
 		
 		// MARK: - Types
 		
@@ -47,6 +49,11 @@ namespace active::utility {
 			@param uuidString The guid in string form
 		*/
 		explicit Guid(const String& uuidString);
+		/*!
+			constexpr constructor
+			@param rawVal The guid raw value
+		*/
+		constexpr Guid(Raw rawVal) : m_value{rawVal} {}
 		
 		// MARK: - Operators
 

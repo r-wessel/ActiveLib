@@ -32,32 +32,6 @@ namespace {
 
 
 /*--------------------------------------------------------------------
-	Encode an integer into a guid - niche support for systems that use integer IDs rather than Guids (don't use otherwise)
- 
-	val: The integer to encode. Note that this could be any lesser integer type, e.g. char, short etc.
- 
-	return: A guid - the lower 8 bytes are encoded from the integer and the remainder is zero (so guids from the same number are identical)
-  --------------------------------------------------------------------*/
-Guid Guid::fromInt(int64_t val) {
-	Guid result;
-	result.m_value.second = val;
-	return result;
-} //Guid::fromInt
-
-
-/*--------------------------------------------------------------------
-	Decode an integer from a guid - niche support for systems that use integer IDs rather than Guids (don't use otherwise)
- 
-	guid: The guid to decode (it is assumed that 'fromInt' has been used to generate this guid)
- 
-	return: An integer decoded from the guid
-  --------------------------------------------------------------------*/
-int64_t Guid::toInt(const Guid& guid) {
-	return guid.m_value.second;
-} //Guid::toInt
-
-
-/*--------------------------------------------------------------------
 	Default constructor
  
 	autoGenerate: True to generate a guid value on construction

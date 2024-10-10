@@ -22,7 +22,7 @@ namespace active::database {
 
 		// MARK: - Types
 		
-		using base = active::database::Index<ObjID>;
+		using base = active::database::Index<ObjID, TableID, DocID>;
 			///Unique pointer
 		using Unique = std::unique_ptr<Link>;
 			///Shared pointer
