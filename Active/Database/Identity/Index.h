@@ -32,12 +32,6 @@ namespace active::database {
 		/*!
 		 Default constructor
 		 @param objID The object identifier
-		 @param owner An optional runtime identifier for the object owner in memory
-		 */
-		Index(const ObjID& objID, std::any owner = std::any{}) : ObjID{objID}, ownerID{owner} {}
-		/*!
-		 Default constructor
-		 @param objID The object identifier
 		 @param tblID An optional table identifier
 		 @param dcID An optional table identifier
 		 */
