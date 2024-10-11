@@ -74,7 +74,7 @@ namespace active::serialise {
 			Get the cargo management
 			@return The active management
 		*/
-		Management* management() const { return m_management; }
+		virtual Management* management() const { return m_management; }
 		
 		// MARK: - Functions (mutating)
 		
