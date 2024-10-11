@@ -68,6 +68,11 @@ namespace active::serialise {
 			@return The requested cargo (nullptr on failure)
 		*/
 		Cargo::Unique getCargo(const Inventory::Item& item) const override { return get().getCargo(item); }
+		/*!
+			Use a manager in (de)serialisation processes
+			@param management The management to use
+		*/
+		void useManagement(Management* management) const override { get().useManagement(management); }
 	
 		// MARK: - Functions (mutating)
 		

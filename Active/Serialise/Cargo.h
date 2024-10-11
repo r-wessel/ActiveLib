@@ -69,7 +69,7 @@ namespace active::serialise {
 			Use a manager in (de)serialisation processes
 			@param management The management to use
 		*/
-		void useManagement(Management* management) const { m_management = management; }
+		virtual void useManagement(Management* management) const { m_management = management; }
 		/*!
 			Get the cargo management
 			@return The active management
