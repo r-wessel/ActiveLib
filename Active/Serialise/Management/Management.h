@@ -50,6 +50,9 @@ namespace active::serialise {
 			}
 			if (auto manager = dynamic_cast<Manager*>(&cargo))
 				push_back(manager);
+			if (auto management = cargo.management(); management != nullptr)
+				for (auto manager : *management)
+					push_back(manager);
 		}
 	};
 	

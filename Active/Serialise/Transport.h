@@ -92,7 +92,7 @@ namespace active::serialise {
 			Determine if the cargo is managed
 			@return True if the cargo is managed
 		*/
-		bool isManaged() const { return m_management.operator bool(); }
+		bool isManaged() const { return management() != nullptr; }
 		/*!
 			Get the acting management
 			@return The acting management (nullptr if no management has been assigned) 
