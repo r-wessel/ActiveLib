@@ -213,6 +213,7 @@
     <ClCompile Include="Active\Serialise\Package\Pair.cpp" />
     <ClCompile Include="Active\Serialise\Package\Wrapper\Mover.cpp" />
     <ClCompile Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.cpp" />
+    <ClCompile Include="Active\Serialise\Transport.cpp" />
     <ClCompile Include="Active\Serialise\XML\Item\XMLDateTime.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.cpp" />

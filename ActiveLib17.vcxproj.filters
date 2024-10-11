@@ -714,6 +714,9 @@
     <ClCompile Include="Active\Utility\SHA256.cpp">
       <Filter>Active\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Active\Serialise\Transport.cpp">
+      <Filter>Active\Serialise</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Active\CMakeLists.txt">
