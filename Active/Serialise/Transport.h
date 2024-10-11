@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_TRANSPORT
 
 #include "Active/Serialise/XML/Item/XMLDateTime.h"
-#include "Active/Serialise/Manager.h"
+#include "Active/Serialise/Management/Management.h"
 #include "Active/Utility/Memory.h"
 
 namespace active::utility {
@@ -53,22 +53,7 @@ namespace active::serialise {
 			@param policy Content policy, i.e. unknown instances and requirements policy
 			@param timeFormat The serialisation date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		Transport(Policy policy = relaxed, TimeFormat timeFormat = iso8601) noexcept {
-			switch (policy) {
-				case verbose:
-					m_isEveryEntryRequired = true;
-					[[fallthrough]];
-				case strict:
-					m_isMissingEntryFailed = true;
-					[[fallthrough]];
-				case moderate:
-					m_isUnknownNameSkipped = false;
-					break;
-				default:
-					break;	//NB: Default member variable settings equate to relaxed policy
-			}
-			m_timeFormat = timeFormat;
-		}
+		Transport(Policy policy = relaxed, TimeFormat timeFormat = iso8601) noexcept;
 		/*!
 			Destructor
 		*/
@@ -107,12 +92,12 @@ namespace active::serialise {
 			Determine if the cargo is managed
 			@return True if the cargo is managed
 		*/
-		bool isManager() const { return m_manager.operator bool(); }
+		bool isManaged() const { return m_management.operator bool(); }
 		/*!
-			Get the acting manager
-			@return The acting manager (nullptr if no manager has been assigned) 
+			Get the acting management
+			@return The acting management (nullptr if no management has been assigned) 
 		*/
-		Manager* getManager() const { return m_manager.get(); }
+		Management* management() const { return m_management.get(); }
 		/*!
 			Get the last received character row position of the data source (after calling receive, for error diagnostics)
 			@return The last row position received from the data source
@@ -147,10 +132,10 @@ namespace active::serialise {
 		*/
 		void setTimeFormat(TimeFormat format) noexcept { m_timeFormat = format; }
 		/*!
-			Use a manager in (de)serialisation processes
-			@param manager The manager to use
+			Use management in (de)serialisation processes
+			@param management The management to use
 		*/
-		void setManager(std::unique_ptr<Manager> manager) { m_manager = std::move(manager); }
+		void setManagement(std::shared_ptr<Management> management) { m_management = management; }
 		/*!
 			Set whether unknown names are skipped
 			@param state True if unknown names are skipped
@@ -182,8 +167,8 @@ namespace active::serialise {
 	private:
 			//The preferred date/time format
 		TimeFormat m_timeFormat = iso8601;
-			//An optional serialisation manager
-		std::unique_ptr<Manager> m_manager;
+			//Optional serialisation management
+		std::shared_ptr<Management> m_management;
 			//The last row read from the data source (can be useful for error diagnostics)
 		mutable size_type m_lastRow = 0;
 			//The last column read from the data source (can be useful for error diagnostics)

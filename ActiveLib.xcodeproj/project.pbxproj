@@ -109,9 +109,9 @@
 		219988142BD7C4490035E5EA /* DocumentTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988132BD7C4490035E5EA /* DocumentTests.cpp */; };
 		219988172BD7C5C10035E5EA /* MeasurementTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988152BD7C5C10035E5EA /* MeasurementTests.cpp */; };
 		2199881E2BD833830035E5EA /* libActiveLib.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21379E082AE47A6400A1584C /* libActiveLib.a */; };
+		21A0FBA62CB90E8C0023F24E /* Transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21A0FBA52CB90E8C0023F24E /* Transport.cpp */; };
 		21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9AB2CA445C4000B8681 /* Vertex.h */; };
 		21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9AC2CA445C4000B8681 /* Vertex.cpp */; };
-		21AEF9B22CA5BB63000B8681 /* Manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9B12CA5BB62000B8681 /* Manager.h */; };
 		21AEF9CA2CA82393000B8681 /* SHA256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9C82CA82393000B8681 /* SHA256.cpp */; };
 		21AEF9CB2CA82393000B8681 /* SHA256.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9C92CA82393000B8681 /* SHA256.h */; };
 		21AEF9CD2CA8A96D000B8681 /* SHA256Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */; };
@@ -378,6 +378,8 @@
 		219988112BD7C2EB0035E5EA /* Base64Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Base64Tests.cpp; sourceTree = "<group>"; };
 		219988132BD7C4490035E5EA /* DocumentTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = DocumentTests.cpp; sourceTree = "<group>"; };
 		219988152BD7C5C10035E5EA /* MeasurementTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MeasurementTests.cpp; sourceTree = "<group>"; };
+		21A0FB9C2CB86F490023F24E /* Management.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Management.h; sourceTree = "<group>"; };
+		21A0FBA52CB90E8C0023F24E /* Transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transport.cpp; sourceTree = "<group>"; };
 		21AEF9AB2CA445C4000B8681 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		21AEF9AC2CA445C4000B8681 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
 		21AEF9B12CA5BB62000B8681 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
@@ -497,19 +499,20 @@
 		212A834E2AE47AD9001EAFE7 /* Serialise */ = {
 			isa = PBXGroup;
 			children = (
-				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				212A834F2AE47AD9001EAFE7 /* Cargo.h */,
 				21F69F622C6D4AEE008B6A06 /* CargoHold.h */,
 				215F08482C972BB100CD343B /* CargoType.h */,
+				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				215F08392C95953800CD343B /* Concepts.h */,
 				214EA4D12BA488DA008E5358 /* Document */,
 				212A83752AE47AD9001EAFE7 /* Generic */,
 				212A83702AE47AD9001EAFE7 /* Inventory */,
 				212A83662AE47AD9001EAFE7 /* Item */,
 				212A83632AE47AD9001EAFE7 /* JSON */,
-				21AEF9B12CA5BB62000B8681 /* Manager.h */,
+				21A0FB9B2CB86F2C0023F24E /* Management */,
 				212A83782AE47AD9001EAFE7 /* Package */,
 				219712682BE7E2D500D9EF7E /* Serialisation.md */,
+				21A0FBA52CB90E8C0023F24E /* Transport.cpp */,
 				217AE6422BEA5CF6004CC2B0 /* Transport.h */,
 				219245F92CA2C9CE00CF5703 /* UnboxedTransport.h */,
 				212A83502AE47AD9001EAFE7 /* XML */,
@@ -926,6 +929,15 @@
 			path = SettingTests;
 			sourceTree = "<group>";
 		};
+		21A0FB9B2CB86F2C0023F24E /* Management */ = {
+			isa = PBXGroup;
+			children = (
+				21A0FB9C2CB86F490023F24E /* Management.h */,
+				21AEF9B12CA5BB62000B8681 /* Manager.h */,
+			);
+			path = Management;
+			sourceTree = "<group>";
+		};
 		21D0BCF82C84AC560077E104 /* Content */ = {
 			isa = PBXGroup;
 			children = (
@@ -1050,7 +1062,6 @@
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
 				216DFFAC2AE87766009110CF /* UInt32Value.h in Headers */,
 				218953A42C0C9CB00078F182 /* Version.h in Headers */,
-				21AEF9B22CA5BB63000B8681 /* Manager.h in Headers */,
 				21329F562BFB8E9B00B5C7AF /* Mover.h in Headers */,
 				21257AB42C19D10C00B710AC /* DataFormat.h in Headers */,
 				21932D412BE13FD8005DB06E /* MassValue.h in Headers */,
@@ -1241,6 +1252,7 @@
 				212A840C2AE47AD9001EAFE7 /* PolyEdge.cpp in Sources */,
 				212A83D42AE47AD9001EAFE7 /* Directory.cpp in Sources */,
 				212A84002AE47AD9001EAFE7 /* Line.cpp in Sources */,
+				21A0FBA62CB90E8C0023F24E /* Transport.cpp in Sources */,
 				214661992C263C550048BBA7 /* Colour.cpp in Sources */,
 				212A83DB2AE47AD9001EAFE7 /* XMLDateTime.cpp in Sources */,
 				2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */,

@@ -6,6 +6,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_SERIALISE_MANAGER
 #define ACTIVE_SERIALISE_MANAGER
 
+#include <memory>
+
 namespace active::serialise {
 	
 	/*!
@@ -16,6 +18,8 @@ namespace active::serialise {
 	 */
 	class Manager {
 	public:
+		using Shared = std::shared_ptr<Manager>;
+		
 		virtual ~Manager() {}
 	};
 	

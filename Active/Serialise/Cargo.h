@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active::serialise {
 	
-	class Manager;
+	class Management;
 	
 	/*!
 		Interface for data entities that support serialisation for transport
@@ -67,15 +67,14 @@ namespace active::serialise {
 		virtual Cargo::Unique getCargo(const Inventory::Item& item) const = 0;
 		/*!
 			Use a manager in (de)serialisation processes
-			@param manager The manager to use
+			@param management The management to use
 		*/
-		void useManager(Manager* manager) const { m_manager = manager; }
+		void useManagement(Management* management) const { m_management = management; }
 		/*!
-			Get the cargo manager
-			@return The active manager
+			Get the cargo management
+			@return The active management
 		*/
-		template<typename T>
-		T* getManager() const { return dynamic_cast<T*>(m_manager); }
+		Management* management() const { return m_management; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -105,14 +104,13 @@ namespace active::serialise {
 	private:
 			///Optional recommended cargo type - useful for some forms of transport which might incorrectly deduce it
 		std::optional<Entry::Type> m_type;
-			///Optional cargo manager (migration handling etc)
-		mutable Manager* m_manager = nullptr;
+			///Optional cargo management (migration handling etc)
+		mutable Management* m_management = nullptr;
 	};
 
 		///Transportable concept for classes/functions representing transportable cargo
 	template<class T>
 	concept Transportable = std::is_base_of<active::serialise::Cargo, T>::value;
-	
 	
 }
 
