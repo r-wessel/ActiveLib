@@ -354,6 +354,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	///Tests for sending and receiving items via JSON
    TEST_CASE(TESTQ(testContainer)) {
 	   JSONTransport transport;
+	   	//Test string array
 	   std::vector<String> test1{"Something", "Whatever", "more", "Testing"};
 	   String json;
 	   try {
@@ -368,6 +369,22 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<String>));
 	   }
 	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive strings failed));
+		   //Test guid array
+	   std::vector<Guid> testg1{Guid{true}, Guid{true}, Guid{true}, Guid{true}};
+	   json.clear();
+	   try {
+		   transport.send(ContainerWrap{testg1}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<Guid>));
+	   }
+	   std::vector<Guid> test1gIn;
+	   try {
+		   transport.receive(ContainerWrap{test1gIn}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<Guid>));
+	   }
+	   CHECK_MESSAGE(testg1 == test1gIn, TEST_MESSAGE(String array JSON send/receive guids failed));
+		   //Test double array
 	   json.clear();
 	   std::vector<double> test2{1.0, 2.0, 3.14};
 	   try {
