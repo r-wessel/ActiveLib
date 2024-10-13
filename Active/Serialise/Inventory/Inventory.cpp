@@ -44,9 +44,9 @@ Inventory::Sequence Inventory::sequence() const {
 	for (auto i = begin(); i != end(); ++i)
 		sequenced.push_back(std::make_pair(i->index, i));
 		//Order attributes first, then ordered by entry.index
-	std::sort(sequenced.begin(), sequenced.end(), [](const auto& left, const auto& right) {
+	std::stable_sort(sequenced.begin(), sequenced.end(), [](const auto& left, const auto& right) {
 		if (left.second->isAttribute() == right.second->isAttribute())
-			return left.first < right.first;
+			return false;
 		return left.second->isAttribute();	//Attributes come first
 	});
 	return sequenced;
