@@ -158,7 +158,7 @@ namespace active::setting {
 		@return True if the value is null
 	*/
 	template<> inline
-	bool DoubleValue::isNull() const { return !math::isZero(data); }
+	bool DoubleValue::isNull() const { return math::isZero(data); }
 	/*!
 		Get the value type
 		@return The value type

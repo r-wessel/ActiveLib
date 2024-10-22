@@ -141,7 +141,7 @@ namespace active::setting {
 		@return True if the value is null
 	*/
 	template<> inline
-	bool Int64Value::isNull() const { return (data != 0); }
+	bool Int64Value::isNull() const { return (data == 0); }
 	/*!
 		Get the value type
 		@return The value type

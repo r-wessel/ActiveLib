@@ -167,7 +167,7 @@ namespace active::setting {
 		@return True if the value is null
 	*/
 	template<> inline
-	bool StringValue::isNull() const { return !data.empty(); }
+	bool StringValue::isNull() const { return data.empty(); }
 	/*!
 		Get the value type
 		@return The value type
