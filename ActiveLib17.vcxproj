@@ -150,6 +150,8 @@
     <ClInclude Include="Active\Setting\Values\Measurement\Units\LengthUnit.h" />
     <ClInclude Include="Active\Setting\Values\Measurement\Units\MassUnit.h" />
     <ClInclude Include="Active\Setting\Values\Measurement\Units\Unit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\VolumeUnit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\VolumeValue.h" />
     <ClInclude Include="Active\Setting\Values\NullValue.h" />
     <ClInclude Include="Active\Setting\Values\StringValue.h" />
     <ClInclude Include="Active\Setting\Values\TimeValue.h" />
@@ -227,6 +229,7 @@
     <ClCompile Include="Active\Setting\Values\Measurement\Units\AreaUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Measurement\Units\LengthUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Measurement\Units\MassUnit.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\VolumeUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Value.cpp" />
     <ClCompile Include="Active\Utility\BufferIn.cpp" />
     <ClCompile Include="Active\Utility\BufferOut.cpp" />
