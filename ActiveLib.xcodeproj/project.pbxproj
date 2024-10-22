@@ -110,6 +110,9 @@
 		219988172BD7C5C10035E5EA /* MeasurementTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988152BD7C5C10035E5EA /* MeasurementTests.cpp */; };
 		2199881E2BD833830035E5EA /* libActiveLib.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21379E082AE47A6400A1584C /* libActiveLib.a */; };
 		21A0FBA62CB90E8C0023F24E /* Transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21A0FBA52CB90E8C0023F24E /* Transport.cpp */; };
+		21AE195B2CC297A4004DBCFC /* VolumeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AE19592CC297A4004DBCFC /* VolumeUnit.h */; };
+		21AE195C2CC297A4004DBCFC /* VolumeUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */; };
+		21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AE195D2CC29AB9004DBCFC /* VolumeValue.h */; };
 		21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9AB2CA445C4000B8681 /* Vertex.h */; };
 		21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9AC2CA445C4000B8681 /* Vertex.cpp */; };
 		21AEF9CA2CA82393000B8681 /* SHA256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9C82CA82393000B8681 /* SHA256.cpp */; };
@@ -380,6 +383,9 @@
 		219988152BD7C5C10035E5EA /* MeasurementTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MeasurementTests.cpp; sourceTree = "<group>"; };
 		21A0FB9C2CB86F490023F24E /* Management.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Management.h; sourceTree = "<group>"; };
 		21A0FBA52CB90E8C0023F24E /* Transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transport.cpp; sourceTree = "<group>"; };
+		21AE19592CC297A4004DBCFC /* VolumeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeUnit.h; sourceTree = "<group>"; };
+		21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeUnit.cpp; sourceTree = "<group>"; };
+		21AE195D2CC29AB9004DBCFC /* VolumeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeValue.h; sourceTree = "<group>"; };
 		21AEF9AB2CA445C4000B8681 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		21AEF9AC2CA445C4000B8681 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
 		21AEF9B12CA5BB62000B8681 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
@@ -837,6 +843,7 @@
 				21932D402BE13FD8005DB06E /* MassValue.h */,
 				215F91462BC92A800052BFC8 /* MeasuredValue.h */,
 				215F913F2BC83B510052BFC8 /* Units */,
+				21AE195D2CC29AB9004DBCFC /* VolumeValue.h */,
 			);
 			path = Measurement;
 			sourceTree = "<group>";
@@ -853,6 +860,8 @@
 				215F915D2BCDD5E30052BFC8 /* MassUnit.cpp */,
 				215F914B2BC9DA1E0052BFC8 /* MassUnit.h */,
 				215F913E2BC83B510052BFC8 /* Unit.h */,
+				21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */,
+				21AE19592CC297A4004DBCFC /* VolumeUnit.h */,
 			);
 			path = Units;
 			sourceTree = "<group>";
@@ -1060,6 +1069,7 @@
 				21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */,
 				21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */,
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
+				21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */,
 				216DFFAC2AE87766009110CF /* UInt32Value.h in Headers */,
 				218953A42C0C9CB00078F182 /* Version.h in Headers */,
 				21329F562BFB8E9B00B5C7AF /* Mover.h in Headers */,
@@ -1093,6 +1103,7 @@
 				215F91112BC574790052BFC8 /* Base64Transport.h in Headers */,
 				21F93AD22B2B81C6009A2C5B /* SettingList.h in Headers */,
 				215F91532BCB1F330052BFC8 /* AngleValue.h in Headers */,
+				21AE195B2CC297A4004DBCFC /* VolumeUnit.h in Headers */,
 				21F93ADE2B2C79B5009A2C5B /* Publisher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1269,6 +1280,7 @@
 				212A84432AE47AD9001EAFE7 /* Guid.cpp in Sources */,
 				21257AC62C1C881F00B710AC /* DataFormat.cpp in Sources */,
 				21D0BDA12C8F2C430077E104 /* RecordCache.cpp in Sources */,
+				21AE195C2CC297A4004DBCFC /* VolumeUnit.cpp in Sources */,
 				21F93AD42B2B8679009A2C5B /* SettingList.cpp in Sources */,
 				212A83DE2AE47AD9001EAFE7 /* XMLValueSetting.cpp in Sources */,
 				212A841B2AE47AD9001EAFE7 /* XList.cpp in Sources */,

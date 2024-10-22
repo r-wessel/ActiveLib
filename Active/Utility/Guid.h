@@ -121,4 +121,12 @@ struct std::hash<active::utility::Guid> {
 	}
 };
 
+	///Hashing for a Guid pair, e.g. to use as a key in unordered_map
+template<>
+struct std::hash<std::pair<active::utility::Guid, active::utility::Guid>> {
+	std::size_t operator() (const std::pair<active::utility::Guid, active::utility::Guid>& pair) const {
+		return std::hash<active::utility::Guid>()(pair.first) | std::rotr(std::hash<active::utility::Guid>()(pair.second), 8 * sizeof(std::size_t));
+	}
+};
+
 #endif	//ACTIVE_UTILITY_GUID
