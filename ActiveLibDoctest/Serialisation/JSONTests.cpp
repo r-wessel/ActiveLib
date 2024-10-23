@@ -309,7 +309,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			checkedTransport.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with an unknown name));
 		} catch(std::system_error& error) {
-			CHECK_MESSAGE(makeReportFor(checkedTransport, error.code().message()) == "An unknown name was found in the JSON at row: 24, column: 5",
+			CHECK_MESSAGE(makeReportFor(checkedTransport, error.code().message()) == "An unknown name was found in the JSON at row: 23, column: 14",
 						  TEST_MESSAGE(Failure report for input with an incorrect name wrong));
 		}
 			//Read JSON with a missing quote
