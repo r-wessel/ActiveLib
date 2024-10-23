@@ -888,9 +888,10 @@ namespace {
 					Inventory::iterator incomingItem = inventory.end();
 					if (parsingStage == array)
 						getArrayIdentity(container, inventory, containerIdentity, identity);
-					if ((parsingStage == root) || (identity.type == arrayStart))	//At root level we're importing to the container we already have
-						cargo = makeWrapper(container, containerIdentity, inventory, identity);
-					else {
+					if ((parsingStage == root) || (identity.type == arrayStart)) {	//At root level we're importing to the container we already have
+						if (!isReadingAttribute)
+							cargo = makeWrapper(container, containerIdentity, inventory, identity);
+					} else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
 						if (incomingItem != inventory.end()) {
 							if (isReadingAttribute && !incomingItem->isAttribute() && (parsingStage != array))
