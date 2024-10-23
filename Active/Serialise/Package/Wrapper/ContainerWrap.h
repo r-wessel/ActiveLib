@@ -65,7 +65,7 @@ namespace active::serialise {
 		 @param tg The default item tag
 		 */
 		ContainerWrap(const Container& container, bool isEmptySent = false, const utility::String& tg = defaultTag) :
-				ContainerWrap{const_cast<Container&>(container), isEmptySent, defaultTag} {}
+				ContainerWrap{const_cast<Container&>(container), isEmptySent, tg} {}
 		/*!
 		 Destructor
 		*/

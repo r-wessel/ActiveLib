@@ -905,7 +905,7 @@ namespace {
 										throw std::system_error(makeJSONError(inventoryBoundsExceeded));
 									if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
 										--attributesRemaining;
-									incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
+									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
 									cargo = container.getCargo(*incomingItem);
 									if (cargo)
 										cargo->setDefault();
