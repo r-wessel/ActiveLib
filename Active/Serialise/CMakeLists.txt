@@ -3,13 +3,13 @@ set(SourceFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/Base64Transport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/HexTransport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Inventory/Inventory.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Item/Encoding.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Item.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/AnyValueWrap.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/JSON/JSONTransport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Pair.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/Mover.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/ValueSettingWrap.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Transport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Item/XMLDateTime.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Package/Wrapper/Geometry/XMLPoint.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Package/Wrapper/Geometry/XMLPolyPoint.cpp
@@ -41,7 +41,8 @@ set(HeaderFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/ValueOptionWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/ValueWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/JSON/JSONTransport.h
-	${CMAKE_CURRENT_SOURCE_DIR}/Manager.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Management/Management.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Management/Manager.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/NullPackage.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Package.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Pair.h
