@@ -16,12 +16,12 @@ namespace active::database {
 		
 		// MARK: - Types
 		
-		using TableSchema = TableSchema<TableID>;
-		using base = std::vector<TableSchema>;
+		using TableSchemaType = TableSchema<TableID>;
+		using base = std::vector<TableSchemaType>;
 		
 		// MARK: - Constructors
 		
-		DBaseSchema(const DBaseID& nm, const std::initializer_list<TableSchema> tables) : base{tables}, name{nm} {}
+		DBaseSchema(const DBaseID& nm, const std::initializer_list<TableSchemaType> tables) : base{tables}, name{nm} {}
 		
 		DBaseID name;
 	};
