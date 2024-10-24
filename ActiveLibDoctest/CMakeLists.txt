@@ -36,7 +36,7 @@ add_executable(activelibtests
     Serialisation/SerialiseArrayTester.cpp
     Serialisation/SerialiseTester.cpp
     Serialisation/XMLTests.cpp
-    Settingtests/MeasurementTests.cpp
+    SettingTests/MeasurementTests.cpp
     SHA256Tests.cpp
     StringTests.cpp
     TimeTests.cpp
