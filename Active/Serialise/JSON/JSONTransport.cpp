@@ -1035,12 +1035,10 @@ namespace {
 			bool isItemArray = entryItem.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray) {
-				if (isFirstItem)
-					isFirstItem = false;	//This has been delayed until a first value is actually written
-				else {
+				if (!isFirstItem)
 					exporter.write(",");
-					isFirstItem = true;
-				}
+				isFirstItem = true;
+				isFirstValue = true;
 				exporter.writeTag(entryItem.identity().name, entryNameSpace, arrayStart, depth);
 			}
 			for (entryItem.available = 0; entryItem.available < limit; ++entryItem.available) {
