@@ -34,6 +34,17 @@ namespace active::serialise {
 			@return True if the package requires attributes first
 		*/
 		virtual bool isAttributeFirst() const { return false; }
+		/*!
+			Get the serialisation type for the cargo value
+			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
+		*/
+		std::optional<Type> type() const override { return Cargo::Type::package; }
+		/*!
+			Write the item data to a string
+			@param dest The string to write the data to
+			@return True if the data was successfully written
+		*/
+		bool write(utility::String& dest) const override  { return true; }	//Most packages do not write a data value independent of a specific field
 
 		// MARK: - Functions (mutating)
 		
@@ -53,7 +64,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the package was successfully read
 		*/
-		virtual bool read(const utility::String& source) { return true; }
+		bool read(const utility::String& source) override { return true; }	//Most packages do not read a data value independent of a specific field
 		/*!
 			Set whether the package is the outermost/root layer of a hierarchy
 			@param state True if the package is the outermost/root layer of a hierarchy

@@ -40,16 +40,11 @@ namespace active::serialise::xml {
 		*/
 		virtual double getPrecision() const = 0;
 		/*!
-			Determine if the number is written with padding (zeros)
-			@return True if the number should be padded to the specified precision
-		*/
-		virtual bool isPadded() const { return false; }
-		/*!
 			Write the item data to a string
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		virtual bool write(utility::String& dest) const { dest = utility::String{get(), getPrecision(), isPadded()}; return true; }
+		virtual bool write(utility::String& dest) const { dest = utility::String{get(), getPrecision()}; return true; }
 	};
 	
 }

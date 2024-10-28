@@ -14,7 +14,7 @@ using namespace active::utility;
 	policy: Content policy, i.e. unknown instances and requirements policy
 	timeFormat: The serialisation date/time format (nullopt = use the format specified in each outgoing item)
   --------------------------------------------------------------------*/
-Transport::Transport(Policy policy, TimeFormat timeFormat) noexcept {
+Transport::Transport(Policy policy, Item::TimeFormat timeFormat) noexcept {
 	switch (policy) {
 		case verbose:
 			m_isEveryEntryRequired = true;

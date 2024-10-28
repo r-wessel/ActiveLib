@@ -34,9 +34,9 @@ namespace active::serialise {
 		
 		// MARK: - Types
 			
-		using TimeFormat = std::optional<xml::XMLDateTime::Format>;
+		using TimeFormat = std::optional<Item::TimeFormat>;
 		using size_type = utility::Memory::size_type;
-		using enum xml::XMLDateTime::Format;
+		using enum Item::TimeFormat;
 		
 			///Policy for adherence to schema
 		enum Policy {
@@ -53,7 +53,7 @@ namespace active::serialise {
 			@param policy Content policy, i.e. unknown instances and requirements policy
 			@param timeFormat The serialisation date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		Transport(Policy policy = relaxed, TimeFormat timeFormat = iso8601) noexcept;
+		Transport(Policy policy = relaxed, Item::TimeFormat timeFormat = iso8601) noexcept;
 		/*!
 			Destructor
 		*/
@@ -87,7 +87,7 @@ namespace active::serialise {
 			Set the preferred serialisation date/time format
 			@return The preferred date/time format
 		*/
-		TimeFormat getTimeFormat() const noexcept { return m_timeFormat; }
+		Item::TimeFormat getTimeFormat() const noexcept { return m_timeFormat; }
 		/*!
 			Determine if the cargo is managed
 			@return True if the cargo is managed
@@ -130,7 +130,7 @@ namespace active::serialise {
 			Set the preferred date/time format for serialisation
 			@param format The preferred date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		void setTimeFormat(TimeFormat format) noexcept { m_timeFormat = format; }
+		void useTimeFormat(Item::TimeFormat format) noexcept { m_timeFormat = format; }
 		/*!
 			Use management in (de)serialisation processes
 			@param management The management to use
@@ -166,7 +166,7 @@ namespace active::serialise {
 		
 	private:
 			//The preferred date/time format
-		TimeFormat m_timeFormat = iso8601;
+		Item::TimeFormat m_timeFormat = iso8601;
 			//Optional serialisation management
 		std::shared_ptr<Management> m_management;
 			//The last row read from the data source (can be useful for error diagnostics)

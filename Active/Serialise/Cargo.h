@@ -20,6 +20,18 @@ namespace active::serialise {
 		
 		// MARK: - Types
 		
+			//Cargo types
+		enum class Type {
+			text, ///<Text value
+			number, ///<Numeric value
+			boolean, ///<Boolean value
+			package, ///<Packaged cargo, not a unary item and therefore not necessarily a specific value type
+		};
+			///Serialisation date/time format
+		enum class TimeFormat {
+			iso8601,			///< ISO 8601
+			secondsSince1970,	///< Unix (posix) epoch
+		};
 			///Unique pointer
 		using Unique = std::unique_ptr<Cargo>;
 			///Shared pointer
@@ -49,6 +61,17 @@ namespace active::serialise {
 		*/
 		virtual bool isNull() const { return false; }
 		/*!
+			Write the item data to a string
+			@param dest The string to write the data to
+			@return True if the data was successfully written
+		*/
+		virtual bool write(utility::String& dest) const = 0;
+		/*!
+			Get the serialisation type for the cargo value
+			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
+		*/
+		virtual std::optional<Type> type() const { return std::nullopt; }
+		/*!
 			Get the recommended cargo entry type
 			@return The cargo entry type (nullopt = deduce automatically from cargo characteristics)
 		*/
@@ -65,6 +88,11 @@ namespace active::serialise {
 			@return The requested cargo (nullptr on failure)
 		*/
 		virtual Cargo::Unique getCargo(const Inventory::Item& item) const = 0;
+		/*!
+			Use a specified date/time format for serialisation
+			@param format The date/time format
+		*/
+		virtual void useTimeFormat(TimeFormat format) const {}
 		/*!
 			Use a manager in (de)serialisation processes
 			@param management The management to use
@@ -87,6 +115,12 @@ namespace active::serialise {
 			m_type = type;
 			return *this;
 		}
+		/*!
+			Read the cargo data from the specified string
+			@param source The string to read
+			@return True if the data was successfully read
+		*/
+		virtual bool read(const utility::String& source) = 0;
 		/*!
 			Clear the data content (typically a reset to defaults)
 		*/

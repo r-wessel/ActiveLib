@@ -675,7 +675,7 @@ namespace {
 		if (!value)
 			throw std::system_error(makeJSONError(valueMissing));
 			//Once a value has been retrieved with a type based on the JSON encoding, we can assign that to the receiving item
-		if (!item.read(*value))
+		if (!item.readSetting(*value))
 			throw std::system_error(makeJSONError(badValue));
 	} //JSONImporter::getContent
 
@@ -981,33 +981,27 @@ namespace {
 			if (exporter.isNameSpaces && identity.group)
 				nameSpace = *identity.group;
 		}
-		const auto* item = dynamic_cast<const Item*>(&cargo);
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			exporter.writeTag(tag, nameSpace, valueStart, depth);
-			if ((item == nullptr) || item->isNull()) {
-				if (!cargo.isNull() && (item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
+			if ((cargo.type() == Cargo::Type::package) || cargo.isNull()) {
+				if (!cargo.isNull() && (cargo.type() == Cargo::Type::package))
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
 				return;
 			}
 			String outgoing;
 				//Check for a time item not matching the current output spec
-			if (const auto* timeItem = dynamic_cast<const xml::XMLDateTime*>(item);
-						exporter.timeFormat && (timeItem != nullptr) && (timeItem->getFormat() != *exporter.timeFormat)) {
-				xml::XMLDateTime formattedTimeItem{*timeItem};
-				formattedTimeItem.setFormat(*exporter.timeFormat);	//Set the specified format
-				if (!formattedTimeItem.write(outgoing))
-					throw std::system_error(makeJSONError(badValue));
-			} else if (!item->write(outgoing))
+			cargo.useTimeFormat(*exporter.timeFormat);
+			if (!cargo.write(outgoing))
 				throw std::system_error(makeJSONError(badValue));
-			if (item->type() == Item::text)
+			if (cargo.type() == Cargo::Type::text)
 				outgoing = "\"" + toJSONString(outgoing, exporter.glossary()) + "\"";
 			exporter.write(outgoing);
 			return;
 		}
-		if ((item != nullptr) && (inventory.size() != 1))	//An item can have multiple values but they must all be a homogenous type, e.g. an array
+		if ((cargo.type() != Cargo::Type::package) && (inventory.size() != 1))	//An item can have multiple values but they must all be a homogenous type, e.g. an array
 			throw std::system_error(makeJSONError(badValue));
 			//Determine if this element acts as an object/array wrapper for values
 			//The package will have an outer object wrapper (even if an array) if the outer element has a name that differs from the inner item
@@ -1056,7 +1050,7 @@ namespace {
 				else
 					exporter.write(",");
 				doJSONExport(*content, isItemArray || isArray ? entryItem.identity() : JSONIdentity{entryItem.identity()}.atStage(object),
-							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
+							 exporter, ((cargo.type() == Cargo::Type::package)) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
 				exporter.writeTag(String{}, String{}, arrayEnd, depth);

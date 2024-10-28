@@ -32,7 +32,7 @@ namespace active::database {
 			///The database schema, including tables
 		using DBaseSchema = DBaseSchema<DBaseID, TableID>;
 			///Tables within the database, including a full description of member fields (names/types) and primary index/content fields
-		using TableSchema = DBaseSchema::TableSchema;
+		using TableSchema = DBaseSchema::TableSchemaType;
 			///Unary predicate for filtering records
 		using Filter = std::function<bool(const Obj&)>;
 			///A serialisation wrapper for a Storage container

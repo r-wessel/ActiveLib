@@ -9,11 +9,11 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/BufferOut.h"
 
 #include <cwctype>
+#include <format>
 #include <numeric>
 #include <locale>
 #include <optional>
 #include <set>
-#include <sstream>
 #include <stdexcept>
 
 using namespace active::utility;
@@ -446,20 +446,13 @@ String::String(size_type newSize, const String& fillText) {
 	padZero: True to pad the number to the specified precision with zeros
   --------------------------------------------------------------------*/
 String::String(double val, double prec, bool padZero) {
-	std::ostringstream text;
-	text.setf(std::ios::fixed, std::ios::floatfield);
-	auto dp = static_cast<std::string::size_type>(math::round(math::maxVal(0.0, -log10(prec)), 1.0));
-	text.precision(dp);
-	text << val;
-	m_string = text.str();
+	int32_t dec = std::max(0, static_cast<int32_t>(-log10(prec)));
+	m_string = std::format("{:.{}f}", val, dec);
 		//Padding is added by default, so strip it when unwanted
 	if (!padZero) {
-		auto pointPos = m_string.find_last_of('.');
-		if (pointPos != npos) {
-			while (m_string.back() == '0')
-				m_string.pop_back();
-			if (m_string.back() == '.')
-				m_string.pop_back();
+		if (auto pointPos = m_string.find('.'); pointPos != npos) {
+			auto lastZero = m_string.find_last_not_of("0");
+			m_string = substr(0, (pointPos == lastZero) ? pointPos : lastZero + 1);
 		}
 	}
 } //String::String
