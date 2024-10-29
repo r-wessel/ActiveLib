@@ -19,6 +19,11 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the cargo has a null value (undefined)
+			@return True if the cargo data is undefined
+		*/
+		bool isNull() const override { return true; }
+		/*!
 			Write the item data to a string
 			@param dest The string to write the data to
 			@return True if the data was successfully written
