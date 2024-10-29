@@ -992,7 +992,6 @@ namespace {
 				return;
 			}
 			String outgoing;
-				//Check for a time item not matching the current output spec
 			cargo.useTimeFormat(*exporter.timeFormat);
 			if (!cargo.write(outgoing))
 				throw std::system_error(makeJSONError(badValue));
