@@ -40,7 +40,7 @@ namespace active::database {
 	 @tparam ObjID The object identifier type
 	 */
 	template<typename ObjID = active::utility::Guid>
-	class Record : public active::serialise::Package, public active::utility::Cloner {
+	class Record : public active::serialise::Package, public virtual active::utility::Cloner {
 	public:
 
 		// MARK: - Types
