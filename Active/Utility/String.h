@@ -631,6 +631,13 @@ namespace active::utility {
 		*/
 		size_type assign(const char* source, sizeOption byteCount = std::nullopt, sizeOption charCount = std::nullopt, DataFormat format = DataFormat{});
 		/*!
+			Assign a double value to the string (used in special cases where fast conversion is a priority
+			@param value The string to assign
+			@param decPlaces The number of decimal places
+			@return True if the assignment was successful
+		*/
+		bool assign(double value, uint8_t decPlaces = 5);
+		/*!
 			Append the specified string to this
 			@param source The string to append
 			@return A reference to this

@@ -502,8 +502,11 @@ String::size_type String::getValidByteCount(const char* text, sizeOption howMany
 		if (auto nextLen = String::getCharacterByteCount(endPos, howMany, format); nextLen && (nextLen > 0)) {
 			endPos += *nextLen;
 				//If the source is byte-limited, ensure the remaining count is updated
-			if (howMany)
+			if (howMany) {
 				*howMany -= *nextLen;
+				if (*howMany == 0)
+					break;
+			}
 		} else
 			break;
 	} while ((*endPos != 0) && (isOpen || --(*charCount)));
@@ -1512,6 +1515,26 @@ String& String::assign(const String& source) {
 String::size_type String::assign(const char* source, sizeOption byteCount, sizeOption charCount, DataFormat format) {
 	m_string.clear();
 	return makeString(m_string, source, byteCount, charCount, format);
+} //String::assign
+
+
+/*--------------------------------------------------------------------
+	Assign a double value to the string (used in special cases where fast conversion is a priority
+ 
+	value: The string to assign
+	decPlaces: The number of decimal places
+ 
+	return: True if the assignment was successful
+  --------------------------------------------------------------------*/
+bool String::assign(double value, uint8_t decPlaces) {
+	constexpr size_t bufferLen = 40;
+	m_string.resize(bufferLen);
+	auto result = std::to_chars(m_string.data(), m_string.data() + bufferLen, value, std::chars_format::fixed, decPlaces);
+	if (result.ec != std::errc())
+		return false;
+	*result.ptr = '\0';
+	m_string.resize(result.ptr - m_string.data());
+	return true;
 } //String::assign
 
 

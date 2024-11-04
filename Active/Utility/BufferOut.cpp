@@ -94,6 +94,7 @@ BufferOut::BufferOut(BufferOut&& source) noexcept :
 		m_memory(std::exchange(source.m_memory, nullptr)),
 		m_bufferPos(std::exchange(source.m_bufferPos, 0)) {
 	m_format = source.m_format;
+	m_bufferSizeTip = source.m_bufferSizeTip;
 } //BufferOut::BufferOut
 
 
