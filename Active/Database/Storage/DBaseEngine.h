@@ -37,11 +37,20 @@ namespace active::database {
 		// MARK: - Functions (const)
 		
 		/*!
+		 Find a filtered list of objects
+		 @param filter The object filter (nullptr = find all objects)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
+		 @return A list containing IDs of found elements (empty if none found)
+		 */
+		virtual std::vector<ObjID> findObjects(const Filter& filter = nullptr, std::optional<TableID> tableID = std::nullopt,
+											   std::optional<DocID> documentID = std::nullopt) const = 0;
+		/*!
 		 Get an object by index
 		 @param objID The object ID
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
-		 @return: The requested object (nullptr on failure)
+		 @return The requested object (nullptr on failure)
 		 */
 		virtual std::unique_ptr<Obj> getObject(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
@@ -49,14 +58,14 @@ namespace active::database {
 		 @param objID The object ID
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
-		 @return: The requested wrapped cargo (nullptr on failure)
+		 @return The requested wrapped cargo (nullptr on failure)
 		 */
 		virtual active::serialise::Cargo::Unique getObjectCargo(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
 		 Get all objects
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
-		 @return: The requested objects (nullptr on failure)
+		 @return The requested objects (nullptr on failure)
 		 */
 		virtual active::container::Vector<Obj> getObjects(std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
@@ -64,7 +73,7 @@ namespace active::database {
 		 @param filter The object filter
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
-		 @return: The filtered objects (nullptr on failure)
+		 @return The filtered objects (nullptr on failure)
 		 */
 		virtual active::container::Vector<Obj> getObjects(const Filter& filter, std::optional<TableID> tableID = std::nullopt,
 														  std::optional<DocID> documentID = std::nullopt) const = 0;
