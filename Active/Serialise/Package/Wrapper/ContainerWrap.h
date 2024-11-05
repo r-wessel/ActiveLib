@@ -128,9 +128,12 @@ namespace active::serialise {
 							if constexpr (std::is_base_of_v<Package, Obj>)
 								return std::make_unique<PackType>(*iter);
 							else {
-								if constexpr (IsWrappableValue<Obj>)
-									return std::make_unique<ValueType>(*iter);
-								else
+								if constexpr (IsWrappableValue<Obj>) {
+									if constexpr (IsItemCargo<ObjWrapper>)
+										return std::make_unique<ObjWrapper>(*iter);
+									else
+										return std::make_unique<ValueType>(*iter);
+								} else
 									return std::make_unique<ItemType>(*iter);
 							}
 						} else {
