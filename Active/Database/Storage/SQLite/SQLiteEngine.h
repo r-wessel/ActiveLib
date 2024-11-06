@@ -43,6 +43,7 @@ namespace active::database {
 		using base = DBaseEngine<Obj, ObjID, DocID, utility::String>;
 		using Filter = base::Filter;
 		using Outline = base::Outline;
+		using ObjIDList = base::ObjIDList;
 
 		// MARK: - Constructors
 		
@@ -62,8 +63,8 @@ namespace active::database {
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
 		 @return A list containing IDs of found elements (empty if none found)
 		 */
-		virtual std::vector<ObjID> findObjects(const Filter& filter = nullptr, std::optional<utility::String> tableID = std::nullopt,
-											   std::optional<DocID> documentID = std::nullopt) const override { return {}; }	//Implement when required
+		virtual ObjIDList findObjects(const Filter& filter = nullptr, std::optional<utility::String> tableID = std::nullopt,
+									  std::optional<DocID> documentID = std::nullopt) const override { return {}; }	//Implement when required
 		/*!
 		 Get an object by index
 		 @param ID The object ID
@@ -300,14 +301,14 @@ namespace active::database {
 				//And extract the index column from the table
 			auto indexField = table[table.globalIndex]->name();
 			auto transaction = makeTransaction("SELECT " + indexField + " FROM " + table.ID + ";");
-			std::vector<ObjID> tableIDs;
+			std::unordered_set<ObjID> tableIDs;
 			do {
 				auto row = ++transaction;
 				if (!row)
 					break;
 				if (auto idSetting = dynamic_cast<const setting::ValueSetting*>((*row)[0].get()); idSetting != nullptr) {
 					ObjID temp = *idSetting;
-					tableIDs.emplace_back(temp);
+					tableIDs.insert(temp);
 				}
 			} while (transaction);
 				//Add the table name and index column to the outline
