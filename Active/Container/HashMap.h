@@ -9,6 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/Cloner.h"
 #include "Active/Utility/Mover.h"
 
+#include <algorithm>
 #include <unordered_map>
 #include <unordered_set>
 
