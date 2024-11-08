@@ -44,6 +44,8 @@ namespace active::serialise {
 		Cargo::Unique getCargo(const Inventory::Item& item) const override { return nullptr; }
 	};
 	
+	class NullContainer : public NullPackage {};
+	
 }  // namespace active::serialise
 
 #endif	//ACTIVE_SERIALISE_NULL_PACKAGE

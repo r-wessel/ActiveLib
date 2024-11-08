@@ -382,6 +382,7 @@
 		219988132BD7C4490035E5EA /* DocumentTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = DocumentTests.cpp; sourceTree = "<group>"; };
 		219988152BD7C5C10035E5EA /* MeasurementTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MeasurementTests.cpp; sourceTree = "<group>"; };
 		2199BB4D2CD8C6AE00A4BEEC /* FastDoubleWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FastDoubleWrap.h; sourceTree = "<group>"; };
+		2199BB7F2CDD7A2700A4BEEC /* ContainerBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContainerBase.h; sourceTree = "<group>"; };
 		21A0FB9C2CB86F490023F24E /* Management.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Management.h; sourceTree = "<group>"; };
 		21A0FBA52CB90E8C0023F24E /* Transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transport.cpp; sourceTree = "<group>"; };
 		21AE19592CC297A4004DBCFC /* VolumeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeUnit.h; sourceTree = "<group>"; };
@@ -1017,6 +1018,7 @@
 		21F69F5B2C6CE8E2008B6A06 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				2199BB7F2CDD7A2700A4BEEC /* ContainerBase.h */,
 				215F08382C9593B800CD343B /* ContainerWrap.h */,
 				215F08232C945B1C00CD343B /* Handler.h */,
 				215F08242C94652100CD343B /* Mover.cpp */,

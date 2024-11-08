@@ -11,11 +11,16 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Wrapper/ValueItem.h"
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Serialise/Package/NullPackage.h"
+#include "Active/Serialise/Package/Wrapper/ContainerBase.h"
 
 namespace active::serialise {
 	
 	template<typename T>
-	concept IsPackageBase = std::is_base_of_v<Package, T>;
+	concept IsContainerBase = std::is_base_of_v<ContainerBase, T>;
+
+
+	template<typename T>
+	concept IsPackageBase = !IsContainerBase<T> && std::is_base_of_v<Package, T>;
 
 	
 	template<typename T>
@@ -28,6 +33,12 @@ namespace active::serialise {
 	
 	template<class T>
 	struct CargoPicker {
+	};
+
+
+	template<IsContainerBase X>
+	struct CargoPicker<X> {
+		using CargoType = NullContainer;
 	};
 
 
