@@ -87,11 +87,10 @@ SQLiteCore::Transaction::~Transaction() {
 SettingList::Unique SQLiteCore::Transaction::operator++() {
 		//First check if we need to prepare the statement
 	if (m_handle == nullptr) {
-		constexpr size_t bufferSize = 0x400;
-		char buffer[bufferSize];
 		auto dbaseHandle = m_sqlite->getHandle();
-		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), bufferSize,
-											 (sqlite3_stmt**) &m_handle, (const char**) &buffer); status != SQLITE_OK)
+		const char* dataTail = nullptr;
+		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), m_statement.dataSize() + 1,
+											 (sqlite3_stmt**) &m_handle, &dataTail); (status != SQLITE_OK) && (dataTail != nullptr))
 			throw std::system_error(makeError(static_cast<Status>(status)));
 		m_isDone = false;
 	}
