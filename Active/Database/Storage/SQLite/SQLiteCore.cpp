@@ -47,7 +47,7 @@ namespace {
 				case outOfMemory:
 					return "Memory exhausted";
 				case readOnlyState:
-					return "ttempt to write to a read-only file was refused";
+					return "Attempt to write to a read-only file was refused";
 				case interrupt:
 					return "An operation was interrupted, e.g. by the UI";
 				case ioErr:
@@ -89,7 +89,7 @@ SettingList::Unique SQLiteCore::Transaction::operator++() {
 	if (m_handle == nullptr) {
 		auto dbaseHandle = m_sqlite->getHandle();
 		const char* dataTail = nullptr;
-		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), m_statement.dataSize() + 1,
+		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), static_cast<int>(m_statement.dataSize() + 1u),
 											 (sqlite3_stmt**) &m_handle, &dataTail); (status != SQLITE_OK) && (dataTail != nullptr))
 			throw std::system_error(makeError(static_cast<Status>(status)));
 		m_isDone = false;

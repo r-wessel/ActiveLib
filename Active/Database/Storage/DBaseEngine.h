@@ -53,12 +53,13 @@ namespace active::database {
 		/*!
 		 Find a filtered list of objects
 		 @param filter The object filter (nullptr = find all objects)
+		 @param subset A subset of the database content to search (specified by record ID)
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
 		 @return A list containing IDs of found elements (empty if none found)
 		 */
-		virtual ObjIDList findObjects(const Filter& filter = nullptr, std::optional<TableID> tableID = std::nullopt,
-											   std::optional<DocID> documentID = std::nullopt) const = 0;
+		virtual ObjIDList findObjects(const Filter& filter = nullptr, const ObjIDList& subset = {}, std::optional<TableID> tableID = std::nullopt,
+									  std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
 		 Get an object by index
 		 @param objID The object ID
@@ -99,7 +100,7 @@ namespace active::database {
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 */
-		virtual void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+		virtual void write(Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
 						   std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
 		 Erase an object by index

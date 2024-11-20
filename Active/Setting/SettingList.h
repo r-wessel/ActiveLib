@@ -100,13 +100,13 @@ namespace active::setting {
 			@tparam T The expected setting type
 		*/
 		template<typename T>
-		const T* find(const utility::NameID& nameID) const;
+		T* find(const utility::NameID& nameID) const;
 		/*!
 			Find a value setting with a specified ID
 			@param nameID The ID to search for
 			@return A pointer to the requested value setting (nullptr on failure)
 		*/
-		ValueSetting* findValue(const utility::NameID& nameID) const;
+		ValueSetting* findValue(const utility::NameID& nameID) const { return find<ValueSetting>(nameID); }
 
 		// MARK: Functions (mutating)
 		
@@ -133,9 +133,9 @@ namespace active::setting {
 		return The requested setting (nullptr if not found)
   	  --------------------------------------------------------------------*/
 	template<typename T>
-	const T* SettingList::find(const utility::NameID& nameID) const {
+	T* SettingList::find(const utility::NameID& nameID) const {
 		if (auto iter = find(nameID); iter != end())
-			return dynamic_cast<const T*>(iter->get());
+			return dynamic_cast<T*>(iter->get());
 		return nullptr;
 	} //SettingList::find
 	

@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Serialise/Package/NullPackage.h"
 #include "Active/Serialise/Package/Wrapper/ContainerBase.h"
-
+	
 namespace active::serialise {
 	
 	template<typename T>
