@@ -520,6 +520,9 @@
     <ClInclude Include="Active\Setting\Values\Measurement\VolumeValue.h">
       <Filter>Active\Setting\Values\Measurement</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Database\Transaction.h">
+      <Filter>Active\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">

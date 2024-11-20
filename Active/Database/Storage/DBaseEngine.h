@@ -58,7 +58,7 @@ namespace active::database {
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
 		 @return A list containing IDs of found elements (empty if none found)
 		 */
-		virtual ObjIDList findObjects(const Filter& filter = nullptr, const ObjIDList& subset = {}, std::optional<TableID> tableID = std::nullopt,
+		virtual ObjIDList findObjects(const Filter* filter = nullptr, const ObjIDList& subset = {}, std::optional<TableID> tableID = std::nullopt,
 									  std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
 		 Get an object by index
