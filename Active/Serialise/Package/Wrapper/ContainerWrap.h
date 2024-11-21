@@ -195,8 +195,12 @@ namespace active::serialise {
 								base::get().emplace_back(holder->get());
 						} else {
 							if constexpr (IsWrappableValue<Obj>) {
-								if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr)
-									base::get().emplace_back(holder->get());
+								if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr) {
+									if constexpr (IsInsertion<Container, ValueType>)
+										base::get().insert(holder->get());
+									else
+										base::get().emplace_back(holder->get());
+								}
 							} else {
 								if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
 									base::get().emplace_back(holder->get());

@@ -54,6 +54,7 @@
     <ClInclude Include="Active\Database\Storage\SQLite\SQLiteEngine.h" />
     <ClInclude Include="Active\Database\Storage\Storage.h" />
     <ClInclude Include="Active\Database\Storage\TableSchema.h" />
+    <ClInclude Include="Active\Database\Transaction.h" />
     <ClInclude Include="Active\Environment\App.h" />
     <ClInclude Include="Active\Event\Event.h" />
     <ClInclude Include="Active\Event\Message.h" />

@@ -97,7 +97,7 @@ namespace active::database {
 		 Write a record to storage
 		 @param record The record to write (adds if new, or overwrites any record with the same ID)
 		 */
-		virtual void write(const Obj& record) {
+		virtual void write(Obj& record) {
 			erase(record.getID());
 			base::emplace(record.getID(), clone(record));
 		}

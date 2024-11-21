@@ -397,7 +397,8 @@ namespace active::utility {
 		/*!
 			Return the number of bytes consumed by this string
 			@param howMany The number of chars to count (nullopt = for full length)
-			@return The number of bytes consumed by the string (NB: String are null terminated, but this is not included in the data length)
+			@return The number of
+		 bytes consumed by the string (NB: String are null terminated, but this is not included in the data length)
 		*/
 		size_type dataSize(sizeOption howMany = std::nullopt) const;
 		/*!

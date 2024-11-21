@@ -126,7 +126,7 @@ namespace active::database {
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 */
-		void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+		void write(Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
 				   std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			m_engine->write(object, objID, objDocID, tableID, documentID);
 		}
@@ -137,7 +137,7 @@ namespace active::database {
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 */
 		template<typename T>
-		void write(const T& record, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+		void write(T& record, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
 			m_engine->write(record, ObjID{record.getGlobalID()}, ObjID{record.getID()}, tableID, documentID);
 		}
 		/*!

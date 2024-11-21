@@ -59,11 +59,13 @@ namespace active::database {
 		/*!
 		 Find a filtered list of objects
 		 @param filter The object filter (nullptr = find all objects)
+		 @param subset A subset of the database content to search (specified by record ID)
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
 		 @return A list containing IDs of found elements (empty if none found)
 		 */
-		virtual ObjIDList findObjects(const Filter& filter = nullptr, std::optional<utility::String> tableID = std::nullopt,
+		virtual ObjIDList findObjects(const Filter* filter = nullptr, const ObjIDList& subset = {},
+									  std::optional<utility::String> tableID = std::nullopt,
 									  std::optional<DocID> documentID = std::nullopt) const override { return {}; }	//Implement when required
 		/*!
 		 Get an object by index
@@ -105,7 +107,7 @@ namespace active::database {
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 */
-		virtual void write(const Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+		virtual void write(Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
 						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
 		 Erase an object by index
@@ -236,7 +238,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
 	requires SQLiteStorable<Obj, ObjWrapper, Transport>
-	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write(const Obj& object,
+	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write(Obj& object,
 																	   const ObjID& objID, std::optional<ObjID> objDocID,
 																	   utility::String::Option tableID, std::optional<DocID> documentID) const {
 		utility::String content;

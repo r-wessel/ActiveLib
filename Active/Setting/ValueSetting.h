@@ -12,6 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/ValueBase.h"
 
 #include <set>
+#include <unordered_set>
 
 namespace active::setting {
 
@@ -73,6 +74,16 @@ namespace active::setting {
 		ValueSetting(const std::set<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
 			for (auto& value: values)
 				emplace_back(ValueBase<T>(value));
+		}
+		/*!
+			Constructor
+			@param values An array of values to populate into the setting
+			@param nameID The setting identifier
+		*/
+		template<typename T> requires std::copyable<T>
+		ValueSetting(const std::unordered_set<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
+			for (auto& value : values)
+				emplace_back(ValueBase<T>{value});
 		}
 		/*!
 			Constructor
