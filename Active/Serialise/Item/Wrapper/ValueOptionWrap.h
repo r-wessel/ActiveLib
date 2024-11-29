@@ -82,12 +82,12 @@ namespace active::serialise {
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
-		std::optional<Item::Type> type() const override {
-			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T>)
-				return Item::Type::text;
+		std::optional<Cargo::Type> type() const override {
+			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T> || std::is_enum_v<T>)
+				return Cargo::Type::text;
 			else if constexpr (std::is_same_v<bool, T>)
-				return Item::Type::boolean;
-			return Item::Type::number;
+				return Cargo::Type::boolean;
+			return Cargo::Type::number;
 		}	//Other types should specialise accordingly
 	};
 

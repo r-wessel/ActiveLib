@@ -19,6 +19,18 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the cargo has a null value (undefined)
+			@return True if the cargo data is undefined
+		*/
+		bool isNull() const override { return true; }
+		/*!
+			Write the item data to a string
+			@param dest The string to write the data to
+			@return True if the data was successfully written
+		*/
+		bool write(utility::String& dest) const override { return true; }
+
+		/*!
 			Fill an inventory with the cargo items
 			@param inventory The inventory to receive the cargo items
 			@return True if items have been added to the inventory
@@ -33,6 +45,12 @@ namespace active::serialise {
 
 		// MARK: - Functions (mutating)
 
+		/*!
+			Read the cargo data from the specified string
+			@param source The string to read
+			@return True if the data was successfully read
+		*/
+		bool read(const utility::String& source) override { return true; }
 		/*!
 			Set to the default package content
 		*/

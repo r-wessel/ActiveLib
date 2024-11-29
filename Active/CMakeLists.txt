@@ -18,6 +18,7 @@ endfunction()
 	#Module sources
 addModule(Attribute)
 addModule(Container)
+addModule(Database)
 addModule(Environment)
 addModule(Event)
 addModule(File)

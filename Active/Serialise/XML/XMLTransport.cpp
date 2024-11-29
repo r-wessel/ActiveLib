@@ -731,7 +731,7 @@ namespace {
 		phrase: The XML phrase to be imported
 	  --------------------------------------------------------------------*/
 	void doXMLItemImport(Cargo& cargo, String& phrase) {
-		if (auto* item = dynamic_cast<Item*>(&cargo); (item != nullptr) && !item->read(StringValue{phrase}))
+		if (auto* item = dynamic_cast<Item*>(&cargo); (item != nullptr) && !item->readSetting(StringValue{phrase}))
 			throw std::system_error(makeXMLError(badValue));
 	} //doXMLItemImport
 	

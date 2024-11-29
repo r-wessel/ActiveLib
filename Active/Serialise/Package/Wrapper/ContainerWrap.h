@@ -3,13 +3,14 @@ Copyright 2024 Ralph Wessel and Hugh Wessel
 Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
 */
 
-#ifndef ACTIVE_SERIALISE_CONTAINER_STD_WRAP
-#define ACTIVE_SERIALISE_CONTAINER_STD_WRAP
+#ifndef ACTIVE_SERIALISE_CONTAINER_WRAP
+#define ACTIVE_SERIALISE_CONTAINER_WRAP
 
 #include "Active/Serialise/CargoHold.h"
 #include "Active/Serialise/Concepts.h"
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Serialise/Package/Wrapper/PackageWrap.h"
+#include "Active/Serialise/Package/Wrapper/ContainerBase.h"
 #include "Active/Serialise/Item/Wrapper/ItemWrap.h"
 #include "Active/Utility/Concepts.h"
 
@@ -31,7 +32,7 @@ namespace active::serialise {
 	 */
 	template<typename Container, typename ObjWrapper = serialise::PackageWrap>
 	requires (IsWrappableValue<typename Container::value_type> || IsCargo<typename Container::value_type>)
-	class ContainerWrap : public Package, public std::reference_wrapper<Container> {
+	class ContainerWrap : public ContainerBase, public Package, public std::reference_wrapper<Container> {
 	public:
 		
 			//Default container element tag
@@ -65,7 +66,12 @@ namespace active::serialise {
 		 @param tg The default item tag
 		 */
 		ContainerWrap(const Container& container, bool isEmptySent = false, const utility::String& tg = defaultTag) :
-				ContainerWrap{const_cast<Container&>(container), isEmptySent, defaultTag} {}
+				ContainerWrap{const_cast<Container&>(container), isEmptySent, tg} {}
+		/*!
+		 Constructor
+		 @param nullContainer A placeholder signalling that no object is available yet to be wrapped (used when wrapped in CargoHold)
+		 */
+		ContainerWrap(NullContainer& nullContainer) : base{m_nullContainer} {}
 		/*!
 		 Destructor
 		*/
@@ -128,9 +134,12 @@ namespace active::serialise {
 							if constexpr (std::is_base_of_v<Package, Obj>)
 								return std::make_unique<PackType>(*iter);
 							else {
-								if constexpr (IsWrappableValue<Obj>)
-									return std::make_unique<ValueType>(*iter);
-								else
+								if constexpr (IsWrappableValue<Obj>) {
+									if constexpr (IsItemCargo<ObjWrapper>)
+										return std::make_unique<ObjWrapper>(*iter);
+									else
+										return std::make_unique<ValueType>(*iter);
+								} else
 									return std::make_unique<ItemType>(*iter);
 							}
 						} else {
@@ -186,8 +195,12 @@ namespace active::serialise {
 								base::get().emplace_back(holder->get());
 						} else {
 							if constexpr (IsWrappableValue<Obj>) {
-								if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr)
-									base::get().emplace_back(holder->get());
+								if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr) {
+									if constexpr (IsInsertion<Container, ValueType>)
+										base::get().insert(holder->get());
+									else
+										base::get().emplace_back(holder->get());
+								}
 							} else {
 								if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
 									base::get().emplace_back(holder->get());
@@ -202,8 +215,10 @@ namespace active::serialise {
 		}
 		
 	private:
+			//Temporary placeholder when using ContainerWrap in conjunction with CargoHold
+		inline static Container m_nullContainer = Container{};
 	};
 	
 }
 
-#endif	//ACTIVE_SERIALISE_CONTAINER_STD_WRAP
+#endif	//ACTIVE_SERIALISE_CONTAINER_WRAP

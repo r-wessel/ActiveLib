@@ -36,6 +36,12 @@ namespace active::serialise {
 		{ ValueWrap<Obj>(obj).read(str) };
 	};
 
+		///Concept for containers that support inserted values
+	template<typename Cont, typename Elem>
+	concept IsInsertion = requires(Cont cont, Elem elem) {
+		{ cont.insert(elem) };
+	};
+
 }  // namespace active::serialise
 
 #endif	//ACTIVE_SERIALISE_CONCEPTS

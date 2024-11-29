@@ -138,7 +138,7 @@ namespace active::serialise {
 		Handler::Shared m_handler;
 			///The type name extracted from an incoming attribute (used during deserialisation)
 		utility::String m_typeName;
-			///Bugger for creating a new object during deserialisation
+			///Wrapper for creating a new object during deserialisation
 		mutable Package::Unique m_wrapper;
 			///Pointer to to the target object (can be to an external object or one of the internal members above)
 		mutable Package* m_package = nullptr;

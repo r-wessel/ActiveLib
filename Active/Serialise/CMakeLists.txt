@@ -3,22 +3,25 @@ set(SourceFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/Base64Transport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/HexTransport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Inventory/Inventory.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Item/Encoding.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Item.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/AnyValueWrap.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/JSON/JSONTransport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Pair.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Serialisation.md
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/Mover.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/ValueSettingWrap.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Transport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Item/XMLDateTime.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Package/Wrapper/Geometry/XMLPoint.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Package/Wrapper/Geometry/XMLPolyPoint.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Package/Wrapper/XMLValueSetting.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Package/XMLProlog.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/XMLTransport.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Transport.h
 )
 set(HeaderFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Cargo.h
+	${CMAKE_CURRENT_SOURCE_DIR}/CargoHold.h
+	${CMAKE_CURRENT_SOURCE_DIR}/CargoType.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Concepts.h
 	${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
 	${CMAKE_CURRENT_SOURCE_DIR}/Document/Handler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Document/Object.h
@@ -30,17 +33,29 @@ set(HeaderFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Inventory/Inventory.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Encoding.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Item.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Item/NullItem.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/UnknownItem.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/AnyValueWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/ItemWrap.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/ValueItem.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/ValueOptionWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Item/Wrapper/ValueWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/JSON/JSONTransport.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Management/Management.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Management/Manager.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/NullPackage.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Package.h
-	${CMAKE_CURRENT_SOURCE_DIR}/Package/PackageWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Pair.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Package/Unknown.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/ContainerWrap.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/Handler.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/Mover.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/PackageUniqueWrap.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/PackageWrap.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Package/Wrapper/ValueSettingWrap.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Serialisation.md
-	${CMAKE_CURRENT_SOURCE_DIR}/Package/Unknown.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Transport.h
+	${CMAKE_CURRENT_SOURCE_DIR}/UnboxedTransport.h
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Item/XMLDateTime.h
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Item/XMLLength.h
 	${CMAKE_CURRENT_SOURCE_DIR}/XML/Item/XMLNumber.h

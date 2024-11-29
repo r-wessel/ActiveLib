@@ -14,8 +14,10 @@ namespace active::database {
 	 an app) or a table identifier (where the database is divided into tables). The specific form of these identifies is generic to support alternate
 	 database engines. The database and table identifiers can be ignored for situations where this is not warranted
 	 @tparam ObjID The object identifier type
+	 @tparam TableID The source table identifier type
+	 @tparam DocID The source document identifier type
 	 */
-	template<typename ObjID = active::utility::Guid>
+	template<typename ObjID = active::utility::Guid, typename TableID = active::utility::Guid, typename DocID = active::utility::Guid>
 	class Index : public ObjID {
 	public:
 
@@ -25,13 +27,23 @@ namespace active::database {
 		
 		/*!
 		 Default constructor
-		 @param object The object identifier
-		 @param owner An optional runtime identifier for the object owner in memory
 		 */
-		Index(const ObjID& object = ObjID{}, std::any owner = std::any{}) : ObjID{object}, ownerID{owner} {}
+		Index() {}
+		/*!
+		 Default constructor
+		 @param objID The object identifier
+		 @param tblID An optional table identifier
+		 @param dcID An optional table identifier
+		 */
+		Index(const ObjID& objID, const TableID& tblID, const DocID& dcID = DocID{}) :
+				ObjID{objID}, tableID{tblID}, docID{dcID} {}
 		
 		// MARK: - Public variables
 		
+			///An optional table identifier
+		TableID tableID;
+			///An optional document identifier
+		DocID docID;
 			///An optional runtime identifier for the object owner in memory - can be used as required for a target application
 		std::any ownerID;
 	};

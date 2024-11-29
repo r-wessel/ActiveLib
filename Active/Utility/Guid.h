@@ -21,13 +21,15 @@ namespace active::utility {
 			@param val The integer to encode. Note that this could be any lesser integer type, e.g. char, short etc.
 			@return A guid - the lower 8 bytes are encoded from the integer and the remainder is zero (so guids from the same number are identical)
 		*/
-		static Guid fromInt(int64_t val);
+		static constexpr Guid fromInt(int64_t val) {
+			return Guid{ Raw{0, val} };
+		}
 		/*!
 			Decode an integer from a guid - niche support for systems that use integer IDs rather than Guids (don't use otherwise)
 			@param guid The guid to decode (it is assumed that 'fromInt' has been used to generate thus guid)
 			@return An integer decoded from the guid
 		*/
-		static int64_t toInt(const Guid& guid);
+		static constexpr int64_t toInt(const Guid& guid) { return guid.m_value.second; }
 		
 		// MARK: - Types
 		
@@ -47,6 +49,11 @@ namespace active::utility {
 			@param uuidString The guid in string form
 		*/
 		explicit Guid(const String& uuidString);
+		/*!
+			constexpr constructor
+			@param rawVal The guid raw value
+		*/
+		constexpr Guid(Raw rawVal) : m_value{rawVal} {}
 		
 		// MARK: - Operators
 
@@ -68,7 +75,7 @@ namespace active::utility {
 			Conversion operator
 			@return True if the guid has a value (non-nil)
 		*/
-		operator bool() const { return (m_value.first != 0) || (m_value.second != 0); }
+		operator bool() const { return !empty(); }
 		
 		// MARK: - Functions (const)
 		
@@ -82,6 +89,11 @@ namespace active::utility {
 			@return A string representation
 		*/
 		String string() const;
+		/*!
+			Determine if the guid is an empty (nil) value
+			@return True if the guid is empty
+		*/
+		bool empty() const { return (m_value.first == 0) && (m_value.second == 0); }
 		
 		// MARK: - Functions (mutating)
 		
@@ -106,6 +118,14 @@ template<>
 struct std::hash<active::utility::Guid> {
 	std::size_t operator() (const active::utility::Guid& guid) const {
 		return static_cast<std::size_t>(guid.raw().first ^ guid.raw().second);
+	}
+};
+
+	///Hashing for a Guid pair, e.g. to use as a key in unordered_map
+template<>
+struct std::hash<std::pair<active::utility::Guid, active::utility::Guid>> {
+	std::size_t operator() (const std::pair<active::utility::Guid, active::utility::Guid>& pair) const {
+		return std::hash<active::utility::Guid>()(pair.first) | std::rotr(std::hash<active::utility::Guid>()(pair.second), 8 * sizeof(std::size_t));
 	}
 };
 

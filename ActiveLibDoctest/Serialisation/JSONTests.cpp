@@ -309,7 +309,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			checkedTransport.receive(PackageWrap{testObject}, SerialiseTester::tag, unknownJSONName);
 			FAIL_CHECK(TEST_MESSAGE(JSON reader accepted input with an unknown name));
 		} catch(std::system_error& error) {
-			CHECK_MESSAGE(makeReportFor(checkedTransport, error.code().message()) == "An unknown name was found in the JSON at row: 24, column: 5",
+			CHECK_MESSAGE(makeReportFor(checkedTransport, error.code().message()) == "An unknown name was found in the JSON at row: 23, column: 14",
 						  TEST_MESSAGE(Failure report for input with an incorrect name wrong));
 		}
 			//Read JSON with a missing quote
@@ -354,6 +354,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	///Tests for sending and receiving items via JSON
    TEST_CASE(TESTQ(testContainer)) {
 	   JSONTransport transport;
+	   	//Test string array
 	   std::vector<String> test1{"Something", "Whatever", "more", "Testing"};
 	   String json;
 	   try {
@@ -367,7 +368,37 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	   } catch(std::system_error& error) {
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<String>));
 	   }
-	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive failed));
+	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive strings failed));
+		   //Test guid array
+	   std::vector<Guid> testg1{Guid{true}, Guid{true}, Guid{true}, Guid{true}};
+	   json.clear();
+	   try {
+		   transport.send(ContainerWrap{testg1}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<Guid>));
+	   }
+	   std::vector<Guid> test1gIn;
+	   try {
+		   transport.receive(ContainerWrap{test1gIn}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<Guid>));
+	   }
+	   CHECK_MESSAGE(testg1 == test1gIn, TEST_MESSAGE(String array JSON send/receive guids failed));
+		   //Test double array
+	   json.clear();
+	   std::vector<double> test2{1.0, 2.0, 3.14};
+	   try {
+		   transport.send(ContainerWrap{test2}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<double>));
+	   }
+	   std::vector<double> test2In;
+	   try {
+		   transport.receive(ContainerWrap{test2In}, Identity{}, json);
+	   } catch(std::system_error& error) {
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<double>));
+	   }
+	   CHECK_MESSAGE(test2 == test2In, TEST_MESSAGE(String array JSON send/receive doubles failed));
    } //testContainer
 
 TEST_SUITE_CLOSE //JSONTest

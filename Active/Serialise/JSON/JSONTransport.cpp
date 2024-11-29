@@ -303,8 +303,8 @@ namespace {
 			@param dest The data destination
 			@param glossary The JSON entity glossary
 		*/
-		JSONExporter(BufferOut& dest, JSONGlossary& glossary, JSONTransport::TimeFormat format, bool everyEntryRequired) :
-				m_buffer(dest), m_glossary(glossary), timeFormat{format}, isEveryEntryRequired{everyEntryRequired} {
+		JSONExporter(BufferOut& dest, JSONGlossary& glossary, JSONTransport::TimeFormat format, bool everyEntryRequired, Management* management) :
+				m_buffer(dest), m_glossary(glossary), timeFormat{format}, isEveryEntryRequired{everyEntryRequired}, m_management{management} {
 		}
 			///No copy constructor
 		JSONExporter(const JSONExporter& source) = delete;
@@ -328,6 +328,11 @@ namespace {
 			@return The JSON glossary
 		*/
 		JSONGlossary& glossary() const { return m_glossary; }
+		/*!
+			Get the cargo management
+			@return The active management
+		*/
+		Management* management() const { return m_management; }
 		
 		// MARK: Functions (mutating)
 		
@@ -368,6 +373,8 @@ namespace {
 		BufferOut& m_buffer;
 			///A glossary of JSON entities and replacement text encountered for faster lookup
 		JSONGlossary& m_glossary;
+			///Optional cargo management (migration handling etc)
+		Management* m_management = nullptr;
 	};
 	
 	
@@ -384,9 +391,9 @@ namespace {
 			@param isUnknownNameSkipped True if unknown names found in the JSON should be skipped
 		*/
 		JSONImporter(BufferIn& source, JSONGlossary& glossary,
-					 bool isUnknownNameSkipped, bool isEveryEntryRequired, bool isMissingEntryFailed) :
+					 bool isUnknownNameSkipped, bool isEveryEntryRequired, bool isMissingEntryFailed, Management* management) :
 				m_buffer(source), m_glossary(glossary), m_isUnknownNameSkipped(isUnknownNameSkipped),
-				m_isEveryEntryRequired(isEveryEntryRequired), m_isMissingEntryFailed(isMissingEntryFailed) {}
+				m_isEveryEntryRequired(isEveryEntryRequired), m_isMissingEntryFailed(isMissingEntryFailed), m_management{management} {}
 			///No copy constructor
 		JSONImporter(const JSONImporter& source) = delete;
 		
@@ -442,6 +449,11 @@ namespace {
 			@return The transport status (nominal = no errors)
 		*/
 		JSONTransport::Status getStatus() const { return m_status; }
+		/*!
+			Get the cargo management
+			@return The active management
+		*/
+		Management* management() const { return m_management; }
 		
 		// MARK: Functions (mutating)
 		
@@ -488,6 +500,8 @@ namespace {
 		BufferIn& m_buffer;
 			///Glossary of JSON entities
 		JSONGlossary& m_glossary;
+			///Optional cargo management (migration handling etc)
+		Management* m_management = nullptr;
 			//The current transport status
 		JSONTransport::Status m_status = nominal;
 			//True if unknown tags should be skipped over
@@ -661,7 +675,7 @@ namespace {
 		if (!value)
 			throw std::system_error(makeJSONError(valueMissing));
 			//Once a value has been retrieved with a type based on the JSON encoding, we can assign that to the receiving item
-		if (!item.read(*value))
+		if (!item.readSetting(*value))
 			throw std::system_error(makeJSONError(badValue));
 	} //JSONImporter::getContent
 
@@ -840,6 +854,7 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
+		container.useManagement(importer.management());
 		Inventory inventory = getImportInventoryFor(container, importer.isEveryEntryRequired());
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
@@ -873,22 +888,28 @@ namespace {
 					Inventory::iterator incomingItem = inventory.end();
 					if (parsingStage == array)
 						getArrayIdentity(container, inventory, containerIdentity, identity);
-					if ((parsingStage == root) || (identity.type == arrayStart))	//At root level we're importing to the container we already have
-						cargo = makeWrapper(container, containerIdentity, inventory, identity);
-					else {
+					if (parsingStage == root) {	//At root level we're importing to the container we already have
+						if (!isReadingAttribute)
+							cargo = makeWrapper(container, containerIdentity, inventory, identity);
+					} else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
 						if (incomingItem != inventory.end()) {
 							if (isReadingAttribute && !incomingItem->isAttribute() && (parsingStage != array))
 								incomingItem = inventory.end();
 							else {
-								if (!incomingItem->bumpAvailable())
-									throw std::system_error(makeJSONError(inventoryBoundsExceeded));
-								if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
-									--attributesRemaining;
-								incomingItem->required = false;	//Does not change import behaviour - flags that we have found at least one instance
-								cargo = container.getCargo(*incomingItem);
-								if (cargo)
-									cargo->setDefault();
+								if ((identity.type == arrayStart) && !(incomingItem->maximum() == 1)) {
+									cargo = makeWrapper(container, containerIdentity, inventory, identity);
+									incomingItem = inventory.end();
+								} else {
+									if (!incomingItem->bumpAvailable())
+										throw std::system_error(makeJSONError(inventoryBoundsExceeded));
+									if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
+										--attributesRemaining;
+									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
+									cargo = container.getCargo(*incomingItem);
+									if (cargo)
+										cargo->setDefault();
+								}
 							}
 						}
 					}
@@ -950,6 +971,7 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void doJSONExport(const Cargo& cargo, const JSONIdentity& identity, JSONExporter& exporter, int32_t depth = 0) {
 		using enum JSONIdentity::Type;
+		cargo.useManagement(exporter.management());
 		String tag, nameSpace;
 		if (identity.stage != root) {
 			if (identity.name.empty())	//Non-root values, i.e. values embedded in an object, must have an identifying name
@@ -959,33 +981,26 @@ namespace {
 			if (exporter.isNameSpaces && identity.group)
 				nameSpace = *identity.group;
 		}
-		const auto* item = dynamic_cast<const Item*>(&cargo);
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			exporter.writeTag(tag, nameSpace, valueStart, depth);
-			if ((item == nullptr) || item->isNull()) {
-				if (!cargo.isNull() && (item == nullptr) && (dynamic_cast<const Null*>(&cargo) == nullptr))
+			if ((cargo.type() == Cargo::Type::package) || cargo.isNull()) {
+				if (!cargo.isNull() && (cargo.type() == Cargo::Type::package))
 					throw std::system_error(makeJSONError(badValue));	//If anything other than a single-value item lands here, it's an error
 				exporter.write(nullValue);
 				return;
 			}
 			String outgoing;
-				//Check for a time item not matching the current output spec
-			if (const auto* timeItem = dynamic_cast<const xml::XMLDateTime*>(item);
-						exporter.timeFormat && (timeItem != nullptr) && (timeItem->getFormat() != *exporter.timeFormat)) {
-				xml::XMLDateTime formattedTimeItem{*timeItem};
-				formattedTimeItem.setFormat(*exporter.timeFormat);	//Set the specified format
-				if (!formattedTimeItem.write(outgoing))
-					throw std::system_error(makeJSONError(badValue));
-			} else if (!item->write(outgoing))
+			cargo.useTimeFormat(*exporter.timeFormat);
+			if (!cargo.write(outgoing))
 				throw std::system_error(makeJSONError(badValue));
-			if (item->type() == Item::text)
+			if (cargo.type() == Cargo::Type::text)
 				outgoing = "\"" + toJSONString(outgoing, exporter.glossary()) + "\"";
 			exporter.write(outgoing);
 			return;
 		}
-		if ((item != nullptr) && (inventory.size() != 1))	//An item can have multiple values but they must all be a homogenous type, e.g. an array
+		if ((cargo.type() != Cargo::Type::package) && (inventory.size() != 1))	//An item can have multiple values but they must all be a homogenous type, e.g. an array
 			throw std::system_error(makeJSONError(badValue));
 			//Determine if this element acts as an object/array wrapper for values
 			//The package will have an outer object wrapper (even if an array) if the outer element has a name that differs from the inner item
@@ -1013,12 +1028,10 @@ namespace {
 			bool isItemArray = entryItem.isRepeating() && !isArray,
 				 isFirstValue = true;
 			if (isItemArray) {
-				if (isFirstItem)
-					isFirstItem = false;	//This has been delayed until a first value is actually written
-				else {
+				if (!isFirstItem)
 					exporter.write(",");
-					isFirstItem = true;
-				}
+				isFirstItem = true;
+				isFirstValue = true;
 				exporter.writeTag(entryItem.identity().name, entryNameSpace, arrayStart, depth);
 			}
 			for (entryItem.available = 0; entryItem.available < limit; ++entryItem.available) {
@@ -1036,7 +1049,7 @@ namespace {
 				else
 					exporter.write(",");
 				doJSONExport(*content, isItemArray || isArray ? entryItem.identity() : JSONIdentity{entryItem.identity()}.atStage(object),
-							 exporter, (dynamic_cast<Package*>(content.get()) == nullptr) ? depth : depth + ((identity.stage == root) ? 0 : 1));
+							 exporter, ((cargo.type() == Cargo::Type::package)) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
 				exporter.writeTag(String{}, String{}, arrayEnd, depth);
@@ -1091,8 +1104,13 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
 						 bool isTabbed, bool isLineFeeds, bool isNameSpaces, bool isProlog) const {
 	if (!isLineFeeds)
 		isTabbed = false;	//Tabs would be pointless without line-feeds
+		//Collect any management applicable to the serialisation
+	Management exportManager;
+	if (isManaged())
+		exportManager = *management();
+	exportManager.add(cargo);
 	JSONGlossary glossary;
-	JSONExporter exporter(destination, glossary, getTimeFormat(), isEveryEntryRequired());
+	JSONExporter exporter(destination, glossary, getTimeFormat(), isEveryEntryRequired(), exportManager.empty() ? nullptr : &exportManager);
 	exporter.isTabbed = isTabbed;
 	exporter.isLineFeeds = isLineFeeds;
 	exporter.isNameSpaces = isNameSpaces;
@@ -1109,8 +1127,14 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
 	source: The JSON source (can be a wrapper for file, memory, string)
   --------------------------------------------------------------------*/
 void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& source) const {
+		//Collect any management applicable to the deserialisation
+	Management exportManager;
+	if (isManaged())
+		exportManager = *management();
+	exportManager.add(cargo);
 	JSONGlossary glossary;
-	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed());
+	JSONImporter importer(source, glossary, isUnknownNameSkipped(), isEveryEntryRequired(), isMissingEntryFailed(),
+						  exportManager.empty() ? nullptr : &exportManager);
 	try {
 		cargo.setDefault();
 		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);

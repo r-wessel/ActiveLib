@@ -397,7 +397,8 @@ namespace active::utility {
 		/*!
 			Return the number of bytes consumed by this string
 			@param howMany The number of chars to count (nullopt = for full length)
-			@return The number of bytes consumed by the string (NB: String are null terminated, but this is not included in the data length)
+			@return The number of
+		 bytes consumed by the string (NB: String are null terminated, but this is not included in the data length)
 		*/
 		size_type dataSize(sizeOption howMany = std::nullopt) const;
 		/*!
@@ -630,6 +631,13 @@ namespace active::utility {
 			@return The number of bytes assigned from the source
 		*/
 		size_type assign(const char* source, sizeOption byteCount = std::nullopt, sizeOption charCount = std::nullopt, DataFormat format = DataFormat{});
+		/*!
+			Assign a double value to the string (used in special cases where fast conversion is a priority
+			@param value The string to assign
+			@param decPlaces The number of decimal places
+			@return True if the assignment was successful
+		*/
+		bool assign(double value, uint8_t decPlaces = 5);
 		/*!
 			Append the specified string to this
 			@param source The string to append

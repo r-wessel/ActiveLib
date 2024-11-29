@@ -11,6 +11,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include <algorithm>
 #include <map>
+#include <set>
 #include <vector>
 
 namespace active::container {
@@ -108,11 +109,11 @@ namespace active::container {
 		auto find(const Key& key) const { return base::find(key); }
 		/*!
 			Get the map keys
-			@return An array containing the map keys
+			@return An set containing the map keys
 		*/
-		std::vector<Key> keys() const {
-			std::vector<Key> result;
-			std::for_each(base::begin(), base::end(), [&result](const auto& entry){ result.push_back(entry.first); });
+		std::set<Key> keys() const {
+			std::set<Key> result;
+			std::for_each(base::begin(), base::end(), [&result](const auto& entry){ result.insert(entry.first); });
 			return result;
 		}
 		

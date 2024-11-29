@@ -90,14 +90,18 @@ namespace active::serialise {
 		 */
 		const Obj& get() const {
 			if (auto mover = dynamic_cast<const Mover*>(this); (mover != nullptr) && !mover->isNull()) {
-				if (auto obj = dynamic_cast<Obj*>(mover->getIncoming()); obj != nullptr)
-					return *obj;
+				if constexpr (std::is_arithmetic_v<Obj>)
+					return *(reinterpret_cast<Obj*>(mover->getIncoming()));
+				else {
+					if (auto obj = dynamic_cast<Obj*>(mover->getIncoming()); obj != nullptr)
+						return *obj;
+				}
 			}
 			return *m_object;
 		}
 
 	private:
-		static CargoPicker<Wrap>::CargoType m_nullCargo;
+		static typename CargoPicker<Wrap>::CargoType m_nullCargo;
 		Obj* m_object = nullptr;
 		std::unique_ptr<Obj> m_cache;
 	};

@@ -119,15 +119,10 @@ namespace active::utility {
 		// MARK: - Functions (const)
 		
 		/*!
-			Get a pointer to the raw buffer data (NB: only intended for low-level APIs that require pointer/length buffering - avoid otherwise)
-			@return A pointer to the buffer data (nullptr if the buffer has no source - dataSize will return the number of bytes in the buffer)
+			Get the number of bytes to be supplied from the buffer (unread in the buffer plus remainder in the source)
+			@return The number of bytes still to be supplied
 		*/
-		const char* data() const { return !good() ? nullptr : m_buffer; }
-		/*!
-			Get the number of bytes remaining in the buffer
-			@return The number of bytes remaining in the buffer
-		*/
-		Memory::size_type dataSize() const { return (!good() || (m_readPos >= m_bufferLen)) ? 0 : m_bufferLen - m_readPos; }
+		Memory::size_type getSupplyCount() const { return (m_bufferLen - m_readPos) + m_remaining; }
 		/*!
 			Get the total number of bytes in the source, e.g. the source file/string/memory
 			@return The total number of bytes in the source
@@ -298,6 +293,22 @@ namespace active::utility {
 			@param pos The read position (e.g. the read position in a source file)
 		*/
 		void setPosition(Memory::size_type pos) const;
+		/*!
+			Get a pointer to the raw buffer data (NB: intended for low-level APIs that require pointer/length buffering)
+			@return A pointer to the buffer data (nullptr if the buffer has no source - dataSize will return the number of bytes in the buffer)
+		*/
+		const char* data() const { return !good() ? nullptr : m_buffer + m_readPos; }
+		/*!
+			Get the number of bytes remaining in the buffer (NB: intended for low-level APIs that require pointer/length buffering
+			@return The number of bytes remaining in the buffer
+		*/
+		Memory::size_type dataSize() const { return (!good() || (m_readPos >= m_bufferLen)) ? 0 : m_bufferLen - m_readPos; }
+		/*!
+			Attempt to ensure a minimum number of bytes is buffered (NB: intended for low-level APIs that require pointer/length buffering
+			@param minLength The minimum buffer length required (refill of lower)
+			@return The number of bytes available in the buffer
+		*/
+		Memory::size_type bufferMin(Memory::size_type minLength) const;
 
 		// MARK: - Functions (mutating)
 		
@@ -347,12 +358,6 @@ namespace active::utility {
 		*/
 		bool checkEndOfFile() const;
 		/*!
-			Attempt to ensure a minimum number of bytes is buffered (refill if lower)
-			@param minLength The minimum buffer length required
-			@return The number of bytes available in the buffer
-		*/
-		Memory::size_type bufferMin(Memory::size_type minLength) const;
-		/*!
 			Refill the buffer from the current data source
 			@return True if no errors were encountered
 		*/
@@ -390,11 +395,6 @@ namespace active::utility {
 			@return The buffer capacity
 		*/
 		Memory::size_type getCapacity() const;
-		/*!
-			Get the number of bytes to be supplied from the buffer (unread in the buffer plus remainder in the source)
-			@return The number of bytes still to be supplied
-		*/
-		Memory::size_type getSupplyCount() const { return (m_bufferLen - m_readPos) + m_remaining; }
 		/*!
 			Discover the source format by analysing the content
 			@return The source format

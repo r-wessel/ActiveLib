@@ -35,7 +35,7 @@ void Memory::fill(void* start, size_type size, char fillChar) {
  
 	return: The number of bytes copied
   --------------------------------------------------------------------*/
-Memory::size_type Memory::copy(char* dest, char* source, Memory::size_type destSize, Memory::size_type sourceSize) {
+Memory::size_type Memory::copy(char* dest, const char* source, Memory::size_type destSize, Memory::size_type sourceSize) {
 	auto copySize = std::min(sourceSize, destSize);
 	std::memcpy(dest, source, copySize);
 	return copySize;
@@ -50,8 +50,8 @@ Memory::size_type Memory::copy(char* dest, char* source, Memory::size_type destS
 	makeCopy: True to make a private (owned) copy of the data
 	takeOwnership: True for this object to take ownership of the data (ignored if makeCopy == true)
   --------------------------------------------------------------------*/
-Memory::Memory(void* location, size_type size, bool makeCopy, bool takeOwnership) {
-	m_location = reinterpret_cast<char*>(location);
+Memory::Memory(const void* location, size_type size, bool makeCopy, bool takeOwnership) {
+	m_location = reinterpret_cast<char*>(const_cast<void*>(location));
 	m_allocSize = (size == 0) ? String::getValidByteCount(m_location) : size;
 	if (makeCopy)
 		reallocate(m_allocSize);

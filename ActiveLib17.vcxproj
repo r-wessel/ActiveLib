@@ -54,6 +54,7 @@
     <ClInclude Include="Active\Database\Storage\SQLite\SQLiteEngine.h" />
     <ClInclude Include="Active\Database\Storage\Storage.h" />
     <ClInclude Include="Active\Database\Storage\TableSchema.h" />
+    <ClInclude Include="Active\Database\Transaction.h" />
     <ClInclude Include="Active\Environment\App.h" />
     <ClInclude Include="Active\Event\Event.h" />
     <ClInclude Include="Active\Event\Message.h" />
@@ -85,11 +86,13 @@
     <ClInclude Include="Active\Geometry\Rotation.h" />
     <ClInclude Include="Active\Geometry\Vector3.h" />
     <ClInclude Include="Active\Geometry\Vector4.h" />
+    <ClInclude Include="Active\Geometry\Vertex.h" />
     <ClInclude Include="Active\Geometry\XInfo.h" />
     <ClInclude Include="Active\Geometry\XList.h" />
     <ClInclude Include="Active\Geometry\XPoint.h" />
     <ClInclude Include="Active\Serialise\Cargo.h" />
     <ClInclude Include="Active\Serialise\CargoHold.h" />
+    <ClInclude Include="Active\Serialise\Concepts.h" />
     <ClInclude Include="Active\Serialise\Document\Object.h" />
     <ClInclude Include="Active\Serialise\Document\Shipper.h" />
     <ClInclude Include="Active\Serialise\Document\Transportable.h" />
@@ -106,6 +109,7 @@
     <ClInclude Include="Active\Serialise\Item\Wrapper\Int32Wrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\ItemWrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\StringWrap.h" />
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ValueOptionWrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\ValueWrap.h" />
     <ClInclude Include="Active\Serialise\JSON\JSONTransport.h" />
     <ClInclude Include="Active\Serialise\Null.h" />
@@ -120,6 +124,8 @@
     <ClInclude Include="Active\Serialise\Package\Wrapper\PackageUniqueWrap.h" />
     <ClInclude Include="Active\Serialise\Package\Wrapper\PackageWrap.h" />
     <ClInclude Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.h" />
+    <ClInclude Include="Active\Serialise\Transport.h" />
+    <ClInclude Include="Active\Serialise\UnboxedTransport.h" />
     <ClInclude Include="Active\Serialise\XML\Item\XMLDateTime.h" />
     <ClInclude Include="Active\Serialise\XML\Item\XMLNumber.h" />
     <ClInclude Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.h" />
@@ -145,6 +151,8 @@
     <ClInclude Include="Active\Setting\Values\Measurement\Units\LengthUnit.h" />
     <ClInclude Include="Active\Setting\Values\Measurement\Units\MassUnit.h" />
     <ClInclude Include="Active\Setting\Values\Measurement\Units\Unit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\VolumeUnit.h" />
+    <ClInclude Include="Active\Setting\Values\Measurement\VolumeValue.h" />
     <ClInclude Include="Active\Setting\Values\NullValue.h" />
     <ClInclude Include="Active\Setting\Values\StringValue.h" />
     <ClInclude Include="Active\Setting\Values\TimeValue.h" />
@@ -159,6 +167,7 @@
     <ClInclude Include="Active\Utility\Guid.h" />
     <ClInclude Include="Active\Utility\MathFunctions.h" />
     <ClInclude Include="Active\Utility\Memory.h" />
+    <ClInclude Include="Active\Utility\SHA256.h" />
     <ClInclude Include="Active\Utility\String.h" />
     <ClInclude Include="Active\Utility\TextEncoding.h" />
     <ClInclude Include="Active\Utility\Time.h" />
@@ -194,6 +203,7 @@
     <ClCompile Include="Active\Geometry\Rotater.cpp" />
     <ClCompile Include="Active\Geometry\Vector3.cpp" />
     <ClCompile Include="Active\Geometry\Vector4.cpp" />
+    <ClCompile Include="Active\Geometry\Vertex.cpp" />
     <ClCompile Include="Active\Geometry\XList.cpp" />
     <ClCompile Include="Active\Geometry\XPoint.cpp" />
     <ClCompile Include="Active\Serialise\Document\Object.cpp" />
@@ -206,6 +216,7 @@
     <ClCompile Include="Active\Serialise\Package\Pair.cpp" />
     <ClCompile Include="Active\Serialise\Package\Wrapper\Mover.cpp" />
     <ClCompile Include="Active\Serialise\Package\Wrapper\ValueSettingWrap.cpp" />
+    <ClCompile Include="Active\Serialise\Transport.cpp" />
     <ClCompile Include="Active\Serialise\XML\Item\XMLDateTime.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPoint.cpp" />
     <ClCompile Include="Active\Serialise\XML\Package\Wrapper\Geometry\XMLPolyPoint.cpp" />
@@ -219,12 +230,14 @@
     <ClCompile Include="Active\Setting\Values\Measurement\Units\AreaUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Measurement\Units\LengthUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Measurement\Units\MassUnit.cpp" />
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\VolumeUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Value.cpp" />
     <ClCompile Include="Active\Utility\BufferIn.cpp" />
     <ClCompile Include="Active\Utility\BufferOut.cpp" />
     <ClCompile Include="Active\Utility\DataFormat.cpp" />
     <ClCompile Include="Active\Utility\Guid.cpp" />
     <ClCompile Include="Active\Utility\Memory.cpp" />
+    <ClCompile Include="Active\Utility\SHA256.cpp" />
     <ClCompile Include="Active\Utility\String.cpp" />
     <ClCompile Include="Active\Utility\TextEncoding.cpp" />
     <ClCompile Include="Active\Utility\Time.cpp" />

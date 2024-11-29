@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_TRANSPORT
 
 #include "Active/Serialise/XML/Item/XMLDateTime.h"
+#include "Active/Serialise/Management/Management.h"
 #include "Active/Utility/Memory.h"
 
 namespace active::utility {
@@ -33,9 +34,9 @@ namespace active::serialise {
 		
 		// MARK: - Types
 			
-		using TimeFormat = std::optional<xml::XMLDateTime::Format>;
+		using TimeFormat = std::optional<Item::TimeFormat>;
 		using size_type = utility::Memory::size_type;
-		using enum xml::XMLDateTime::Format;
+		using enum Item::TimeFormat;
 		
 			///Policy for adherence to schema
 		enum Policy {
@@ -52,22 +53,7 @@ namespace active::serialise {
 			@param policy Content policy, i.e. unknown instances and requirements policy
 			@param timeFormat The serialisation date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		Transport(Policy policy = relaxed, TimeFormat timeFormat = iso8601) noexcept {
-			switch (policy) {
-				case verbose:
-					m_isEveryEntryRequired = true;
-					[[fallthrough]];
-				case strict:
-					m_isMissingEntryFailed = true;
-					[[fallthrough]];
-				case moderate:
-					m_isUnknownNameSkipped = false;
-					break;
-				default:
-					break;	//NB: Default member variable settings equate to relaxed policy
-			}
-			m_timeFormat = timeFormat;
-		}
+		Transport(Policy policy = relaxed, Item::TimeFormat timeFormat = iso8601) noexcept;
 		/*!
 			Destructor
 		*/
@@ -101,7 +87,17 @@ namespace active::serialise {
 			Set the preferred serialisation date/time format
 			@return The preferred date/time format
 		*/
-		TimeFormat getTimeFormat() const noexcept { return m_timeFormat; }
+		Item::TimeFormat getTimeFormat() const noexcept { return m_timeFormat; }
+		/*!
+			Determine if the cargo is managed
+			@return True if the cargo is managed
+		*/
+		bool isManaged() const { return management() != nullptr; }
+		/*!
+			Get the acting management
+			@return The acting management (nullptr if no management has been assigned) 
+		*/
+		Management* management() const { return m_management.get(); }
 		/*!
 			Get the last received character row position of the data source (after calling receive, for error diagnostics)
 			@return The last row position received from the data source
@@ -134,7 +130,12 @@ namespace active::serialise {
 			Set the preferred date/time format for serialisation
 			@param format The preferred date/time format (nullopt = use the format specified in each outgoing item)
 		*/
-		void setTimeFormat(TimeFormat format) noexcept { m_timeFormat = format; }
+		void useTimeFormat(Item::TimeFormat format) noexcept { m_timeFormat = format; }
+		/*!
+			Use management in (de)serialisation processes
+			@param management The management to use
+		*/
+		void setManagement(std::shared_ptr<Management> management) { m_management = management; }
 		/*!
 			Set whether unknown names are skipped
 			@param state True if unknown names are skipped
@@ -165,7 +166,9 @@ namespace active::serialise {
 		
 	private:
 			//The preferred date/time format
-		TimeFormat m_timeFormat = iso8601;
+		Item::TimeFormat m_timeFormat = iso8601;
+			//Optional serialisation management
+		std::shared_ptr<Management> m_management;
 			//The last row read from the data source (can be useful for error diagnostics)
 		mutable size_type m_lastRow = 0;
 			//The last column read from the data source (can be useful for error diagnostics)

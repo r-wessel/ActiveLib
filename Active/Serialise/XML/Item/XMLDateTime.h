@@ -16,13 +16,7 @@ namespace active::serialise::xml {
 	public:
 		
 		// MARK: - Types
-		
-			///Preferred JSON date/time format
-		enum class Format {
-			iso8601,			///< ISO 8601
-			secondsSince1970,	///< Unix (posix) epoch
-		};
-		
+				
 			///The date/time content, i.e. just a date, just a time, date & time etc. Ignored for secondsSince1970 format
 		enum class Content {
 			dateTime,
@@ -67,7 +61,7 @@ namespace active::serialise::xml {
 			Get the date/time format
 			@return The date/time format
 		*/
-		virtual Format getFormat() const { return m_format; }
+		virtual TimeFormat getTimeFormat() const { return m_format; }
 		/*!
 			Get the content of the date/time
 			@return The content of the date/time
@@ -88,7 +82,12 @@ namespace active::serialise::xml {
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
-		std::optional<Type> type() const override { return (m_format == Format::iso8601) ? text : number; }
+		std::optional<Cargo::Type> type() const override { return (m_format == TimeFormat::iso8601) ? text : number; }
+		/*!
+			Use a specified date/time format for serialisation
+			@param format The date/time format
+		*/
+		void useTimeFormat(TimeFormat format) const override { m_format = format; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -97,11 +96,6 @@ namespace active::serialise::xml {
 			@param prec The seconds precision
 		*/
 		void setSecondsPrecision(double prec) { m_secsPrecision = prec; }
-		/*!
-			Set the date/time format
-			@param format The date/time format
-		*/
-		virtual void setFormat(Format format) { m_format = format; }
 		/*!
 			Set the content of the date/time
 			@param content The content of the date/time
@@ -127,7 +121,7 @@ namespace active::serialise::xml {
 		utility::Time& m_time;
 		utility::Time m_buffer;
 		double m_secsPrecision = 1e-6;
-		Format m_format = Format::iso8601;
+		mutable TimeFormat m_format = TimeFormat::iso8601;
 		Content m_content = Content::dateTime;
 		bool m_read;
 		bool m_valid;

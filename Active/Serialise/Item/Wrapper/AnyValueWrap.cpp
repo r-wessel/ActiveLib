@@ -43,11 +43,11 @@ bool AnyValueWrap::read(const utility::String& source) {
  
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool AnyValueWrap::read(const Value& source) {
+bool AnyValueWrap::readSetting(const Value& source) {
 	m_incoming = clone(source);	//If we receive an incoming value type, we use this in preference to any specified concrete type
-	Item::read(source);	//But we still read the value as usual in case this is preferred
+	read(source);	//But we still read the value as usual in case this is preferred
 	return true;
-} //AnyValueWrap::read
+} //AnyValueWrap::readSetting
 
 
 /*--------------------------------------------------------------------
@@ -64,8 +64,8 @@ void AnyValueWrap::setDefault() {
  
 	return: The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
   --------------------------------------------------------------------*/
-std::optional<Item::Type> AnyValueWrap::type() const  {
-	using enum Item::Type;
+std::optional<Cargo::Type> AnyValueWrap::type() const  {
+	using enum Cargo::Type;
 	using enum Value::Type;
 	switch (getTargetValue().getType()) {
 		case Value::Type::null:
@@ -73,9 +73,9 @@ std::optional<Item::Type> AnyValueWrap::type() const  {
 		case Value::Type::boolType:
 			return boolean;
 		case Value::Type::idType: case Value::Type::stringType: case Value::Type::timeType:
-			return Item::Type::text;
+			return Cargo::Type::text;
 		default:
-			return Item::Type::number;
+			return Cargo::Type::number;
 	}
 } //AnyValueWrap::type
 

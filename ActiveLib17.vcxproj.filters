@@ -496,6 +496,33 @@
     <ClInclude Include="Active\Serialise\Package\Wrapper\PackageWrap.h">
       <Filter>Active\Serialise\Package\Wrapper</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\Transport.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\UnboxedTransport.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Concepts.h">
+      <Filter>Active\Serialise</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Geometry\Vertex.h">
+      <Filter>Active\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Utility\SHA256.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\Wrapper\ValueOptionWrap.h">
+      <Filter>Active\Serialise\Item\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\Units\VolumeUnit.h">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Setting\Values\Measurement\VolumeValue.h">
+      <Filter>Active\Setting\Values\Measurement</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Database\Transaction.h">
+      <Filter>Active\Database</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -689,6 +716,18 @@
     </ClCompile>
     <ClCompile Include="Active\Serialise\Package\Wrapper\Mover.cpp">
       <Filter>Active\Serialise\Package\Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Geometry\Vertex.cpp">
+      <Filter>Active\Geometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\SHA256.cpp">
+      <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Transport.cpp">
+      <Filter>Active\Serialise</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Setting\Values\Measurement\Units\VolumeUnit.cpp">
+      <Filter>Active\Setting\Values\Measurement\Units</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

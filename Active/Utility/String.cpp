@@ -13,8 +13,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <locale>
 #include <optional>
 #include <set>
-#include <sstream>
 #include <stdexcept>
+#if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
+#include <sstream>
+#else
+#include <format>
+#endif
 
 using namespace active::utility;
 
@@ -446,20 +450,23 @@ String::String(size_type newSize, const String& fillText) {
 	padZero: True to pad the number to the specified precision with zeros
   --------------------------------------------------------------------*/
 String::String(double val, double prec, bool padZero) {
+		//std::format is faster than stringstream - use where available
+#if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)
 	std::ostringstream text;
 	text.setf(std::ios::fixed, std::ios::floatfield);
 	auto dp = static_cast<std::string::size_type>(math::round(math::maxVal(0.0, -log10(prec)), 1.0));
 	text.precision(dp);
 	text << val;
 	m_string = text.str();
+#else
+	int32_t dec = std::max(0, static_cast<int32_t>(-log10(prec)));
+	m_string = std::format("{:.{}f}", val, dec);
+#endif
 		//Padding is added by default, so strip it when unwanted
 	if (!padZero) {
-		auto pointPos = m_string.find_last_of('.');
-		if (pointPos != npos) {
-			while (m_string.back() == '0')
-				m_string.pop_back();
-			if (m_string.back() == '.')
-				m_string.pop_back();
+		if (auto pointPos = m_string.find('.'); pointPos != npos) {
+			auto lastZero = m_string.find_last_not_of("0");
+			m_string = substr(0, (pointPos == lastZero) ? pointPos : lastZero + 1);
 		}
 	}
 } //String::String
@@ -509,8 +516,11 @@ String::size_type String::getValidByteCount(const char* text, sizeOption howMany
 		if (auto nextLen = String::getCharacterByteCount(endPos, howMany, format); nextLen && (nextLen > 0)) {
 			endPos += *nextLen;
 				//If the source is byte-limited, ensure the remaining count is updated
-			if (howMany)
+			if (howMany) {
 				*howMany -= *nextLen;
+				if (*howMany == 0)
+					break;
+			}
 		} else
 			break;
 	} while ((*endPos != 0) && (isOpen || --(*charCount)));
@@ -1519,6 +1529,30 @@ String& String::assign(const String& source) {
 String::size_type String::assign(const char* source, sizeOption byteCount, sizeOption charCount, DataFormat format) {
 	m_string.clear();
 	return makeString(m_string, source, byteCount, charCount, format);
+} //String::assign
+
+
+/*--------------------------------------------------------------------
+	Assign a double value to the string (used in special cases where fast conversion is a priority
+ 
+	value: The string to assign
+	decPlaces: The number of decimal places
+ 
+	return: True if the assignment was successful
+  --------------------------------------------------------------------*/
+bool String::assign(double value, uint8_t decPlaces) {
+#if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
+	m_string = std::move(String{value, pow(10.0, decPlaces)}.m_string);
+#else
+	constexpr size_t bufferLen = 40;
+	m_string.resize(bufferLen);
+	auto result = std::to_chars(m_string.data(), m_string.data() + bufferLen, value, std::chars_format::fixed, decPlaces);
+	if (result.ec != std::errc())
+		return false;
+	*result.ptr = '\0';
+	m_string.resize(result.ptr - m_string.data());
+#endif
+	return true;
 } //String::assign
 
 

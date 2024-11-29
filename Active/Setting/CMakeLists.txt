@@ -28,6 +28,8 @@ set(HeaderFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/LengthUnit.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/MassUnit.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/Unit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/Units/VolumeUnit.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Values/Measurement/VolumeValue.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Values/NullValue.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Values/StringValue.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Values/TimeValue.h

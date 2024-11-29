@@ -88,20 +88,6 @@ SettingList::const_iterator SettingList::find(const Setting& ref) const {
 
 
 /*--------------------------------------------------------------------
-	Find a value setting with a specified ID
- 
-	nameID: The ID to search for
- 
-	return: A pointer to the requested value setting (nullptr on failure)
-  --------------------------------------------------------------------*/
-ValueSetting* SettingList::findValue(const utility::NameID& nameID) const {
-	if (auto setting = find(nameID); setting != end())
-		return dynamic_cast<ValueSetting*>(setting->get());
-	return nullptr;
-} //SettingList::findValue
-
-
-/*--------------------------------------------------------------------
 	Find a setting with a specified ID
  
 	nameID: The ID to search for

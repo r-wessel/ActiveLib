@@ -95,7 +95,7 @@ namespace active::serialise {
 			@param source The setting to read
 			@return True if the data was successfully read
 		*/
-		bool read(const setting::Value& source) override {
+		bool readSetting(const setting::Value& source) override {
 				//If Value supports conversion to this type, assign directly
 			if constexpr(requires (setting::Value& v) { base::get() = v; }) {
 				base::get() = source;
@@ -112,12 +112,12 @@ namespace active::serialise {
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
-		std::optional<Item::Type> type() const override {
-			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T>)
-				return Item::Type::text;
+		std::optional<Cargo::Type> type() const override {
+			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T> || std::is_enum_v<T>)
+				return Cargo::Type::text;
 			else if constexpr (std::is_same_v<bool, T>)
-				return Item::Type::boolean;
-			return Item::Type::number;
+				return Cargo::Type::boolean;
+			return Cargo::Type::number;
 		}	//Other types should specialise accordingly
 	};
 
@@ -174,7 +174,7 @@ namespace active::serialise {
 		@return True if the data was successfully read
 	*/
 	template<> inline
-		bool ValueWrap<std::optional<bool>>::read(const utility::String& source) {
+	bool ValueWrap<std::optional<bool>>::read(const utility::String& source) {
 		auto result = readBoolRefValue(source);
 		if (result.second)
 			base::get() = result.first;

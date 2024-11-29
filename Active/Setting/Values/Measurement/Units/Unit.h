@@ -99,7 +99,7 @@ namespace active::measure {
 			@return True if fractions are created
 		*/
 		bool isDecimal() const {
-			return math::isEqual(base, 10.0);	//Base 10 numbers are never displayed as fractions
+			return active::math::isEqual(base, 10.0);	//Base 10 numbers are never displayed as fractions
 		}
 		/*!
 			The format divisor for fractional formatting

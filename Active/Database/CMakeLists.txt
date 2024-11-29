@@ -1,0 +1,33 @@
+set(SourceFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/Content/Record.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/RecordCache.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/SQLite/SQLiteCore.cpp
+)
+set(HeaderFiles
+	${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/Concepts.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Content/Record.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Identity/Index.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Identity/Link.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/DBaseEngine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/DBaseSchema.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/RecordCache.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/SQLite/SQLiteCore.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/SQLite/SQLiteEngine.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/Storage.h
+	${CMAKE_CURRENT_SOURCE_DIR}/Storage/TableSchema.h
+)
+set(ModuleFiles
+	${SourceFiles}
+	${HeaderFiles}
+	PARENT_SCOPE
+)
+target_sources(ActiveLib
+	PRIVATE
+		${SourceFiles}
+	PUBLIC
+	FILE_SET HEADERS
+	BASE_DIRS ${PROJECT_SOURCE_DIR}
+	FILES
+		${HeaderFiles}
+)

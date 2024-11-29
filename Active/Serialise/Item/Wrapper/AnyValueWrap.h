@@ -64,7 +64,7 @@ namespace active::serialise {
 			@param source The setting to read
 			@return True if the data was successfully read
 		*/
-		bool read(const setting::Value& source) override;
+		bool readSetting(const setting::Value& source) override;
 		/*!
 			Set to the default package content
 		*/
@@ -73,7 +73,7 @@ namespace active::serialise {
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
-		std::optional<Item::Type> type() const override;
+		std::optional<Cargo::Type> type() const override;
 		
 	private:
 		/*!

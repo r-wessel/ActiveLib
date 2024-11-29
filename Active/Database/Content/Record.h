@@ -40,7 +40,7 @@ namespace active::database {
 	 @tparam ObjID The object identifier type
 	 */
 	template<typename ObjID = active::utility::Guid>
-	class Record : public active::serialise::Package, public active::utility::Cloner {
+	class Record : public active::serialise::Package, public virtual active::utility::Cloner {
 	public:
 
 		// MARK: - Types
@@ -95,7 +95,11 @@ namespace active::database {
 		 Get the object document index
 		 @return The object index
 		 */
-		virtual Index getIndex() const { return Index{m_ID, m_ownerID}; }
+		virtual Index getIndex() const {
+			Index result{m_ID};
+			result.ownerID = m_ownerID;
+			return result;
+		}
 		/*!
 		 Get the object document link
 		 @return The object link
@@ -183,8 +187,8 @@ namespace active::database {
 		using enum record::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{
-				{ getIdentity(idIndex), idIndex, element },
-				{ getIdentity(globIndex), globIndex, element },
+				{ getIdentity(idIndex), idIndex, element, !m_ID.empty() },
+				{ getIdentity(globIndex), globIndex, element, !m_globalID.empty() },
 				{ getIdentity(createIndex), createIndex, element },
 				{ getIdentity(editIndex), editIndex, element },
 			},

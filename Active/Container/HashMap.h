@@ -9,7 +9,9 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/Cloner.h"
 #include "Active/Utility/Mover.h"
 
+#include <algorithm>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace active::container {
 
@@ -104,6 +106,15 @@ namespace active::container {
 			@return An iterator pointing to the key/value pair (end() on failure)
 		*/
 		auto find(const Key& key) const { return base::find(key); }
+		/*!
+			Get the map keys
+			@return An set containing the map keys
+		*/
+		std::unordered_set<Key> keys() const {
+			std::unordered_set<Key> result;
+			std::for_each(base::begin(), base::end(), [&result](const auto& entry){ result.insert(entry.first); });
+			return result;
+		}
 		
 		// MARK: Functions (mutating)
 		
@@ -153,15 +164,20 @@ namespace active::container {
 			@param pos An iterator pointing to the item to be removed
 			@return An iterator at the next value
 		*/
-		auto release(iterator& pos) { return release(const_iterator(pos)); }
+		auto release(iterator& pos) {
+			auto item = std::move(pos->second);
+			erase(pos);
+			return item;
+		}
 		/*!
 			Release the pointer held by the specified item and erase
 			@param pos An iterator pointing to the item to be removed
 		 	@return The released pointer from the map item
 		*/
 		auto release(const_iterator pos) {
-			auto item = std::move(pos.second);
-			erase(pos);
+			auto& val = const_cast<std::unique_ptr<T>&>(pos->second);
+			auto item = std::unique_ptr<T>{val.release()};
+			base::erase(pos);
 			return item;
 		}
 		

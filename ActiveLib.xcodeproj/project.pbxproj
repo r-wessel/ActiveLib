@@ -109,6 +109,15 @@
 		219988142BD7C4490035E5EA /* DocumentTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988132BD7C4490035E5EA /* DocumentTests.cpp */; };
 		219988172BD7C5C10035E5EA /* MeasurementTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219988152BD7C5C10035E5EA /* MeasurementTests.cpp */; };
 		2199881E2BD833830035E5EA /* libActiveLib.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = 21379E082AE47A6400A1584C /* libActiveLib.a */; };
+		21A0FBA62CB90E8C0023F24E /* Transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21A0FBA52CB90E8C0023F24E /* Transport.cpp */; };
+		21AE195B2CC297A4004DBCFC /* VolumeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AE19592CC297A4004DBCFC /* VolumeUnit.h */; };
+		21AE195C2CC297A4004DBCFC /* VolumeUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */; };
+		21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AE195D2CC29AB9004DBCFC /* VolumeValue.h */; };
+		21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9AB2CA445C4000B8681 /* Vertex.h */; };
+		21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9AC2CA445C4000B8681 /* Vertex.cpp */; };
+		21AEF9CA2CA82393000B8681 /* SHA256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9C82CA82393000B8681 /* SHA256.cpp */; };
+		21AEF9CB2CA82393000B8681 /* SHA256.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9C92CA82393000B8681 /* SHA256.h */; };
+		21AEF9CD2CA8A96D000B8681 /* SHA256Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */; };
 		21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C2535F2B92ECF7003B2F63 /* UnknownItem.h */; };
 		21C253622B94578F003B2F63 /* Value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C253612B94578F003B2F63 /* Value.cpp */; };
 		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -350,6 +359,7 @@
 		218953B62C0F35E60078F182 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Button.h; path = EventTests/Button.h; sourceTree = "<group>"; };
 		218953B72C0F35E60078F182 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Button.cpp; path = EventTests/Button.cpp; sourceTree = "<group>"; };
 		218953B92C0F3FDD0078F182 /* CalcApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CalcApp.cpp; path = EventTests/CalcApp.cpp; sourceTree = "<group>"; };
+		219245F92CA2C9CE00CF5703 /* UnboxedTransport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnboxedTransport.h; sourceTree = "<group>"; };
 		21932D3E2BE13F4D005DB06E /* AreaValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AreaValue.h; sourceTree = "<group>"; };
 		21932D402BE13FD8005DB06E /* MassValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassValue.h; sourceTree = "<group>"; };
 		21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerialiseArrayTester.cpp; sourceTree = "<group>"; };
@@ -371,6 +381,20 @@
 		219988112BD7C2EB0035E5EA /* Base64Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = Base64Tests.cpp; sourceTree = "<group>"; };
 		219988132BD7C4490035E5EA /* DocumentTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = DocumentTests.cpp; sourceTree = "<group>"; };
 		219988152BD7C5C10035E5EA /* MeasurementTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = MeasurementTests.cpp; sourceTree = "<group>"; };
+		2199BB4D2CD8C6AE00A4BEEC /* FastDoubleWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FastDoubleWrap.h; sourceTree = "<group>"; };
+		2199BB7F2CDD7A2700A4BEEC /* ContainerBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContainerBase.h; sourceTree = "<group>"; };
+		21A0FB9C2CB86F490023F24E /* Management.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Management.h; sourceTree = "<group>"; };
+		21A0FBA52CB90E8C0023F24E /* Transport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transport.cpp; sourceTree = "<group>"; };
+		21AE19592CC297A4004DBCFC /* VolumeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeUnit.h; sourceTree = "<group>"; };
+		21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeUnit.cpp; sourceTree = "<group>"; };
+		21AE195D2CC29AB9004DBCFC /* VolumeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeValue.h; sourceTree = "<group>"; };
+		21AEF9AB2CA445C4000B8681 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
+		21AEF9AC2CA445C4000B8681 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
+		21AEF9B12CA5BB62000B8681 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
+		21AEF9C82CA82393000B8681 /* SHA256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA256.cpp; sourceTree = "<group>"; };
+		21AEF9C92CA82393000B8681 /* SHA256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA256.h; sourceTree = "<group>"; };
+		21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SHA256Tests.cpp; sourceTree = "<group>"; };
+		21AEF9CE2CA9B263000B8681 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnyValueWrap.h; sourceTree = "<group>"; };
 		21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnyValueWrap.cpp; sourceTree = "<group>"; };
 		21C23CFF2C11142400E40710 /* File.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = File.md; sourceTree = "<group>"; };
@@ -398,6 +422,7 @@
 		21D0BD842C8B56530077E104 /* Concepts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Concepts.h; sourceTree = "<group>"; };
 		21D0BD9F2C8F1F1C0077E104 /* RecordCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordCache.h; sourceTree = "<group>"; };
 		21D0BDA02C8F2C430077E104 /* RecordCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecordCache.cpp; sourceTree = "<group>"; };
+		21F0AE562CECD40C003AD722 /* Transaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transaction.h; sourceTree = "<group>"; };
 		21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueSettingWrap.cpp; sourceTree = "<group>"; };
 		21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueSettingWrap.h; sourceTree = "<group>"; };
 		21F69F622C6D4AEE008B6A06 /* CargoHold.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CargoHold.h; sourceTree = "<group>"; };
@@ -483,19 +508,22 @@
 		212A834E2AE47AD9001EAFE7 /* Serialise */ = {
 			isa = PBXGroup;
 			children = (
-				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				212A834F2AE47AD9001EAFE7 /* Cargo.h */,
 				21F69F622C6D4AEE008B6A06 /* CargoHold.h */,
 				215F08482C972BB100CD343B /* CargoType.h */,
+				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				215F08392C95953800CD343B /* Concepts.h */,
 				214EA4D12BA488DA008E5358 /* Document */,
 				212A83752AE47AD9001EAFE7 /* Generic */,
 				212A83702AE47AD9001EAFE7 /* Inventory */,
 				212A83662AE47AD9001EAFE7 /* Item */,
 				212A83632AE47AD9001EAFE7 /* JSON */,
+				21A0FB9B2CB86F2C0023F24E /* Management */,
 				212A83782AE47AD9001EAFE7 /* Package */,
 				219712682BE7E2D500D9EF7E /* Serialisation.md */,
+				21A0FBA52CB90E8C0023F24E /* Transport.cpp */,
 				217AE6422BEA5CF6004CC2B0 /* Transport.h */,
+				219245F92CA2C9CE00CF5703 /* UnboxedTransport.h */,
 				212A83502AE47AD9001EAFE7 /* XML */,
 			);
 			path = Serialise;
@@ -582,6 +610,7 @@
 			children = (
 				21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */,
 				21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */,
+				2199BB4D2CD8C6AE00A4BEEC /* FastDoubleWrap.h */,
 				212A836D2AE47AD9001EAFE7 /* ItemWrap.h */,
 				215F08492C97351700CD343B /* ValueItem.h */,
 				21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */,
@@ -680,6 +709,8 @@
 				212A83AB2AE47AD9001EAFE7 /* Vector3.h */,
 				212A838A2AE47AD9001EAFE7 /* Vector4.cpp */,
 				212A83A32AE47AD9001EAFE7 /* Vector4.h */,
+				21AEF9AC2CA445C4000B8681 /* Vertex.cpp */,
+				21AEF9AB2CA445C4000B8681 /* Vertex.h */,
 				212A83852AE47AD9001EAFE7 /* XInfo.h */,
 				212A839F2AE47AD9001EAFE7 /* XList.cpp */,
 				212A83992AE47AD9001EAFE7 /* XList.h */,
@@ -744,6 +775,8 @@
 				212A83C72AE47AD9001EAFE7 /* Memory.h */,
 				21329F552BFB8E9B00B5C7AF /* Mover.h */,
 				21F93AC92B2B5DA2009A2C5B /* NameID.h */,
+				21AEF9C82CA82393000B8681 /* SHA256.cpp */,
+				21AEF9C92CA82393000B8681 /* SHA256.h */,
 				218061D92BEE580F00F8BD9E /* StackBufferOut.h */,
 				212A83C22AE47AD9001EAFE7 /* String.cpp */,
 				212A83CE2AE47AD9001EAFE7 /* String.h */,
@@ -796,9 +829,9 @@
 		214EA4D12BA488DA008E5358 /* Document */ = {
 			isa = PBXGroup;
 			children = (
+				214EA4CD2BA488DA008E5358 /* Handler.h */,
 				214EA4CA2BA488DA008E5358 /* Object.cpp */,
 				214EA4CB2BA488DA008E5358 /* Object.h */,
-				214EA4CD2BA488DA008E5358 /* Handler.h */,
 				214EA4CE2BA488DA008E5358 /* Transportable.h */,
 			);
 			path = Document;
@@ -814,6 +847,7 @@
 				21932D402BE13FD8005DB06E /* MassValue.h */,
 				215F91462BC92A800052BFC8 /* MeasuredValue.h */,
 				215F913F2BC83B510052BFC8 /* Units */,
+				21AE195D2CC29AB9004DBCFC /* VolumeValue.h */,
 			);
 			path = Measurement;
 			sourceTree = "<group>";
@@ -830,6 +864,8 @@
 				215F915D2BCDD5E30052BFC8 /* MassUnit.cpp */,
 				215F914B2BC9DA1E0052BFC8 /* MassUnit.h */,
 				215F913E2BC83B510052BFC8 /* Unit.h */,
+				21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */,
+				21AE19592CC297A4004DBCFC /* VolumeUnit.h */,
 			);
 			path = Units;
 			sourceTree = "<group>";
@@ -865,6 +901,7 @@
 				2199880A2BD7B7D20035E5EA /* GuidTests.cpp */,
 				219988072BD7B6370035E5EA /* Serialisation */,
 				219988162BD7C5C10035E5EA /* SettingTests */,
+				21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */,
 				219987FC2BD709080035E5EA /* StringTests.cpp */,
 				219987F92BD6FB7C0035E5EA /* TestingPlatforms.h */,
 				219987FF2BD709080035E5EA /* TimeTests.cpp */,
@@ -905,6 +942,15 @@
 			path = SettingTests;
 			sourceTree = "<group>";
 		};
+		21A0FB9B2CB86F2C0023F24E /* Management */ = {
+			isa = PBXGroup;
+			children = (
+				21A0FB9C2CB86F490023F24E /* Management.h */,
+				21AEF9B12CA5BB62000B8681 /* Manager.h */,
+			);
+			path = Management;
+			sourceTree = "<group>";
+		};
 		21D0BCF82C84AC560077E104 /* Content */ = {
 			isa = PBXGroup;
 			children = (
@@ -931,10 +977,12 @@
 		21D0BCFB2C84AC560077E104 /* Database */ = {
 			isa = PBXGroup;
 			children = (
+				21AEF9CE2CA9B263000B8681 /* CMakeLists.txt */,
 				215F082B2C94A89B00CD343B /* Concepts.h */,
 				21D0BCF82C84AC560077E104 /* Content */,
 				21D0BD052C84B1400077E104 /* Identity */,
 				21D0BCFA2C84AC560077E104 /* Storage */,
+				21F0AE562CECD40C003AD722 /* Transaction.h */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -972,6 +1020,7 @@
 		21F69F5B2C6CE8E2008B6A06 /* Wrapper */ = {
 			isa = PBXGroup;
 			children = (
+				2199BB7F2CDD7A2700A4BEEC /* ContainerBase.h */,
 				215F08382C9593B800CD343B /* ContainerWrap.h */,
 				215F08232C945B1C00CD343B /* Handler.h */,
 				215F08242C94652100CD343B /* Mover.cpp */,
@@ -1024,7 +1073,9 @@
 				21F93ADC2B2C6E9C009A2C5B /* Subscriber.h in Headers */,
 				21932D4F2BE29C69005DB06E /* SerialiseArrayTester.h in Headers */,
 				21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */,
+				21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */,
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
+				21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */,
 				216DFFAC2AE87766009110CF /* UInt32Value.h in Headers */,
 				218953A42C0C9CB00078F182 /* Version.h in Headers */,
 				21329F562BFB8E9B00B5C7AF /* Mover.h in Headers */,
@@ -1048,6 +1099,7 @@
 				21F93ACF2B2B67FD009A2C5B /* Event.h in Headers */,
 				215F91402BC83B510052BFC8 /* Unit.h in Headers */,
 				215F914F2BC9DA1E0052BFC8 /* AngleUnit.h in Headers */,
+				21AEF9CB2CA82393000B8681 /* SHA256.h in Headers */,
 				21F69F632C6D4AEE008B6A06 /* CargoHold.h in Headers */,
 				21F93AD62B2C6A90009A2C5B /* PostBox.h in Headers */,
 				214EA4D62BA488DA008E5358 /* Transportable.h in Headers */,
@@ -1057,6 +1109,7 @@
 				215F91112BC574790052BFC8 /* Base64Transport.h in Headers */,
 				21F93AD22B2B81C6009A2C5B /* SettingList.h in Headers */,
 				215F91532BCB1F330052BFC8 /* AngleValue.h in Headers */,
+				21AE195B2CC297A4004DBCFC /* VolumeUnit.h in Headers */,
 				21F93ADE2B2C79B5009A2C5B /* Publisher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1167,6 +1220,7 @@
 				2199880B2BD7B7D20035E5EA /* GuidTests.cpp in Sources */,
 				218953B12C0F2FE00078F182 /* CalculatorRPN.cpp in Sources */,
 				219988142BD7C4490035E5EA /* DocumentTests.cpp in Sources */,
+				21AEF9CD2CA8A96D000B8681 /* SHA256Tests.cpp in Sources */,
 				219988012BD7B4790035E5EA /* TimeTests.cpp in Sources */,
 				219988022BD7B48A0035E5EA /* FileTests.cpp in Sources */,
 			);
@@ -1197,6 +1251,7 @@
 				212A84252AE47AD9001EAFE7 /* Plane.cpp in Sources */,
 				214EA4D22BA488DA008E5358 /* Object.cpp in Sources */,
 				212A83D72AE47AD9001EAFE7 /* Path.cpp in Sources */,
+				21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */,
 				21932D4E2BE29C69005DB06E /* SerialiseArrayTester.cpp in Sources */,
 				215F91372BC82A150052BFC8 /* LengthUnit.cpp in Sources */,
 				212A84362AE47AD9001EAFE7 /* Memory.cpp in Sources */,
@@ -1214,6 +1269,7 @@
 				212A840C2AE47AD9001EAFE7 /* PolyEdge.cpp in Sources */,
 				212A83D42AE47AD9001EAFE7 /* Directory.cpp in Sources */,
 				212A84002AE47AD9001EAFE7 /* Line.cpp in Sources */,
+				21A0FBA62CB90E8C0023F24E /* Transport.cpp in Sources */,
 				214661992C263C550048BBA7 /* Colour.cpp in Sources */,
 				212A83DB2AE47AD9001EAFE7 /* XMLDateTime.cpp in Sources */,
 				2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */,
@@ -1226,9 +1282,11 @@
 				215F91102BC574790052BFC8 /* Base64Transport.cpp in Sources */,
 				212A841E2AE47AD9001EAFE7 /* PolyPoint.cpp in Sources */,
 				212A83F62AE47AD9001EAFE7 /* HexTransport.cpp in Sources */,
+				21AEF9CA2CA82393000B8681 /* SHA256.cpp in Sources */,
 				212A84432AE47AD9001EAFE7 /* Guid.cpp in Sources */,
 				21257AC62C1C881F00B710AC /* DataFormat.cpp in Sources */,
 				21D0BDA12C8F2C430077E104 /* RecordCache.cpp in Sources */,
+				21AE195C2CC297A4004DBCFC /* VolumeUnit.cpp in Sources */,
 				21F93AD42B2B8679009A2C5B /* SettingList.cpp in Sources */,
 				212A83DE2AE47AD9001EAFE7 /* XMLValueSetting.cpp in Sources */,
 				212A841B2AE47AD9001EAFE7 /* XList.cpp in Sources */,
@@ -1361,7 +1419,7 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				OBJROOT = "$(PROJECT_DIR)/build";
@@ -1433,10 +1491,11 @@
 				HEADER_SEARCH_PATHS = "$(SRCROOT)";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACH_O_TYPE = staticlib;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				OBJROOT = "$(PROJECT_DIR)/build";
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SYMROOT = "$(PROJECT_DIR)/bin";
 				SYSTEM_HEADER_SEARCH_PATHS = (

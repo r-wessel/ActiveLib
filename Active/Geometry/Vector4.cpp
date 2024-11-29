@@ -9,6 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/MathFunctions.h"
 #include "Active/Geometry/Matrix4x4.h"
 #include "Active/Geometry/Vector3.h"
+#include "Active/Geometry/Vertex.h"
 
 using namespace active::geometry;
 using namespace active::math;
@@ -44,6 +45,16 @@ Vector4::Vector4(const double& x, const double& y, const double& z) {
 	source: The object to copy
   --------------------------------------------------------------------*/
 Vector4::Vector4(const Point& source) {
+	*this = source;
+} //Vector4::Vector4
+
+
+/*--------------------------------------------------------------------
+	Constructor
+	
+	source: The vertex to copy
+  --------------------------------------------------------------------*/
+Vector4::Vector4(const Vertex& source) {
 	*this = source;
 } //Vector4::Vector4
 
@@ -87,6 +98,22 @@ Vector4::Vector4(const Vector4& source) {
 	return: A reference to this
   --------------------------------------------------------------------*/
 Vector4& Vector4::operator=(const Point& source) {
+	m_vector[0] = source.x;
+	m_vector[1] = source.y;
+	m_vector[2] = source.z;
+	m_vector[3] = 1;
+	return *this;
+} //Vector4::operator=
+
+
+/*--------------------------------------------------------------------
+	Assignment operator
+	
+	source: The vertex to copy
+	
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Vector4& Vector4::operator=(const Vertex& source) {
 	m_vector[0] = source.x;
 	m_vector[1] = source.y;
 	m_vector[2] = source.z;
@@ -261,6 +288,16 @@ Vector4& Vector4::operator*=(const Matrix4x4& matrix) {
 Vector4::operator Point() const {
 	return Point(m_vector[0], m_vector[1], m_vector[2]);
 } //Vector4::operator Point
+
+
+/*--------------------------------------------------------------------
+	Converion operator
+	
+	return: A vertex derived from this vector
+  --------------------------------------------------------------------*/
+Vector4::operator Vertex() const {
+	return Vertex(m_vector[0], m_vector[1], m_vector[2]);
+} //Vector4::operator Vertex
 
 // MARK: - Functions (const)
 

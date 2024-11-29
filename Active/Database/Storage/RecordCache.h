@@ -1,7 +1,7 @@
 #ifndef ACTIVE_DATABASE_RECORD_CACHE
 #define ACTIVE_DATABASE_RECORD_CACHE
 
-#include "Active/Container/Map.h"
+#include "Active/Container/HashMap.h"
 #include "Active/Database/Concepts.h"
 #include "Active/Database/Content/Record.h"
 #include "Active/Serialise/CargoHold.h"
@@ -44,12 +44,12 @@ namespace active::database {
 	 */
 	template<typename Obj, typename ObjWrapper, typename ObjID = utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
-	class RecordCache : public Record<ObjID>, private container::Map<ObjID, Obj> {
+	class RecordCache : public Record<ObjID>, private container::HashMap<ObjID, Obj> {
 	public:
 		
 		// MARK: - Types
 		
-		using base = container::Map<ObjID, Obj>;
+		using base = container::HashMap<ObjID, Obj>;
 			///Unary predicate for filtering records
 		using Filter = std::function<bool(const Obj&)>;
 		
@@ -97,7 +97,10 @@ namespace active::database {
 		 Write a record to storage
 		 @param record The record to write (adds if new, or overwrites any record with the same ID)
 		 */
-		virtual void write(const Obj& record) { base::emplace(record.getID(), clone(record)); }
+		virtual void write(Obj& record) {
+			erase(record.getID());
+			base::emplace(record.getID(), clone(record));
+		}
 		/*!
 		 Erase an record by index
 		 @param objID The record ID

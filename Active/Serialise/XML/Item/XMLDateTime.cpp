@@ -13,7 +13,7 @@ using namespace active::serialise::xml;
 using namespace active::utility;
 
 using enum XMLDateTime::Content;
-using enum XMLDateTime::Format;
+using enum Item::TimeFormat;
 
 #include <regex>
 
@@ -51,7 +51,7 @@ XMLDateTime::XMLDateTime(Time& time, Content content, double prec) : Item(), m_t
   --------------------------------------------------------------------*/
 bool XMLDateTime::write(String& dest) const {
 		//If the preferred format is the Unix epoch, write the seconds since 1970
-	if (m_format == Format::secondsSince1970) {
+	if (m_format == secondsSince1970) {
 		dest += String{m_time.secondsSince1970()};
 		return true;
 	}
