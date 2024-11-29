@@ -101,7 +101,7 @@ namespace active::serialise {
 		}
 
 	private:
-		static CargoPicker<Wrap>::CargoType m_nullCargo;
+		static typename CargoPicker<Wrap>::CargoType m_nullCargo;
 		Obj* m_object = nullptr;
 		std::unique_ptr<Obj> m_cache;
 	};

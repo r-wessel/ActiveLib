@@ -9,12 +9,16 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/BufferOut.h"
 
 #include <cwctype>
-#include <format>
 #include <numeric>
 #include <locale>
 #include <optional>
 #include <set>
 #include <stdexcept>
+#if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
+#include <sstream>
+#else
+#include <format>
+#endif
 
 using namespace active::utility;
 
@@ -446,8 +450,18 @@ String::String(size_type newSize, const String& fillText) {
 	padZero: True to pad the number to the specified precision with zeros
   --------------------------------------------------------------------*/
 String::String(double val, double prec, bool padZero) {
+		//std::format is faster than stringstream - use where available
+#if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)
+	std::ostringstream text;
+	text.setf(std::ios::fixed, std::ios::floatfield);
+	auto dp = static_cast<std::string::size_type>(math::round(math::maxVal(0.0, -log10(prec)), 1.0));
+	text.precision(dp);
+	text << val;
+	m_string = text.str();
+#else
 	int32_t dec = std::max(0, static_cast<int32_t>(-log10(prec)));
 	m_string = std::format("{:.{}f}", val, dec);
+#endif
 		//Padding is added by default, so strip it when unwanted
 	if (!padZero) {
 		if (auto pointPos = m_string.find('.'); pointPos != npos) {
@@ -1527,6 +1541,9 @@ String::size_type String::assign(const char* source, sizeOption byteCount, sizeO
 	return: True if the assignment was successful
   --------------------------------------------------------------------*/
 bool String::assign(double value, uint8_t decPlaces) {
+#if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
+	m_string = std::move(String{value, pow(10.0, decPlaces)}.m_string);
+#else
 	constexpr size_t bufferLen = 40;
 	m_string.resize(bufferLen);
 	auto result = std::to_chars(m_string.data(), m_string.data() + bufferLen, value, std::chars_format::fixed, decPlaces);
@@ -1534,6 +1551,7 @@ bool String::assign(double value, uint8_t decPlaces) {
 		return false;
 	*result.ptr = '\0';
 	m_string.resize(result.ptr - m_string.data());
+#endif
 	return true;
 } //String::assign
 
