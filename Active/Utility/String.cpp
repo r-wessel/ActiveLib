@@ -451,7 +451,7 @@ String::String(size_type newSize, const String& fillText) {
   --------------------------------------------------------------------*/
 String::String(double val, double prec, bool padZero) {
 		//std::format is faster than stringstream - use where available
-#if defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)
+#if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
 	std::ostringstream text;
 	text.setf(std::ios::fixed, std::ios::floatfield);
 	auto dp = static_cast<std::string::size_type>(math::round(math::maxVal(0.0, -log10(prec)), 1.0));
