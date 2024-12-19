@@ -73,6 +73,12 @@ namespace active::event {
 		bool add(std::shared_ptr<Subscriber> subscriber);
 		/*!
 			Add a managed subscriber, i.e. the subscription continues until the publisher is explicitly instructed to end it
+			@param subscriber The new subscriber. NB: The caller retains ownership o fthe object and must manage it accordingly
+			@return True if subscriber was added
+		*/
+		bool addManaged(Subscriber* subscriber);
+		/*!
+			Add a managed subscriber, i.e. the subscription continues until the publisher is explicitly instructed to end it
 			@return The new subscriber on success, nullptr on failure
 			@tparam T The type of subscriber to add
 		*/

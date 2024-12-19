@@ -19,13 +19,13 @@ namespace active::event {
 		- Initialise, e.g. allocate resources
 		- Shutdown (release resources etc)
 	*/
-	class Participant : public utility::NameID {
+	class Participant : public ::active::utility::NameID {
 	public:
 		/*!
 			Default constructor
 			@param identity Optional name/ID for the participant
 		*/
-		Participant(const utility::NameID& identity = utility::NameID{}) : utility::NameID{identity} {}
+		Participant(const NameID& identity = NameID{}) : NameID{identity} {}
 		/*!
 			Destructor
 		*/

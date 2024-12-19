@@ -70,7 +70,7 @@ namespace active::event {
 			@param identity Name/ID for the subscriber
 			@param priority The subscriber priority (determines the order in which subscribers receive events)
 		*/
-		Subscriber(const utility::NameID& identity, int32_t priority = 0) : Participant{identity} { m_priority = priority; }
+		Subscriber(const NameID& identity, int32_t priority = 0) : Participant{identity} { m_priority = priority; }
 		/*!
 			Destructor
 		*/

@@ -33,14 +33,13 @@ namespace active::serialise::doc {
 
 		// MARK: - Types
 		
+		using base = serialise::Package;
 			///Unique pointer
 		using Unique = std::unique_ptr<Object>;
 			///Shared pointer
 		using Shared = std::shared_ptr<Object>;
 			///Optional
 		using Option = std::optional<Object>;
-			///Base container - supports an document object hierarchy
-		using base = std::vector<Object>;
 			///Values container - holds all single-value variables from the original class
 		using Values = std::vector<setting::ValueSetting>;
 		

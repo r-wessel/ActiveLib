@@ -14,7 +14,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::file {
 
 		/// Class to represent the path of a node in the local file system
-	class Path: public utility::Cloner {
+	class Path: public ::active::utility::Cloner {
 	public:
 		
 		// MARK: - Types
