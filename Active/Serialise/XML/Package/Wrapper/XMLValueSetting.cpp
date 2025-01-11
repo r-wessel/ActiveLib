@@ -79,7 +79,7 @@ XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, const utility::
 	return: True if the package has added items to the inventory
   --------------------------------------------------------------------*/
 bool XMLValueSetting::fillInventory(Inventory& inventory) const {
-	using enum Entry::Type;
+	using enum Identity::Role;
 	inventory.merge(Inventory{
 		{
 			{ fieldID[name], name, attribute, !m_name.empty() },

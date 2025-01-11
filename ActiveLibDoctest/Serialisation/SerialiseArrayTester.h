@@ -177,7 +177,7 @@ public:
 		Get the recommended cargo entry type
 		@return The cargo entry type (nullopt = deduce automatically from cargo characteristics)
 	*/
-	std::optional<active::serialise::Entry::Type> entryType() const override { return active::serialise::Entry::Type::array; }
+	std::optional<active::serialise::Identity::Role> entryRole() const override { return active::serialise::Identity::Role::array; }
 		///Resets the target object to a default state prior to importing deserialised data
 	void setDefault() override;
 		///Inserts a newly deserialised object container into the target (identified by an inventory item)

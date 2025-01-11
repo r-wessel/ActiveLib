@@ -731,7 +731,7 @@ namespace {
 		phrase: The XML phrase to be imported
 	  --------------------------------------------------------------------*/
 	void doXMLItemImport(Cargo& cargo, String& phrase) {
-		if (auto* item = dynamic_cast<Item*>(&cargo); (item != nullptr) && !item->readSetting(StringValue{phrase}))
+		if (!cargo.readSetting(StringValue{phrase}))
 			throw std::system_error(makeXMLError(badValue));
 	} //doXMLItemImport
 	
@@ -791,7 +791,7 @@ namespace {
 	void doXMLImport(Cargo& container, const XMLIdentity& containerIdentity, XMLImporter& importer, int32_t depth) {
 			//Find out what the container can hold
 		Inventory inventory;
-		if (!container.fillInventory(inventory) && (dynamic_cast<Item*>(&container) == nullptr))
+		if (!container.fillInventory(inventory) && !container.isItem())
 			throw std::system_error(makeXMLError(missingInventory));
 		inventory.resetAvailable();	//Reset the availability of each entry to zero so we can count incoming items
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
@@ -839,10 +839,27 @@ namespace {
 						cargo = wrapped(container);	//The next iteration will inspect the inventory of the root container
 					} else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
-						if (!incomingItem->bumpAvailable())
-							throw std::system_error(makeXMLError(inventoryBoundsExceeded));
+						if ((incomingItem == inventory.end()) && inventory.isEveryItemAccepted) {
+							if (auto* package = dynamic_cast<Package*>(&container); package != nullptr)
+								incomingItem = package->allocate(inventory, identity);
+						}
 						cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
-						if (!cargo) {
+						if (cargo != nullptr) {
+							if (!incomingItem->bumpAvailable()) {
+								do {
+									if (inventory.isEveryItemAccepted) {	//A package with dynamic content might transform an item to an array
+										if (auto* package = dynamic_cast<Package*>(&container); package != nullptr) {
+											if (incomingItem = package->allocateArray(inventory, incomingItem); incomingItem != inventory.end()) {
+												cargo = container.getCargo(*incomingItem);
+												incomingItem->bumpAvailable();
+												break;	//Continue when transformed
+											}
+										}
+									}
+									throw std::system_error(makeXMLError(inventoryBoundsExceeded));
+								} while (false);
+							}
+						} else {
 							if (isEmpty)
 								break;	//Just skip an unknown empty tag
 							else if (importer.isUnknownTagSkipped())
@@ -900,12 +917,10 @@ namespace {
 				continue;
 			}
 			auto content = cargo.getCargo(item);
-				//Attributes must be single items
-			auto* itemContent = dynamic_cast<Item*>(content.get());
-			if (itemContent == nullptr)
+			if (!content || !content->isItem())
 				continue;
 			String value;
-			if (!itemContent->write(value))
+			if (!content->write(value))
 				continue;
 			String attribute{" "};
 			if (exporter.isNameSpaces && item.identity().group && !item.identity().group->empty())
@@ -928,14 +943,13 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void doXMLExport(const Cargo& cargo, const XMLIdentity& identity, XMLExporter& exporter, int32_t depth = 0) {
 		validateXMLName(identity.name);
-		const auto* item = dynamic_cast<const Item*>(&cargo);
 		Inventory inventory;
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
-			if (item == nullptr)
+			if (!cargo.isItem())
 				throw std::system_error(makeXMLError(badValue));
 			String outgoing;
-			if (!item->write(outgoing))
+			if (!cargo.write(outgoing))
 				throw std::system_error(makeXMLError(badValue));
 			exporter.writeTag(identity.name, exporter.isNameSpaces ? identity.group.value_or(String()) : String(), startTag, depth);
 			exporter.writePhrase(outgoing);
@@ -943,10 +957,11 @@ namespace {
 			return;
 		}
 		bool isWrapperTag = true;
-		if (item != nullptr) {
+		if (cargo.isItem()) {
 			if (inventory.size() != 1)
 				throw std::system_error(makeXMLError(badValue));
-			isWrapperTag = !identity.name.empty() && !inventory.begin()->identity().name.empty() && (inventory.begin()->identity() != identity);
+			auto itemIdentity = inventory.front().identity();
+			isWrapperTag = !identity.name.empty() && !itemIdentity.name.empty() && (itemIdentity != identity);
 		}
 		auto sequence = inventory.sequence();
 		if (isWrapperTag) {
@@ -972,7 +987,7 @@ namespace {
 			}
 		}
 			//Non-items write a closing tag
-		if (item == nullptr)
+		if (!cargo.isItem())
 			exporter.writeTag(identity.name, identity.group, endTag, depth);
 	} //doXMLExport
 

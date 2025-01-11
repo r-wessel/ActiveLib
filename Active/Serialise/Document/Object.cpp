@@ -85,7 +85,7 @@ const ValueSetting::Option Object::value(const String& name) const {
 	return: True if the package has added items to the inventory
   --------------------------------------------------------------------*/
 bool Object::fillInventory(Inventory& inventory) const {
-	using enum Entry::Type;
+	using enum Identity::Role;
 	inventory.merge(Inventory{
 		{
 			{ fieldID[typeID], typeID, attribute },

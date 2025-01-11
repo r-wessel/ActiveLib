@@ -81,7 +81,7 @@ namespace active::serialise::xml {
 			@return True if the package has added items to the inventory
 		*/
 		bool fillInventory(Inventory& inventory) const override {
-			using enum Entry::Type;
+			using enum Identity::Role;
 			inventory.merge(Inventory{
 				{
 					{ fieldID[topID], topID, attribute, (m_topID != 0) },

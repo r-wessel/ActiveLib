@@ -28,7 +28,7 @@ namespace {
 	return: True if the package has added items to the inventory
   --------------------------------------------------------------------*/
 bool ValueSettingWrap::fillInventory(Inventory& inventory) const {
-	using enum Entry::Type;
+	using enum Identity::Role;
 	inventory.merge(Inventory{
 		{
 			{ String{"value"}, valueIndex, static_cast<uint32_t>(get().size()), std::nullopt, (get().size() > 0), &typeid(ValueSettingWrap) },

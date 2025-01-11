@@ -316,7 +316,7 @@ Then an `Inventory` (the serialisation schema) can be defined like this:
 
 ```Cpp
 bool Object::fillInventory(Inventory& inventory) const {
-	using enum Entry::Type;
+	using enum Identity::Role;
 	inventory.merge(Inventory{
 		{
 			{ {"class"}, typeID, attribute },

@@ -8,9 +8,13 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/Inventory/Inventory.h"
 
-namespace active::serialise {
+namespace active::setting {
 	
-	class Management;
+	class Value;
+	
+}
+
+namespace active::serialise {
 	
 	/*!
 		Interface for data entities that support serialisation for transport
@@ -61,21 +65,32 @@ namespace active::serialise {
 		*/
 		virtual bool isNull() const { return false; }
 		/*!
+			Determine if the cargo is an item, e.g. a single/homogenous value type (not an object)
+			@return True if the cargo is an item
+		*/
+		virtual bool isItem() const = 0;
+		/*!
 			Write the item data to a string
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
 		virtual bool write(utility::String& dest) const = 0;
 		/*!
+			Write the cargo data to a specified setting
+			@param dest The setting to write to
+			@return True if the data was successfully written or ignored (use false only for a genuine error - it will trigger a process failure)
+		*/
+		virtual bool writeSetting(setting::Value& dest) const { return true; }
+		/*!
 			Get the serialisation type for the cargo value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
 		virtual std::optional<Type> type() const { return std::nullopt; }
 		/*!
-			Get the recommended cargo entry type
-			@return The cargo entry type (nullopt = deduce automatically from cargo characteristics)
+			Get the recommended cargo entry role
+			@return The cargo entry role (nullopt = deduce automatically from cargo characteristics)
 		*/
-		virtual std::optional<Entry::Type> entryType() const { return m_type; }
+		virtual std::optional<Identity::Role> entryRole() const { return m_role; }
 		/*!
 			Fill an inventory with the cargo items
 			@param inventory The inventory to receive the cargo items
@@ -93,16 +108,6 @@ namespace active::serialise {
 			@param format The date/time format
 		*/
 		virtual void useTimeFormat(TimeFormat format) const {}
-		/*!
-			Use a manager in (de)serialisation processes
-			@param management The management to use
-		*/
-		virtual void useManagement(Management* management) const { m_management = management; }
-		/*!
-			Get the cargo management
-			@return The active management
-		*/
-		virtual Management* management() const { return m_management; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -111,8 +116,8 @@ namespace active::serialise {
 			@param type The cargo type, e.g. force an object to export as an array in JSON
 			@return A reference to this
 		*/
-		virtual Cargo& asType(Entry::Type type) {
-			m_type = type;
+		virtual Cargo& asType(Identity::Role type) {
+			m_role = type;
 			return *this;
 		}
 		/*!
@@ -121,6 +126,12 @@ namespace active::serialise {
 			@return True if the data was successfully read
 		*/
 		virtual bool read(const utility::String& source) = 0;
+		/*!
+			Read the cargo data from the specified setting
+			@param source The setting to read
+			@return True if the data was successfully read or ignored (use false only for a genuine error - it will trigger a process failure)
+		*/
+		virtual bool readSetting(const setting::Value& source) { return true; }
 		/*!
 			Clear the data content (typically a reset to defaults)
 		*/
@@ -135,11 +146,12 @@ namespace active::serialise {
 		*/
 		virtual bool validate() { return true; }
 		
+		// MARK: - Functions (mutating)
+		
+		
 	private:
 			///Optional recommended cargo type - useful for some forms of transport which might incorrectly deduce it
-		std::optional<Entry::Type> m_type;
-			///Optional cargo management (migration handling etc)
-		mutable Management* m_management = nullptr;
+		std::optional<Identity::Role> m_role;
 	};
 
 		///Transportable concept for classes/functions representing transportable cargo

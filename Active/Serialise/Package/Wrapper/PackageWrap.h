@@ -52,10 +52,26 @@ namespace active::serialise {
 		*/
 		bool isRoot() const { return get().isRoot(); }
 		/*!
+			Determine if the cargo is an item, e.g. a single/homogenous value type (not an object)
+			@return True if the cargo is an item
+		*/
+		bool isItem() const override { return get().isItem(); }
+		/*!
 			Determine if the package requires attributes to be imported first (primarily for unordered serialisation, e.g. JSON)
 			@return True if the package requires attributes first
 		*/
 		bool isAttributeFirst() const override { return get().isAttributeFirst(); }
+		/*!
+			Get the serialisation type for the cargo value
+			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
+		*/
+		std::optional<Type> type() const override { return get().type(); }
+		/*!
+			Write the item data to a string
+			@param dest The string to write the data to
+			@return True if the data was successfully written
+		*/
+		bool write(utility::String& dest) const override  { return get().write(dest); }
 		/*!
 			Fill an inventory with the cargo items
 			@param inventory The inventory to receive the cargo items
@@ -68,11 +84,6 @@ namespace active::serialise {
 			@return The requested cargo (nullptr on failure)
 		*/
 		Cargo::Unique getCargo(const Inventory::Item& item) const override { return get().getCargo(item); }
-		/*!
-			Use a manager in (de)serialisation processes
-			@param management The management to use
-		*/
-		void useManagement(Management* management) const override { get().useManagement(management); }
 	
 		// MARK: - Functions (mutating)
 		
@@ -96,6 +107,12 @@ namespace active::serialise {
 		*/
 		bool read(const utility::String& source) override { return get().read(source); }
 		/*!
+			Read the cargo data from the specified setting
+			@param source The setting to read
+			@return True if the data was successfully read or ignored (use false only for a genuine error - it will trigger a process failure)
+		*/
+		bool readSetting(const setting::Value& source) override { return get().readSetting(source); }
+		/*!
 			Insert specified cargo into the package - used for cargo with many instances sharing the same ID (e.g. from an array/map)
 			@param cargo The cargo to insert
 			@param item The inventory item linked with the cargo
@@ -106,6 +123,21 @@ namespace active::serialise {
 			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
 		*/
 		bool finaliseAttributes() override { return get().finaliseAttributes(); }
+		/*!
+		 Allocate inventory for new (incoming) cargo
+		 @param inventory The inventory to extend
+		 @param identity The cargo identity
+		 @return An iterator pointing to the allocated item (returns end() if inventory cannot be allocated)
+		 */
+		Inventory::iterator allocate(Inventory& inventory, const Identity& identity) override { return get().allocate(inventory, identity); }
+		/*!
+		 Allocate an existing inventory item as an array
+		 @param inventory The parent inventory
+		 @param item The inventory item to reallocate as an array
+		 @return An iterator pointing to the reallocated item (returns end() if the item cannot be reallocated as an array)
+		 */
+		Inventory::iterator allocateArray(Inventory& inventory, Inventory::iterator item) override
+				{ return get().allocateArray(inventory, item); }
 	};
 	
 }

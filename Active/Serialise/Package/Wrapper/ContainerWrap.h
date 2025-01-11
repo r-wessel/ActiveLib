@@ -93,7 +93,7 @@ namespace active::serialise {
 		 */
 		bool fillInventory(Inventory& inventory) const override {
 			inventory.merge(Entry{tag, itemID, static_cast<uint32_t>(base::get().size()), std::nullopt,
-					(base::get().size() > 0) || isEmptyRequired, &typeid(wrapped_t)}.withType(Entry::Type::array));
+					(base::get().size() > 0) || isEmptyRequired, &typeid(wrapped_t)}.withRole(Identity::Role::array));
 			return true;
 		}
 		/*!

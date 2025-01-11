@@ -12,10 +12,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active::serialise {
 	
+	class Management;
+
 	/*!
 		Interface for the inventory of a package (describing package/item content)
 	*/
-	class Inventory : public std::vector<Entry> {
+	class Inventory : protected std::vector<Entry> {
 	public:
 		
 		// MARK: - Types
@@ -28,6 +30,8 @@ namespace active::serialise {
 		using size_type = base::size_type;
 			///Base storage class - entry keyed by ID/name
 		using iterator = typename base::iterator;
+			///Base storage class - entry keyed by ID/name
+		using const_iterator = typename base::const_iterator;
 			///An optional inventory
 		using Option = std::optional<Inventory>;
 			///An inventory item pairing an entry with its ID/name
@@ -41,13 +45,15 @@ namespace active::serialise {
 		
 		/*!
 			Default constructor
+			@param management The cargo management to use
 		*/
-		Inventory() : base() {}
+		Inventory(Management* management = nullptr) : base(), m_management{management} {}
 		/*!
 			Constructor
 			@param entries The inventory entries
+			@param management The cargo management to use
 		*/
-		Inventory(base entries) : base(entries) { m_isFilled = true; }
+		Inventory(base entries, Management* management = nullptr) : base(entries), m_management{management} { m_isFilled = true; }
 		
 		// MARK: - Variables
 		
@@ -58,6 +64,18 @@ namespace active::serialise {
 		
 			///True if entries have been filled into the inventory
 		bool isFilled() const { return m_isFilled; }
+			///True if the inventory is managed
+		bool isManaged() const { return (m_management != nullptr); }
+		/*!
+			Get the front inventory entry
+ 			@return The front inventory entry
+		*/
+		Entry front() const { return base::front(); }
+		/*!
+			Find an array entry in the inventory (e.g. in JSON for anonymous arrays)
+			@return An iterator at the requested entry (end() on failure)
+		*/
+		const_iterator findArray() const;
 		/*!
 			Count the number of attributes in the inventory
 			@param isRequiredOnly True if only required attributes should be counted
@@ -73,6 +91,17 @@ namespace active::serialise {
 			@return The inventory handling sequence (ordered by entry.index). Invalidated if the inventory changes
 		*/
 		Sequence sequence() const;
+			///Return true if the inventory is empty
+		bool empty() const { return base::empty(); }
+			///Return the number of entries in the inventory
+		auto size() const { return base::size(); }
+			///Get an iterator at the inventory end
+		const_iterator end() const { return base::end(); }
+		/*!
+			Get the cargo management
+			@return The active management
+		*/
+		virtual Management* management() const { return m_management; }
 
 		// MARK: - Functions (mutating)
 		
@@ -89,11 +118,16 @@ namespace active::serialise {
 		*/
 		Inventory& merge(const Inventory& inventory);
 		/*!
-			Merge an entry with this
+			Merge an entry
 			@param entry The entry to merge
-			@return A reference to this
+			@return An iterator pointing to the new entry
 		*/
-		Inventory& merge(const Entry& entry);
+		iterator merge(const Entry& entry);
+		/*!
+			Add an entry
+ 			@param entry The entry to add to the inventory
+		*/
+		void push_back(const Entry& entry) { merge(entry); }
 		/*!
 			Register an incoming item in the inventory
 			@param identity The item identity
@@ -130,10 +164,19 @@ namespace active::serialise {
 			Mark all the entries as 'required'
 		*/
 		void setAllRequired();
+			///Get an iterator at the inventory end
+		iterator end() { return base::end(); }
+		/*!
+			Use a manager in (de)serialisation processes
+			@param management The management to use
+		*/
+		void useManagement(Management* management) { m_management = management; }
 		
 	private:
 			///True if entries have been filled into the inventory
 		bool m_isFilled = false;
+			///Optional cargo management (migration handling etc)
+		Management* m_management = nullptr;
 	};
 	
 }  // namespace active::serialise

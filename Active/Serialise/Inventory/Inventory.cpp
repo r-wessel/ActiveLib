@@ -11,6 +11,18 @@ using namespace active::serialise;
 using namespace active::utility;
 
 /*--------------------------------------------------------------------
+	Find an array entry in the inventory (e.g. in JSON for anonymous arrays)
+ 
+	return: An iterator at the requested entry (end() on failure)
+  --------------------------------------------------------------------*/
+Inventory::const_iterator Inventory::findArray() const {
+	return std::find_if(begin(), end(), [&](auto& i) {
+		return (i.isRepeating());
+	});
+} //Inventory::findArray
+
+
+/*--------------------------------------------------------------------
 	Count the number of attributes in the inventory
  
 	isRequiredOnly: True if only required attributes should be counted
@@ -74,9 +86,8 @@ Inventory& Inventory::withType(const std::type_info* ownerType) {
 	return: A reference to this
   --------------------------------------------------------------------*/
 Inventory& Inventory::merge(const Inventory& inventory) {
-	insert(end(), inventory.begin(), inventory.end());
-		//If these are the first entries in the inventory, we also set any metadata it contains
-	m_isFilled = true;
+	for (const auto& entry : inventory)
+		merge(entry);
 	return *this;
 } //Inventory::merge
 
@@ -86,11 +97,13 @@ Inventory& Inventory::merge(const Inventory& inventory) {
  
 	entry: The entry to merge
  
-	return: A reference to this
+	return: An iterator pointing to the new entry
   --------------------------------------------------------------------*/
-Inventory& Inventory::merge(const Entry& entry) {
-	insert(end(), entry);
-	return *this;
+Inventory::iterator Inventory::merge(const Entry& entry) {
+	auto result = insert(end(), entry);
+	result->inventory = this;
+	m_isFilled = true;
+	return result;
 } //Inventory::merge
 
 
@@ -102,13 +115,7 @@ Inventory& Inventory::merge(const Entry& entry) {
  	return: The registered item (nullopt == not found)
   --------------------------------------------------------------------*/
 Inventory::iterator Inventory::registerIncoming(const Identity& identity) {
-		//Look for an existing inventory item
-	if (auto item = findEntry(identity); item != base::end())
-		return item;
-	if (isEveryItemAccepted) {
-		
-	}
-	return end();
+	return findEntry(identity);
 } //Inventory::registerIncoming
 
 

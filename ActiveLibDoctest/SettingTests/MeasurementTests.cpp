@@ -5,6 +5,8 @@
 #include "Active/Setting/Values/Measurement/MassValue.h"
 #include "Active/Utility/MathFunctions.h"
 
+#include <variant>
+
 using namespace active::math;
 using namespace active::measure;
 using namespace active::setting;
