@@ -104,6 +104,9 @@
     <Filter Include="Active\Database\Storage\SQLite">
       <UniqueIdentifier>{a67b791e-0c73-4a7e-b1f4-1142f36d7024}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Active\Serialise\DOM">
+      <UniqueIdentifier>{cb398e31-736b-4d0b-a85b-bc77a556dc85}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Active\Container\HashMap.h">
@@ -523,6 +526,9 @@
     <ClInclude Include="Active\Database\Transaction.h">
       <Filter>Active\Database</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\DOM\Node.h">
+      <Filter>Active\Serialise\DOM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -728,6 +734,9 @@
     </ClCompile>
     <ClCompile Include="Active\Setting\Values\Measurement\Units\VolumeUnit.cpp">
       <Filter>Active\Setting\Values\Measurement\Units</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\DOM\Node.cpp">
+      <Filter>Active\Serialise\DOM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
