@@ -946,10 +946,10 @@
 				219988132BD7C4490035E5EA /* DocumentTests.cpp */,
 				21244D172D2968F8002E3526 /* DOMTests.cpp */,
 				2199880F2BD7C1AE0035E5EA /* JSONTests.cpp */,
-				21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */,
 				21932D4D2BE29C69005DB06E /* SerialiseArrayTester.h */,
-				212A87FD2AE486E3001EAFE7 /* SerialiseTester.cpp */,
+				21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */,
 				212A87FF2AE486E3001EAFE7 /* SerialiseTester.h */,
+				212A87FD2AE486E3001EAFE7 /* SerialiseTester.cpp */,
 				219988062BD7B6370035E5EA /* XMLTests.cpp */,
 			);
 			name = Serialisation;

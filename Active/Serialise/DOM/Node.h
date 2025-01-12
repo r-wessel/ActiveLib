@@ -76,14 +76,14 @@ namespace active::serialise::dom {
 	template<typename T>
 	concept IsNodeAssignable = requires(Node& node, const T& t) {
 		{ !IsValue<T> };
-		{ operator << (node, t) };
+		{ pack(node, t) };
 	};
 	
 		///Concept for node transferable types
 	template<typename T>
 	concept IsNodeTransferable = requires(const Node& node, T& t) {
 		{ !IsValue<T> };
-		{ operator >> (node, t) };
+		{ unpack(node, t) };
 	};
 
 	/*!
@@ -218,7 +218,7 @@ namespace active::serialise::dom {
 		 */
 		template<typename T> requires IsNodeAssignable<T>
 		Node& operator=(T obj) {
-			return *this << obj;
+			return pack(*this, obj);
 		}
 		/*!
 		 Assigment operator
@@ -258,7 +258,7 @@ namespace active::serialise::dom {
 		template<typename T> requires IsNodeTransferable<T>
 		operator T() const {
 			T obj;
-			*this >> obj;
+			unpack(*this, obj);
 			return obj;
 		}
 		

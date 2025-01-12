@@ -1,5 +1,6 @@
 set(SourceFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Document/Object.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/DOM/Node.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/Base64Transport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/HexTransport.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/Inventory/Inventory.cpp
@@ -26,6 +27,7 @@ set(HeaderFiles
 	${CMAKE_CURRENT_SOURCE_DIR}/Document/Handler.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Document/Object.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Document/Transportable.h
+	${CMAKE_CURRENT_SOURCE_DIR}/DOM/Node.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/Base64Transport.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Generic/HexTransport.h
 	${CMAKE_CURRENT_SOURCE_DIR}/Inventory/Entry.h

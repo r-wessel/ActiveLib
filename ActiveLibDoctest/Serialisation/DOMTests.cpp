@@ -28,7 +28,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		uint32_t c = 0;
 	};
 
-	friend Node& operator << (Node& node, const TestNode& test) {
+	Node& pack(Node& node, const TestNode& test) {
 		node =  Object{};
 		node["a"] = test.a;
 		node["b"] = test.b;
@@ -36,7 +36,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		return node;
 	}
 
-	friend const Node& operator >> (const Node& node, TestNode& test) {
+	const Node& unpack(const Node& node, TestNode& test) {
 		test.a = node["a"].operator String();
 		test.b = node["b"];
 		test.c = node["c"];
