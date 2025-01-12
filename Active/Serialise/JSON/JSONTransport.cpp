@@ -915,7 +915,7 @@ namespace {
 					} else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
 						if ((incomingItem == inventory.end()) && inventory.isEveryItemAccepted && (package != nullptr))
-							incomingItem = package->allocate(inventory, identity);
+							incomingItem = package->allocate(inventory, identity, containerIdentity);
 						if (incomingItem != inventory.end()) {
 							if (isReadingAttribute && !incomingItem->isAttribute() && (parsingStage != array))
 								incomingItem = inventory.end();

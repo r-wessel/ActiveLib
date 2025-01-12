@@ -291,16 +291,15 @@ bool Node::insert(Cargo::Unique&& cargo, const active::serialise::Inventory::Ite
  
 	inventory: The inventory to extend
 	identity: The cargo identity
-	entryType The inventory entry type
-	valueType: Optional type
+	enclosing: The enclosing cargo identity
  
 	return: An iterator pointing to the allocated item (returns end() if inventory cannot be allocated)
   --------------------------------------------------------------------*/
-Inventory::iterator Node::allocate(Inventory& inventory, const Identity& identity) {
+Inventory::iterator Node::allocate(Inventory& inventory, const Identity& identity, const Identity& enclosing) {
 	switch (index()) {
 			//If the node is undefined, we're at the root level - apply the identity to this node
 		case Index::undefined:
-			if (identity.entryRole == Identity::Role::array) {
+			if (enclosing.entryRole == Identity::Role::array) {
 				base::operator=(Array{}.withItemTag(identity.name));	//Allocate an empty array
 				return inventory.merge({ identity.name, static_cast<int16_t>(inventory.size()), 0, std::nullopt });
 			}

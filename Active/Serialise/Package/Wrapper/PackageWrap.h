@@ -127,9 +127,11 @@ namespace active::serialise {
 		 Allocate inventory for new (incoming) cargo
 		 @param inventory The inventory to extend
 		 @param identity The cargo identity
+		 @param enclosing The enclosing cargo identity
 		 @return An iterator pointing to the allocated item (returns end() if inventory cannot be allocated)
 		 */
-		Inventory::iterator allocate(Inventory& inventory, const Identity& identity) override { return get().allocate(inventory, identity); }
+		Inventory::iterator allocate(Inventory& inventory, const Identity& identity, const Identity& enclosing) override
+				{ return get().allocate(inventory, identity, enclosing); }
 		/*!
 		 Allocate an existing inventory item as an array
 		 @param inventory The parent inventory

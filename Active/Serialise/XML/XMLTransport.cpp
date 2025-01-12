@@ -841,7 +841,7 @@ namespace {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
 						if ((incomingItem == inventory.end()) && inventory.isEveryItemAccepted) {
 							if (auto* package = dynamic_cast<Package*>(&container); package != nullptr)
-								incomingItem = package->allocate(inventory, identity);
+								incomingItem = package->allocate(inventory, identity, containerIdentity);
 						}
 						cargo = (incomingItem == inventory.end()) ? nullptr : container.getCargo(*incomingItem);
 						if (cargo != nullptr) {
