@@ -19,17 +19,20 @@ using namespace active::serialise::xml;
 using namespace active::setting;
 using namespace active::utility;
 
-	///Tests for DOM (de)serialisation
-TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
+namespace {
 	
 	struct TestNode {
 		String a;
 		double b = 0.0;
 		uint32_t c = 0;
 	};
+	
+}
 
+namespace active::serialise::dom {
+	
 	Node& pack(Node& node, const TestNode& test) {
-		node =  Object{};
+		node = Object{};
 		node["a"] = test.a;
 		node["b"] = test.b;
 		node["c"] = test.c;
@@ -43,6 +46,10 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		return node;
 	}
 
+}
+
+	///Tests for DOM (de)serialisation
+TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 
 		///Make a DOM mode populated with content for testing
 	Node makeNode() {

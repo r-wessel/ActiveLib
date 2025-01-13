@@ -15,19 +15,11 @@ namespace active::serialise::dom {
 	
 		///Concept for integer types
 	template<typename T>
-	concept IsInteger = requires(T t) {
-		{ !std::is_class_v<T> };
-		{ !std::is_pointer_v<T> };
-		{ !std::is_same_v<T, bool> };
-		{ std::is_integral_v<T> };
-	};
+	concept IsInteger = !std::is_class_v<T> && !std::is_pointer_v<T> && !std::is_same_v<T, bool> && std::is_integral_v<T>;
 
 		///Concept for integer types
 	template<typename T>
-	concept IsFloat = requires(T t) {
-		{ !std::is_class_v<T> };
-		{ std::is_floating_point_v<T> };
-	};
+	concept IsFloat = !std::is_class_v<T> && std::is_floating_point_v<T>;
 	
 	
 	/*!
@@ -75,15 +67,15 @@ namespace active::serialise::dom {
 		///Concept for node assignable types
 	template<typename T>
 	concept IsNodeAssignable = requires(Node& node, const T& t) {
-		{ !IsValue<T> };
-		{ pack(node, t) };
+		requires !IsValue<T>;
+		{ pack(node, t) } -> std::same_as<Node&>;
 	};
 	
 		///Concept for node transferable types
 	template<typename T>
-	concept IsNodeTransferable = requires(const Node& node, T& t) {
-		{ !IsValue<T> };
-		{ unpack(node, t) };
+	concept IsNodeTransferable = requires(const Node& node, T t) {
+		requires !IsValue<T>;
+		{ unpack(node, t) } -> std::same_as<const Node&>;
 	};
 
 	/*!
@@ -174,7 +166,7 @@ namespace active::serialise::dom {
 		 @param object The object
 		 */
 		template<typename T> requires IsNodeAssignable<T>
-		Node(const T& object) : base{Object{}} { *this << object; }
+		Node(const T& object) : base{Object{}} { pack(*this, object); }
 		/*!
 		 Constructor
 		 @param object The node object
@@ -206,19 +198,13 @@ namespace active::serialise::dom {
 		 @param val The value to assign
 		 @return A reference to this
 		 */
-		template<typename T> requires IsValue<T>
-		Node& operator=(T val) {
-			base::operator=(Value{val});
+		template<typename T> requires IsValue<T> || IsNodeAssignable<T>
+		Node& operator=(const T& val) {
+			if constexpr(IsValue<T>)
+				base::operator=(Value{val});
+			else
+				return pack(*this, val);
 			return *this;
-		}
-		/*!
-		 Assigment operator
-		 @param obj The object to assign
-		 @return A reference to this
-		 */
-		template<typename T> requires IsNodeAssignable<T>
-		Node& operator=(T obj) {
-			return pack(*this, obj);
 		}
 		/*!
 		 Assigment operator
@@ -249,19 +235,16 @@ namespace active::serialise::dom {
 		 Conversion operator (assumes node is a value - throws otherwise)
 		 @return An equivalent boolean value
 		 */
-		template<typename T> requires IsValue<T>
-		operator T() const { return value().setting()->operator T(); }
-		/*!
-		 Assigment operator
-		 @return A reference to this
-		 */
-		template<typename T> requires IsNodeTransferable<T>
+		template<typename T> requires IsValue<T> || IsNodeTransferable<T>
 		operator T() const {
-			T obj;
-			unpack(*this, obj);
-			return obj;
+			if constexpr(IsValue<T>)
+				return value().setting()->operator T();
+			else {
+				T obj;
+				unpack(*this, obj);
+				return obj;
+			}
 		}
-		
 		/*!
 		 Subscript operator (NB: assumes node is an object - throws otherwise)
 		 @param memberName The object member name
