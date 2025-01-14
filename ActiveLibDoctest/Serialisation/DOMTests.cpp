@@ -9,6 +9,7 @@
 #include "Active/Utility/MathFunctions.h"
 
 #include <array>
+#include <map>
 
 using namespace active;
 using namespace active::math;
@@ -59,12 +60,17 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		node["double"] = 1.23;
 		node["string"] = "Test";
 		(node["array"] = std::vector{ 1, 2, 3, 4, 5, 6 }).withItemTag("val");
+		node["map"] = std::map<utility::String, int32_t>{
+			{ "first", 1},
+			{ "second", 2},
+			{ "third", 3},
+		};
 		return node;
 	}
 
 
 		///Test the content and structure of an imported DOM node
-	void testNode(const Node& node, size_t childSize = 8) {
+	void testNode(const Node& node, size_t childSize = 10) {
 		if (node.index() == Node::Index::object) {
 			bool boolValue = node["boolean"];
 			int64_t intValue = node["integer"];
@@ -96,6 +102,12 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		Node root(makeNode());
 		root["object"] = makeNode();
 		root["ad-hoc"] = { 1.2, 2.3, "text", 1, false };
+		root["ad-hocObj"] = Object{
+			{"first", 1},
+			{"second", 2},
+			{"third", 1.23},
+			{"fourth", "testing"},
+		};
 		root["assign"] = TestNode{"something", 1.23, 25};
 			//Test DOM i/o via JSON
 		String json;
@@ -105,12 +117,15 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(json.contains("\"double\":1.23"), TEST_MESSAGE(DOM node export to JSON failed with double value));
 		CHECK_MESSAGE(json.contains("\"string\":\"Test\""), TEST_MESSAGE(DOM node export to JSON failed with string value));
 		CHECK_MESSAGE(json.contains("\"array\":[1,2,3,4,5,6]"), TEST_MESSAGE(DOM node export to JSON failed with array));
-		CHECK_MESSAGE(json.contains("\"ad-hoc\":[1.2,2.3,\"text\",1,false]"), TEST_MESSAGE(DOM node export to JSON failed with ad-hoc values));
+		CHECK_MESSAGE(json.contains("\"ad-hoc\":[1.2,2.3,\"text\",1,false]"), TEST_MESSAGE(DOM node export to JSON failed with ad-hoc array));
+		CHECK_MESSAGE(json.contains("\"ad-hocObj\":{") && json.contains("\"first\":1") &&
+					  json.contains("\"second\":2") && json.contains("\"third\":1.23") && json.contains("\"fourth\":\"testing\""),
+					  TEST_MESSAGE(DOM node export to JSON failed with ad-hoc object));
 		Node fromJSON;
 		JSONTransport().receive(std::forward<Cargo&&>(fromJSON), Identity{}, json);
 		TestNode assigned = fromJSON["assign"];
 		testNode(fromJSON);
-		testNode(fromJSON["object"], 5);
+		testNode(fromJSON["object"], 6);
 			//Test DOM i/o via XML
 		String xml;
 		XMLTransport().send(std::forward<Cargo&&>(root), Identity{"testing"}, xml);
@@ -121,12 +136,15 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(xml.contains("<array><val>1</val><val>2</val><val>3</val><val>4</val><val>5</val><val>6</val></array>"),
 					  TEST_MESSAGE(DOM node export to XML failed with array));
 		CHECK_MESSAGE(xml.contains("<ad-hoc><item>1.2</item><item>2.3</item><item>text</item><item>1</item><item>false</item></ad-hoc>"),
-					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc values));
+					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc array));
+		CHECK_MESSAGE(xml.contains("<ad-hocObj>") && xml.contains("<first>1</first>") &&
+					  xml.contains("<second>2</second>") && xml.contains("<third>1.23</third>") && xml.contains("<fourth>testing</fourth>"),
+					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc object));
 		Node fromXML;
 		XMLTransport().receive(std::forward<Cargo&&>(fromXML), Identity{"testing"}, xml);
 		assigned = fromXML["assign"];
 		testNode(fromXML);
-		testNode(fromXML["object"], 5);
+		testNode(fromXML["object"], 6);
 	}
 
 TEST_SUITE_CLOSE

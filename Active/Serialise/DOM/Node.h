@@ -21,7 +21,6 @@ namespace active::serialise::dom {
 	template<typename T>
 	concept IsFloat = !std::is_class_v<T> && std::is_floating_point_v<T>;
 	
-	
 	/*!
 	 A value in a generic document object model (DOM) for serialised data transport
 	 */
@@ -103,7 +102,22 @@ namespace active::serialise::dom {
 			return *this;
 		}
 	};
-
+	
+	template<typename T>
+	concept IsSequenceContainer = requires(T t) {
+		requires IsValue<typename T::value_type>;
+		{ t.begin() };
+		{ t.end() };
+		{ t.front() } -> std::same_as<typename T::value_type&>;
+	};
+	
+	template<typename T>
+	concept IsAssociativeContainer = requires(T t) {
+		requires !IsSequenceContainer<T> && IsValue<typename T::value_type::second_type> && std::is_convertible_v<typename T::key_type, utility::String>;
+		{ t.begin() };
+		{ t.end() };
+	};
+	
 	/*!
 	 A node in a generic document object model (DOM) for serialised data transport
 	 
@@ -208,15 +222,28 @@ namespace active::serialise::dom {
 		}
 		/*!
 		 Assigment operator
-		 @param vect The vector of values to assign
+		 @param container The sequence container of values to assign
 		 @return A reference to this
 		 */
-		template<typename T> requires IsValue<T>
-		Node& operator=(std::vector<T> vect) {
+		template<typename Container> requires IsSequenceContainer<Container>
+		Node& operator=(Container container) {
 			Array array;
-			for (const auto& val : vect)
+			for (const auto& val : container)
 				array.emplace_back(Value{val});
 			base::operator=(array);
+			return *this;
+		}
+		/*!
+		 Assigment operator
+		 @param container An associative container of values to assign
+		 @return A reference to this
+		 */
+		template<typename Container> requires IsAssociativeContainer<Container>
+		Node& operator=(Container container) {
+			Object object;
+			for (const auto& item : container)
+				object.insert({utility::String{item.first}, item.second});
+			base::operator=(object);
 			return *this;
 		}
 		/*!
