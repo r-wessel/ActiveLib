@@ -1,14 +1,13 @@
 #include "ActiveLibDoctest/TestingPlatforms.h"
 
 #include "Active/Serialise/DOM/Node.h"
-#include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Serialise/JSON/JSONTransport.h"
 #include "Active/Serialise/XML/XMLTransport.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
 #include "Active/Utility/MathFunctions.h"
 
-#include <array>
+#include <vector>
 #include <map>
 
 using namespace active;
@@ -32,6 +31,7 @@ namespace {
 
 namespace active::serialise::dom {
 	
+		//Pack a TestNode into a dom::Node
 	Node& pack(Node& node, const TestNode& test) {
 		node = Object{};
 		node["a"] = test.a;
@@ -40,6 +40,7 @@ namespace active::serialise::dom {
 		return node;
 	}
 
+		//Unpack a TestNode from a dom::Node
 	const Node& unpack(const Node& node, TestNode& test) {
 		test.a = node["a"].operator String();
 		test.b = node["b"];
@@ -70,17 +71,21 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 
 
 		///Test the content and structure of an imported DOM node
-	void testNode(const Node& node, size_t childSize = 10) {
+	void validateNode(const Node& node, size_t childSize = 10) {
 		if (node.index() == Node::Index::object) {
 			bool boolValue = node["boolean"];
 			int64_t intValue = node["integer"];
 			double doubleValue = node["double"];
 			utility::String stringValue = node["string"];
+			auto doubleSetting = node.value("double");
+			auto missingSetting = node.value("nonexistent");
 			CHECK_MESSAGE(node.object().size() == childSize, TEST_MESSAGE(DOM node import has wrong number of items));
 			CHECK_MESSAGE(boolValue == true, TEST_MESSAGE(DOM node import has failed to import a boolean value));
 			CHECK_MESSAGE(intValue == 5, TEST_MESSAGE(DOM node import has failed to import an integer value));
 			CHECK_MESSAGE(isEqual(doubleValue, 1.23), TEST_MESSAGE(DOM node import has failed to import a double value));
 			CHECK_MESSAGE(stringValue == "Test", TEST_MESSAGE(DOM node import has failed to import a string value));
+			CHECK_MESSAGE(doubleSetting.operator bool() && isEqual(*doubleSetting, 1.23), TEST_MESSAGE(DOM node import failed to find setting));
+			CHECK_MESSAGE(!missingSetting.operator bool(), TEST_MESSAGE(DOM node import found non-existent setting));
 			if (auto iter = node.object().find("array"); (iter != node.object().end()) && (iter->second.index() == Node::Index::array) &&
 				(iter->second.array().size() == 6)) {
 				auto sourceArray{iter->second.array()};
@@ -124,8 +129,8 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		Node fromJSON;
 		JSONTransport().receive(std::forward<Cargo&&>(fromJSON), Identity{}, json);
 		TestNode assigned = fromJSON["assign"];
-		testNode(fromJSON);
-		testNode(fromJSON["object"], 6);
+		validateNode(fromJSON);
+		validateNode(fromJSON["object"], 6);
 			//Test DOM i/o via XML
 		String xml;
 		XMLTransport().send(std::forward<Cargo&&>(root), Identity{"testing"}, xml);
@@ -143,8 +148,8 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		Node fromXML;
 		XMLTransport().receive(std::forward<Cargo&&>(fromXML), Identity{"testing"}, xml);
 		assigned = fromXML["assign"];
-		testNode(fromXML);
-		testNode(fromXML["object"], 6);
+		validateNode(fromXML);
+		validateNode(fromXML["object"], 6);
 	}
 
 TEST_SUITE_CLOSE

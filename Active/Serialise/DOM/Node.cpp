@@ -124,6 +124,22 @@ bool Node::empty() const {
 
 
 /*--------------------------------------------------------------------
+	Get the index of a named item in the node
+ 
+	name: The name to search for
+ 
+	return: The type index of the named item (nullopt if not found)
+  --------------------------------------------------------------------*/
+std::optional<Node::Index> Node::index(const utility::String& name) const {
+	if (!isObject())
+		return std::nullopt;
+	if (auto iter = object().find(name); iter != object().end())
+		return iter->second.index();
+	return std::nullopt;
+} //Node::index
+
+
+/*--------------------------------------------------------------------
 	Write the item to a string
  
 	dest: The string to write the data to
@@ -170,6 +186,34 @@ std::optional<Cargo::Type> Node::type() const {
 	}
 	return package;
 } //Node::type
+
+
+/*--------------------------------------------------------------------
+	Get an object value by name
+ 
+	name: The value name
+ 
+	return: The requested value (nullopt on failure)
+  --------------------------------------------------------------------*/
+const ValueSetting::Option Node::value(const String& name) const {
+	if (!isObject())
+		return std::nullopt;
+	if (auto iter = object().find(name); (iter != object().end()) && (iter->second.index() == Index::value)) {
+		switch (static_cast<ValueIndex>(iter->second.value().index())) {
+			case Node::ValueIndex::boolType:
+				return ValueSetting(get<bool>(iter->second.value()), name);
+			case Node::ValueIndex::intType:
+				return ValueSetting(get<int64_t>(iter->second.value()), name);
+			case Node::ValueIndex::floatType:
+				return ValueSetting(get<double>(iter->second.value()), name);
+			case Node::ValueIndex::stringType:
+				return ValueSetting(get<String>(iter->second.value()), name);
+			default:
+				break;
+		}
+	}
+	return std::nullopt;
+} //Node::value
 
 
 /*--------------------------------------------------------------------

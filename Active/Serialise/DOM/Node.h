@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_DOM_NODE
 
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Setting/Values/Value.h"
+#include "Active/Setting/ValueSetting.h"
 
 #include <variant>
 
@@ -308,10 +308,31 @@ namespace active::serialise::dom {
 		 */
 		bool isItem() const override { return index() == Index::value; }
 		/*!
+		 Determine if the cargo is a value
+		 @return True if the cargo is a value
+		 */
+		bool isValue() const { return index() == Index::value; }
+		/*!
+		 Determine if the node is an array
+		 @return True if the node is an array
+		 */
+		bool isArray() const { return index() == Index::array; }
+		/*!
+		 Determine if the node is an object
+		 @return True if the node is an object
+		 */
+		bool isObject() const { return index() == Index::object; }
+		/*!
 		 Determine if the cargo is null, i.e. has no defined content
 		 @return True if the cargo is a null
 		 */
 		bool isNull() const override { return base::valueless_by_exception(); }
+		/*!
+		 Determine if the node contains a sub-node with a specified name
+		 @param name The name to search for
+		 @return True if the node contains the specified name
+		 */
+		bool contains(const utility::String name) const { return index(name).operator bool(); }
 		/*!
 		 Write item data to a string
 		 @param dest The string to write the data to
@@ -324,15 +345,27 @@ namespace active::serialise::dom {
 		 */
 		std::optional<Type> type() const override;
 		/*!
-			Get the index of the node type
-			@return The node type index
-		*/
+		 Get the index of the node type
+		 @return The node type index
+		 */
 		Index index() const { return static_cast<Node::Index>(base::index()); }
+		/*!
+		 Get the index of a named item in the node
+		 @param name The name to search for
+		 @return The type index of the named item (nullopt if not found)
+		 */
+		std::optional<Index> index(const utility::String& name) const;
 		/*!
 		 Get the node value
 		 @return The node value (throws if the node does not hold a value)
 		 */
 		const Value& value() const { return std::get<Value>(*this); }
+		/*!
+		 Get an object value by name
+		 @param name The value name
+		 @return The requested value (nullopt on failure)
+		 */
+		const setting::ValueSetting::Option value(const utility::String& name) const;
 		/*!
 		 Get the node object
 		 @return The node object (throws if the node does not hold an object)
