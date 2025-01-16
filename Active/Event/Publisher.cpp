@@ -17,7 +17,14 @@ using namespace active::utility;
 using enum Subscriber::Action;
 
 namespace {
+
+		///A list of subscribers backed (where necessary) by shared_pts ensuring weak_ptrs don't go out of scope
+	using PooledSubscribers = std::pair<std::vector<Subscriber*>, std::vector<Subscriber::Shared>>;
 	
+	/*!
+	 Template for a list of subscribers
+	 @tparam T The subscriber type
+	 */
 	template<class T>
 	class SubscriberList : public std::vector<T> {
 	public:
@@ -29,43 +36,61 @@ namespace {
 		
 		iterator findBySub(const Subscriber& sub) {
 			return find_if(base::begin(), base::end(), [&](auto& subscriber) {
-				if (auto locked = lock(subscriber); locked && (locked.get() == &sub))
-					return true;
+				if (auto locked = lock(subscriber); locked.second) {
+					if constexpr (std::is_pointer_v<T>) {
+						if (subscriber == &sub)
+							return true;
+					} else {
+						if (locked.first.get() == &sub)
+							return true;
+					}
+				}
 				return false;
 			});
 		}
 		iterator findByID(const Guid& id) {
 			return find_if(base::begin(), base::end(), [&](auto& subscriber){
-				if (auto locked = lock(subscriber); locked && (locked->id == id))
-					return true;
+				if constexpr (std::is_pointer_v<T>) {
+					if (subscriber->id == id)
+						return true;
+				} else {
+					if (auto locked = lock(subscriber); (locked.second != nullptr) && (locked.first->id == id))
+						return true;
+				}
 				return false;
 			});
 		}
 		/*!
 			Filter the list to remove redundant items and optionally find subscriptions to a specified event identify (from the remainder)
-			@param subscriberPool A pool of active subscribers to the event
+			@param subscribers Active subscribers to the event
 			@param eventID An event identifier to match (nullopt = pool all active subscribers)
 			@return A list of subscribers that require renewal
 		*/
-		std::vector<T> filter(std::vector<Subscriber::Shared>& subscriberPool, const NameID::Option eventID = std::nullopt) {
+		std::vector<T> filter(PooledSubscribers& subscribers, const NameID::Option eventID = std::nullopt) {
 			std::vector<T> toRenew;
 			for (auto i = base::size(); i--; ) {
 				auto subscriber = lock((*this)[i]);
-				if (!subscriber || (subscriber->action() != issue)) {
-					if (subscriber) {
-						if (subscriber->action() == discontinue)
+				if ((subscriber.second == nullptr) || (subscriber.second->action() != issue)) {
+					if (subscriber.second != nullptr) {
+						if (subscriber.second->action() == discontinue)
 							continue;
-						if (subscriber->action() == renew)
+						if (subscriber.second->action() == renew)
 							toRenew.push_back((*this)[i]);
 					}
 					(*this)[i] = base::back();
 					base::pop_back();
 					continue;
 				}
-				if (subscriber->action() == suspend)
+				if (subscriber.second->action() == suspend)
 					continue;
-				if (!eventID || subscriber->subscription().contains(*eventID))
-					subscriberPool.push_back(subscriber);
+				if (!eventID || subscriber.second->subscription().contains(*eventID)) {
+					if constexpr (std::is_pointer_v<T>) {
+						subscribers.first.push_back(subscriber.second);
+					} else {
+						subscribers.first.push_back(subscriber.second);
+						subscribers.second.push_back(subscriber.first);
+					}
+				}
 			}
 			return toRenew;
 		}
@@ -75,22 +100,30 @@ namespace {
 			Lock the subscriber (primarily for weak_ptrs)
 			@return A shared_ptr to the item
 		*/
-		std::shared_ptr<Subscriber> lock(T& t) {
-			return t;
+		std::pair<std::shared_ptr<Subscriber>, Subscriber*> lock(T& t) {
+			if constexpr (std::is_pointer_v<T>)
+				return {nullptr, t};
+			else {
+				std::shared_ptr<Subscriber> result{t};
+				return {result, result.get()};
+			}
 		}
 	};
-	
+
+
 	/*!
 		Lock the subscriber (primarily for weak_ptrs)
 		@return A shared_ptr to the item
 	*/
 	template<> inline
-	std::shared_ptr<Subscriber> SubscriberList<std::weak_ptr<Subscriber>>::lock(std::weak_ptr<Subscriber>& t) {
-		return t.lock();
+	std::pair<std::shared_ptr<Subscriber>, Subscriber*> SubscriberList<std::weak_ptr<Subscriber>>::lock(std::weak_ptr<Subscriber>& t) {
+		auto temp = t.lock();
+		return {temp, temp.get()};
 	}
 
 	class WeakList : public SubscriberList<std::weak_ptr<Subscriber>> {};
 	class SharedList : public SubscriberList<std::shared_ptr<Subscriber>> {};
+	class IndieList : public SubscriberList<Subscriber*> {};
 }  // namespace
 
 namespace active::event {
@@ -103,6 +136,7 @@ namespace active::event {
 		SubscriberList() {
 			m_weak = std::make_unique<WeakList>();
 			m_shared = std::make_unique<SharedList>();
+			m_indie = std::make_unique<IndieList>();
 		}
 		/*!
 			Copy constructor
@@ -111,6 +145,7 @@ namespace active::event {
 		SubscriberList(const SubscriberList& source) {
 			m_weak = std::make_unique<WeakList>(*source.m_weak);
 			m_shared = std::make_unique<SharedList>(*source.m_shared);
+			m_indie = std::make_unique<IndieList>(*source.m_indie);
 		}
 		/*!
 			Destructor
@@ -147,6 +182,21 @@ namespace active::event {
 			return true;
 		}
 		/*!
+			Add a managed subscriber, i.e. the subscription continues until the publisher is explicitly instructed to end it
+			@param subscriber The new subscriber. NB: The caller retains ownership o fthe object and must manage it accordingly
+			@return True if subscriber was added
+		*/
+		bool addManaged(Subscriber* subscriber) {
+			if (subscriber == nullptr)
+				return false;
+			if (subscriber->id) {
+				if (auto sub = m_indie->findByID(subscriber->id); sub != m_indie->end())
+					return false;
+			}
+			m_indie->push_back(subscriber);
+			return true;
+		}
+		/*!
 			Remove a subscriber (by memory address)
 			@param subscriber A reference to the subscriber to remove
 			@return True if subscriber was removed
@@ -159,6 +209,10 @@ namespace active::event {
 			}
 			if (auto sub = m_weak->findBySub(subscriber); sub != m_weak->end()) {
 				m_weak->erase(sub);
+				result = true;
+			}
+			if (auto sub = m_indie->findBySub(subscriber); sub != m_indie->end()) {
+				m_indie->erase(sub);
 				result = true;
 			}
 			return result;
@@ -178,6 +232,10 @@ namespace active::event {
 				m_weak->erase(sub);
 				result = true;
 			}
+			if (auto sub = m_indie->findByID(id); sub != m_indie->end()) {
+				m_indie->erase(sub);
+				result = true;
+			}
 			return result;
 		}
 		/*!
@@ -185,16 +243,26 @@ namespace active::event {
 			@param eventID An event identifier to filter the subscribers by (nullopt = pool all active subscribers)
 			@return The filtered subscribers
 		*/
-		std::vector<std::shared_ptr<Subscriber>> filter(const utility::NameID::Option eventID = std::nullopt) {
-			std::vector<Subscriber::Shared> subscribers;
+		PooledSubscribers filter(const utility::NameID::Option eventID = std::nullopt) {
+			PooledSubscribers subscribers;
+			std::vector<Subscriber::Shared> pooled;
 			m_mutex.lock();
 				//Filter subscribers for those expecting this event (and remove any expired)
-			auto renewShared = m_shared->filter(subscribers, eventID);
-			for (auto& subscriber : renewShared)
-				add(subscriber);
-			auto renewWeak = m_weak->filter(subscribers, eventID);
-			for (auto& subscriber : renewWeak)
-				add(subscriber);
+			{
+				auto toRenew = m_shared->filter(subscribers, eventID);
+				for (auto& subscriber : toRenew)
+					add(subscriber);
+			}
+			{
+				auto toRenew = m_weak->filter(subscribers, eventID);
+				for (auto& subscriber : toRenew)
+					add(subscriber);
+			}
+			{
+				auto toRenew = m_indie->filter(subscribers, eventID);
+				for (auto& subscriber : toRenew)
+					addManaged(subscriber);
+			}
 			m_mutex.unlock();
 			return subscribers;
 		}
@@ -202,6 +270,7 @@ namespace active::event {
 	private:
 		std::unique_ptr<WeakList> m_weak;
 		std::unique_ptr<SharedList> m_shared;
+		std::unique_ptr<IndieList> m_indie;
 		std::mutex m_mutex;
 	};
 	
@@ -257,9 +326,9 @@ Publisher& Publisher::operator= (const Publisher& source) {
 bool Publisher::publish(const Event& event) {
 	auto subscribers = m_subscriber->filter(event);
 		//Sort subscribers by priority
-	std::sort(subscribers.begin(), subscribers.end(), [](auto& lhs, auto& rhs){ return lhs->getPriority() > rhs->getPriority(); });
+	std::sort(subscribers.first.begin(), subscribers.first.end(), [](auto& lhs, auto& rhs){ return lhs->getPriority() > rhs->getPriority(); });
 		//Publish the event to subscribers - stop only if one signals the event is closed
-	for (auto& subscriber : subscribers)
+	for (auto& subscriber : subscribers.first)
 		if (subscriber->receive(event))
 			return true;
 	return false;
@@ -276,6 +345,18 @@ bool Publisher::publish(const Event& event) {
 bool Publisher::add(std::shared_ptr<Subscriber> subscriber) {
 	return m_subscriber->add(subscriber);
 } //Publisher::add
+
+
+/*--------------------------------------------------------------------
+	Add a managed subscriber, i.e. the subscription continues until the publisher is explicitly instructed to end it
+ 
+	subscriber: The new subscriber. NB: The caller retains ownership o fthe object and must manage it accordingly
+ 
+	return: True if subscriber was added
+  --------------------------------------------------------------------*/
+bool Publisher::addManaged(Subscriber* subscriber) {
+	return m_subscriber->addManaged(subscriber);
+} //Publisher::addManaged
 
 
 /*--------------------------------------------------------------------
@@ -323,7 +404,7 @@ bool Publisher::remove(const Guid& id) {
 bool Publisher::audit() {
 	auto subscribers = m_subscriber->filter();
 	bool allSuccessful = true;
-	for (auto& subscriber : subscribers)
+	for (auto& subscriber : subscribers.first)
 		if (!subscriber->audit())
 			allSuccessful = false;
 	return allSuccessful;
@@ -338,7 +419,7 @@ bool Publisher::audit() {
 bool Publisher::attach() {
 	auto subscribers = m_subscriber->filter();
 	bool allSuccessful = true;
-	for (auto& subscriber : subscribers)
+	for (auto& subscriber : subscribers.first)
 		if (!subscriber->attach())
 			allSuccessful = false;
 	return allSuccessful;
@@ -353,7 +434,7 @@ bool Publisher::attach() {
 bool Publisher::start() {
 	auto subscribers = m_subscriber->filter();
 	bool allSuccessful = true;
-	for (auto& subscriber : subscribers)
+	for (auto& subscriber : subscribers.first)
 		if (!subscriber->start())
 			allSuccessful = false;
 	return allSuccessful;
@@ -365,6 +446,6 @@ bool Publisher::start() {
   --------------------------------------------------------------------*/
 void Publisher::stop() {
 	auto subscribers = m_subscriber->filter();
-	for (auto& subscriber : subscribers)
+	for (auto& subscriber : subscribers.first)
 		subscriber->stop();
 } //Publisher::stop

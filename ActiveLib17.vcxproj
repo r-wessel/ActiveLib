@@ -96,6 +96,7 @@
     <ClInclude Include="Active\Serialise\Document\Object.h" />
     <ClInclude Include="Active\Serialise\Document\Shipper.h" />
     <ClInclude Include="Active\Serialise\Document\Transportable.h" />
+    <ClInclude Include="Active\Serialise\DOM\Node.h" />
     <ClInclude Include="Active\Serialise\Generic\Base64Transport.h" />
     <ClInclude Include="Active\Serialise\Generic\HexTransport.h" />
     <ClInclude Include="Active\Serialise\Inventory\Entry.h" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Active\Geometry\XList.cpp" />
     <ClCompile Include="Active\Geometry\XPoint.cpp" />
     <ClCompile Include="Active\Serialise\Document\Object.cpp" />
+    <ClCompile Include="Active\Serialise\DOM\Node.cpp" />
     <ClCompile Include="Active\Serialise\Generic\Base64Transport.cpp" />
     <ClCompile Include="Active\Serialise\Generic\HexTransport.cpp" />
     <ClCompile Include="Active\Serialise\Inventory\Inventory.cpp" />

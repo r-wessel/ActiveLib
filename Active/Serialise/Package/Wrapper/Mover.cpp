@@ -64,7 +64,7 @@ Mover::Mover(Handler::Shared handler) : m_handler{handler} {
 	return: True if the package has added items to the inventory
   --------------------------------------------------------------------*/
 bool Mover::fillInventory(Inventory& inventory) const {
-	using enum Entry::Type;
+	using enum Identity::Role;
 	if (m_handler && ((m_transportPhase == writingEverything) || (m_transportPhase == readingAttributes))) {
 		inventory.merge(Inventory{
 			{

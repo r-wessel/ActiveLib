@@ -86,6 +86,9 @@
     <ClCompile Include="SHA256Tests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Serialisation\DOMTests.cpp">
+      <Filter>Source Files\Serialisation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ActiveLibDoctest\TestingPlatforms.h">

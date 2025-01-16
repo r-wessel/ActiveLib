@@ -6,6 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_SERIALISE_IDENTITY
 #define ACTIVE_SERIALISE_IDENTITY
 
+#include "Active/Setting/Values/Value.h"
 #include "Active/Utility/String.h"
 
 namespace active::serialise {
@@ -16,7 +17,15 @@ namespace active::serialise {
 		The primary forms of identifying cargo - a name and group. Used in an inventory to uniquely identify cargo during import/export
 	*/
 	struct Identity {
-		
+
+		// MARK: - Types
+
+		enum class Role {
+			attribute,
+			element,
+			array,
+		};
+
 		// MARK: - Constructors
 		
 		/*!
@@ -37,15 +46,16 @@ namespace active::serialise {
 			group = groupIn;
 		}
 		
-			///Destructor
-		virtual ~Identity() = default;
-		
 		// MARK: - Variables
 		
 			///An identifying name
 		utility::String name;
 			///Optional named group (in which the name is unique, i.e. to avoid name clashes)
 		utility::String::Option group = std::nullopt;
+			///The expected inventory role (applicable when a new identity has been parsed)
+		std::optional<Role> entryRole;
+			///The value type (applicable when a new value has been parsed)
+		std::optional<setting::Value::Type> valueType;
 	};
 		
 	// MARK: - Operators

@@ -24,6 +24,11 @@ namespace active::serialise {
 		*/
 		bool isNull() const override { return true; }
 		/*!
+			Determine if the cargo is an item, e.g. a single/homogenous value type (not an object)
+			@return True if the cargo is an item
+		*/
+		bool isItem() const override { return true; }
+		/*!
 			Write the item data to a string
 			@param dest The string to write the data to
 			@return True if the data was successfully written

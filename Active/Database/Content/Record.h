@@ -183,7 +183,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename ObjID>
 	bool Record<ObjID>::fillInventory(active::serialise::Inventory& inventory) const {
-		using enum serialise::Entry::Type;
+		using enum serialise::Identity::Role;
 		using enum record::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{

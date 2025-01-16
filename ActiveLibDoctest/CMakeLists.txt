@@ -32,6 +32,7 @@ add_executable(activelibtests
     GuidTests.cpp
     Serialisation/Base64Tests.cpp
     Serialisation/DocumentTests.cpp
+    Serialisation/DOMTests.cpp
     Serialisation/JSONTests.cpp
     Serialisation/SerialiseArrayTester.cpp
     Serialisation/SerialiseTester.cpp

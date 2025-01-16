@@ -25,6 +25,11 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the cargo is an item, e.g. a single/homogenous value type (not an object)
+			@return True if the cargo is an item
+		*/
+		bool isItem() const override { return false; }
+		/*!
 			Determine if the package is the outermost/root layer of a hierarchy
 			@return True if the package is the outermost/root layer of a hierarchy
 		*/
@@ -75,6 +80,21 @@ namespace active::serialise {
 			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
 		*/
 		virtual bool finaliseAttributes() { return true; }
+		/*!
+		 Allocate inventory for new (incoming) cargo
+		 @param inventory The inventory to extend
+		 @param identity The cargo identity
+		 @param enclosing The enclosing cargo identity
+		 @return An iterator pointing to the allocated item (returns end() if inventory cannot be allocated)
+		 */
+		virtual Inventory::iterator allocate(Inventory& inventory, const Identity& identity, const Identity& enclosing) { return inventory.end(); }
+		/*!
+		 Allocate an existing inventory item as an array
+		 @param inventory The parent inventory
+		 @param item The inventory item to reallocate as an array
+		 @return An iterator pointing to the reallocated item (returns end() if the item cannot be reallocated as an array)
+		 */
+		virtual Inventory::iterator allocateArray(Inventory& inventory, Inventory::iterator item) { return inventory.end(); }
 		
 	private:
 			///True if the package is the outermost/root layer of a hierarchy

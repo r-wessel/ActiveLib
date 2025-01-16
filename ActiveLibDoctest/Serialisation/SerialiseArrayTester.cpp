@@ -13,7 +13,7 @@ using namespace active;
 using namespace active::serialise;
 using namespace active::utility;
 
-using enum Entry::Type;
+using enum Identity::Role;
 
 /*!
 	Defines the serialisation wrapper classes for `BarA`, `BarB` and `Foo`

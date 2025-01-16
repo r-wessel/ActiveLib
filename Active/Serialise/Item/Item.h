@@ -28,24 +28,29 @@ namespace active::serialise {
 		// MARK: - Functions (const)
 		
 		/*!
+			Determine if the cargo is an item, e.g. a single/homogenous value type (not an object)
+			@return True if the cargo is an item
+		*/
+		bool isItem() const override { return true; }
+		/*!
 			Fill an inventory with the cargo items. NB: Most items rely on the enclosing package to do this, so returns false by default
 			@param inventory The inventory to receive the cargo items
 			@return True if items have been added to the inventory
 		*/
-		virtual bool fillInventory(Inventory& inventory) const { return false; }
+		bool fillInventory(Inventory& inventory) const override { return false; }
 		
 		/*!
 			Get the specified cargo. NB: Most items rely on the enclosing package to do this, so returns nullptr by default
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		virtual Cargo::Unique getCargo(const Inventory::Item& item) const { return nullptr; }
+		Cargo::Unique getCargo(const Inventory::Item& item) const override { return nullptr; }
 		/*!
 			Write the cargo data to a specified setting
 			@param dest The setting to write to
 			@return True if the data was successfully written
 		*/
-		virtual bool writeSetting(setting::Value& dest) const;
+		bool writeSetting(setting::Value& dest) const override;
 		
 		// MARK: - Functions (mutating)
 		
@@ -54,7 +59,7 @@ namespace active::serialise {
 			@param source The setting to read
 			@return True if the data was successfully read
 		*/
-		virtual bool readSetting(const setting::Value& source);
+		bool readSetting(const setting::Value& source) override;
 	};
 	
 }

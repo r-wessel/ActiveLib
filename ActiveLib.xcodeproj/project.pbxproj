@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */; };
 		2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */; };
+		21244D022D24387F002E3526 /* Entry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D012D24387F002E3526 /* Entry.cpp */; };
+		21244D062D2444DA002E3526 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D042D2444DA002E3526 /* Node.cpp */; };
+		21244D072D2444DA002E3526 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 21244D032D2444DA002E3526 /* Node.h */; };
+		21244D182D2968F8002E3526 /* DOMTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D172D2968F8002E3526 /* DOMTests.cpp */; };
 		21257AB42C19D10C00B710AC /* DataFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 21257AB32C19D10C00B710AC /* DataFormat.h */; };
 		21257AC62C1C881F00B710AC /* DataFormat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21257AC52C1C881F00B710AC /* DataFormat.cpp */; };
 		212A83D12AE47AD9001EAFE7 /* FSNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 212A83472AE47AD9001EAFE7 /* FSNode.cpp */; };
@@ -167,6 +171,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		21244D012D24387F002E3526 /* Entry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entry.cpp; sourceTree = "<group>"; };
+		21244D032D2444DA002E3526 /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		21244D042D2444DA002E3526 /* Node.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
+		21244D0B2D244E33002E3526 /* Null.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Null.h; sourceTree = "<group>"; };
+		21244D172D2968F8002E3526 /* DOMTests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = DOMTests.cpp; sourceTree = "<group>"; };
 		21257AB32C19D10C00B710AC /* DataFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFormat.h; sourceTree = "<group>"; };
 		21257AC52C1C881F00B710AC /* DataFormat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataFormat.cpp; sourceTree = "<group>"; };
 		212A83452AE47AD9001EAFE7 /* IOBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IOBase.h; sourceTree = "<group>"; };
@@ -460,6 +469,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		21244D052D2444DA002E3526 /* DOM */ = {
+			isa = PBXGroup;
+			children = (
+				21244D042D2444DA002E3526 /* Node.cpp */,
+				21244D032D2444DA002E3526 /* Node.h */,
+			);
+			path = DOM;
+			sourceTree = "<group>";
+		};
 		212A83422AE47AD9001EAFE7 /* Active */ = {
 			isa = PBXGroup;
 			children = (
@@ -514,11 +532,13 @@
 				2167E27C2C49121F000827D3 /* CMakeLists.txt */,
 				215F08392C95953800CD343B /* Concepts.h */,
 				214EA4D12BA488DA008E5358 /* Document */,
+				21244D052D2444DA002E3526 /* DOM */,
 				212A83752AE47AD9001EAFE7 /* Generic */,
 				212A83702AE47AD9001EAFE7 /* Inventory */,
 				212A83662AE47AD9001EAFE7 /* Item */,
 				212A83632AE47AD9001EAFE7 /* JSON */,
 				21A0FB9B2CB86F2C0023F24E /* Management */,
+				21244D0B2D244E33002E3526 /* Null.h */,
 				212A83782AE47AD9001EAFE7 /* Package */,
 				219712682BE7E2D500D9EF7E /* Serialisation.md */,
 				21A0FBA52CB90E8C0023F24E /* Transport.cpp */,
@@ -622,6 +642,7 @@
 		212A83702AE47AD9001EAFE7 /* Inventory */ = {
 			isa = PBXGroup;
 			children = (
+				21244D012D24387F002E3526 /* Entry.cpp */,
 				212A83712AE47AD9001EAFE7 /* Entry.h */,
 				212A83732AE47AD9001EAFE7 /* Identity.h */,
 				212A83742AE47AD9001EAFE7 /* Inventory.cpp */,
@@ -923,11 +944,12 @@
 			children = (
 				219988112BD7C2EB0035E5EA /* Base64Tests.cpp */,
 				219988132BD7C4490035E5EA /* DocumentTests.cpp */,
+				21244D172D2968F8002E3526 /* DOMTests.cpp */,
 				2199880F2BD7C1AE0035E5EA /* JSONTests.cpp */,
-				21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */,
 				21932D4D2BE29C69005DB06E /* SerialiseArrayTester.h */,
-				212A87FD2AE486E3001EAFE7 /* SerialiseTester.cpp */,
+				21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */,
 				212A87FF2AE486E3001EAFE7 /* SerialiseTester.h */,
+				212A87FD2AE486E3001EAFE7 /* SerialiseTester.cpp */,
 				219988062BD7B6370035E5EA /* XMLTests.cpp */,
 			);
 			name = Serialisation;
@@ -1107,6 +1129,7 @@
 				217AE6432BEA5CF6004CC2B0 /* Transport.h in Headers */,
 				21F93AE02B2C7CF9009A2C5B /* Participant.h in Headers */,
 				215F91112BC574790052BFC8 /* Base64Transport.h in Headers */,
+				21244D072D2444DA002E3526 /* Node.h in Headers */,
 				21F93AD22B2B81C6009A2C5B /* SettingList.h in Headers */,
 				215F91532BCB1F330052BFC8 /* AngleValue.h in Headers */,
 				21AE195B2CC297A4004DBCFC /* VolumeUnit.h in Headers */,
@@ -1204,6 +1227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21244D182D2968F8002E3526 /* DOMTests.cpp in Sources */,
 				219988172BD7C5C10035E5EA /* MeasurementTests.cpp in Sources */,
 				219988092BD7B6380035E5EA /* XMLTests.cpp in Sources */,
 				219988002BD7B4540035E5EA /* StringTests.cpp in Sources */,
@@ -1242,6 +1266,7 @@
 				215F915E2BCDD5E30052BFC8 /* MassUnit.cpp in Sources */,
 				215F08252C94652100CD343B /* Mover.cpp in Sources */,
 				21D0BD4A2C88F4EE0077E104 /* Record.cpp in Sources */,
+				21244D022D24387F002E3526 /* Entry.cpp in Sources */,
 				212A83D12AE47AD9001EAFE7 /* FSNode.cpp in Sources */,
 				212A83E32AE47AD9001EAFE7 /* XMLPoint.cpp in Sources */,
 				212A84092AE47AD9001EAFE7 /* Vector3.cpp in Sources */,
@@ -1275,6 +1300,7 @@
 				2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */,
 				21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */,
 				21F93AE22B2C8282009A2C5B /* Publisher.cpp in Sources */,
+				21244D062D2444DA002E3526 /* Node.cpp in Sources */,
 				215F91552BCBCFAE0052BFC8 /* AngleValue.cpp in Sources */,
 				212A84192AE47AD9001EAFE7 /* XPoint.cpp in Sources */,
 				21C253622B94578F003B2F63 /* Value.cpp in Sources */,

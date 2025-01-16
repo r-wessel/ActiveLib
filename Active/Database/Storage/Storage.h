@@ -179,7 +179,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID, typename TableType>
 	bool Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID, TableType>::Wrapper::fillInventory(active::serialise::Inventory& inventory) const {
-		using enum active::serialise::Entry::Type;
+		using enum active::serialise::Identity::Role;
 			//Each table becomes a serialisation object using the table name
 		int16_t index = 0;
 		for (const auto& item : m_outline)
@@ -214,7 +214,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID, typename TableType>
 	bool Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID, TableType>::Wrapper::Table::fillInventory(active::serialise::Inventory& inventory) const {
-		using enum active::serialise::Entry::Type;
+		using enum active::serialise::Identity::Role;
 		inventory.merge({ m_table.first, 0, m_table.second.size(), std::nullopt });
 		return true;
 	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::fillInventory

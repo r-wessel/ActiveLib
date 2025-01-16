@@ -213,7 +213,7 @@ namespace {
 	
 	
 		///Identification type for JSON elements
-	struct JSONIdentity : Identity {
+	struct JSONIdentity : public Identity {
 		
 		// MARK: Types
 		
@@ -239,23 +239,33 @@ namespace {
 	
 		// MARK: Constructors
 		
+		using Identity::Identity;
+		
+		/*!
+			Default constructor
+		*/
+		JSONIdentity() : Identity{} {}
 		/*!
 			Default constructor
 			@param identity The element identity
 			@param tagType The tag type
 		*/
-		JSONIdentity(const Identity& identity = Identity(), Type tagType = Type::undefined) : Identity(identity) {
-			if (const auto* jsonIdentity = dynamic_cast<const JSONIdentity*>(&identity); jsonIdentity != nullptr) {
-				type = jsonIdentity->type;
-				stage = jsonIdentity->stage;
-			} else
-				type = tagType;
+		JSONIdentity(const Identity& identity, Type tagType) : Identity{identity} {
+			type = tagType;
 		}
 		/*!
 			Constructor
 			@param tagType The tag type
 		*/
-		JSONIdentity(Type tagType) : Identity() { type = tagType; }
+		JSONIdentity(Type tagType) : Identity{} { type = tagType; }
+		/*!
+			Copy constructor
+			@param source The object to copy
+		*/
+		JSONIdentity(const JSONIdentity& source) : Identity{source} {
+			type = source.type;
+			stage = source.stage;
+		}
 		
 		// MARK: Public variables
 		
@@ -475,9 +485,14 @@ namespace {
 		String getValue();
 		/*!
 			Get item content from the data source
-			@param item The item to receive the content
+			@param cargo The cargo to receive the content
 		*/
-		void getContent(Item& item);
+		void getContent(Cargo& cargo);
+		/*!
+		 Get the entry role for an incoming identity, specifically identifying the type of an incoming value
+		 @param identity The incoming identity
+		 */
+		void getEntryRole(Identity& identity);
 		/*!
 			Add an entity to the glossary
 			@param entity The entity to add
@@ -629,9 +644,9 @@ namespace {
 	/*--------------------------------------------------------------------
 		Get item content from the data source
 	 
-		item: The item to receive the content
+		cargo: The cargo to receive the content
 	  --------------------------------------------------------------------*/
-	void JSONImporter::getContent(Item& item) {
+	void JSONImporter::getContent(Cargo& cargo) {
 		m_buffer.findIf([](char32_t uniChar){ return !isWhiteSpace(uniChar); });
 			//First attempt to find a valid JSON value, determining the type according to JSON conventions
 		auto content = m_buffer.getEncodedChar();	//Get the first character from the buffer
@@ -675,10 +690,19 @@ namespace {
 		if (!value)
 			throw std::system_error(makeJSONError(valueMissing));
 			//Once a value has been retrieved with a type based on the JSON encoding, we can assign that to the receiving item
-		if (!item.readSetting(*value))
+		if (!cargo.readSetting(*value))
 			throw std::system_error(makeJSONError(badValue));
 	} //JSONImporter::getContent
 
+	
+	/*--------------------------------------------------------------------
+		Get the entry role for an incoming identity, specifically identifying the type of an incoming value
+		
+		identity: The incoming identity
+	  --------------------------------------------------------------------*/
+	void JSONImporter::getEntryRole(Identity& identity) {
+		
+	} //JSONImporter::getEntryRole
 	
 	/*--------------------------------------------------------------------
 		Write a tag to the data destination
@@ -783,12 +807,8 @@ namespace {
 				//If the outer container is named, use that
 			identity = containerIdentity;
 		else {
-				//Seek an inventory item suited to an array (almost always the sole entry for a typical array container)
-			auto iter = std::find_if(inventory.begin(), inventory.end(), [&](auto& i) {
-				return i.isRepeating();
-			});
-			if (iter != inventory.end())
-				identity = iter->identity();
+			if (auto iter = inventory.findArray(); iter != inventory.end())
+				identity = JSONIdentity{iter->identity(), undefined};
 		}
 		identity.type = type;
 	} //getArrayIdentity
@@ -834,12 +854,12 @@ namespace {
 	 
 		return: The completed inventory
 	  --------------------------------------------------------------------*/
-	Inventory getImportInventoryFor(Cargo& container, bool isEveryEntryRequired) {
-		Inventory inventory;
-		if (!container.fillInventory(inventory) && (dynamic_cast<Item*>(&container) == nullptr))
+	Inventory getImportInventoryFor(Cargo& container, JSONImporter& importer) {
+		Inventory inventory{importer.management()};
+		if (!container.fillInventory(inventory) && !container.isItem())
 			throw std::system_error(makeJSONError(missingInventory));
 		inventory.resetAvailable();	//Reset the availability of each entry to zero so we can count incoming items
-		if (isEveryEntryRequired)
+		if (importer.isEveryEntryRequired())
 			inventory.setAllRequired();
 		return inventory;
 	} //getImportInventoryFor
@@ -854,8 +874,7 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
-		container.useManagement(importer.management());
-		Inventory inventory = getImportInventoryFor(container, importer.isEveryEntryRequired());
+		Inventory inventory = getImportInventoryFor(container, importer);
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
 		auto* package = dynamic_cast<Package*>(&container);
@@ -868,6 +887,8 @@ namespace {
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
 			Memory::size_type readPoint = importer.getPosition();
 			auto identity = importer.getIdentity(parsingStage);	//Get the identity of the next item in the JSON source
+			if (identity.type != JSONIdentity::Type::undefined)
+				identity.entryRole = (identity.type == arrayStart) ? Identity::Role::array : Identity::Role::element;
 			switch (identity.type) {
 				case undefined:	//End of file
 					if (depth != 0)	//Failure if tags haven't been balanced correctly
@@ -893,6 +914,8 @@ namespace {
 							cargo = makeWrapper(container, containerIdentity, inventory, identity);
 					} else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
+						if ((incomingItem == inventory.end()) && inventory.isEveryItemAccepted && (package != nullptr))
+							incomingItem = package->allocate(inventory, identity, containerIdentity);
 						if (incomingItem != inventory.end()) {
 							if (isReadingAttribute && !incomingItem->isAttribute() && (parsingStage != array))
 								incomingItem = inventory.end();
@@ -901,14 +924,15 @@ namespace {
 									cargo = makeWrapper(container, containerIdentity, inventory, identity);
 									incomingItem = inventory.end();
 								} else {
-									if (!incomingItem->bumpAvailable())
-										throw std::system_error(makeJSONError(inventoryBoundsExceeded));
-									if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
-										--attributesRemaining;
 									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
 									cargo = container.getCargo(*incomingItem);
-									if (cargo)
+									if (cargo != nullptr) {
 										cargo->setDefault();
+										if (!incomingItem->bumpAvailable())
+											throw std::system_error(makeJSONError(inventoryBoundsExceeded));
+										if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
+											--attributesRemaining;
+									}
 								}
 							}
 						}
@@ -925,10 +949,8 @@ namespace {
 					}
 					do {	//Fake loop context allows first condition to escape when true
 						if (identity.type == valueStart) {
-							if (auto* item = dynamic_cast<active::serialise::Item*>(cargo.get()); item != nullptr) {
-								importer.getContent(*item);
-								break;
-							}
+							importer.getContent(*cargo);
+							break;
 						}
 						doJSONImport(*cargo, JSONIdentity{identity}.atStage((identity.type == arrayStart) ? array : object), importer, depth + 1);
 					} while (false);
@@ -950,7 +972,7 @@ namespace {
 						attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
 						if (!package->finaliseAttributes())
 							throw std::system_error(makeJSONError(invalidObject));
-						inventory = getImportInventoryFor(container, importer.isEveryEntryRequired());	//The inventory will probably change here
+						inventory = getImportInventoryFor(container, importer);	//The inventory will probably change here
 						parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 						break;
 					}
@@ -971,7 +993,6 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void doJSONExport(const Cargo& cargo, const JSONIdentity& identity, JSONExporter& exporter, int32_t depth = 0) {
 		using enum JSONIdentity::Type;
-		cargo.useManagement(exporter.management());
 		String tag, nameSpace;
 		if (identity.stage != root) {
 			if (identity.name.empty())	//Non-root values, i.e. values embedded in an object, must have an identifying name
@@ -981,7 +1002,7 @@ namespace {
 			if (exporter.isNameSpaces && identity.group)
 				nameSpace = *identity.group;
 		}
-		Inventory inventory;
+		Inventory inventory{exporter.management()};
 			//Single-value items won't specify an inventory (no point)
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			exporter.writeTag(tag, nameSpace, valueStart, depth);
@@ -1004,10 +1025,11 @@ namespace {
 			throw std::system_error(makeJSONError(badValue));
 			//Determine if this element acts as an object/array wrapper for values
 			//The package will have an outer object wrapper (even if an array) if the outer element has a name that differs from the inner item
+		auto itemIdentity = inventory.front().identity();
 		bool isWrapper = (inventory.size() > 1) || (identity.stage == root) ||
-				(!identity.name.empty() && !inventory.begin()->identity().name.empty() && (inventory.begin()->identity() != identity));
+				(!identity.name.empty() && !itemIdentity.name.empty() && (itemIdentity != identity));
 			//An array package will have a single item within more than one possible value
-		bool isArray = (inventory.size() == 1) && !(inventory.begin()->maximum() == 1),
+		bool isArray = (inventory.size() == 1) && !(inventory.front().maximum() == 1),
 			 isFirstItem = true;
 		if (cargo.isNull()) {
 			exporter.writeTag(tag, nameSpace, nullItem, depth);
@@ -1048,7 +1070,7 @@ namespace {
 					isFirstValue = false;
 				else
 					exporter.write(",");
-				doJSONExport(*content, isItemArray || isArray ? entryItem.identity() : JSONIdentity{entryItem.identity()}.atStage(object),
+				doJSONExport(*content, JSONIdentity{entryItem.identity(), undefined}.atStage(isItemArray || isArray ? root : object),
 							 exporter, ((cargo.type() == Cargo::Type::package)) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
@@ -1114,7 +1136,7 @@ void JSONTransport::send(Cargo&& cargo, const Identity& identity, BufferOut&& de
 	exporter.isTabbed = isTabbed;
 	exporter.isLineFeeds = isLineFeeds;
 	exporter.isNameSpaces = isNameSpaces;
-	doJSONExport(cargo, JSONIdentity(identity).atStage(root), exporter);
+	doJSONExport(cargo, JSONIdentity(identity, undefined).atStage(root), exporter);
 	exporter.flush();
 } //JSONTransport::send
 
@@ -1137,7 +1159,7 @@ void JSONTransport::receive(Cargo&& cargo, const Identity& identity, BufferIn&& 
 						  exportManager.empty() ? nullptr : &exportManager);
 	try {
 		cargo.setDefault();
-		doJSONImport(cargo, JSONIdentity(identity).atStage(root), importer);
+		doJSONImport(cargo, JSONIdentity(identity, undefined).atStage(root), importer);
 		if (importer.isError())
 			throw std::system_error(makeJSONError(importer.getStatus()));
 	} catch(...) {

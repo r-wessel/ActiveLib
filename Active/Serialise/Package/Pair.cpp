@@ -14,7 +14,7 @@ using namespace active::utility;
 
 namespace active::serialise {
 	
-	using enum Entry::Type;
+	using enum Identity::Role;
 	
 		///Serialisation field IDs
 	static std::array fieldID = {

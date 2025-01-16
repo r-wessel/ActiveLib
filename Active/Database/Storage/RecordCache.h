@@ -257,7 +257,7 @@ namespace active::database {
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
 	bool RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::fillInventory(active::serialise::Inventory& inventory) const {
-		using enum serialise::Entry::Type;
+		using enum serialise::Identity::Role;
 		using enum cache::FieldIndex;
 		inventory.merge(serialise::Inventory{
 			{

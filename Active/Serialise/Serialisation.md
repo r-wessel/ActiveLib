@@ -4,10 +4,17 @@
 ## Contents
 1. [Purpose](#purpose)
 2. [Application](#app)
-3. [Document Based Application](#dba)
+3. [Ad hoc serialisation](#ahs)
+	- [Basic Example](#ahsexample)
+	- [Node Content](#nodeContent)
+	- [Object Nodes](#objNodes)
+	- [Array Nodes](#arrayNodes)
+	- [Value Nodes](#valueNodes)
+	- [Direct Object Conversion](#objconvert)
+4. [Document Based Application](#dba)
 	- [Implementation Example](#docexample)
 	- [Optional Document Features](#optdoc)
-4. [Schema Driven Application](#sda)
+5. [Schema Driven Application](#sda)
 	- [Terminology](#terms)
 	- [Serialisation Overview](#serialover)
 	- [Deserialisation Overview](#deserialover)
@@ -17,35 +24,417 @@
 
 ## Purpose <a name="purpose"></a>
 
-This module was created to address specific requirements:
+This module was created to address a range of serialisation requirements:
 
+* Simple (de)serialisation of ad hoc data;
 * Persisting complex data structures or relationships;
 * Adapting a single data set to conform with multiple external (published) schemas;
 * Migrating legacy data during deserialisation;
 * Facilitating protocol changes between XML and JSON, i.e. the same code can serialise to both JSON and XML.
 
-If you are looking for ad-hoc serialisation of data with no requirement to either conform to a specific schema or migrate legacy data, stop reading now – there are simpler options.
-
 ## Application <a name="app"></a>
 
-This library offers 2 methods for serialising data:
+This library offers 3 methods for serialising data:
 
-1. Document-based  
+1. Ad hoc  
+Can be used for any (de)serialisation process, but best suited to highly dynamic situations, e.g. where the requirements frequently change or the structure of the data may be unknown. Any source can be deserialised into a generic DOM hierarchy that can be traversed for data extraction as required. Likewise, a DOM can be created on the fly from ad hoc data and serialised (as JSON, XML or whatever other Transport type has been implemented).
+2. Document-based  
 This approach trades some flexibility and efficiency for simplicity. Serialisation uses a built-in, minimal schema, but is capable of conveying data of any complexity. This uses an intermediate data representation (DOM) and therefore has higher memory overheads, but is simple to implement. This provides an easy way to either serialise individual records into a database as a JSON/XML blob or to read/write an entire database from/to a single, serialised file. Recommended for cases where there is no need to create or conform to any specific schema.
-2. Schema-driven  
+3. Schema-driven  
 Efficient and highly customisable, but requires more effort. Serialisation can be tailored to the requirements of a specific schema including structure, names and value type/format, e.g. enabling interaction with some specific 3rd-party service. This approach is best for situations demanding detailed control over the (de)serialisation process. Note that there is no intermediate DOM involved – information flows directly between native structures and serialised data using a dependency injection container – meaning that memory overheads are typically low.
 
-Both can be used together and any implementation automatically works with JSON and XML serialisation. And both can accomodate data migration and validation processes (important considerations for this library).
+These techniques can be mixed within an application and any implementation automatically works with JSON and XML serialisation (or other Tranport-based implementations). The latter two also have specific processes to accomodate data migration and validation processes (important considerations for this library).
+
+## Ad hoc Serialisation <a name="ahs"></a>
+
+Applicable where flexiblity is paramount, e.g. data content is dynamic or used for prototyping/testing. This approach can be used in any context, but the other document/schema-based approaches offer distinct advantages for some situations, e.g. the schema-based serialisation has low overheads and strong schema management.
+### Basic Example <a name="ahsexample"></a>
+
+Possible applications are quite diverse. The basic principle is that a `dom::Node` is a dynamic, intermediary container for serialised data. It supports a hierarchical structure, with a root node branching into a node tree structure. Nodes can be populated using any combination of initialiser lists or algorithms.
+
+Some simple examples follow below (checks omitted for clarity):
+1. Programatically adding data to a node (for serialisation)  
+Constructing a DOM node can be as simple as entering the data directly into an initialiser list, directly reflecting the serialised layout:
+```cpp
+Node node = Object{
+	{"someBool", true},
+	{"someInt", 25},
+	{"someFloat", 1.234},
+	{"someText", "Example"},
+	{"someArray", { 1.23, 25, "text", false }},
+	{"someObject", Object{
+		{"objName", "Sample"},
+		{"objVal", 5.432},
+		{"objNum", 9876},
+	}}
+};
+```
+…and serialised using a `Transport` object, e.g. to JSON:
+```cpp
+String json;
+JSONTransport().send(node, Identity{}, json);
+```
+…which generates:
+```json
+{
+	"someInt": 25,
+	"someText": "Example",
+	"someFloat": 1.234,
+	"someBool": true,
+	"someArray": [
+		1.23,
+		25,
+		"text",
+		false
+	],
+	"someObject": {
+		"objName": "Sample",
+		"objVal": 5.432,
+		"objNum": 9876
+	}
+}
+```
+…or to XML:
+```cpp
+String xml;
+XMLTransport().send(node, Identity{"sampleXML"}, xml);
+```
+…which generates:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<sampleXML>
+  <someInt>25</someInt>
+  <someText>Example</someText>
+  <someFloat>1.234</someFloat>
+  <someBool>true</someBool>
+  <someArray>
+    <item>1.23</item>
+    <item>25</item>
+    <item>text</item>
+    <item>false</item>
+  </exampleArray>
+  <someObject>
+    <objName>Sample</objName>
+    <objVal>5.432</objVal>
+    <objNum>9876</objNum>
+  </someObject>
+</sampleXML>
+```
+> NOTE: XML requires an enclosing tag at the root level ('sampleXML' in this case) where JSON does not. If you intend to serialise to XML, define an enclosing `Identity` in the call to `XMLTransport::send`. An enclosing identity can similarly be defined for JSONTransport serialisation, but it has no effect.
+
+2. Receiving serialised data  
+The JSON created in the above example can be deserialised back into a DOM node:
+```cpp
+Node incoming;
+JSONTransport().receive(incoming, Identity{}, json);
+```
+…and values can be extracted from the deserialised node:
+```cpp
+bool val = incoming["someBool"];	//val == true
+String text = incoming["someText"];	//text == "Example"
+double arrayVal = incoming["someArray"][0];	//arrayVal == 1.23
+String arrayText = incoming["someArray"][2];	//arrayText == "text"
+double objectVal = incoming["someObject"]["objVal"];	//arrayVal == 5.432
+String objectText = incoming["someObject"]["objName"];	//arrayText == "Sample"
+```
+
+### Node Content <a name="ahs"></a>  
+
+A `dom::Node` can contain be of the following:
+
+1. Object:
+An unordered map pairing a name (String) key with a `dom::Node` value, i.e. `std::unordered_map<String, dom::Node>`
+
+2. Array:
+An array of `dom::Node`, i.e. `std::vector<dom::Node>`
+
+3. Value:
+A single boolean/integer/floating/string value (can also be undefined, i.e. null)
+
+4. Undefined:
+No content - equivalent to null in JSON.
+
+The node type can be tested by calling `Node::index()`, which returns a `Node::Index` enumerator value, e.g.:
+```cpp
+switch (node.index()) {
+	case Index::value:
+		...
+	case Index::object:
+		...
+	case Index::array:
+		...
+	case Index::undefined:
+		...
+}
+
+```
+A number of Node methods assert a specific content type, e.g. `Node::object()` returns the node as an `Object`. An exception is thrown if the assertion is false.
+
+### Object Nodes <a name="objNodes"></a>
+
+An object node contains any number of names paired with a Node (i.e. `unordered_map<String, Node>`). A new object node can be constructed from an initialiser list:
+```cpp
+Node node = Object{
+	{"firstName", "Joe"},
+	{"surname", "Bloggs"},
+	{"streetNo", 123},
+	{"height", 1.82},
+	{"phone", Object{
+			{"home", "0123456789"},
+			{"work", "0987654321"},
+		}
+	}
+	{"wfh", true},
+};
+```
+…and/or defined piecemeal:
+```cpp
+Node node(Object{});
+node["firstName"] = "Joe";
+node["surname"] = "Bloggs",
+node["streetNo"] = 123,
+node["height"] = 1.82,
+Node phone(Object{});
+phone["home"] = "0123456789";
+phone["work"] = "0987654321";
+node["phone"] = phone;
+node["wfh"] = true;
+```
+The node can be exported to JSON:
+```cpp
+String json;
+XMLTransport().send(node, Identity{}, json);
+```
+…resulting in:
+```Json
+{
+	"firstName": "Joe",
+	"height": 1.82,
+	"surname": "Bloggs",
+	"streetNo": 123,
+	"phone": {
+		"home": "0123456789",
+		"work": "0987654321"
+	},
+	"wfh": true
+}
+```
+…or exported to XML:
+```cpp
+String xml;
+XMLTransport().send(node, Identity{"contact"}, xml);
+```
+…resulting in:
+```Xml
+<?xml version="1.0" encoding="utf-8"?>
+<contact>
+  <firstName>Joe</firstName>
+  <height>1.82</height>
+  <surname>Bloggs</surname>
+  <streetNo>123</streetNo>
+  <phone>
+    <home>0123456789</home>
+    <work>0987654321</work>
+  </phone>
+  <wfh>true</wfh>
+</contact>
+```
+
+Object nodes can also be constructed directly from STL associative containers, e.g.:
+```cpp
+Node mapNode = std::map<utility::String, int32_t>{
+	{ "first", 1 },
+	{ "second", 2 },
+	{ "third", 3 },
+};
+```
+
+…and used in range-based for loops, e.g.:
+```cpp
+for (auto& item : mapNode.object()) {
+	auto key = item.first;
+	int32_t value = item.second;
+}
+```
+
+Values can be extracted from an object node in two ways:
+
+1. Subscript operator (by name - const):
+An exception will be thrown if the node is either not an object or the name does not exist. The required type is deduced from the variable to receive the value.
+```cpp
+double height = node["height"];
+```
+2. Node::setting(const String& name):
+The return type is a ValueSetting. If the node is not an object or the name is not found, it will be populated with NullValue{}. Otherwise it contains whatever value/type was deserialised from the source, but can be transformed to any other type.
+```cpp
+double height = node.setting("height").value_or(DoubleValue{0.0});
+```
+
+
+### Array Nodes <a name="arrayNodes"></a>  
+
+An array node contains any number of Node items (i.e. `vector<Node>`). A new array node can be constructed from an initialiser list:
+```cpp
+Node node = {
+	"Joe",
+	"Bloggs",
+	123,
+	1.82,
+	true,
+};
+```
+
+> TIP: Be mindful to use an appropriate form of Node constructor to avoid accidentally creating an initialiser list, e.g.:
+> ```cpp
+> Node node{Object{}};	//Constructs an array node containing an object node
+> ```
+> …vs
+> ```cpp
+> Node node(Object{});	//Constructs an object node
+> ```
+Node content can also be assembled piecemeal:
+```cpp
+Node testRoot(Array{});
+Node node(Array{});
+node.push_back("Joe");
+node.push_back("Bloggs");
+node.push_back(123);
+node.push_back(1.82);
+node.push_back(true);
+testRoot.push_back(node.withItemTag("info"));
+```
+The node can be exported to JSON:
+```cpp
+String json;
+JSONTransport().send(testRoot, Identity{}, json);
+```
+…resulting in:
+```json
+[
+	[
+		"Joe",
+		"Bloggs",
+		123,
+		1.82,
+		true
+	]
+]
+```
+…or exported to XML:
+```cpp
+String xml;
+XMLTransport().send(testRoot.withItemTag("contact"), Identity{"contacts"}, xml);
+```
+…resulting in:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<contacts>
+  <contact>
+    <info>Joe</info>
+    <info>Bloggs</info>
+    <info>123</info>
+    <info>1.82</info>
+    <info>true</info>
+  </contact>
+</contacts>
+```
+> NOTE: XML does not explicitly define an array. An item tag is defined by calling Node::withItemTag in the line `testRoot.push_back(node.withItemTag("info"));`. If the tag is omitted, the array becomes a flat list of <contact> elements, e.g.:
+> ```cpp
+> <?xml version="1.0" encoding="utf-8"?>
+> <contacts>
+>   <contact>Joe</contact>
+>   <contact>Bloggs</contact>
+>   <contact>123</contact>
+>   <contact>1.82</contact>
+>   <contact>true</contact>
+> </contacts>
+> ```
+
+Array nodes can also be constructed directly from STL sequence containers, e.g.:
+```cpp
+Node vectNode = std::vector{ 1, 2, 3, 4, 5, 6 };
+```
+
+…or STL associative containers:
+```cpp
+Node mapNode = std::map<utility::String, int32_t>{
+	{ "first", 1},
+	{ "second", 2},
+	{ "third", 3},
+};
+```
+
+…and used in range-based for loops, e.g.:
+```cpp
+for (auto& item : vectNode.array())
+	int32_t value = item;
+```
+
+### Value Nodes <a name="valueNodes"></a>
+
+Value nodes adapt to most value types automatically, performing conversions as required e.g.:
+```cpp
+Node node = 1.23;
+bool boolVal = node;	//boolVal == true
+uint32 intVal = node;	//intVal == 1
+double val = node;	//val == 1.23
+String stringVal = node;	//stringVal == "1.23"
+```
+
+The internal value type of a node can be validated using Value::index() if necessary.
+
+### Direct Object Conversion <a name="objconvert"></a>
+
+Conversions between custom objects and dom:Node can be defined, enabling direct assignment of an object instance to a node (and vice versa), by defining up to two functions in the active::serialise::dom namespace. The following examples will define the conversion functions for an example struct:  
+```cpp
+struct Example {
+	String a;
+	double b = 0.0;
+	uint32_t c = 0;
+};
+```
+
+1. Assigning an instance to dom::Node  
+Define a `pack` function that populates the instance data into a Node:  
+```cpp  
+	//Pack an Example struct into a dom::Node
+Node& pack(Node& node, const Example& test) {
+	node = Object{};	//Ensure the node is an object type
+	node["a"] = test.a;
+	node["b"] = test.b;
+	node["c"] = test.c;
+	return node;
+}
+```  
+2. Assigning an instance to dom::Node  
+Define an `upack` function that extracts data from the Node to populate in instance:
+```cpp  
+	//Unpack an Example struct from a dom::Node
+const Node& unpack(const Node& node, Example& test) {
+	test.a = node["a"].operator String();
+	test.b = node["b"];
+	test.c = node["c"];
+	return node;
+}
+```  
+
+This enables simple coding for transferring data between object instances and `dom::Node`, e.g.:
+```cpp
+Node node(Object{});
+	//Assign an object instance into a node
+node["example"] = Example{"something", 1.23, 25};
+	//...and assign a node to an object
+Example obj = node["example"];
 
 ## Document Based Application <a name="dba"></a>
 
-Applicable where a serialisation schema is not specified and simplicity is paramount.
+Applicable where a serialisation schema is not specified, simplicity is paramount and legacy data migration might need to be employed.
 
 ### Implementation Example <a name="docexample"></a>
 
 The following class will be used as an illustration:
 
-```Cpp
+```cpp
 class Category {
 public:
 	static inline const char* defaultName = "untitled";
@@ -62,7 +451,7 @@ private:
 Steps for implementing document-based serialisation:
 1. All member fields need a unique serialisation name/tag (i.e. unique within the class) - it's good practice to define them using a field enumerator and a string array to avoid manual repetition, e.g.:  
 
-```Cpp
+```cpp
 enum Field {
 	name,
 	index,
@@ -77,13 +466,13 @@ std::array fieldName{
 
 2. The target class should also have a unique identifying type name, e.g.:  
 
-```Cpp
+```cpp
 inline static const String typeName = "Category";
 ```
 
 3. Add a member function to *send* the object to a serialised document `Object`, e.g.:
 
-```Cpp
+```cpp
 doc::Object send(const SettingList* spec = nullptr) const {
 	auto result = doc::Object{typeName}  //Make a new Object
 			<< ValueSetting{m_name, fieldName.at(name)}  //Send member variables
@@ -97,7 +486,7 @@ doc::Object send(const SettingList* spec = nullptr) const {
 
 4. Add a new constructor to reconstruct an instance from an incoming document `Object`:
 
-```Cpp
+```cpp
 Category(const doc::Object& incoming, const SettingList* spec = nullptr) {
 		//Retrieve member variables
 	m_name = incoming.value(fieldName.at(name)).value_or(ValueSetting{String{defaultName}});
@@ -113,28 +502,28 @@ Category(const doc::Object& incoming, const SettingList* spec = nullptr) {
 
 Any object implementing these functions can then be sent to a document object, e.g.:
 
-```Cpp
+```cpp
 Category category;
 auto document = category.send();
 ```
 
 …and then serialised into a `String`, `File` or `Memory`, either as JSON:
 
-```Cpp
+```cpp
 String jsonString;
 JSONTransport().send(PackageWrap{document}, Object::defaultTag, jsonString); 
 ```
 
 …or XML:
 
-```Cpp
+```cpp
 Memory xmlOutput;
 XMLTransport().send(PackageWrap{document}, Object::defaultTag, xmlOutput); 
 ```
 
 The document can be reconstructed from serialised data by defining a `Handler` and populating it with any types it should be expected to deserialise, e.g.:
 
-```Cpp
+```cpp
 class DocHandler : public Handler {
 public:
 	DocHandler() {
@@ -149,7 +538,7 @@ public:
 An instance of this handler can be used to reconstruct the document from JSON or XML, e.g.:
 
 
-```Cpp
+```cpp
 	//Rebuild the document from JSON
 Object document;
 JSONTransport().receive(PackageWrap{document}, Object::defaultTag, jsonString);
@@ -171,7 +560,7 @@ A wrapper class can be used in this case, holding a reference to an instance of 
 2. Using SettingList
 Both the required *send* function and constructor from a document object have an optional *spec* parameter, e.g.:
 
-```Cpp
+```cpp
 Object send(const SettingList* spec = nullptr) const;
 ```
 
@@ -264,14 +653,14 @@ Convert a serialised string back into a value. Returning `false` indicates a bad
 
 Any instance of a `Package` subclass, e.g. *someObject*,  can then be serialised into a `String` as JSON:
 
-```Cpp
+```cpp
 String jsonOutput;
 JSONTransport().send(PackageWrap{someObject}, Identity{}, jsonOutput); 
 ```
 
 …or as XML:
 
-```Cpp
+```cpp
 String xmlOutput;
 XMLTransport().send(PackageWrap{someObject}, Identity{}, xmlOutput); 
 ```
@@ -303,7 +692,7 @@ The `Object` has the following fields (which will be reflected in the serialisat
 
 It's good practice to make an enumerator for the fields, e.g.:
 
-```Cpp
+```cpp
 enum FieldIndex {
 	typeID,
 	tagID,
@@ -314,9 +703,9 @@ enum FieldIndex {
 
 Then an `Inventory` (the serialisation schema) can be defined like this:
 
-```Cpp
+```cpp
 bool Object::fillInventory(Inventory& inventory) const {
-	using enum Entry::Type;
+	using enum Identity::Role;
 	inventory.merge(Inventory{
 		{
 			{ {"class"}, typeID, attribute },
@@ -345,7 +734,7 @@ The inventory is defined as a series of entries (one per field), each pairing th
 
 A function to provide a value/object instance for transport can look like this:
 
-```Cpp
+```cpp
 Cargo::Unique Object::getCargo(const Inventory::Item& item) const {
 		//Ensure this item is from my inventory
 	if (item.second.ownerType != &typeid(Object))
@@ -385,7 +774,7 @@ The response for the array field (*val* and *obj*) is more complex. Both seriali
 
 When the `Transport` is deserialising and has obtained a new `Cargo` instance with *getCargo*, the first step (before any data is deserialised into the cargo) is to ensure the instance starts in the schema default state by calling *setDefault*, e.g.:
 
-```Cpp
+```cpp
 void Object::setDefault() {
 	docType.clear();
 	tag.clear();
@@ -398,7 +787,7 @@ In this case, the default state is for all the fields to be empty. However, some
 
 Once `Cargo` has been fully deserialised, it is asked to validate the content:
 
-```Cpp
+```cpp
 bool Object::validate() {
 	return !docType.empty();
 }
@@ -414,7 +803,7 @@ The only invariant for this `Cargo` is that *docType* (an identifier for the obj
 
 Following validation, there is one final step for deserialising an object that is an item instance belonging to an array/dictionary - insertion into the parent container:
 
-```Cpp
+```cpp
 bool Object::insert(Cargo::Unique&& cargo, const Inventory::Item& item) {
 	if (item.second.ownerType != &typeid(Object))
 		return true;

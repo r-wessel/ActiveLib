@@ -15,7 +15,7 @@ using namespace active::serialise;
 using namespace active::serialise::xml;
 using namespace active::utility;
 
-using enum Entry::Type;
+using enum Identity::Role;
 
 namespace {
 	
