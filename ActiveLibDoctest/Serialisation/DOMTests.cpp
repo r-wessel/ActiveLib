@@ -87,7 +87,8 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 			CHECK_MESSAGE(intValue == 5, TEST_MESSAGE(DOM node import has failed to import an integer value));
 			CHECK_MESSAGE(isEqual(doubleValue, 1.23), TEST_MESSAGE(DOM node import has failed to import a double value));
 			CHECK_MESSAGE(stringValue == "Test", TEST_MESSAGE(DOM node import has failed to import a string value));
-			CHECK_MESSAGE(doubleSetting.operator bool() && isEqual(*doubleSetting, 1.23), TEST_MESSAGE(DOM node import failed to find setting));
+			bool isDoubleOk = doubleSetting.operator bool() && isEqual(*doubleSetting, 1.23);
+			CHECK_MESSAGE(isDoubleOk, TEST_MESSAGE(DOM node import failed to find setting));
 			CHECK_MESSAGE(!missingSetting.operator bool(), TEST_MESSAGE(DOM node import found non-existent setting));
 			if (auto iter = node.object().find("array"); (iter != node.object().end()) && (iter->second.index() == Node::Index::array) &&
 				(iter->second.array().size() == 6)) {
@@ -126,9 +127,10 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(json.contains("\"string\":\"Test\""), TEST_MESSAGE(DOM node export to JSON failed with string value));
 		CHECK_MESSAGE(json.contains("\"array\":[1,2,3,4,5,6]"), TEST_MESSAGE(DOM node export to JSON failed with array));
 		CHECK_MESSAGE(json.contains("\"ad-hoc\":[1.2,2.3,\"text\",1,false]"), TEST_MESSAGE(DOM node export to JSON failed with ad-hoc array));
-		CHECK_MESSAGE(json.contains("\"ad-hocObj\":{") && json.contains("\"first\":1") &&
-					  json.contains("\"second\":2") && json.contains("\"third\":1.23") && json.contains("\"fourth\":\"testing\""),
-					  TEST_MESSAGE(DOM node export to JSON failed with ad-hoc object));
+		bool isArrayOk = json.contains("\"ad-hocObj\":{") && json.contains("\"first\":1") &&
+					json.contains("\"second\":2") && json.contains("\"third\":1.23") &&
+					json.contains("\"fourth\":\"testing\"");
+		CHECK_MESSAGE(isArrayOk, TEST_MESSAGE(DOM node export to JSON failed with ad-hoc object));
 		Node fromJSON;
 		JSONTransport().receive(fromJSON, Identity{}, json);
 		TestNode assigned = fromJSON["assign"];
@@ -145,9 +147,10 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 					  TEST_MESSAGE(DOM node export to XML failed with array));
 		CHECK_MESSAGE(xml.contains("<ad-hoc>1.2</ad-hoc><ad-hoc>2.3</ad-hoc><ad-hoc>text</ad-hoc><ad-hoc>1</ad-hoc><ad-hoc>false</ad-hoc>"),
 					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc array));
-		CHECK_MESSAGE(xml.contains("<ad-hocObj>") && xml.contains("<first>1</first>") &&
-					  xml.contains("<second>2</second>") && xml.contains("<third>1.23</third>") && xml.contains("<fourth>testing</fourth>"),
-					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc object));
+		bool isXMLOk = xml.contains("<ad-hocObj>") && xml.contains("<first>1</first>") &&
+						xml.contains("<second>2</second>") && xml.contains("<third>1.23</third>") &&
+						xml.contains("<fourth>testing</fourth>");
+		CHECK_MESSAGE(isXMLOk, TEST_MESSAGE(DOM node export to XML failed with ad-hoc object));
 		Node fromXML;
 		XMLTransport().receive(fromXML, Identity{"testing"}, xml);
 		assigned = fromXML["assign"];
