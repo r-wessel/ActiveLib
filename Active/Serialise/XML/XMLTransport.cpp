@@ -960,10 +960,13 @@ namespace {
 		if (cargo.isItem()) {
 			if (inventory.size() != 1)
 				throw std::system_error(makeXMLError(badValue));
+		}
+		if (inventory.size() == 1) {
 			auto itemIdentity = inventory.front().identity();
 			isWrapperTag = !identity.name.empty() && !itemIdentity.name.empty() && (itemIdentity != identity);
 		}
 		auto sequence = inventory.sequence();
+		auto itemDepth = depth;
 		if (isWrapperTag) {
 			String openingTag(identity.name);
 			auto isAttributes = getContainerAttributes(exporter, cargo, sequence, openingTag) || (identity.type == instruction);
@@ -971,6 +974,7 @@ namespace {
 			exporter.writeTag(openingTag, identity.group, tagType, depth);
 			if (isAttributes)
 				return;
+			++itemDepth;
 		}
 		for (auto& entry : sequence) {
 			auto item = *entry.second;
@@ -981,13 +985,13 @@ namespace {
 			auto limit = item.available;
 			for (item.available = 0; item.available < limit; ++item.available) {
 				if (auto content = cargo.getCargo(item); content) {
-					doXMLExport(*content, item.identity(), exporter, dynamic_cast<Package*>(content.get()) == nullptr ? depth : depth + 1);
+					doXMLExport(*content, isWrapperTag ? item.identity() : identity, exporter, itemDepth);
 				} else
 					break;	//Discontinue an inventory item when the supply runs out
 			}
 		}
 			//Non-items write a closing tag
-		if (!cargo.isItem())
+		if (isWrapperTag)
 			exporter.writeTag(identity.name, identity.group, endTag, depth);
 	} //doXMLExport
 

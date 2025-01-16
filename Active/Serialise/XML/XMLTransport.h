@@ -61,8 +61,12 @@ namespace active::serialise::xml {
 			@param isProlog True if an serialisation prolog should be written
 			@throw std::system_error Thrown on write errors, serialisation failure (e.g. invalid XML names, missing inventory etc)
 		*/
-		virtual void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+		void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
 				  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const override;
+		void send(serialise::Cargo& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+				  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const {
+			send(std::forward<Cargo&&>(cargo), identity, std::move(destination));
+		}
 		/*!
 			Receive cargo from a specified XML source
 			@param cargo The cargo to receive the XML data
@@ -71,6 +75,9 @@ namespace active::serialise::xml {
 			@throw std::system_error Thrown on read errors, invalid encoding or parsing failure (e.g. ill-formed XML)
 		*/
 		void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const override;
+		void receive(serialise::Cargo& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const {
+			receive(std::forward<Cargo&&>(cargo), identity, std::move(source));
+		}
 		/*!
 			Determine if unknown instructions are skipped
 			@return True if unknown instructions are skipped

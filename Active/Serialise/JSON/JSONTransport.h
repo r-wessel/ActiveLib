@@ -73,8 +73,12 @@ namespace active::serialise::json {
 			@param isProlog True if an serialisation prolog should be written (not currently used for JSON)
 			@throw std::system_error Thrown on write errors, serialisation failure (e.g. invalid names, missing inventory etc)
 		*/
-		virtual void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+		void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
 						  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const override;
+		void send(serialise::Cargo& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+				  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const {
+			send(std::forward<Cargo&&>(cargo), identity, std::move(destination));
+		}
 		/*!
 			Receive cargo from a specified JSON source
 			@param cargo The cargo to receive the JSON data
@@ -83,6 +87,9 @@ namespace active::serialise::json {
 			@throw std::system_error Thrown on read errors, invalid encoding or parsing failure (e.g. ill-formed JSON)
 		*/
 		void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const override;
+		void receive(serialise::Cargo& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const {
+			receive(std::forward<Cargo&&>(cargo), identity, std::move(source));
+		}
 	};
 	
 }

@@ -25,34 +25,50 @@ namespace active::serialise::dom {
 	 A value in a generic document object model (DOM) for serialised data transport
 	 */
 	struct Value : std::variant<std::monostate, bool, int64_t, double, utility::String> {
+
+		using base = std::variant<std::monostate, bool, int64_t, double, utility::String>;
+			///Indices of a value type
+		enum class Index {
+			undefined = 0,
+			boolType,
+			intType,
+			floatType,
+			stringType,
+		};
+		
 		/*!
 		 Conversion operator
 		 @return An equivalent boolean value
 		 */
-		explicit operator bool() const { return setting()->operator bool(); }
+		explicit operator bool() const { return setting().operator bool(); }
 		/*!
 		 Conversion operator
 		 @return An equivalent boolean value
 		 */
 		template<typename T> requires IsInteger<T>
-		operator T() const { return static_cast<T>(setting()->operator int64_t()); }
+		operator T() const { return static_cast<T>(setting().operator int64_t()); }
 		/*!
 		 Conversion operator
 		 @return An equivalent boolean value
 		 */
 		template<typename T> requires IsFloat<T>
-		operator T() const { return static_cast<T>(setting()->operator double()); }
+		operator T() const { return static_cast<T>(setting().operator double()); }
 		/*!
 		 Conversion operator
 		 @return An equivalent boolean value
 		 */
-		explicit operator utility::String() const { return setting()->operator utility::String(); }
+		explicit operator utility::String() const { return setting().operator utility::String(); }
 
+		/*!
+		 Get the index of the value type
+		 @return The value type index
+		 */
+		Index index() const { return static_cast<Index>(base::index()); }
 		/*!
 		 Get the value setting (allowing for anonymous conversion to a variety of value types)
 		 @return The value setting
 		 */
-		setting::Value::Unique setting() const;
+		setting::ValueSetting setting() const;
 	};
 	
 		///Concept for value types
@@ -90,9 +106,9 @@ namespace active::serialise::dom {
 	 Array items are unnamed
 	 */
 	struct Array : std::vector<Node> {
-			///Optional tag for the array items (NB: needed for some serialisation, e.g. XML, but not for others, e.g. JSON
-		utility::String itemTag = "item";
-		
+			///Optional tag for the array items (NB: Unused for JSON. Optional for XML - otherwise the array is flattened and items use the parent tag
+		utility::String itemTag;
+
 		/*!
 		 Define an array item tag
 		 @param tag The item tag
@@ -143,14 +159,6 @@ namespace active::serialise::dom {
 			value,
 			object,
 			array,
-		};
-			///Indices of a value type
-		enum class ValueIndex {
-			undefined = 0,
-			boolType,
-			intType,
-			floatType,
-			stringType,
 		};
 		
 		// MARK: - Constructors
@@ -257,7 +265,14 @@ namespace active::serialise::dom {
 		 @param memberName The object member name
 		 @return The member node (creates if missing)
 		 */
-		Node& operator[](const char* memberName) { return object()[utility::String{memberName}]; }
+		template<typename T> requires std::is_same_v<T, const char*>	//NB: This prevents some compilers from transforming a 0 index into nullptr
+		Node& operator[](T memberName) { return object()[utility::String{memberName}]; }
+		/*!
+		 Subscript operator (NB: assumes node is an array - throws otherwise)
+		 @param index Index into the required array value
+		 @return The indexed value
+		 */
+		Node& operator[](size_t index) { return array()[index]; }
 		/*!
 		 Conversion operator (assumes node is a value - throws otherwise)
 		 @return An equivalent boolean value
@@ -265,7 +280,7 @@ namespace active::serialise::dom {
 		template<typename T> requires IsValue<T> || IsNodeTransferable<T>
 		operator T() const {
 			if constexpr(IsValue<T>)
-				return value().setting()->operator T();
+				return value().setting().operator T();
 			else {
 				T obj;
 				unpack(*this, obj);
@@ -361,11 +376,11 @@ namespace active::serialise::dom {
 		 */
 		const Value& value() const { return std::get<Value>(*this); }
 		/*!
-		 Get an object value by name
+		 Get an object value setting by name
 		 @param name The value name
-		 @return The requested value (nullopt on failure)
+		 @return The requested value setting (nullopt on failure)
 		 */
-		const setting::ValueSetting::Option value(const utility::String& name) const;
+		setting::ValueSetting::Option setting(const utility::String& name) const;
 		/*!
 		 Get the node object
 		 @return The node object (throws if the node does not hold an object)

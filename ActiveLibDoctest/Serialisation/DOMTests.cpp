@@ -3,12 +3,15 @@
 #include "Active/Serialise/DOM/Node.h"
 #include "Active/Serialise/JSON/JSONTransport.h"
 #include "Active/Serialise/XML/XMLTransport.h"
+#include "Active/Setting/Values/DoubleValue.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
 #include "Active/Utility/MathFunctions.h"
 
 #include <vector>
 #include <map>
+
+#include <iostream>
 
 using namespace active;
 using namespace active::math;
@@ -33,7 +36,7 @@ namespace active::serialise::dom {
 	
 		//Pack a TestNode into a dom::Node
 	Node& pack(Node& node, const TestNode& test) {
-		node = Object{};
+		node = Object{};	//Ensure the node is an object type
 		node["a"] = test.a;
 		node["b"] = test.b;
 		node["c"] = test.c;
@@ -77,8 +80,8 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 			int64_t intValue = node["integer"];
 			double doubleValue = node["double"];
 			utility::String stringValue = node["string"];
-			auto doubleSetting = node.value("double");
-			auto missingSetting = node.value("nonexistent");
+			auto doubleSetting = node.setting("double");
+			auto missingSetting = node.setting("nonexistent");
 			CHECK_MESSAGE(node.object().size() == childSize, TEST_MESSAGE(DOM node import has wrong number of items));
 			CHECK_MESSAGE(boolValue == true, TEST_MESSAGE(DOM node import has failed to import a boolean value));
 			CHECK_MESSAGE(intValue == 5, TEST_MESSAGE(DOM node import has failed to import an integer value));
@@ -116,7 +119,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		root["assign"] = TestNode{"something", 1.23, 25};
 			//Test DOM i/o via JSON
 		String json;
-		JSONTransport().send(std::forward<Cargo&&>(root), Identity{}, json);
+		JSONTransport().send(root, Identity{}, json);
 		CHECK_MESSAGE(json.contains("\"boolean\":true"), TEST_MESSAGE(DOM node export to JSON failed with boolean value));
 		CHECK_MESSAGE(json.contains("\"integer\":5"), TEST_MESSAGE(DOM node export to JSON failed with integer value));
 		CHECK_MESSAGE(json.contains("\"double\":1.23"), TEST_MESSAGE(DOM node export to JSON failed with double value));
@@ -127,26 +130,26 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 					  json.contains("\"second\":2") && json.contains("\"third\":1.23") && json.contains("\"fourth\":\"testing\""),
 					  TEST_MESSAGE(DOM node export to JSON failed with ad-hoc object));
 		Node fromJSON;
-		JSONTransport().receive(std::forward<Cargo&&>(fromJSON), Identity{}, json);
+		JSONTransport().receive(fromJSON, Identity{}, json);
 		TestNode assigned = fromJSON["assign"];
 		validateNode(fromJSON);
 		validateNode(fromJSON["object"], 6);
 			//Test DOM i/o via XML
 		String xml;
-		XMLTransport().send(std::forward<Cargo&&>(root), Identity{"testing"}, xml);
+		XMLTransport().send(root, Identity{"testing"}, xml);
 		CHECK_MESSAGE(xml.contains("<boolean>true</boolean>"), TEST_MESSAGE(DOM node export to XML failed with boolean value));
 		CHECK_MESSAGE(xml.contains("<integer>5</integer>"), TEST_MESSAGE(DOM node export to XML failed with integer value));
 		CHECK_MESSAGE(xml.contains("<double>1.23</double>"), TEST_MESSAGE(DOM node export to XML failed with double value));
 		CHECK_MESSAGE(xml.contains("<string>Test</string>"), TEST_MESSAGE(DOM node export to XML failed with string value));
 		CHECK_MESSAGE(xml.contains("<array><val>1</val><val>2</val><val>3</val><val>4</val><val>5</val><val>6</val></array>"),
 					  TEST_MESSAGE(DOM node export to XML failed with array));
-		CHECK_MESSAGE(xml.contains("<ad-hoc><item>1.2</item><item>2.3</item><item>text</item><item>1</item><item>false</item></ad-hoc>"),
+		CHECK_MESSAGE(xml.contains("<ad-hoc>1.2</ad-hoc><ad-hoc>2.3</ad-hoc><ad-hoc>text</ad-hoc><ad-hoc>1</ad-hoc><ad-hoc>false</ad-hoc>"),
 					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc array));
 		CHECK_MESSAGE(xml.contains("<ad-hocObj>") && xml.contains("<first>1</first>") &&
 					  xml.contains("<second>2</second>") && xml.contains("<third>1.23</third>") && xml.contains("<fourth>testing</fourth>"),
 					  TEST_MESSAGE(DOM node export to XML failed with ad-hoc object));
 		Node fromXML;
-		XMLTransport().receive(std::forward<Cargo&&>(fromXML), Identity{"testing"}, xml);
+		XMLTransport().receive(fromXML, Identity{"testing"}, xml);
 		assigned = fromXML["assign"];
 		validateNode(fromXML);
 		validateNode(fromXML["object"], 6);

@@ -74,20 +74,21 @@ Node::Node(const std::initializer_list<Node>& nodes) {
  
 	return: The value setting
   --------------------------------------------------------------------*/
-active::setting::Value::Unique dom::Value::setting() const {
-	switch (static_cast<Node::ValueIndex>(index())) {
-		case Node::ValueIndex::boolType:
-			return std::make_unique<BoolValue>(get<bool>(*this));
-		case Node::ValueIndex::intType:
-			return std::make_unique<Int64Value>(get<int64_t>(*this));
-		case Node::ValueIndex::floatType:
-			return std::make_unique<DoubleValue>(get<double>(*this));
-		case Node::ValueIndex::stringType:
-			return std::make_unique<StringValue>(get<String>(*this));
+ValueSetting dom::Value::setting() const {
+	using enum Index;
+	switch (index()) {
+		case boolType:
+			return ValueSetting(get<bool>(*this));
+		case intType:
+			return ValueSetting(get<int64_t>(*this));
+		case floatType:
+			return ValueSetting(get<double>(*this));
+		case stringType:
+			return ValueSetting(get<String>(*this));
 		default:
 			break;
 	}
-	return std::make_unique<NullValue>();
+	return ValueSetting{NullValue{}};
 } //Value::setting
 
 
@@ -99,14 +100,15 @@ active::setting::Value::Unique dom::Value::setting() const {
 bool Node::empty() const {
 	switch (index()) {
 		case Index::value:
-			switch (static_cast<ValueIndex>(value().index())) {
-				case ValueIndex::boolType:
+			using enum Value::Index;
+			switch (value().index()) {
+				case boolType:
 					return !get<bool>(value());
-				case ValueIndex::intType:
+				case intType:
 					return get<int64_t>(value()) == 0;
-				case ValueIndex::floatType:
+				case floatType:
 					return math::isZero(get<double>(value()));
-				case ValueIndex::stringType:
+				case stringType:
 					return get<String>(value()).empty();
 				default:
 					break;
@@ -147,14 +149,15 @@ std::optional<Node::Index> Node::index(const utility::String& name) const {
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
 bool Node::write(utility::String& dest) const {
-	switch (static_cast<Node::ValueIndex>(value().index())) {
-		case Node::ValueIndex::boolType:
+	using enum Value::Index;
+	switch (value().index()) {
+		case boolType:
 			return BoolWrap(get<bool>(value())).write(dest);
-		case Node::ValueIndex::intType:
+		case intType:
 			return Int64Wrap(get<int64_t>(value())).write(dest);
-		case Node::ValueIndex::floatType:
+		case floatType:
 			return DoubleWrap(get<double>(value())).write(dest);
-		case Node::ValueIndex::stringType:
+		case stringType:
 			dest = get<utility::String>(value());
 			break;
 		default:
@@ -173,12 +176,13 @@ bool Node::write(utility::String& dest) const {
 std::optional<Cargo::Type> Node::type() const {
 	using enum Cargo::Type;
 	if (index() == Index::value) {
-		switch (static_cast<ValueIndex>(value().index())) {
-			case ValueIndex::boolType:
+		using enum Value::Index;
+		switch (value().index()) {
+			case boolType:
 				return boolean;
-			case ValueIndex::intType: case ValueIndex::floatType:
+			case intType: case floatType:
 				return number;
-			case ValueIndex::stringType:
+			case stringType:
 				return text;
 			default:
 				break;
@@ -189,31 +193,32 @@ std::optional<Cargo::Type> Node::type() const {
 
 
 /*--------------------------------------------------------------------
-	Get an object value by name
+	Get an object value setting by name
  
 	name: The value name
  
-	return: The requested value (nullopt on failure)
+	return: The requested value setting (nullopt on failure)
   --------------------------------------------------------------------*/
-const ValueSetting::Option Node::value(const String& name) const {
+ValueSetting::Option Node::setting(const String& name) const {
 	if (!isObject())
 		return std::nullopt;
 	if (auto iter = object().find(name); (iter != object().end()) && (iter->second.index() == Index::value)) {
-		switch (static_cast<ValueIndex>(iter->second.value().index())) {
-			case Node::ValueIndex::boolType:
+		using enum Value::Index;
+		switch (iter->second.value().index()) {
+			case boolType:
 				return ValueSetting(get<bool>(iter->second.value()), name);
-			case Node::ValueIndex::intType:
+			case intType:
 				return ValueSetting(get<int64_t>(iter->second.value()), name);
-			case Node::ValueIndex::floatType:
+			case floatType:
 				return ValueSetting(get<double>(iter->second.value()), name);
-			case Node::ValueIndex::stringType:
+			case stringType:
 				return ValueSetting(get<String>(iter->second.value()), name);
 			default:
 				break;
 		}
 	}
 	return std::nullopt;
-} //Node::value
+} //Node::setting
 
 
 /*--------------------------------------------------------------------
@@ -349,8 +354,18 @@ Inventory::iterator Node::allocate(Inventory& inventory, const Identity& identit
 			}
 			base::operator=(Object{});
 			break;
-		case Index::array:
-			return inventory.end();	//If the node is already allocated as an array, we can't allocate sub-nodes
+		case Index::array: {
+				//Assume this node should actually be an object - first capture the existing content
+			auto child = *this;
+			base::operator=(Object{});
+				//We can only retain the existing node in an object if it's named
+			if (!child.array().itemTag.empty()) {
+				auto name = child.array().itemTag;
+				object()[name] = child;
+				object()[name].array().itemTag.clear();
+			}
+			break;
+		}
 		case Index::value:
 			base::operator=(Object{});	///If the node is a value, assume that it should transform to an object
 			break;
@@ -378,9 +393,21 @@ Inventory::iterator Node::allocateArray(Inventory& inventory, Inventory::iterato
 	auto child = object().find(item->identity().name);
 	if ((child == object().end()) || (child->second.index() != Index::value))
 		return inventory.end();
+		//Cache the value already in the child node
 	Node cached(Value{child->second.value()});
-	base::operator=(Array{}.withItemTag(item->identity().name));
-	array().push_back(cached);
+		//If there's only one item in the object, assume for the moment that the entire node is an array
+	if (object().size() == 1) {
+			//Reallocate this node an an array
+		base::operator=(Array{}.withItemTag(item->identity().name));
+			//Push the existing value into the new array
+		array().push_back(cached);
+	} else {
+			//Reallocate the node as an array
+		child->second.base::operator=(Array{}.withItemTag(item->identity().name));
+			//Push the existing value into the new array
+		child->second.push_back(cached);
+	}
+		//Clear the maximum items allowed in this node (i.e. no limit)
 	item->setMaximum();
 	return item;
 } //Node::allocateArray
