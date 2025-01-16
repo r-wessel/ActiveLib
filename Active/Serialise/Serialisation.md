@@ -355,15 +355,6 @@ Array nodes can also be constructed directly from STL sequence containers, e.g.:
 Node vectNode = std::vector{ 1, 2, 3, 4, 5, 6 };
 ```
 
-…or STL associative containers:
-```cpp
-Node mapNode = std::map<utility::String, int32_t>{
-	{ "first", 1},
-	{ "second", 2},
-	{ "third", 3},
-};
-```
-
 …and used in range-based for loops, e.g.:
 ```cpp
 for (auto& item : vectNode.array())
@@ -425,6 +416,7 @@ Node node(Object{});
 node["example"] = Example{"something", 1.23, 25};
 	//...and assign a node to an object
 Example obj = node["example"];
+```
 
 ## Document Based Application <a name="dba"></a>
 
