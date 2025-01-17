@@ -74,18 +74,18 @@ namespace active::database {
 		 @param objID The record ID
 		 @return The requested record (nullptr on failure). NB: The returned record is a clone of the original in storage
 		 */
-		virtual std::unique_ptr<Obj> read(const ObjID& objID) const;
+		virtual std::unique_ptr<Obj> readObject(const ObjID& objID) const;
 		/*!
 		 Read all records
 		 @return The requested records (nullptr on failure). NB: The returned records are cloned from storage
 		 */
-		virtual active::container::Vector<Obj> read() const;
+		virtual active::container::Vector<Obj> readObjects() const;
 		/*!
 		 Read a filtered list of records
 		 @param filter The record filter
 		 @return The filtered records (nullptr on failure). NB: The returned records are cloned from storage
 		 */
-		virtual active::container::Vector<Obj> read(const Filter& filter) const;
+		virtual active::container::Vector<Obj> readObjects(const Filter& filter) const;
 		/*!
 		 Get the cached object keys
 		 @return An array containing the cache keys
@@ -97,7 +97,7 @@ namespace active::database {
 		 Write a record to storage
 		 @param record The record to write (adds if new, or overwrites any record with the same ID)
 		 */
-		virtual void write(Obj& record) {
+		virtual void writeObject(Obj& record) {
 			erase(record.getID());
 			base::emplace(record.getID(), clone(record));
 		}
@@ -156,7 +156,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
-	typename std::unique_ptr<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read(const ObjID& objID) const {
+	typename std::unique_ptr<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::readObject(const ObjID& objID) const {
 		if (auto iter = base::find(objID); iter != base::end())
 			return clone(*iter->second);
 		return nullptr;
@@ -170,7 +170,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
-	typename active::container::Vector<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read() const {
+	typename active::container::Vector<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::readObjects() const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&result](const auto& item){ result.emplace_back(clone(*item.second)); });
 		return result;
@@ -186,7 +186,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
-	typename active::container::Vector<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::read(const Filter& filter) const {
+	typename active::container::Vector<Obj> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::readObjects(const Filter& filter) const {
 		active::container::Vector<Obj> result;
 		std::for_each(base::begin(), base::end(), [&](const auto& item){
 			if (filter(*item.second))
