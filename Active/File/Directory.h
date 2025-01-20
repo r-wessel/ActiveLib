@@ -79,6 +79,11 @@ namespace active::file {
 			@return The directory for application data
 		*/
 		static Directory::Option appData();
+		/*!
+			Get a directory for user-based configuration data (for *nix contexts only - prefer appData in most cases) *
+			@return The directory for user-based configuration data
+		*/
+		static Directory::Option config();
 		
 		// MARK: Functions (const)
 		

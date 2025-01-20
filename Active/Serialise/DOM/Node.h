@@ -302,11 +302,18 @@ namespace active::serialise::dom {
 		 @param memberName The object member name
 		 @return The member node (throws if not found)
 		 */
-		const Node& operator[](const char* memberName) const {
+		template<typename T> requires std::is_same_v<T, const char*>	//NB: This prevents some compilers from transforming a 0 index into nullptr
+		const Node& operator[](T memberName) const {
 			if (auto iter = object().find(utility::String{memberName}); iter != object().end())
 				return iter->second;
 			throw std::out_of_range("Node name not found");
 		}
+		/*!
+		 Subscript operator (NB: assumes node is an array - throws otherwise)
+		 @param index Index into the required array value
+		 @return The indexed value
+		 */
+		const Node& operator[](size_t index) const { return array()[index]; }
 
 		
 		
@@ -479,7 +486,48 @@ namespace active::serialise::dom {
 		Inventory::iterator allocateArray(Inventory& inventory, Inventory::iterator item) override;
 	};
 
-
 }
+
+
+	///Hashing for Node class, e.g. to use as a key in unordered_map
+template <>
+struct std::hash<active::serialise::dom::Node> {
+	using enum active::serialise::dom::Node::Index;
+	std::size_t operator()(const active::serialise::dom::Node& node) const {
+		switch (node.index()) {
+			case value:
+				using enum active::serialise::dom::Value::Index;
+				switch (node.value().index()) {
+					case boolType:
+						return hash<bool>()(std::get<bool>(node.value()));
+					case intType:
+						return hash<int64_t>()(node.value());
+					case floatType:
+						return hash<double>()(node.value());
+					case stringType:
+						return hash<std::string>()(node.value().operator active::utility::String());
+					default:
+						break;
+				}
+				return true;
+			case object: {
+				std::size_t result = 0;
+				for (const auto& item : node.object())
+					result = this->operator()(item.second) ^ rotl(result, 1);
+				return result;
+			}
+			case array: {
+				std::size_t result = 0;
+				for (const auto& item : node.array())
+					result = this->operator()(item) ^ rotl(result, 1);
+				return result;
+			}
+			default:
+				break;
+		}
+		return 0;
+	}
+};
+	
 
 #endif	//ACTIVE_SERIALISE_DOM_NODE

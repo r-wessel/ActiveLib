@@ -9,12 +9,37 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "shlobj_core.h"
 #endif
 #ifdef __APPLE__
-#include <sysdir.h>
 #include <glob.h>
+#include <sysdir.h>
+#include <wordexp.h>
 #endif
 
 using namespace active::file;
 using namespace active::utility;
+
+namespace {
+	
+#ifdef __APPLE__
+	/*!
+	 Expand a specified path, e.g. replacing "~" with user home directory path
+	 @param path The target path
+	 @return The expanded path (nullopt on failure)
+	 */
+	String::Option expandPath(const String& path) {
+		String::Option result;
+		String shellPath{path};
+			//Shell paths can't contain unescaped spaces
+		shellPath.replaceAll("\\ ", " ");	//Can't be certain that some spaces aren't already escaped - reduce all to spaces
+		shellPath.replaceAll(" ", "\\ ");
+		wordexp_t exp_result;
+		if (wordexp(shellPath.data(), &exp_result, 0) == 0)
+			result = String{exp_result.we_wordv[0]};
+		wordfree(&exp_result);
+		return result;
+	} //expandPath
+#endif
+							  
+}
 
 /*--------------------------------------------------------------------
 	Constructor
@@ -94,14 +119,35 @@ Directory::Option Directory::appData() {
 	CoTaskMemFree(static_cast<void*>(directorypath));
 #endif
 #ifdef __APPLE__
-	char directorypath[PATH_MAX];
+	char directorypath[4 * PATH_MAX];
 	auto state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT,
 													  SYSDIR_DOMAIN_MASK_USER);
-	if ((state = sysdir_get_next_search_path_enumeration(state, directorypath)))
-		result = Directory{String{directorypath}};
+	if ((state = sysdir_get_next_search_path_enumeration(state, directorypath))) {
+			//Expand the returned path, e.g. replacing "~" with user home directory path
+		if (auto expandedPath = expandPath(directorypath); expandedPath)
+			result = Directory{*expandedPath};
+	}
 #endif
 	return result;
 } //Directory::appData
+
+
+/*--------------------------------------------------------------------
+	Get a directory for user-based configuration data (for *nix contexts only - prefer appData in most cases) *
+ 
+	return: The directory for user-based configuration data
+  --------------------------------------------------------------------*/
+Directory::Option Directory::config() {
+	Directory::Option result;
+#ifdef WINDOWS
+	result = Directory::appData();	//Always use app data in Windows
+#endif
+#ifdef __APPLE__
+	if (auto expandedPath = expandPath("~/.config"); expandedPath)
+		result = Directory{*expandedPath};
+#endif
+	return result;
+} //Directory::config
 
 
 /*--------------------------------------------------------------------
