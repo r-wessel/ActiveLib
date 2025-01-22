@@ -83,6 +83,16 @@ namespace active::utility {
 			@return True if the guid has a value (non-nil)
 		*/
 		operator bool() const { return id || !name.empty(); }
+		/*!
+			Conversion operator
+			@return An unsigned 32-bit integer derived either (preferably) from the Guid or (alternatively) the name
+		*/
+		operator uint32_t() const;
+		/*!
+			Conversion operator
+			@return An unsigned 64-bit integer derived either (preferably) from the Guid or (alternatively) the name
+		*/
+		operator uint64_t() const;
 		
 		// MARK: - Functions (const)
 		
