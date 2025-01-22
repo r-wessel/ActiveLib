@@ -10,12 +10,15 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include <array>
 
+namespace active::primitive {
+	class Vertex;
+}
+
 namespace active::geometry {
 	
 	class Line;
 	class Matrix4x4;
 	class Vector3;
-	class Vertex;
 	
 	///A 1x4 vector class
 	class Vector4 {
@@ -42,7 +45,7 @@ namespace active::geometry {
 			@param y Y coefficient
 			@param z Z coefficient
 		*/
-		Vector4(const double& x, const double& y, const double& z);
+		Vector4(double x, double y, double z);
 		/*!
 			Constructor
 			@param source A point to construct the vector from
@@ -52,7 +55,7 @@ namespace active::geometry {
 			Constructor
 			@param source A vertex to construct the vector from
 		*/
-		explicit Vector4(const Vertex& source);
+		explicit Vector4(const primitive::Vertex& source);
 		/*!
 			Constructor
 			@param source A line to construct the vector from
@@ -86,7 +89,7 @@ namespace active::geometry {
 			@param source The vertex to copy
 			@return A reference to this
 		*/
-		Vector4& operator=(const Vertex& source);
+		Vector4& operator=(const primitive::Vertex& source);
 		/*!
 			Assignment operator
 			@param source The object to copy
@@ -174,7 +177,7 @@ namespace active::geometry {
 			Conversion operator
 			@return Vertex derived from this
 		*/
-		operator Vertex() const;
+		operator primitive::Vertex() const;
 		
 		// MARK: - Functions (const)
 		

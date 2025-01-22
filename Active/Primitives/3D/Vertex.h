@@ -3,8 +3,8 @@ Copyright 2024 Ralph Wessel and Hugh Wessel
 Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
 */
 
-#ifndef ACTIVE_GEOMETRY_VERTEX
-#define ACTIVE_GEOMETRY_VERTEX
+#ifndef ACTIVE_PRIMITIVE_VERTEX
+#define ACTIVE_PRIMITIVE_VERTEX
 
 #include "Active/Geometry/Position.h"
 #include "Active/Utility/Cloner.h"
@@ -14,14 +14,16 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <optional>
 
 namespace active::geometry {
-	
 	class Matrix3x3;
 	class Matrix4x4;
+}
 
+namespace active::primitive {
+	
 	/*!
 	 A class to represent a point in 3-dimensional space, i.e. with x, y, z coordinates
 	 
-	 Use this class in preference to Point in cases where memory overheads are important. Point has functions which means that
+	 Use this class in preference to Point in cases where memory overheads are important. Point has virtual functions which means that
 	 every allocated instance uses an extra 8 bytes.
 	*/
 	class Vertex {
@@ -29,7 +31,7 @@ namespace active::geometry {
 		
 		// MARK: - Types
 		
-		using enum Position;
+		using enum geometry::Position;
 
 			///Unique pointer
 		using Unique = std::unique_ptr<Vertex>;
@@ -134,13 +136,13 @@ namespace active::geometry {
 			@param matrix The matrix to multiply the point by
 			@return The result of the multiplication
 		*/
-		Vertex operator* (const Matrix3x3& matrix) const;
+		Vertex operator* (const active::geometry::Matrix3x3& matrix) const;
 		/*!
 			Multiplication operator
 			@param matrix The matrix to multiply the point by
 			@return The result of the multiplication
 		*/
-		Vertex operator* (const Matrix4x4& matrix) const;
+		Vertex operator* (const active::geometry::Matrix4x4& matrix) const;
 		/*!
 			Multiplication and assignment operator
 			@param mult The factor to multiply the point by
@@ -158,13 +160,13 @@ namespace active::geometry {
 			@param matrix The matrix to multiply the point by
 			@return A reference to this
 		*/
-		Vertex& operator*= (const Matrix3x3& matrix);
+		Vertex& operator*= (const active::geometry::Matrix3x3& matrix);
 		/*!
 			Multiplication and assignment operator
 			@param matrix The matrix to multiply the point by
 			@return A reference to this
 		*/
-		Vertex& operator*= (const Matrix4x4& matrix);
+		Vertex& operator*= (const active::geometry::Matrix4x4& matrix);
 		/*!
 			Division operator
 			@param mult The factor to divide the point by
@@ -250,4 +252,4 @@ namespace active::geometry {
 
 }
 
-#endif	//ACTIVE_GEOMETRY_VERTEX
+#endif	//ACTIVE_PRIMITIVE_VERTEX

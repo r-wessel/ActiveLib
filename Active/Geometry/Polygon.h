@@ -190,16 +190,28 @@ namespace active::geometry {
 		Polygon& operator-= (const Point& offset);
 		/*!
 			Multiplication operator
-			@param mult The amount to scale the polygon by
+			@param mult The amount to multiply the polygon by
 			@return A scaled copy of this
 		*/
-		Polygon operator* (const double& mult) const;
+		Polygon operator* (double mult) const;
 		/*!
 			Multiplication with assignment operator
-			@param mult The amount to scale the polygon by
+			@param mult The amount to multiply the polygon by
 			@return A reference to this
 		*/
-		Polygon& operator*= (const double& mult);
+		Polygon& operator*= (double mult);
+		/*!
+			Multiplication operator
+			@param mult The amount to multiply the polygon by
+			@return A scaled copy of this
+		*/
+		Polygon operator* (const Point& mult) const;
+		/*!
+			Multiplication with assignment operator
+			@param mult The amount to multiply the polygon by
+			@return A reference to this
+		*/
+		Polygon& operator*= (const Point& mult);
 		/*!
 			Multiplication operator
 			@param mult The matrix to multiply the polygon by
@@ -229,13 +241,13 @@ namespace active::geometry {
 			@param mult The amount to scale the polygon by
 			@return A scaled copy of this
 		*/
-		Polygon operator/ (const double& mult) const;
+		Polygon operator/ (double mult) const;
 		/*!
 			Division with assignment operator
 			@param mult The amount to scale the polygon by
 			@return A reference to this
 		*/
-		Polygon& operator/= (const double& mult);
+		Polygon& operator/= (double mult);
 
 		//MARK: - Functions (const)
 		

@@ -59,7 +59,7 @@ namespace active::geometry {
 			@param y Y coordinate
 			@param z Z coordinate
 		*/
-		Point(const double& x, const double& y, const double& z = 0.0);
+		Point(double x, double y, double z = 0.0);
 		/*!
 			Constructor
 			@param source2D A 2D point, i.e. only the x/y coordinates are relevant
@@ -140,7 +140,7 @@ namespace active::geometry {
 			@param mult The factor to multiply the point by
 			@return The result of the multiplication of this and the specified factor
 		*/
-		Point operator* (const double& mult) const;
+		Point operator* (double mult) const;
 		/*!
 			Multiplication operator
 			@param mult The x/y/z factors to multiply the point by
@@ -164,7 +164,7 @@ namespace active::geometry {
 			@param mult The factor to multiply the point by
 			@return A reference to this
 		*/
-		virtual Point& operator*= (const double& mult);
+		virtual Point& operator*= (double mult);
 		/*!
 			Multiplication and assignment operator
 			@param mult The x/y/z factors to multiply the point by
@@ -188,13 +188,13 @@ namespace active::geometry {
 			@param mult The factor to divide the point by
 			@return The result of the division of this by the specified factor
 		*/
-		Point operator/ (const double& mult) const;
+		Point operator/ (double mult) const;
 		/*!
 			Division and assignment operator
 			@param mult The factor to divide the point by
 			@return A reference to this
 		*/
-		virtual Point& operator/= (const double& mult);
+		virtual Point& operator/= (double mult);
 		
 		// MARK: - Functions (const)
 		

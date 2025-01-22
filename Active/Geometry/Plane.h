@@ -86,7 +86,7 @@ namespace active::geometry {
 			@param mult The factor to multiply this by
 			@return The result of the multiplication of this and the specified factor
 		*/
-		virtual Plane operator* (const double& mult) const;
+		virtual Plane operator* (double mult) const;
 		/*!
 			Multiplication operator
 			@param matrix The matrix to multiply this by
@@ -104,7 +104,7 @@ namespace active::geometry {
 			@param mult The factor to multiply this by
 			@return A reference to this
 		*/
-		virtual Plane& operator*= (const double& mult);
+		virtual Plane& operator*= (double mult);
 		/*!
 			Multiplication and assignment operator
 			@param matrix The matrix to multiply this by

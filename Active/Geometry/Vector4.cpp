@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/MathFunctions.h"
 #include "Active/Geometry/Matrix4x4.h"
 #include "Active/Geometry/Vector3.h"
-#include "Active/Geometry/Vertex.h"
+#include "Active/Primitives/3D/Vertex.h"
 
 using namespace active::geometry;
 using namespace active::math;
@@ -32,7 +32,7 @@ Vector4::Vector4() {
 	y: Y coefficient
 	z: Z coefficient
   --------------------------------------------------------------------*/
-Vector4::Vector4(const double& x, const double& y, const double& z) {
+Vector4::Vector4(double x, double y, double z) {
 	m_vector[0] = x;
 	m_vector[1] = y;
 	m_vector[2] = z;
@@ -54,7 +54,7 @@ Vector4::Vector4(const Point& source) {
 	
 	source: The vertex to copy
   --------------------------------------------------------------------*/
-Vector4::Vector4(const Vertex& source) {
+Vector4::Vector4(const primitive::Vertex& source) {
 	*this = source;
 } //Vector4::Vector4
 
@@ -113,7 +113,7 @@ Vector4& Vector4::operator=(const Point& source) {
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Vector4& Vector4::operator=(const Vertex& source) {
+Vector4& Vector4::operator=(const primitive::Vertex& source) {
 	m_vector[0] = source.x;
 	m_vector[1] = source.y;
 	m_vector[2] = source.z;
@@ -295,8 +295,8 @@ Vector4::operator Point() const {
 	
 	return: A vertex derived from this vector
   --------------------------------------------------------------------*/
-Vector4::operator Vertex() const {
-	return Vertex(m_vector[0], m_vector[1], m_vector[2]);
+Vector4::operator primitive::Vertex() const {
+	return primitive::Vertex(m_vector[0], m_vector[1], m_vector[2]);
 } //Vector4::operator Vertex
 
 // MARK: - Functions (const)

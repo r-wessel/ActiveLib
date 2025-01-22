@@ -3,7 +3,7 @@ Copyright 2024 Ralph Wessel and Hugh Wessel
 Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
 */
 
-#include "Active/Geometry/Vertex.h"
+#include "Active/Primitives/3D/Vertex.h"
 
 #include "Active/Utility/MathFunctions.h"
 #include "Active/Geometry/Matrix3x3.h"
@@ -13,7 +13,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include <cmath>
 
-using namespace active::geometry;
+using namespace active;
+using namespace active::primitive;
 using namespace active::math;
 
 /*--------------------------------------------------------------------
@@ -171,8 +172,8 @@ Vertex Vertex::operator* (const Vertex& mult) const {
 	
 	return: The result of the multiplication
   --------------------------------------------------------------------*/
-Vertex Vertex::operator* (const Matrix3x3& matrix) const {
-	return Vector3(*this) * matrix;
+Vertex Vertex::operator* (const geometry::Matrix3x3& matrix) const {
+	return geometry::Vector3(*this) * matrix;
 } //Vertex::operator*
 
 
@@ -183,8 +184,8 @@ Vertex Vertex::operator* (const Matrix3x3& matrix) const {
 	
 	return: The result of the multiplication
   --------------------------------------------------------------------*/
-Vertex Vertex::operator* (const Matrix4x4& matrix) const {
-	return Vector4(*this) * matrix;
+Vertex Vertex::operator* (const geometry::Matrix4x4& matrix) const {
+	return geometry::Vector4(*this) * matrix;
 } //Vertex::operator*
 
 
@@ -225,8 +226,8 @@ Vertex& Vertex::operator*= (const Vertex& mult) {
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Vertex& Vertex::operator*= (const Matrix3x3& matrix) {
-	return (*this = Vector3(*this) * matrix);
+Vertex& Vertex::operator*= (const geometry::Matrix3x3& matrix) {
+	return (*this = geometry::Vector3(*this) * matrix);
 } //Vertex::operator*=
 
 
@@ -237,8 +238,8 @@ Vertex& Vertex::operator*= (const Matrix3x3& matrix) {
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Vertex& Vertex::operator*= (const Matrix4x4& matrix) {
-	return (*this = Vector4(*this) * matrix);
+Vertex& Vertex::operator*= (const geometry::Matrix4x4& matrix) {
+	return (*this = geometry::Vector4(*this) * matrix);
 } //Vertex::operator*=
 
 

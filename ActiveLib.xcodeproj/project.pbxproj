@@ -10,6 +10,17 @@
 		2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */; };
 		2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */; };
 		2123DD2B2D4005340090A4FE /* NameID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD2A2D4005340090A4FE /* NameID.cpp */; };
+		2123DD4A2D414C1D0090A4FE /* Layered.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD2E2D414C1D0090A4FE /* Layered.h */; };
+		2123DD4B2D414C1D0090A4FE /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD352D414C1D0090A4FE /* Point.h */; };
+		2123DD4C2D414C1D0090A4FE /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD332D414C1D0090A4FE /* Path.h */; };
+		2123DD4D2D414C1D0090A4FE /* Primitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD2F2D414C1D0090A4FE /* Primitive.h */; };
+		2123DD4F2D414C1D0090A4FE /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD372D414C1D0090A4FE /* Text.h */; };
+		2123DD532D414C1D0090A4FE /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD362D414C1D0090A4FE /* Point.cpp */; };
+		2123DD592D414C1D0090A4FE /* Primitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD302D414C1D0090A4FE /* Primitive.cpp */; };
+		2123DD5A2D414C1D0090A4FE /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD382D414C1D0090A4FE /* Text.cpp */; };
+		2123DD5B2D414C1D0090A4FE /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD342D414C1D0090A4FE /* Path.cpp */; };
+		2123DD632D414CF00090A4FE /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD612D414CF00090A4FE /* Vertex.h */; };
+		2123DD642D414CF00090A4FE /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD622D414CF00090A4FE /* Vertex.cpp */; };
 		21244D022D24387F002E3526 /* Entry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D012D24387F002E3526 /* Entry.cpp */; };
 		21244D062D2444DA002E3526 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D042D2444DA002E3526 /* Node.cpp */; };
 		21244D072D2444DA002E3526 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 21244D032D2444DA002E3526 /* Node.h */; };
@@ -118,8 +129,6 @@
 		21AE195B2CC297A4004DBCFC /* VolumeUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AE19592CC297A4004DBCFC /* VolumeUnit.h */; };
 		21AE195C2CC297A4004DBCFC /* VolumeUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */; };
 		21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AE195D2CC29AB9004DBCFC /* VolumeValue.h */; };
-		21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9AB2CA445C4000B8681 /* Vertex.h */; };
-		21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9AC2CA445C4000B8681 /* Vertex.cpp */; };
 		21AEF9CA2CA82393000B8681 /* SHA256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9C82CA82393000B8681 /* SHA256.cpp */; };
 		21AEF9CB2CA82393000B8681 /* SHA256.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9C92CA82393000B8681 /* SHA256.h */; };
 		21AEF9CD2CA8A96D000B8681 /* SHA256Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */; };
@@ -173,6 +182,17 @@
 
 /* Begin PBXFileReference section */
 		2123DD2A2D4005340090A4FE /* NameID.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NameID.cpp; sourceTree = "<group>"; };
+		2123DD2E2D414C1D0090A4FE /* Layered.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Layered.h; sourceTree = "<group>"; };
+		2123DD2F2D414C1D0090A4FE /* Primitive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Primitive.h; sourceTree = "<group>"; };
+		2123DD302D414C1D0090A4FE /* Primitive.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Primitive.cpp; sourceTree = "<group>"; };
+		2123DD332D414C1D0090A4FE /* Path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
+		2123DD342D414C1D0090A4FE /* Path.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
+		2123DD352D414C1D0090A4FE /* Point.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
+		2123DD362D414C1D0090A4FE /* Point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
+		2123DD372D414C1D0090A4FE /* Text.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
+		2123DD382D414C1D0090A4FE /* Text.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
+		2123DD612D414CF00090A4FE /* Vertex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
+		2123DD622D414CF00090A4FE /* Vertex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
 		21244D012D24387F002E3526 /* Entry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entry.cpp; sourceTree = "<group>"; };
 		21244D032D2444DA002E3526 /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		21244D042D2444DA002E3526 /* Node.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
@@ -399,8 +419,6 @@
 		21AE19592CC297A4004DBCFC /* VolumeUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeUnit.h; sourceTree = "<group>"; };
 		21AE195A2CC297A4004DBCFC /* VolumeUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VolumeUnit.cpp; sourceTree = "<group>"; };
 		21AE195D2CC29AB9004DBCFC /* VolumeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VolumeValue.h; sourceTree = "<group>"; };
-		21AEF9AB2CA445C4000B8681 /* Vertex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
-		21AEF9AC2CA445C4000B8681 /* Vertex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
 		21AEF9B12CA5BB62000B8681 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Manager.h; sourceTree = "<group>"; };
 		21AEF9C82CA82393000B8681 /* SHA256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SHA256.cpp; sourceTree = "<group>"; };
 		21AEF9C92CA82393000B8681 /* SHA256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA256.h; sourceTree = "<group>"; };
@@ -471,6 +489,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2123DD3B2D414C1D0090A4FE /* 2D */ = {
+			isa = PBXGroup;
+			children = (
+				2123DD2E2D414C1D0090A4FE /* Layered.h */,
+				2123DD302D414C1D0090A4FE /* Primitive.cpp */,
+				2123DD2F2D414C1D0090A4FE /* Primitive.h */,
+				2123DD342D414C1D0090A4FE /* Path.cpp */,
+				2123DD332D414C1D0090A4FE /* Path.h */,
+				2123DD362D414C1D0090A4FE /* Point.cpp */,
+				2123DD352D414C1D0090A4FE /* Point.h */,
+				2123DD382D414C1D0090A4FE /* Text.cpp */,
+				2123DD372D414C1D0090A4FE /* Text.h */,
+			);
+			path = 2D;
+			sourceTree = "<group>";
+		};
+		2123DD472D414C1D0090A4FE /* 3D */ = {
+			isa = PBXGroup;
+			children = (
+				2123DD622D414CF00090A4FE /* Vertex.cpp */,
+				2123DD612D414CF00090A4FE /* Vertex.h */,
+			);
+			path = 3D;
+			sourceTree = "<group>";
+		};
+		2123DD482D414C1D0090A4FE /* Primitives */ = {
+			isa = PBXGroup;
+			children = (
+				2123DD3B2D414C1D0090A4FE /* 2D */,
+				2123DD472D414C1D0090A4FE /* 3D */,
+			);
+			path = Primitives;
+			sourceTree = "<group>";
+		};
 		21244D052D2444DA002E3526 /* DOM */ = {
 			isa = PBXGroup;
 			children = (
@@ -491,6 +543,7 @@
 				21F93ACC2B2B67FC009A2C5B /* Event */,
 				212A83432AE47AD9001EAFE7 /* File */,
 				212A83832AE47AD9001EAFE7 /* Geometry */,
+				2123DD482D414C1D0090A4FE /* Primitives */,
 				212A834E2AE47AD9001EAFE7 /* Serialise */,
 				212A83AC2AE47AD9001EAFE7 /* Setting */,
 				212A83BB2AE47AD9001EAFE7 /* Utility */,
@@ -732,8 +785,6 @@
 				212A83AB2AE47AD9001EAFE7 /* Vector3.h */,
 				212A838A2AE47AD9001EAFE7 /* Vector4.cpp */,
 				212A83A32AE47AD9001EAFE7 /* Vector4.h */,
-				21AEF9AC2CA445C4000B8681 /* Vertex.cpp */,
-				21AEF9AB2CA445C4000B8681 /* Vertex.h */,
 				212A83852AE47AD9001EAFE7 /* XInfo.h */,
 				212A839F2AE47AD9001EAFE7 /* XList.cpp */,
 				212A83992AE47AD9001EAFE7 /* XList.h */,
@@ -1098,7 +1149,11 @@
 				21F93ADC2B2C6E9C009A2C5B /* Subscriber.h in Headers */,
 				21932D4F2BE29C69005DB06E /* SerialiseArrayTester.h in Headers */,
 				21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */,
-				21AEF9AD2CA445C4000B8681 /* Vertex.h in Headers */,
+				2123DD4A2D414C1D0090A4FE /* Layered.h in Headers */,
+				2123DD4B2D414C1D0090A4FE /* Point.h in Headers */,
+				2123DD4C2D414C1D0090A4FE /* Path.h in Headers */,
+				2123DD4D2D414C1D0090A4FE /* Primitive.h in Headers */,
+				2123DD4F2D414C1D0090A4FE /* Text.h in Headers */,
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
 				21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */,
 				216DFFAC2AE87766009110CF /* UInt32Value.h in Headers */,
@@ -1110,6 +1165,7 @@
 				215F914D2BC9DA1E0052BFC8 /* AreaUnit.h in Headers */,
 				21932D3F2BE13F4D005DB06E /* AreaValue.h in Headers */,
 				215106B92AE96EFF0022CD24 /* HashMap.h in Headers */,
+				2123DD632D414CF00090A4FE /* Vertex.h in Headers */,
 				2146619C2C263C550048BBA7 /* Finish.h in Headers */,
 				2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */,
 				214EA4EE2BAAF8D7008E5358 /* XMLLength.h in Headers */,
@@ -1280,7 +1336,6 @@
 				212A84252AE47AD9001EAFE7 /* Plane.cpp in Sources */,
 				214EA4D22BA488DA008E5358 /* Object.cpp in Sources */,
 				212A83D72AE47AD9001EAFE7 /* Path.cpp in Sources */,
-				21AEF9AE2CA445C4000B8681 /* Vertex.cpp in Sources */,
 				21932D4E2BE29C69005DB06E /* SerialiseArrayTester.cpp in Sources */,
 				215F91372BC82A150052BFC8 /* LengthUnit.cpp in Sources */,
 				212A84362AE47AD9001EAFE7 /* Memory.cpp in Sources */,
@@ -1295,6 +1350,10 @@
 				212A83DD2AE47AD9001EAFE7 /* XMLTransport.cpp in Sources */,
 				212A84032AE47AD9001EAFE7 /* Leveller.cpp in Sources */,
 				21D0BD362C8727CE0077E104 /* SQLiteCore.cpp in Sources */,
+				2123DD532D414C1D0090A4FE /* Point.cpp in Sources */,
+				2123DD592D414C1D0090A4FE /* Primitive.cpp in Sources */,
+				2123DD5A2D414C1D0090A4FE /* Text.cpp in Sources */,
+				2123DD5B2D414C1D0090A4FE /* Path.cpp in Sources */,
 				212A840C2AE47AD9001EAFE7 /* PolyEdge.cpp in Sources */,
 				212A83D42AE47AD9001EAFE7 /* Directory.cpp in Sources */,
 				212A84002AE47AD9001EAFE7 /* Line.cpp in Sources */,
@@ -1307,6 +1366,7 @@
 				21244D062D2444DA002E3526 /* Node.cpp in Sources */,
 				215F91552BCBCFAE0052BFC8 /* AngleValue.cpp in Sources */,
 				212A84192AE47AD9001EAFE7 /* XPoint.cpp in Sources */,
+				2123DD642D414CF00090A4FE /* Vertex.cpp in Sources */,
 				21C253622B94578F003B2F63 /* Value.cpp in Sources */,
 				212A83E62AE47AD9001EAFE7 /* XMLProlog.cpp in Sources */,
 				215F91102BC574790052BFC8 /* Base64Transport.cpp in Sources */,

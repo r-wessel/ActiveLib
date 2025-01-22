@@ -127,8 +127,8 @@ namespace active::geometry {
 		virtual Rotater& reverse() { if (m_isActive) setAngle(-getAngle()); return *this; }
 		
 	protected:
-		const double& k1() const { return m_k1; }
-		const double& k2() const { return m_k2; }
+		double k1() const { return m_k1; }
+		double k2() const { return m_k2; }
 		
 	private:
 		bool m_isActive;

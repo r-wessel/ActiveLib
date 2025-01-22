@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_ATTRIBUTE_TEXT_STYLE
 
 #include "Active/Attribute/Colour.h"
+#include "Active/Attribute/Pen.h"
 #include "Active/Geometry/Anchor2D.h"
 #include "Active/Utility/String.h"
 
@@ -42,10 +43,12 @@ namespace active::attribute {
 		utility::String fontName;
 			///Text size in points
 		float size = 12.0;
-			///Text body colour
-		Colour bodyColour = colour::black;
+			///Text body colour (nullopt = no fill colour, e.g. outlined)
+		Colour::Option bodyColour = colour::black;
 			///Text outline colour (nullopt = same as body colour)
 		Colour::Option outlineColour;
+			///Text outline pen
+		Pen outlinePen{Pen::standard[Pen::hairline]};
 			///Anchor position for the rectlinear text bounds
 		geometry::Anchor2D anchor = centreHalf;
 			///True if the text can be orientated to suit reading standards, e.g. upright
