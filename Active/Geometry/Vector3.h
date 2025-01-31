@@ -66,10 +66,6 @@ namespace active::geometry {
 			@param source The object to copy
 		*/
 		Vector3(const Vector3& source);
-		/*!
-			Destructor
-		*/
-		virtual ~Vector3() = default;
 		
 		// MARK: - Operators
 		

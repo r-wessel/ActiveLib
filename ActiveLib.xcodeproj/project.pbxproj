@@ -21,6 +21,10 @@
 		2123DD5B2D414C1D0090A4FE /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD342D414C1D0090A4FE /* Path.cpp */; };
 		2123DD632D414CF00090A4FE /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD612D414CF00090A4FE /* Vertex.h */; };
 		2123DD642D414CF00090A4FE /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD622D414CF00090A4FE /* Vertex.cpp */; };
+		2123DD662D415EEF0090A4FE /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD652D415EEF0090A4FE /* Mesh.h */; };
+		2123DD682D415F5E0090A4FE /* Edge.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD672D415F5E0090A4FE /* Edge.h */; };
+		2123DD6A2D4185E90090A4FE /* Index.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD692D4185E90090A4FE /* Index.h */; };
+		2123DD6C2D418BBB0090A4FE /* Face.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD6B2D418BBB0090A4FE /* Face.h */; };
 		21244D022D24387F002E3526 /* Entry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D012D24387F002E3526 /* Entry.cpp */; };
 		21244D062D2444DA002E3526 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21244D042D2444DA002E3526 /* Node.cpp */; };
 		21244D072D2444DA002E3526 /* Node.h in Headers */ = {isa = PBXBuildFile; fileRef = 21244D032D2444DA002E3526 /* Node.h */; };
@@ -193,6 +197,10 @@
 		2123DD382D414C1D0090A4FE /* Text.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
 		2123DD612D414CF00090A4FE /* Vertex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
 		2123DD622D414CF00090A4FE /* Vertex.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Vertex.cpp; sourceTree = "<group>"; };
+		2123DD652D415EEF0090A4FE /* Mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
+		2123DD672D415F5E0090A4FE /* Edge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Edge.h; sourceTree = "<group>"; };
+		2123DD692D4185E90090A4FE /* Index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Index.h; sourceTree = "<group>"; };
+		2123DD6B2D418BBB0090A4FE /* Face.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Face.h; sourceTree = "<group>"; };
 		21244D012D24387F002E3526 /* Entry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Entry.cpp; sourceTree = "<group>"; };
 		21244D032D2444DA002E3526 /* Node.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
 		21244D042D2444DA002E3526 /* Node.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
@@ -508,6 +516,10 @@
 		2123DD472D414C1D0090A4FE /* 3D */ = {
 			isa = PBXGroup;
 			children = (
+				2123DD672D415F5E0090A4FE /* Edge.h */,
+				2123DD6B2D418BBB0090A4FE /* Face.h */,
+				2123DD692D4185E90090A4FE /* Index.h */,
+				2123DD652D415EEF0090A4FE /* Mesh.h */,
 				2123DD622D414CF00090A4FE /* Vertex.cpp */,
 				2123DD612D414CF00090A4FE /* Vertex.h */,
 			);
@@ -1156,12 +1168,15 @@
 				2123DD4F2D414C1D0090A4FE /* Text.h in Headers */,
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
 				21AE195E2CC29AB9004DBCFC /* VolumeValue.h in Headers */,
+				2123DD682D415F5E0090A4FE /* Edge.h in Headers */,
 				216DFFAC2AE87766009110CF /* UInt32Value.h in Headers */,
+				2123DD6C2D418BBB0090A4FE /* Face.h in Headers */,
 				218953A42C0C9CB00078F182 /* Version.h in Headers */,
 				21329F562BFB8E9B00B5C7AF /* Mover.h in Headers */,
 				21257AB42C19D10C00B710AC /* DataFormat.h in Headers */,
 				21932D412BE13FD8005DB06E /* MassValue.h in Headers */,
 				218061DA2BEE581000F8BD9E /* StackBufferOut.h in Headers */,
+				2123DD662D415EEF0090A4FE /* Mesh.h in Headers */,
 				215F914D2BC9DA1E0052BFC8 /* AreaUnit.h in Headers */,
 				21932D3F2BE13F4D005DB06E /* AreaValue.h in Headers */,
 				215106B92AE96EFF0022CD24 /* HashMap.h in Headers */,
@@ -1172,6 +1187,7 @@
 				218484C62AF92D7300280FEF /* UniqueString.h in Headers */,
 				21F93AD82B2C6BFD009A2C5B /* Message.h in Headers */,
 				2146619E2C263C550048BBA7 /* TextStyle.h in Headers */,
+				2123DD6A2D4185E90090A4FE /* Index.h in Headers */,
 				21F93ACB2B2B5DA2009A2C5B /* NameID.h in Headers */,
 				21D0BD852C8B56530077E104 /* Concepts.h in Headers */,
 				215F914E2BC9DA1E0052BFC8 /* MassUnit.h in Headers */,

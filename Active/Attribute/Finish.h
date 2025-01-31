@@ -23,13 +23,34 @@ namespace active::attribute {
 			Constructor
 			@param col The finish colour
 		*/
-		Finish(const Colour& col = colour::white) : colour{col} {
-		}
+		Finish(const Colour& col = colour::white) : colour{col} {}
+		/*!
+			Constructor
+			@param col The finish colour
+			@param ident The finish identifier
+		*/
+		Finish(const Colour& col, const utility::String& ident) : colour{col}, id{ident} {}
 
 		// MARK: Public variables
 
-			///Finish colour
+			///Finish colour (RGBA)
 		Colour colour;
+			///Specular colour (RGBA)
+		Colour specularColour;
+			///Emission colour (RGBA)
+		Colour emissionColour;
+			///Ambient reflection (0.0 -> 1.0)
+		double ambientReflection = 0.0;
+			///Diffuse reflection (0.0 -> 1.0)
+		double diffuseReflection = 0.0;
+			///Specular reflection (0.0 -> 1.0)
+		double specularReflection = 0.0;
+			///Metalness (0.0 -> 1.0)
+		double metalness = 0.0;
+			///Roughness (0.0 -> 1.0)
+		double roughness = 0.0;
+			///Finish identifier (optional - application-specific)
+		utility::String id;
 
 		// MARK: Functions (const)
 

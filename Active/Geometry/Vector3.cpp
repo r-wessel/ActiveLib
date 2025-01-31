@@ -52,6 +52,18 @@ Vector3::Vector3(const Point& source) {
 
 /*--------------------------------------------------------------------
 	Constructor
+ 
+	source: A vertex to construct the vector from
+  --------------------------------------------------------------------*/
+Vector3::Vector3(const primitive::Vertex& source) {
+	m_vector[0] = source.x;
+	m_vector[1] = source.y;
+	m_vector[2] = source.z;
+} //Vector3::Vector3
+
+
+/*--------------------------------------------------------------------
+	Constructor
 	
 	source: The object to copy
   --------------------------------------------------------------------*/

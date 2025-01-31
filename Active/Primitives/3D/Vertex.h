@@ -7,7 +7,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_PRIMITIVE_VERTEX
 
 #include "Active/Geometry/Position.h"
-#include "Active/Utility/Cloner.h"
+#include "Active/Primitives/3D/Index.h"
+#include "Active/Utility/Concepts.h"
 #include "Active/Utility/MathFunctions.h"
 
 #include <memory>
@@ -52,13 +53,19 @@ namespace active::primitive {
 			@param y Y coordinate
 			@param z Z coordinate
 		*/
-		Vertex(const double& x, const double& y, const double& z = 0.0);
+		Vertex(double x, double y, double z = 0.0);
 		/*!
 			Constructor
 			@param source2D A 2D point, i.e. only the x/y coordinates are relevant
 			@param z z coordinate
 		*/
 		Vertex(const Vertex& source2D, double z);
+		/*!
+			Constructor
+			@param source A 3D point
+		*/
+		template<typename T> requires utility::IsCoord3D<T>
+		Vertex(const T& source);
 		
 		// MARK: Public variables
 			
@@ -96,6 +103,13 @@ namespace active::primitive {
 		*/
 		Vertex& operator= (const Vertex& source);
 		/*!
+			Assignment operator
+			@param source The point to assign
+			@return A reference to this
+		*/
+		template<typename T> requires utility::IsCoord3D<T>
+		Vertex& operator= (const T& source);
+		/*!
 			Addition operator
 			@param offset The point to add
 			@return The sum of this and the specified points
@@ -124,7 +138,7 @@ namespace active::primitive {
 			@param mult The factor to multiply the point by
 			@return The result of the multiplication of this and the specified factor
 		*/
-		Vertex operator* (const double& mult) const;
+		Vertex operator* (double mult) const;
 		/*!
 			Multiplication operator
 			@param mult The x/y/z factors to multiply the point by
@@ -148,7 +162,7 @@ namespace active::primitive {
 			@param mult The factor to multiply the point by
 			@return A reference to this
 		*/
-		Vertex& operator*= (const double& mult);
+		Vertex& operator*= (double mult);
 		/*!
 			Multiplication and assignment operator
 			@param mult The x/y/z factors to multiply the point by
@@ -172,13 +186,19 @@ namespace active::primitive {
 			@param mult The factor to divide the point by
 			@return The result of the division of this by the specified factor
 		*/
-		Vertex operator/ (const double& mult) const;
+		Vertex operator/ (double mult) const;
 		/*!
 			Division and assignment operator
 			@param mult The factor to divide the point by
 			@return A reference to this
 		*/
-		Vertex& operator/= (const double& mult);
+		Vertex& operator/= (double mult);
+		/*!
+			Conversion operator
+			@return An equivalent 3D coord
+		*/
+		template<typename T> requires utility::IsCoord3D<T>
+		operator T() const;
 		
 		// MARK: - Functions (const)
 		
@@ -250,6 +270,67 @@ namespace active::primitive {
 		Vertex& movePolar(double len, double azim, double alt);
 	};
 
+	/*--------------------------------------------------------------------
+		Constructor
+	 
+		source: A 3D point
+	  --------------------------------------------------------------------*/
+	template<typename T> requires utility::IsCoord3D<T>
+	Vertex::Vertex(const T& source) {
+		if constexpr(utility::IsCoordLower3D<T>) {
+			x = source.x;
+			y = source.y;
+			z = source.z;
+		} else {
+			x = source.X;
+			y = source.Y;
+			z = source.Z;
+		}
+	} //Vertex::Vertex
+
+
+	/*--------------------------------------------------------------------
+		Assignment operator
+	 
+		source: The point to assign
+	 
+		return: A reference to this
+	  --------------------------------------------------------------------*/
+	template<typename T> requires utility::IsCoord3D<T>
+	inline Vertex& Vertex::operator= (const T& source) {
+		if constexpr(utility::IsCoordLower3D<T>) {
+			x = source.x;
+			y = source.y;
+			z = source.z;
+		} else {
+			x = source.X;
+			y = source.Y;
+			z = source.Z;
+		}
+		return *this;
+	} //Vertex::operator=
+	
+	
+	/*--------------------------------------------------------------------
+		Conversion operator
+	 
+		return: An equivalent 3D coord
+	  --------------------------------------------------------------------*/
+	template<typename T> requires utility::IsCoord3D<T>
+	Vertex::operator T() const {
+		T dest;
+		if constexpr(utility::IsCoordLower3D<T>) {
+			dest.x = x;
+			dest.y = y;
+			dest.z = z;
+		} else {
+			dest.X = x;
+			dest.Y = y;
+			dest.Z = z;
+		}
+		return dest;
+	}
+	
 }
 
 #endif	//ACTIVE_PRIMITIVE_VERTEX

@@ -11,6 +11,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Geometry/Vector3.h"
 #include "Active/Geometry/Vector4.h"
 
+#include "Active/Primitives/3D/Mesh.h"
+
 #include <cmath>
 
 using namespace active;
@@ -32,7 +34,7 @@ Vertex::Vertex() {
 	y: Y coordinate
 	z: Z coordinate
   --------------------------------------------------------------------*/
-Vertex::Vertex(const double& x, const double& y, const double& z) {
+Vertex::Vertex(double x, double y, double z) {
 	this->x = x;
 	this->y = y;
 	this->z = z;
@@ -148,7 +150,7 @@ Vertex& Vertex::operator-= (const Vertex& offset) {
 	return: The result of the multiplication of this and the
 				specified factor
   --------------------------------------------------------------------*/
-Vertex Vertex::operator* (const double& mult) const {
+Vertex Vertex::operator* (double mult) const {
 	return Vertex(*this) *= mult;
 } //Vertex::operator*
 
@@ -196,7 +198,7 @@ Vertex Vertex::operator* (const geometry::Matrix4x4& matrix) const {
 
 	return: A reference to this
   --------------------------------------------------------------------*/
-Vertex& Vertex::operator*= (const double& mult) {
+Vertex& Vertex::operator*= (double mult) {
 	x *= mult;
 	y *= mult;
 	z *= mult;
@@ -239,7 +241,7 @@ Vertex& Vertex::operator*= (const geometry::Matrix3x3& matrix) {
 	return: A reference to this
   --------------------------------------------------------------------*/
 Vertex& Vertex::operator*= (const geometry::Matrix4x4& matrix) {
-	return (*this = geometry::Vector4(*this) * matrix);
+	return (*this = geometry::Vector3(*this) * matrix);
 } //Vertex::operator*=
 
 
@@ -250,7 +252,7 @@ Vertex& Vertex::operator*= (const geometry::Matrix4x4& matrix) {
 
 	return: The result of the division of this by the specified factor
   --------------------------------------------------------------------*/
-Vertex Vertex::operator/ (const double& mult) const {
+Vertex Vertex::operator/ (double mult) const {
 	return Vertex(*this) /= mult;
 } //Vertex::operator/
 
@@ -262,7 +264,7 @@ Vertex Vertex::operator/ (const double& mult) const {
 
 	return: A reference to this
   --------------------------------------------------------------------*/
-Vertex& Vertex::operator/= (const double& mult) {
+Vertex& Vertex::operator/= (double mult) {
 	x /= mult;
 	y /= mult;
 	z /= mult;

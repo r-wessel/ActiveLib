@@ -108,15 +108,15 @@ XMLTransport().send(node, Identity{"sampleXML"}, xml);
   <someFloat>1.234</someFloat>
   <someBool>true</someBool>
   <someArray>
-    <item>1.23</item>
-    <item>25</item>
-    <item>text</item>
-    <item>false</item>
+	<item>1.23</item>
+	<item>25</item>
+	<item>text</item>
+	<item>false</item>
   </exampleArray>
   <someObject>
-    <objName>Sample</objName>
-    <objVal>5.432</objVal>
-    <objNum>9876</objNum>
+	<objName>Sample</objName>
+	<objVal>5.432</objVal>
+	<objNum>9876</objNum>
   </someObject>
 </sampleXML>
 ```
@@ -233,8 +233,8 @@ XMLTransport().send(node, Identity{"contact"}, xml);
   <surname>Bloggs</surname>
   <streetNo>123</streetNo>
   <phone>
-    <home>0123456789</home>
-    <work>0987654321</work>
+	<home>0123456789</home>
+	<work>0987654321</work>
   </phone>
   <wfh>true</wfh>
 </contact>
@@ -330,11 +330,11 @@ XMLTransport().send(testRoot.withItemTag("contact"), Identity{"contacts"}, xml);
 <?xml version="1.0" encoding="utf-8"?>
 <contacts>
   <contact>
-    <info>Joe</info>
-    <info>Bloggs</info>
-    <info>123</info>
-    <info>1.82</info>
-    <info>true</info>
+	<info>Joe</info>
+	<info>Bloggs</info>
+	<info>123</info>
+	<info>1.82</info>
+	<info>true</info>
   </contact>
 </contacts>
 ```
@@ -621,7 +621,7 @@ Serialisation and deserialisation can be implemented through the following steps
 		- Target class is unmodified (keeps functionality focussed, and is essential for 3rd-party code)
 		- Multiple schemas can be supported for the same object (where compliance with 3rd-party schemas is required)
 2. A subclass of `Package` may need to implement up to 4 key functions (as required - anything subclassed from `Item` typically needs none of them, but there can be exceptions):
-	- `bool fillInventory(Inventory& inventory) const`    
+	- `bool fillInventory(Inventory& inventory) const`	
 The `Inventory` is essentially the serialisation schema and should be populated with one `Entry` for every field (value/object) in the target to be (de)serialised, specifying:
 		- `index`: A number used to determine the serialisation order, i.e. index 0 is first
 		- `maximum`: The maximum number of instance of the field (can be unlimited for an array)
@@ -629,18 +629,18 @@ The `Inventory` is essentially the serialisation schema and should be populated 
 		- `isAttribute`: True if this field is an attribute. This is primarily important for XML, but can potentially be significant for JSON too
 		- `required`: Ignored for deserialisation. Can be `false` for serialisation if the field can be skipped, e.g. it's value matches the field default value.
 		- `owner`: The typeid of the field parent type. Used where a serialised element is either a composite or hierarchy of many objects, enabling each field to be bound to its parent.
-	- `Cargo::Unique getCargo(const Inventory::Item& item) const`    
+	- `Cargo::Unique getCargo(const Inventory::Item& item) const`	
 This function should return a `Cargo` container to send or receive data associated with the passed `Inventory::Item` (which combines an `Entry` with an `Identity`). The serialisation process will serialise and export the returned cargo. Deserialisation will populate the returned cargo with the imported deserialised data.
-	- `void setDefault()`    
+	- `void setDefault()`	
 Called during deserialisation only, before any deserialised data is retrieved. The target object/value should reset all its fields to their default state. For an array, this probably means clearing any existing content. This function should only be implemented where there is a suitable default state. Values subclassed from `Item` typically do not need this function.
-	- `bool validate()`    
+	- `bool validate()`	
 Called during deserialisation only, after all the data relevant to the target has been deserialised and populated into the target. The target object/value should return `true` if the deserialised data is valid, but this can also be used as an opportunity for completion processes, e.g. migrating legacy data, caching data for objects that can't be constructed yet, or amalgamating disparate items into a more complex structure. This function can be omitted if none of these processes are required. Sometimes required for subclasses of `Item`, but rarely. 
 	- `bool insert(Cargo::Unique&& cargo, const Inventory::Item& item)`   
 Required for deserialising arrays/dictionaries. When a new array instance is found, a `Cargo` instance is requested (using *getCargo*) to receive the deserialised data. Once the instance has been read and validated, this *insert* function is called. The *cargo* parameter is the new instance to be inserted, and *item* associates the *cargo* with an inventory entry (essential for objects that hold multiple arrays).
 3. A subclass of `Item` may also need to implement the following functions (if it isn't already using an existing `Wrapper`:
-	- `bool write(utility::String& dest) const`    
+	- `bool write(utility::String& dest) const`	
 Convert the `Item` value into a string for serialisation. Returning `false` indicates a bad value (`Transport` will throw an exception).
-	- `bool read(const utility::String& source)`    
+	- `bool read(const utility::String& source)`	
 Convert a serialised string back into a value. Returning `false` indicates a bad value (`Transport` will throw an exception)
 
 Any instance of a `Package` subclass, e.g. *someObject*,  can then be serialised into a `String` as JSON:
@@ -671,7 +671,7 @@ The `Object` class of the ActiveLib serialisation module is used as an implement
 	- Object
 		- Value0
 		- Value1
-		- Value2    
+		- Value2	
 ...etc
 
 </i>
@@ -838,7 +838,7 @@ A wrapper object could address this by gathering all the data (including the typ
 - Mark the `Entry` for these fields as *attributes* in the `Inventory`
 - Override 2 additional functions in the `Cargo` class
 	1. `bool isAttributeFirst() const`  
-When this function returns *true*, the deserialisation process will only recognise entries marked as attributes. All other data will be skipped over until either all the attributes have been found or the end of the scope has been reached.    
+When this function returns *true*, the deserialisation process will only recognise entries marked as attributes. All other data will be skipped over until either all the attributes have been found or the end of the scope has been reached.	
 	2. `bool finaliseAttributes()`   
 This function will be called when *isAttributeFirst()* returns true and the attributes have been read. This provides an opportunity for the correct object to be constructed (based on the attributes).
 > Note:  

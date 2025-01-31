@@ -31,6 +31,22 @@ namespace active::utility {
 		test = String{t};
 	};
 
+		///Object contains 3D coordinates (lower-case)
+	template<typename T>
+	concept IsCoordLower3D = requires(T t) {
+		std::is_arithmetic_v<decltype(t.x)> && std::is_arithmetic_v<decltype(t.y)> && std::is_arithmetic_v<decltype(t.z)>;
+	};
+
+		///Object contains 3D coordinates (upper-case)
+	template<typename T>
+	concept IsCoordUpper3D = requires(T t) {
+		std::is_arithmetic_v<decltype(t.X)> && std::is_arithmetic_v<decltype(t.Y)> && std::is_arithmetic_v<decltype(t.Z)>;
+	};
+
+		///Object contains 3D coordinates - used for interaction with 3rd-party coordinate types
+	template<typename T>
+	concept IsCoord3D = IsCoordLower3D<T> || IsCoordUpper3D<T>;
+
 }  // namespace active::utility
 
 #endif	//ACTIVE_UTILITY_CONCEPTS
