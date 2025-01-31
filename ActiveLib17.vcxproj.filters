@@ -116,6 +116,9 @@
     <Filter Include="Active\Primitives\3D">
       <UniqueIdentifier>{8075784b-e2a9-4240-ad60-5dc58b227832}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Active\Serialise\Management">
+      <UniqueIdentifier>{772542ee-3299-435c-b39c-5521e3716510}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Active\Container\HashMap.h">
@@ -565,6 +568,12 @@
     <ClInclude Include="Active\Primitives\3D\Vertex.h">
       <Filter>Active\Primitives\3D</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\Management\Management.h">
+      <Filter>Active\Serialise\Management</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Management\Manager.h">
+      <Filter>Active\Serialise\Management</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -785,6 +794,9 @@
     </ClCompile>
     <ClCompile Include="Active\Primitives\3D\Vertex.cpp">
       <Filter>Active\Primitives\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Inventory\Entry.cpp">
+      <Filter>Active\Serialise\Inventory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
