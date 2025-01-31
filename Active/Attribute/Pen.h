@@ -53,12 +53,10 @@ namespace active::attribute {
 			2.0,
 		};
 		
-		using enum Weight;
-		
 		// MARK: - Public variables
 		
 			///The pen weight
-		double weight = standard[thinnest];
+		double weight = standard[Weight::thinnest];
 	};
 	
 }

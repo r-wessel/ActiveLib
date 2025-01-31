@@ -295,8 +295,8 @@ Vector4::operator Point() const {
 	
 	return: A vertex derived from this vector
   --------------------------------------------------------------------*/
-Vector4::operator primitive::Vertex() const {
-	return primitive::Vertex(m_vector[0], m_vector[1], m_vector[2]);
+Vector4::operator active::primitive::Vertex() const {
+	return active::primitive::Vertex(m_vector[0], m_vector[1], m_vector[2]);
 } //Vector4::operator Vertex
 
 // MARK: - Functions (const)

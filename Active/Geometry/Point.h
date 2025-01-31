@@ -33,7 +33,7 @@ namespace active::geometry {
 		Note that this class serves for both 2D and 3D contexts (rather than having a separate class for each). Functionality that is specific
 		to either context is clearly labelled, e.g. 'isEqual2D' vs 'isEqual3D'.
 	*/
-	class Point : public utility::Cloner {
+	class Point : public virtual utility::Cloner {
 	public:
 		
 		// MARK: - Types

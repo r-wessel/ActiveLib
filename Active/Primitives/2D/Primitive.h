@@ -23,7 +23,7 @@ namespace active::primitive {
 	/*!
 	 Base class for 2D geometric primitives
 	 */
-	class Primitive: public Layered, public utility::Cloner {
+	class Primitive: public Layered, public virtual utility::Cloner {
 	public:
 
 		//MARK: - Types
@@ -63,11 +63,6 @@ namespace active::primitive {
 			Destructor
 		*/
 		virtual ~Primitive() = default;
-		/*!
-			Clone method
-			@return A clone of this object
-		*/
-		virtual Primitive* clonePtr() const = 0;
 
 		// MARK: Operators
 

@@ -55,7 +55,7 @@ Vector3::Vector3(const Point& source) {
  
 	source: A vertex to construct the vector from
   --------------------------------------------------------------------*/
-Vector3::Vector3(const primitive::Vertex& source) {
+Vector3::Vector3(const active::primitive::Vertex& source) {
 	m_vector[0] = source.x;
 	m_vector[1] = source.y;
 	m_vector[2] = source.z;
@@ -293,8 +293,8 @@ Vector3::operator Point() const {
 	
 	return: A vertex derived from this vector
   --------------------------------------------------------------------*/
-Vector3::operator primitive::Vertex() const {
-	return primitive::Vertex(m_vector[0], m_vector[1], m_vector[2]);
+Vector3::operator active::primitive::Vertex() const {
+	return active::primitive::Vertex(m_vector[0], m_vector[1], m_vector[2]);
 } //Vector3::operator Vertex
 
 // MARK: - Functions (const)

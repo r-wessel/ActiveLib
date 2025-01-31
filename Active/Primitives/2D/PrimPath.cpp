@@ -3,10 +3,28 @@ Copyright 2024 Ralph Wessel and Hugh Wessel
 Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
 */
 
-#include "Active/Primitives/2D/Point.h"
+#include "Active/Primitives/2D/PrimPath.h"
 
+using namespace active::geometry;
 using namespace active::primitive;
 using namespace active::utility;
+
+/*--------------------------------------------------------------------
+	Constructor
+ 
+	polygon: The primitive polygon
+	pn: The primitive linework pen
+	edgeCol: The edge colour (nullopt = no edge)
+	fillCol: The fill colour (nullopt = no fill)
+  --------------------------------------------------------------------*/
+Path::Path(const geometry::Polygon& polygon, attribute::Pen pn,
+							 attribute::Colour::Option edgeCol, attribute::Colour::Option fillCol) :
+		Primitive{pn, edgeCol, fillCol},
+		Polygon{static_cast<vertex_index>(polygon.size()), 0, polygon.isClosed} {
+	for (auto& vertex : polygon)
+		emplace_back(PolyPoint{*vertex});
+} //Path::Path
+
 
 /*--------------------------------------------------------------------
 	Add point coordinates
@@ -15,10 +33,10 @@ using namespace active::utility;
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Primitive& Point::add(const geometry::Point& toAdd) {
-	geometry::Point::operator+=(toAdd);
+Primitive& Path::add(const Point& toAdd) {
+	Polygon::operator+=(toAdd);
 	return Primitive::add(toAdd);
-} //Point::add
+} //Path::add
 
 
 /*--------------------------------------------------------------------
@@ -29,10 +47,10 @@ Primitive& Point::add(const geometry::Point& toAdd) {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Primitive& Point::multiply(double toMultiply, bool isRenderOffset) {
-	geometry::Point::operator*=(toMultiply);
+Primitive& Path::multiply(double toMultiply, bool isRenderOffset) {
+	Polygon::operator*=(toMultiply);
 	return Primitive::multiply(toMultiply);
-} //Point::multiply
+} //Path::multiply
 
 
 /*--------------------------------------------------------------------
@@ -43,10 +61,10 @@ Primitive& Point::multiply(double toMultiply, bool isRenderOffset) {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Primitive& Point::multiply(const geometry::Point& toMultiply, bool isRenderOffset) {
-	geometry::Point::operator*=(toMultiply);
+Primitive& Path::multiply(const Point& toMultiply, bool isRenderOffset) {
+	Polygon::operator*=(toMultiply);
 	return Primitive::multiply(toMultiply);
-} //Point::multiply
+} //Path::multiply
 
 
 /*--------------------------------------------------------------------
@@ -58,7 +76,7 @@ Primitive& Point::multiply(const geometry::Point& toMultiply, bool isRenderOffse
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Primitive& Point::multiply(const geometry::Matrix3x3& toMultiply, bool includeRenderSized, bool isRenderTranslation) {
-	geometry::Point::operator*=(toMultiply);
+Primitive& Path::multiply(const Matrix3x3& toMultiply, bool includeRenderSized, bool isRenderTranslation) {
+	Polygon::operator*=(toMultiply);
 	return Primitive::multiply(toMultiply, includeRenderSized, isRenderTranslation);
-} //Point::multiply
+} //Path::multiply

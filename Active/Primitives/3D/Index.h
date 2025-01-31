@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_PRIMITIVE_INDEX
 
 #include <limits>
+#include <stdint.h>
 
 namespace active::primitive {
 	
