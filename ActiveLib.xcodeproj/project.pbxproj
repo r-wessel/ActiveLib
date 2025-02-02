@@ -11,14 +11,10 @@
 		2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */; };
 		2123DD2B2D4005340090A4FE /* NameID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD2A2D4005340090A4FE /* NameID.cpp */; };
 		2123DD4A2D414C1D0090A4FE /* Layered.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD2E2D414C1D0090A4FE /* Layered.h */; };
-		2123DD4B2D414C1D0090A4FE /* Point.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD352D414C1D0090A4FE /* Point.h */; };
-		2123DD4C2D414C1D0090A4FE /* Path.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD332D414C1D0090A4FE /* Path.h */; };
 		2123DD4D2D414C1D0090A4FE /* Primitive.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD2F2D414C1D0090A4FE /* Primitive.h */; };
 		2123DD4F2D414C1D0090A4FE /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD372D414C1D0090A4FE /* Text.h */; };
-		2123DD532D414C1D0090A4FE /* Point.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD362D414C1D0090A4FE /* Point.cpp */; };
 		2123DD592D414C1D0090A4FE /* Primitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD302D414C1D0090A4FE /* Primitive.cpp */; };
 		2123DD5A2D414C1D0090A4FE /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD382D414C1D0090A4FE /* Text.cpp */; };
-		2123DD5B2D414C1D0090A4FE /* Path.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD342D414C1D0090A4FE /* Path.cpp */; };
 		2123DD632D414CF00090A4FE /* Vertex.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD612D414CF00090A4FE /* Vertex.h */; };
 		2123DD642D414CF00090A4FE /* Vertex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2123DD622D414CF00090A4FE /* Vertex.cpp */; };
 		2123DD662D415EEF0090A4FE /* Mesh.h in Headers */ = {isa = PBXBuildFile; fileRef = 2123DD652D415EEF0090A4FE /* Mesh.h */; };
@@ -107,6 +103,10 @@
 		218061DA2BEE581000F8BD9E /* StackBufferOut.h in Headers */ = {isa = PBXBuildFile; fileRef = 218061D92BEE580F00F8BD9E /* StackBufferOut.h */; };
 		218484C62AF92D7300280FEF /* UniqueString.h in Headers */ = {isa = PBXBuildFile; fileRef = 218484C42AF92D7300280FEF /* UniqueString.h */; };
 		218484C72AF92D7300280FEF /* UniqueString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218484C52AF92D7300280FEF /* UniqueString.cpp */; };
+		218802192D4EC4D400BD78DD /* PrimPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218802162D4EC4D400BD78DD /* PrimPath.cpp */; };
+		2188021A2D4EC4D400BD78DD /* PrimPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218802182D4EC4D400BD78DD /* PrimPoint.cpp */; };
+		2188021B2D4EC4D400BD78DD /* PrimPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 218802152D4EC4D400BD78DD /* PrimPath.h */; };
+		2188021C2D4EC4D400BD78DD /* PrimPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 218802172D4EC4D400BD78DD /* PrimPoint.h */; };
 		218953A42C0C9CB00078F182 /* Version.h in Headers */ = {isa = PBXBuildFile; fileRef = 218953A32C0C9CB00078F182 /* Version.h */; };
 		218953AC2C0F2A230078F182 /* Calculation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218953AB2C0F2A230078F182 /* Calculation.cpp */; };
 		218953AE2C0F2A370078F182 /* EventTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218953AD2C0F2A370078F182 /* EventTests.cpp */; };
@@ -189,10 +189,6 @@
 		2123DD2E2D414C1D0090A4FE /* Layered.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Layered.h; sourceTree = "<group>"; };
 		2123DD2F2D414C1D0090A4FE /* Primitive.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Primitive.h; sourceTree = "<group>"; };
 		2123DD302D414C1D0090A4FE /* Primitive.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Primitive.cpp; sourceTree = "<group>"; };
-		2123DD332D414C1D0090A4FE /* Path.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Path.h; sourceTree = "<group>"; };
-		2123DD342D414C1D0090A4FE /* Path.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Path.cpp; sourceTree = "<group>"; };
-		2123DD352D414C1D0090A4FE /* Point.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Point.h; sourceTree = "<group>"; };
-		2123DD362D414C1D0090A4FE /* Point.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Point.cpp; sourceTree = "<group>"; };
 		2123DD372D414C1D0090A4FE /* Text.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
 		2123DD382D414C1D0090A4FE /* Text.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
 		2123DD612D414CF00090A4FE /* Vertex.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Vertex.h; sourceTree = "<group>"; };
@@ -387,6 +383,10 @@
 		218061D92BEE580F00F8BD9E /* StackBufferOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackBufferOut.h; sourceTree = "<group>"; };
 		218484C42AF92D7300280FEF /* UniqueString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniqueString.h; sourceTree = "<group>"; };
 		218484C52AF92D7300280FEF /* UniqueString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueString.cpp; sourceTree = "<group>"; };
+		218802152D4EC4D400BD78DD /* PrimPath.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrimPath.h; sourceTree = "<group>"; };
+		218802162D4EC4D400BD78DD /* PrimPath.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrimPath.cpp; sourceTree = "<group>"; };
+		218802172D4EC4D400BD78DD /* PrimPoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrimPoint.h; sourceTree = "<group>"; };
+		218802182D4EC4D400BD78DD /* PrimPoint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrimPoint.cpp; sourceTree = "<group>"; };
 		218953A32C0C9CB00078F182 /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		218953AA2C0F2A230078F182 /* Calculation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Calculation.h; path = EventTests/Calculation.h; sourceTree = "<group>"; };
 		218953AB2C0F2A230078F182 /* Calculation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Calculation.cpp; path = EventTests/Calculation.cpp; sourceTree = "<group>"; };
@@ -503,10 +503,10 @@
 				2123DD2E2D414C1D0090A4FE /* Layered.h */,
 				2123DD302D414C1D0090A4FE /* Primitive.cpp */,
 				2123DD2F2D414C1D0090A4FE /* Primitive.h */,
-				2123DD342D414C1D0090A4FE /* Path.cpp */,
-				2123DD332D414C1D0090A4FE /* Path.h */,
-				2123DD362D414C1D0090A4FE /* Point.cpp */,
-				2123DD352D414C1D0090A4FE /* Point.h */,
+				218802162D4EC4D400BD78DD /* PrimPath.cpp */,
+				218802152D4EC4D400BD78DD /* PrimPath.h */,
+				218802182D4EC4D400BD78DD /* PrimPoint.cpp */,
+				218802172D4EC4D400BD78DD /* PrimPoint.h */,
 				2123DD382D414C1D0090A4FE /* Text.cpp */,
 				2123DD372D414C1D0090A4FE /* Text.h */,
 			);
@@ -1156,14 +1156,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2146619F2C263C550048BBA7 /* Pen.h in Headers */,
+				2188021B2D4EC4D400BD78DD /* PrimPath.h in Headers */,
+				2188021C2D4EC4D400BD78DD /* PrimPoint.h in Headers */,
 				21D0BD832C8B4E790077E104 /* ValueOptionWrap.h in Headers */,
 				2146619A2C263C550048BBA7 /* Colour.h in Headers */,
 				21F93ADC2B2C6E9C009A2C5B /* Subscriber.h in Headers */,
 				21932D4F2BE29C69005DB06E /* SerialiseArrayTester.h in Headers */,
 				21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */,
 				2123DD4A2D414C1D0090A4FE /* Layered.h in Headers */,
-				2123DD4B2D414C1D0090A4FE /* Point.h in Headers */,
-				2123DD4C2D414C1D0090A4FE /* Path.h in Headers */,
 				2123DD4D2D414C1D0090A4FE /* Primitive.h in Headers */,
 				2123DD4F2D414C1D0090A4FE /* Text.h in Headers */,
 				215F91422BC843970052BFC8 /* LengthUnit.h in Headers */,
@@ -1366,10 +1366,10 @@
 				212A83DD2AE47AD9001EAFE7 /* XMLTransport.cpp in Sources */,
 				212A84032AE47AD9001EAFE7 /* Leveller.cpp in Sources */,
 				21D0BD362C8727CE0077E104 /* SQLiteCore.cpp in Sources */,
-				2123DD532D414C1D0090A4FE /* Point.cpp in Sources */,
 				2123DD592D414C1D0090A4FE /* Primitive.cpp in Sources */,
+				218802192D4EC4D400BD78DD /* PrimPath.cpp in Sources */,
+				2188021A2D4EC4D400BD78DD /* PrimPoint.cpp in Sources */,
 				2123DD5A2D414C1D0090A4FE /* Text.cpp in Sources */,
-				2123DD5B2D414C1D0090A4FE /* Path.cpp in Sources */,
 				212A840C2AE47AD9001EAFE7 /* PolyEdge.cpp in Sources */,
 				212A83D42AE47AD9001EAFE7 /* Directory.cpp in Sources */,
 				212A84002AE47AD9001EAFE7 /* Line.cpp in Sources */,
