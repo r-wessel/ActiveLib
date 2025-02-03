@@ -574,6 +574,9 @@
     <ClInclude Include="Active\Serialise\Management\Manager.h">
       <Filter>Active\Serialise\Management</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Utility\NameID.h">
+      <Filter>Active\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -797,6 +800,9 @@
     </ClCompile>
     <ClCompile Include="Active\Serialise\Inventory\Entry.cpp">
       <Filter>Active\Serialise\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Utility\NameID.cpp">
+      <Filter>Active\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -25,8 +25,8 @@ namespace active::serialise {
 	 to write temporary values (i.e. the reference would become invalid) or to deserialise incoming values where a data placeholder has not been
 	 allocated, e.g. expecially for polygmorphic classes where the exact type is not known in advance
 	*/
-	template<typename Wrap, typename Obj> requires std::is_base_of_v<Cargo, Wrap>
-	class CargoHold : public Wrap {
+	template<typename WrapT, typename ObjT> requires std::is_base_of_v<Cargo, WrapT>
+	class CargoHold : public WrapT {
 	public:
 		
 		// MARK: - Types
@@ -43,31 +43,31 @@ namespace active::serialise {
 		/*!
 		 Default constructor (wraps a null placeholder - can be used for deserialisation incoming concrete or polymorphic objects)
 		 */
-		CargoHold() : Wrap{m_nullCargo} {	//Use the static member as a placeholder for constructing a valiud reference
-			if constexpr (std::is_default_constructible_v<Obj>) {	//Make an object instance when possible - other cases rely on an object maker
-				m_cache = std::make_unique<Obj>();	//Then create a new instance to populate
+		CargoHold() : WrapT{m_nullCargo} {	//Use the static member as a placeholder for constructing a valiud reference
+			if constexpr (std::is_default_constructible_v<ObjT>) {	//Make an object instance when possible - other cases rely on an object maker
+				m_cache = std::make_unique<ObjT>();	//Then create a new instance to populate
 				m_object = m_cache.get();
-				Wrap::operator=(*m_cache);	//And point the reference to the new instance
+				WrapT::operator=(*m_cache);	//And point the reference to the new instance
 			}
 		}
 		/*!
 		 Constructor (use to transport concrete types by value - avoid where polymorphic behaviours required)
 		 @param obj An object to be tranported (by value)
 		 */
-		CargoHold(const Obj& obj) : Wrap{obj} {
-			if constexpr (std::has_virtual_destructor_v<Obj>)
-				m_object = const_cast<Obj*>(&obj);
+		CargoHold(const ObjT& obj) : WrapT{obj} {
+			if constexpr (std::has_virtual_destructor_v<ObjT>)
+				m_object = const_cast<ObjT*>(&obj);
 			else {
-				m_cache = std::make_unique<Obj>(obj);
+				m_cache = std::make_unique<ObjT>(obj);
 				m_object = m_cache.get();
-				Wrap::operator=(*m_cache);	//And point the reference to the new instance
+				WrapT::operator=(*m_cache);	//And point the reference to the new instance
 			}
 		}
 		/*!
 		 Constructor (use to tranport objects using a base abstract class type, e.g. requiring polymorphic type labelling in serialisation)
 		 @param obj A unique pointer to the object to be transported
 		 */
-		CargoHold(std::unique_ptr<Obj> obj) : Wrap{*obj} {
+		CargoHold(std::unique_ptr<ObjT> obj) : WrapT{*obj} {
 			m_cache = std::move(obj);
 			m_object = m_cache.get();
 		}
@@ -83,17 +83,17 @@ namespace active::serialise {
 		 Get a reference to the wrapped object
 		 @return A reference to the wrapped object
 		 */
-		Obj& get() { return const_cast<Obj&>(const_cast<const CargoHold<Wrap, Obj>*>(this)->get()); }
+		ObjT& get() { return const_cast<ObjT&>(const_cast<const CargoHold<WrapT, ObjT>*>(this)->get()); }
 		/*!
 		 Get a reference to the wrapped object
 		 @return A reference to the wrapped object
 		 */
-		const Obj& get() const {
+		const ObjT& get() const {
 			if (auto mover = dynamic_cast<const Mover*>(this); (mover != nullptr) && !mover->isNull()) {
-				if constexpr (std::is_arithmetic_v<Obj>)
-					return *(reinterpret_cast<Obj*>(mover->getIncoming()));
+				if constexpr (std::is_arithmetic_v<ObjT>)
+					return *(reinterpret_cast<ObjT*>(mover->getIncoming()));
 				else {
-					if (auto obj = dynamic_cast<Obj*>(mover->getIncoming()); obj != nullptr)
+					if (auto obj = dynamic_cast<ObjT*>(mover->getIncoming()); obj != nullptr)
 						return *obj;
 				}
 			}
@@ -101,14 +101,14 @@ namespace active::serialise {
 		}
 
 	private:
-		static typename CargoPicker<Wrap>::CargoType m_nullCargo;
-		Obj* m_object = nullptr;
-		std::unique_ptr<Obj> m_cache;
+		static typename CargoPicker<WrapT>::CargoType m_nullCargo;
+		ObjT* m_object = nullptr;
+		std::unique_ptr<ObjT> m_cache;
 	};
 	
 	
-	template<typename Wrap, typename Obj> requires std::is_base_of_v<Cargo, Wrap>
-	typename CargoPicker<Wrap>::CargoType CargoHold<Wrap, Obj>::m_nullCargo;
+	template<typename WrapT, typename ObjT> requires std::is_base_of_v<Cargo, WrapT>
+	typename CargoPicker<WrapT>::CargoType CargoHold<WrapT, ObjT>::m_nullCargo;
 
 }
 
