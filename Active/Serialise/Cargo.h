@@ -9,12 +9,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Inventory/Inventory.h"
 
 namespace active::setting {
-	
 	class Value;
-	
 }
 
 namespace active::serialise {
+	
+	class Manager;
 	
 	/*!
 		Interface for data entities that support serialisation for transport
@@ -108,6 +108,12 @@ namespace active::serialise {
 			@param format The date/time format
 		*/
 		virtual void useTimeFormat(TimeFormat format) const {}
+		/*!
+		 Get a specified cargo manager
+		 @param index The manager index (0 -> number of managers, anything out of bounds returns nullptr)
+		 @return The requested manager (nullptr = no more management)
+		 */
+		virtual Manager* getManager(size_t index) const { return nullptr; }
 		
 		// MARK: - Functions (mutating)
 		

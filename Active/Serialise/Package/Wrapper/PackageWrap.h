@@ -84,6 +84,12 @@ namespace active::serialise {
 			@return The requested cargo (nullptr on failure)
 		*/
 		Cargo::Unique getCargo(const Inventory::Item& item) const override { return get().getCargo(item); }
+		/*!
+		 Get a specified cargo manager
+		 @param index The manager index (0 -> number of managers, anything out of bounds returns nullptr)
+		 @return The requested manager (nullptr = no more management)
+		 */
+		Manager* getManager(size_t index) const override { return get().getManager(index); }
 	
 		// MARK: - Functions (mutating)
 		
