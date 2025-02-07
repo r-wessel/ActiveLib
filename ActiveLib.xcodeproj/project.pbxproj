@@ -136,6 +136,8 @@
 		21AEF9CA2CA82393000B8681 /* SHA256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9C82CA82393000B8681 /* SHA256.cpp */; };
 		21AEF9CB2CA82393000B8681 /* SHA256.h in Headers */ = {isa = PBXBuildFile; fileRef = 21AEF9C92CA82393000B8681 /* SHA256.h */; };
 		21AEF9CD2CA8A96D000B8681 /* SHA256Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */; };
+		21B4D3BC2D5513850069DB92 /* MeshBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 21B4D3BA2D5513850069DB92 /* MeshBuilder.h */; };
+		21B4D3BD2D5513850069DB92 /* MeshBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21B4D3BB2D5513850069DB92 /* MeshBuilder.cpp */; };
 		21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C2535F2B92ECF7003B2F63 /* UnknownItem.h */; };
 		21C253622B94578F003B2F63 /* Value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C253612B94578F003B2F63 /* Value.cpp */; };
 		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; settings = {COMPILER_FLAGS = "-w"; }; };
@@ -432,6 +434,8 @@
 		21AEF9C92CA82393000B8681 /* SHA256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SHA256.h; sourceTree = "<group>"; };
 		21AEF9CC2CA8A96D000B8681 /* SHA256Tests.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = SHA256Tests.cpp; sourceTree = "<group>"; };
 		21AEF9CE2CA9B263000B8681 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		21B4D3BA2D5513850069DB92 /* MeshBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MeshBuilder.h; sourceTree = "<group>"; };
+		21B4D3BB2D5513850069DB92 /* MeshBuilder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MeshBuilder.cpp; sourceTree = "<group>"; };
 		21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnyValueWrap.h; sourceTree = "<group>"; };
 		21BCA0522BA0C44F00F7D29A /* AnyValueWrap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnyValueWrap.cpp; sourceTree = "<group>"; };
 		21C23CFF2C11142400E40710 /* File.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = File.md; sourceTree = "<group>"; };
@@ -520,6 +524,8 @@
 				2123DD6B2D418BBB0090A4FE /* Face.h */,
 				2123DD692D4185E90090A4FE /* Index.h */,
 				2123DD652D415EEF0090A4FE /* Mesh.h */,
+				21B4D3BB2D5513850069DB92 /* MeshBuilder.cpp */,
+				21B4D3BA2D5513850069DB92 /* MeshBuilder.h */,
 				2123DD622D414CF00090A4FE /* Vertex.cpp */,
 				2123DD612D414CF00090A4FE /* Vertex.h */,
 			);
@@ -1200,6 +1206,7 @@
 				21F69F632C6D4AEE008B6A06 /* CargoHold.h in Headers */,
 				21F93AD62B2C6A90009A2C5B /* PostBox.h in Headers */,
 				214EA4D62BA488DA008E5358 /* Transportable.h in Headers */,
+				21B4D3BC2D5513850069DB92 /* MeshBuilder.h in Headers */,
 				21F93AEB2B2F406E009A2C5B /* App.h in Headers */,
 				217AE6432BEA5CF6004CC2B0 /* Transport.h in Headers */,
 				21F93AE02B2C7CF9009A2C5B /* Participant.h in Headers */,
@@ -1377,6 +1384,7 @@
 				214661992C263C550048BBA7 /* Colour.cpp in Sources */,
 				212A83DB2AE47AD9001EAFE7 /* XMLDateTime.cpp in Sources */,
 				2102A3822BA1F0C9002C93C8 /* AnyValueWrap.cpp in Sources */,
+				21B4D3BD2D5513850069DB92 /* MeshBuilder.cpp in Sources */,
 				21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */,
 				21F93AE22B2C8282009A2C5B /* Publisher.cpp in Sources */,
 				21244D062D2444DA002E3526 /* Node.cpp in Sources */,

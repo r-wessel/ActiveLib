@@ -33,7 +33,7 @@ namespace active::attribute {
 		/*!
 			Default constructor
 		*/
-		Colour(char8_t red, char8_t green = 0, char8_t blue = 0, float alpha = 0.0) : r{red}, g{green}, b{blue}, a{alpha} {}
+		Colour(char8_t red, char8_t green = 0, char8_t blue = 0, float alpha = 1.0) : r{red}, g{green}, b{blue}, a{alpha} {}
 		/*!
 			Constructor
 			@param hex A colour in hex digits
@@ -48,8 +48,8 @@ namespace active::attribute {
 		char8_t g = 0;
 			///Blue component
 		char8_t b = 0;
-			///Alpha component (0.0 -> 1.0)
-		float a = 0.0;
+			///Alpha component (0.0=transparent -> 1.0=opaque)
+		float a = 1.0;
 
 		// MARK: - Operators
 		
@@ -63,7 +63,7 @@ namespace active::attribute {
 		// MARK: - Functions (const)
 
 			///True if the colour is transparent
-		bool isTransparent() const { return math::isEqual(a, 1.0); }
+		bool isTransparent() const { return math::isZero(a); }
 		/*!
 			Get the colour in hex digits
 			@param isAlpha True to include the alpha value

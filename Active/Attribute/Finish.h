@@ -27,9 +27,11 @@ namespace active::attribute {
 		/*!
 			Constructor
 			@param col The finish colour
+			@param nm The finish name
 			@param ident The finish identifier
 		*/
-		Finish(const Colour& col, const utility::String& ident) : colour{col}, id{ident} {}
+		Finish(const Colour& col, const utility::String& nm, const utility::String& ident = utility::String{}) :
+				colour{col}, name{nm}, id{ident} {}
 
 		// MARK: Public variables
 
@@ -49,6 +51,8 @@ namespace active::attribute {
 		double metalness = 0.0;
 			///Roughness (0.0 -> 1.0)
 		double roughness = 0.0;
+			///Finish name (optional - application-specific)
+		utility::String name;
 			///Finish identifier (optional - application-specific)
 		utility::String id;
 
