@@ -124,7 +124,7 @@ namespace active::utility {
 			@param makeCopy True to make a private (owned) copy of the data
 			@param takeOwnership True for this object to take ownership of the data (must be allocated with new char[] - ignored if makeCopy == true)
 		*/
-		template<typename T> requires (sizeof(T) > 1) && (!std::is_pointer<T>())
+		template<typename T> requires (sizeof(T) > 0) && (!std::is_pointer<T>())
 		Memory(const T& buffer, bool makeCopy = false, bool takeOwnership = false) : Memory{&buffer, sizeof(buffer), makeCopy, takeOwnership} {}
 		/*!
 			Constructor

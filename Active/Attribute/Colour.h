@@ -6,6 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_ATTRIBUTE_COLOUR
 #define ACTIVE_ATTRIBUTE_COLOUR
 
+#include "Active/Utility/Hash.h"
 #include "Active/Utility/String.h"
 
 namespace active::attribute {
@@ -70,6 +71,12 @@ namespace active::attribute {
 			@return The colour as hex
 		*/
 		utility::String hex(bool isAlpha = false) const;
+		/*!
+		 Get a hash value for the colour
+		 @param format The required has format
+		 @return The hash formatted as specified
+		 */
+		utility::String hash(utility::HashFormat format = utility::HashFormat::asBase64) const;
 	};
 	
 	namespace colour {

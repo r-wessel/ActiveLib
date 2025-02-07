@@ -28,19 +28,8 @@ using namespace active::utility;
 
 namespace {
 	
-	const double alphaTolerance = 1e-3;
 	const double coordTolerance = 1e-3;
 	
-		///Struct to pair matching colours
-	struct ColourMatch : public Colour {
-		bool operator< (const ColourMatch& ref) const {
-			return ((r < ref.r) || ((r == ref.r) &&
-					((g < ref.g) || ((g == ref.g) &&
-					 ((b < ref.b) || ((b == ref.b) &&
-						isLess(a, ref.a, alphaTolerance)))))));
-		}
-	};
-
 		///Struct to pair matching vertices
 	struct VertexMatch : public Vertex {
 		bool operator< (const VertexMatch& ref) const {
@@ -62,36 +51,16 @@ namespace {
 		///Struct to pair matching edges
 	struct EdgeMatch : public std::pair<Index, Index> {
 		using base = std::pair<Index, Index>;
-		EdgeMatch(const Edge& edgeIn) : base{edgeIn.origin, edgeIn.end}, edge{edgeIn} { if (first > second) std::swap(first, second); }
+		EdgeMatch(const Edge& edgeIn) : base{edgeIn.origin, edgeIn.end} { if (first > second) std::swap(first, second); }
 		operator bool() { return first != second; }
-		Edge edge;
 	};
 
-		///Struct to pair matching finishes
-	struct FinishMatch : public active::attribute::Finish {
-		using base = active::attribute::Finish;
-		FinishMatch(const active::attribute::Finish& finish) : base{finish}, colour{finish.colour} {}
-		ColourMatch colour;
-		bool operator< (const FinishMatch& ref) const {
-			return (colour < ref.colour) || ((colour == ref.colour) && (id < ref.id));	//This may need to be more expansive in future
-		}
-	};
-
-		///Struct to pair matching faces
-	struct FaceMatch : public Face {
-		using base = Face;
-		FaceMatch(const Face& face);
-		String hash;
-		bool operator< (const FaceMatch& ref) const { return hash < ref.hash; }
-		operator bool() { return (edges.size() > 2); }
-	};
-
-	using ColourTable = std::map<ColourMatch, Index>;
+	using ColourTable = std::unordered_map<String, std::pair<Index, Colour>>;
 	using VertexTable = std::map<VertexMatch, Index>;
 	using NormalTable = std::map<NormalMatch, Index>;
-	using EdgeTable = std::map<EdgeMatch, Index>;
-	using FinishTable = std::map<FinishMatch, Index>;
-	using FaceTable = std::map<FaceMatch, Index>;
+	using EdgeTable = std::map<EdgeMatch, std::pair<Index, Edge>>;
+	using FinishTable = std::unordered_map<String, std::pair<Index, Finish>>;
+	using FaceTable = std::unordered_map<String, std::pair<Index, Face>>;
 
 }
 
@@ -108,18 +77,6 @@ namespace active::primitive {
 	};
 	
 }
-
-FaceMatch::FaceMatch(const Face& face) : base{face} {
-	std::vector<Index> edges;
-	for (auto& edge : face.edges)
-		edges.push_back(edge);
-	std::sort(edges.begin(), edges.end());
-	active::utility::SHA256 hasher;
-	for (auto& edge : edges)
-		hasher << edge;
-	hash = hasher.base64Hash();
-} //MeshBuilder::FaceMatch::FaceMatch
-
 
 /*--------------------------------------------------------------------
 	Constructor
@@ -141,12 +98,12 @@ MeshBuilder::~MeshBuilder() {}
 	return: The index of the colour in the mesh table
   --------------------------------------------------------------------*/
 Index MeshBuilder::addColour(const Colour& colour) {
-	ColourMatch match{colour};
+	auto colourID = colour.hash();
 	auto& colours{m_cache->colours};
-	if (auto iter = colours.find(match); iter != colours.end())
-		return iter->second;
+	if (auto iter = colours.find(colourID); iter != colours.end())
+		return iter->second.first;
 	auto result = static_cast<Index>(colours.size());
-	colours[match] = result;
+	colours[colourID] = {result, colour};
 	return result;
 } //MeshBuilder::addColour
 
@@ -163,14 +120,15 @@ Index MeshBuilder::addColour(const Colour& colour) {
 std::optional<Index> MeshBuilder::addEdge(const Vertex& start, const Vertex& end, Edge::Attribute attribute) {
 	auto originIndex = addVertex(start),
 			endIndex = addVertex(end);
-	EdgeMatch match{Edge{originIndex, endIndex, attribute}};
+	Edge edge{originIndex, endIndex, attribute};
+	EdgeMatch match{edge};
 	if (!match)
 		return std::nullopt;
 	auto& edges{m_cache->edges};
 	if (auto iter = edges.find(match); iter != edges.end())
-		return iter->second;
+		return iter->second.first;
 	auto result = static_cast<Index>(edges.size());
-	edges[match] = result;
+	edges[match] = {result, edge};
 	return result;
 } //MeshBuilder::addEdge
 
@@ -225,12 +183,21 @@ std::optional<Index> MeshBuilder::addFace(const std::vector<RawEdge>& vertices, 
 	}
 	if (!isVertexNormal)
 		face.edgeNormals.clear();
-	FaceMatch match{face};
+		//Get a hash for the face
+	std::vector<Index> edges;
+	for (auto& edge : face.edges)
+		edges.push_back(edge);
+	std::sort(edges.begin(), edges.end());
+	active::utility::SHA256 hasher;
+	for (auto& edge : edges)
+		hasher << edge;
+	auto hash = hasher.base64Hash();
+		//Determine if the face is exists
 	auto& faces{m_cache->faces};
-	if (auto iter = faces.find(match); iter != faces.end())
-		return iter->second;
+	if (auto iter = faces.find(hash); iter != faces.end())
+		return iter->second.first;
 	auto result = static_cast<Index>(faces.size());
-	faces[match] = result;
+	faces[hash] = {result, face};
 	return result;
 } //MeshBuilder::addFace
 
@@ -255,7 +222,7 @@ Mesh MeshBuilder::product(bool findSoftEdges) const {
 	auto& colours{m_cache->colours};
 	result.colours.resize(colours.size());
 	for (auto& colour : colours)
-		result.colours[colour.second] = colour.first;
+		result.colours[colour.second.first] = colour.second.second;
 	auto& vertices{m_cache->vertices};
 	result.vertices.resize(vertices.size());
 	for (auto& vertex : vertices)
@@ -267,18 +234,18 @@ Mesh MeshBuilder::product(bool findSoftEdges) const {
 	auto& edges{m_cache->edges};
 	result.edges.resize(edges.size());
 	for (auto& edge : edges)
-		result.edges[edge.second] = edge.first.edge;
+		result.edges[edge.second.first] = edge.second.second;
 	auto& finishes{m_cache->finishes};
 	result.finishes.resize(finishes.size());
 	for (auto& finish : finishes)
-		result.finishes[finish.second] = finish.first;
+		result.finishes[finish.second.first] = finish.second.second;
 	auto& faces{m_cache->faces};
 	result.faces.resize(faces.size());
 	for (auto& face : faces) {
-		result.faces[face.second] = face.first;
+		result.faces[face.second.first] = face.second.second;
 			//Mark the face adjacencies in the mesh edges
-		for (auto& edge : face.first.edges)
-			result.edges[edge].addFace(face.second);
+		for (auto& edge : face.second.second.edges)
+			result.edges[edge].addFace(face.second.first);
 	}
 	return result;
 } //MeshBuilder::product
@@ -328,11 +295,11 @@ Index MeshBuilder::addNormal(const Vector3& normal) {
 	return: The index of the finish in the mesh table
   --------------------------------------------------------------------*/
 Index MeshBuilder::addFinish(const active::attribute::Finish& finish) {
-	FinishMatch match{finish};
+	auto finishID = finish.hash();
 	auto& finishes{m_cache->finishes};
-	if (auto iter = finishes.find(match); iter != finishes.end())
-		return iter->second;
+	if (auto iter = finishes.find(finishID); iter != finishes.end())
+		return iter->second.first;
 	auto result = static_cast<Index>(finishes.size());
-	finishes[match] = result;
+	finishes[finishID] = {result, finish};
 	return result;
 } //MeshBuilder::addFinish

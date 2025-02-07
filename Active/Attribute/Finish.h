@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_ATTRIBUTE_FINISH
 
 #include "Active/Attribute/Colour.h"
+#include "Active/Utility/Hash.h"
 
 namespace active::attribute {
 	
@@ -60,6 +61,12 @@ namespace active::attribute {
 
 			///True if the finish is transparent
 		bool isTransparent() const { return colour.isTransparent(); }
+		/*!
+		 Get a hash value for the finish
+		 @param format The required has format
+		 @return The hash formatted as specified
+		 */
+		utility::String hash(utility::HashFormat format = utility::HashFormat::asBase64) const;
 	};
 	
 }

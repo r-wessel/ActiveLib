@@ -8,6 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Generic/HexTransport.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
+#include "Active/Utility/SHA256.h"
 
 using namespace active;
 using namespace active::attribute;
@@ -63,3 +64,17 @@ String Colour::hex(bool isAlpha) const {
 	HexTransport().send(BufferIn{colourOut}, BufferOut{result});
 	return result;
 } //Colour::hex
+
+
+/*--------------------------------------------------------------------
+	Get a hash value for the colour
+ 
+	format: The required has format
+ 
+	return: The hash formatted as specified
+  --------------------------------------------------------------------*/
+String Colour::hash(HashFormat format) const {
+	SHA256 hasher;
+	hasher << r << g << b << a;
+	return hasher.product(format);
+} //Colour::hash

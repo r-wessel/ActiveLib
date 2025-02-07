@@ -84,6 +84,8 @@
 		214EA4EE2BAAF8D7008E5358 /* XMLLength.h in Headers */ = {isa = PBXBuildFile; fileRef = 214EA4ED2BAAF8D7008E5358 /* XMLLength.h */; };
 		215106B92AE96EFF0022CD24 /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 215106B82AE96EFF0022CD24 /* HashMap.h */; };
 		2158D6EF2B5C6FDC00E40F38 /* Anchor2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2158D6EE2B5C6FDC00E40F38 /* Anchor2D.cpp */; };
+		215C480B2D563E7E009D3E99 /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 215C480A2D563E7E009D3E99 /* Hash.h */; };
+		215C480D2D56415A009D3E99 /* Finish.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 215C480C2D56415A009D3E99 /* Finish.cpp */; };
 		215F08252C94652100CD343B /* Mover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 215F08242C94652100CD343B /* Mover.cpp */; };
 		215F91102BC574790052BFC8 /* Base64Transport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 215F910E2BC574790052BFC8 /* Base64Transport.cpp */; };
 		215F91112BC574790052BFC8 /* Base64Transport.h in Headers */ = {isa = PBXBuildFile; fileRef = 215F910F2BC574790052BFC8 /* Base64Transport.h */; };
@@ -344,6 +346,8 @@
 		214EA4ED2BAAF8D7008E5358 /* XMLLength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLLength.h; sourceTree = "<group>"; };
 		215106B82AE96EFF0022CD24 /* HashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HashMap.h; sourceTree = "<group>"; };
 		2158D6EE2B5C6FDC00E40F38 /* Anchor2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Anchor2D.cpp; sourceTree = "<group>"; };
+		215C480A2D563E7E009D3E99 /* Hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Hash.h; sourceTree = "<group>"; };
+		215C480C2D56415A009D3E99 /* Finish.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Finish.cpp; sourceTree = "<group>"; };
 		215F08222C94567700CD343B /* Mover.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mover.h; sourceTree = "<group>"; };
 		215F08232C945B1C00CD343B /* Handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handler.h; sourceTree = "<group>"; };
 		215F08242C94652100CD343B /* Mover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Mover.cpp; sourceTree = "<group>"; };
@@ -862,6 +866,7 @@
 				212A83C82AE47AD9001EAFE7 /* Defer.h */,
 				212A83CA2AE47AD9001EAFE7 /* Guid.cpp */,
 				212A83C12AE47AD9001EAFE7 /* Guid.h */,
+				215C480A2D563E7E009D3E99 /* Hash.h */,
 				212A83C02AE47AD9001EAFE7 /* MathFunctions.h */,
 				212A83BD2AE47AD9001EAFE7 /* Memory.cpp */,
 				212A83C72AE47AD9001EAFE7 /* Memory.h */,
@@ -912,6 +917,7 @@
 				2167E2762C4911C4000827D3 /* CMakeLists.txt */,
 				214661912C263C550048BBA7 /* Colour.cpp */,
 				214661922C263C550048BBA7 /* Colour.h */,
+				215C480C2D56415A009D3E99 /* Finish.cpp */,
 				214661942C263C550048BBA7 /* Finish.h */,
 				214661962C263C550048BBA7 /* TextStyle.h */,
 				214661972C263C550048BBA7 /* Pen.h */,
@@ -1209,6 +1215,7 @@
 				21B4D3BC2D5513850069DB92 /* MeshBuilder.h in Headers */,
 				21F93AEB2B2F406E009A2C5B /* App.h in Headers */,
 				217AE6432BEA5CF6004CC2B0 /* Transport.h in Headers */,
+				215C480B2D563E7E009D3E99 /* Hash.h in Headers */,
 				21F93AE02B2C7CF9009A2C5B /* Participant.h in Headers */,
 				215F91112BC574790052BFC8 /* Base64Transport.h in Headers */,
 				21244D072D2444DA002E3526 /* Node.h in Headers */,
@@ -1376,6 +1383,7 @@
 				2123DD592D414C1D0090A4FE /* Primitive.cpp in Sources */,
 				218802192D4EC4D400BD78DD /* PrimPath.cpp in Sources */,
 				2188021A2D4EC4D400BD78DD /* PrimPoint.cpp in Sources */,
+				215C480D2D56415A009D3E99 /* Finish.cpp in Sources */,
 				2123DD5A2D414C1D0090A4FE /* Text.cpp in Sources */,
 				212A840C2AE47AD9001EAFE7 /* PolyEdge.cpp in Sources */,
 				212A83D42AE47AD9001EAFE7 /* Directory.cpp in Sources */,

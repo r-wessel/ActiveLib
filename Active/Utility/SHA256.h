@@ -7,6 +7,7 @@
 #define ACTIVE_UTILITY_SHA256
 
 #include "Active/Utility/BufferIn.h"
+#include "Active/Utility/Hash.h"
 #include "Active/Utility/Memory.h"
 #include "Active/Utility/String.h"
 
@@ -60,7 +61,13 @@ namespace active::utility {
 		// MARK: Functions (const)
 		
 		/*!
-		 Get the data hash (NB: This does not prevent additional data from being written to the hash)
+		 Get the hash product (NB: This does not prevent additional data from being written to the hash)
+		 @param format The required hash format
+		 @return The hash product formatted as specified
+		 */
+		String product(HashFormat format) const { return (format == HashFormat::asHex) ? hexHash() : base64Hash(); }
+		/*!
+		 Get the data hash
 		 @return The hash (as hex digits)
 		 */
 		String hexHash() const;
