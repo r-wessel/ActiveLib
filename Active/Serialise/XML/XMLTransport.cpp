@@ -874,7 +874,7 @@ namespace {
 						XMLImporter elementImporter(stringBuffer, importer.glossary(), importer.section(), importer.isUnknownTagSkipped(), false);
 						elementImporter.setEncoding(importer.getEncoding());
 						doXMLImport(*cargo, identity, elementImporter);
-						if (auto* package = dynamic_cast<Package*>(cargo.get()); (package != nullptr) && !package->finaliseAttributes())
+						if (auto* package = dynamic_cast<Package*>(cargo.get()); (package != nullptr) && !package->finaliseAttributes(true))
 							throw std::system_error(makeXMLError(badElement));
 					}
 					if (isEmpty) {

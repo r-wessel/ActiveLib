@@ -240,8 +240,8 @@ namespace {
 			m_wrapper.reset();	//This will be populated once the type and guid are deserialised
 		}
 			///Called when the attributes have been read (which means we should have an object type and guid for creating an object instance)
-		bool finaliseAttributes() override {
-			if (!m_isReadingAttributes.has_value() || !*m_isReadingAttributes || m_wrapper || !m_id)
+		bool finaliseAttributes(bool isScopeEnded) override {
+			if (!isScopeEnded || !m_isReadingAttributes.has_value() || !*m_isReadingAttributes || m_wrapper || !m_id)
 				return false;
 			m_isReadingAttributes = false;
 				//Use the deserialised type name to lookup the correct binding

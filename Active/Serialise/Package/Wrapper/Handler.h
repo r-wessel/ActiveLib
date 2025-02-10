@@ -6,21 +6,37 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_SERIALISE_HANDLER
 #define ACTIVE_SERIALISE_HANDLER
 
+#include "Active/Setting/ValueSetting.h"
+
+namespace active::setting {
+	class SettingList;
+}
+
 namespace active::serialise {
+	
+		///Concept for packages constructed using an input parameter list
+	template<typename Obj>
+	concept MadeWithParams = requires(Obj& obj, const setting::SettingList* params) {
+		{ Obj{params} };
+	};
+	
 	
 	/*!
 		Maker function to reconstruct an object instance
 		@return A new instance
 	*/
 	template<typename T> requires std::is_base_of_v<Package, T>
-	Package* makeFunc() {
-		return new T{};
+	Package* makeFunc(const setting::SettingList* params) {
+		if constexpr (MadeWithParams<T>)
+			return new T{params};
+		else
+			return new T{};
 	}
 	
 	/*!
 	 A class for initialising serialised packages
 	 
-	 The primary role of this class is to construct class instances using a serialised attribute, e.g. object name. An instance of this class
+	 The primary role of this class is to construct class instancees using a serialised attribute, e.g. object name. An instance of this class
 	 should be populated with the identifying attribute values and maker functions for all relevant object types
 	*/
 	class Handler {
@@ -32,15 +48,17 @@ namespace active::serialise {
 		using Shared = std::shared_ptr<Handler>;
 		
 			//Factory function for reconstructing a Package
-		using Reconstruction = std::function<Package*()>;
+		using Reconstruction = std::function<Package*(const setting::SettingList*)>;
 		
 		// MARK: Constructors
 		
 		/*!
 		 Constructor
 		 @param attributeTag The tag identifying a package type
+		 @param parameter Any tags for parameter attributes required for instantiating a package
 		*/
-		Handler(const utility::String& attributeTag) : m_attributeTag{attributeTag} {}
+		Handler(const utility::String& attributeTag, std::initializer_list<active::utility::String> const& parameter = {}) :
+				m_attributeTag{attributeTag}, m_parameterTags{parameter} {}
 		
 		// MARK: Functions (const)
 		
@@ -52,19 +70,27 @@ namespace active::serialise {
 		/*!
 			Reconstruct a package instance based on the attached tag
 			@param tag The attached tag
+			@param parameters Any parameters supplied for the package construction (nullptr = none)
 			@return A new package (nullptr on failure)
 		*/
-		Package* reconstruct(const utility::String& tag) const {
+		Package* reconstruct(const utility::String& tag, const setting::SettingList* parameters = nullptr) const {
 			if (auto maker = reconstruction.find(tag); (maker != reconstruction.end()))
-				return maker->second.second();
+				return maker->second.second(parameters);
 			return nullptr;
 		} //reconstruct
 		/*!
-			Get the attribute tag for object types
-			@return The attribute tage
-		*/
-		const utility::String& attributeTag() const {
+		 Get the attribute tag for object types
+		 @return The attribute tage
+		 */
+		const auto& attributeTag() const {
 			return m_attributeTag;
+		} //reconstruct
+		/*!
+		 Get any parameter tags for reading package construction parameters
+		 @return The parameter tage
+		 */
+		const auto& parameterTags() const {
+			return m_parameterTags;
 		} //reconstruct
 		/*!
 			Find the tag associated with a specified object type
@@ -104,6 +130,8 @@ namespace active::serialise {
 		std::unordered_map<active::utility::String, std::pair<const std::type_info*, Reconstruction>> reconstruction;
 			///The tag of the attribute identifying package type
 		utility::String m_attributeTag;
+			///Secondary tags required to instantiate a package type
+		std::vector<utility::String> m_parameterTags;
 	};
 
 }

@@ -19,7 +19,7 @@ namespace active::serialise {
 	 are 4 different scenarios for using the wrapper:
 	 1) Where it is known that an object is to be serialised (only), the wrapper is constructed with a reference to the target package
 	 2) Where an object is held as a unique pointer and might be serialised or deserialised, the wrapper is constructed  with a reference to
-	 the unique pointer member wrapper. On deserialisation, the wrapper will determine the correct type (using the supplied handler) and popuate the
+	 the unique pointer member wrapper. On deserialisation, the wrapper will determine the correct type (using the supplied handler) and populate the
 	 unique pointer accordingly
 	 3) As above, but the object can only be one type. in this case, the handler is nullptr and an instance of the object can be made (if necessary)
 	 by the wrapper
@@ -116,10 +116,11 @@ namespace active::serialise {
 		 */
 		bool validate() override;
 		/*!
-			Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
-			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
-		*/
-		bool finaliseAttributes() override;
+		 Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
+		 @param isScopeEnded True if the scope for finding more attributes is ended (all found or the object content is all read)
+		 @return True if the attributes have been successfully finalised (returning false when isScopeEnded == true will throw)
+		 */
+		bool finaliseAttributes(bool isScopeEnded) override;
 		/*!
 		 Read the cargo data from the specified string
 		 @param source The string to read
@@ -146,6 +147,8 @@ namespace active::serialise {
 		TransportPhase m_transportPhase = TransportPhase::writingEverything;
 		
 		std::optional<PackageUniqueWrap> m_unique;
+			///Input parameters for creating new packages
+		std::unique_ptr<setting::SettingList> m_parameters;
 	};
 
 }

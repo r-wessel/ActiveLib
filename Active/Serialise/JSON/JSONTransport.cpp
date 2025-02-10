@@ -889,6 +889,7 @@ namespace {
 			auto identity = importer.getIdentity(parsingStage);	//Get the identity of the next item in the JSON source
 			if (identity.type != JSONIdentity::Type::undefined)
 				identity.entryRole = (identity.type == arrayStart) ? Identity::Role::array : Identity::Role::element;
+			bool isAttributeReadingComplete = false, isAttributeFinalised = false;
 			switch (identity.type) {
 				case undefined:	//End of file
 					if (depth != 0)	//Failure if tags haven't been balanced correctly
@@ -930,8 +931,13 @@ namespace {
 										cargo->setDefault();
 										if (!incomingItem->bumpAvailable())
 											throw std::system_error(makeJSONError(inventoryBoundsExceeded));
-										if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
+										if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required) {
+											if (package->finaliseAttributes(false)) {
+												isAttributeReadingComplete = isAttributeFinalised = true;
+												break;
+											}
 											--attributesRemaining;
+										}
 									}
 								}
 							}
@@ -966,19 +972,25 @@ namespace {
 					if (containerIdentity.stage != (identity.type == objectEnd ? object : array))
 						throw std::system_error(makeJSONError(unbalancedScope));	//The scope end couldn't be paired with the atart
 					if (restorePoint) {
-						isReadingAttribute = false;
-						importer.setPosition(*restorePoint);	//Move the read position back to the first non-attribute
-						restorePoint.reset();
-						attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
-						if (!package->finaliseAttributes())
-							throw std::system_error(makeJSONError(invalidObject));
-						inventory = getImportInventoryFor(container, importer);	//The inventory will probably change here
-						parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
+						isAttributeReadingComplete = true;
 						break;
 					}
 					if (!container.validate())
 						throw std::system_error(makeJSONError(invalidObject));	//The incoming data was rejected as invalid
 					return;
+			}
+			if (isAttributeReadingComplete) {
+				isReadingAttribute = false;
+				attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
+				if (restorePoint) {
+					importer.setPosition(*restorePoint);	//Move the read position back to the first non-attribute
+					restorePoint.reset();
+				}
+				if (!isAttributeFinalised && !package->finaliseAttributes(true))
+					throw std::system_error(makeJSONError(invalidObject));
+				inventory = getImportInventoryFor(container, importer);	//The inventory will probably change here
+				parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
+
 			}
 		}
 	} //doJSONImport

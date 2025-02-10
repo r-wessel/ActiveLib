@@ -126,9 +126,10 @@ namespace active::serialise {
 		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override { return get().insert(std::move(cargo), item); }
 		/*!
 			Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
+			@param isScopeEnded True if the scope for finding more attributes is ended (all found or the object content is all read)
 			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
 		*/
-		bool finaliseAttributes() override { return get().finaliseAttributes(); }
+		bool finaliseAttributes(bool isScopeEnded) override { return get().finaliseAttributes(isScopeEnded); }
 		/*!
 		 Allocate inventory for new (incoming) cargo
 		 @param inventory The inventory to extend
