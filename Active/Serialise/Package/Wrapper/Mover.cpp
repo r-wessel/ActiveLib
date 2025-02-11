@@ -60,6 +60,23 @@ Mover::Mover(Handler::Shared handler) : m_handler{handler} {
 
 
 /*--------------------------------------------------------------------
+	Destructor
+  --------------------------------------------------------------------*/
+Mover::~Mover() {}
+
+
+Mover& Mover::operator=(const Mover& source) {
+	m_handler = source.m_handler;
+	m_typeName = source.m_typeName;
+	m_wrapper.reset();
+	m_package = nullptr;
+	m_transportPhase = source.m_transportPhase;
+	m_parameters.reset();
+	return *this;
+}
+
+
+/*--------------------------------------------------------------------
 	Fill an inventory with the package items
  
 	inventory: The inventory to receive the package items
@@ -110,8 +127,11 @@ Cargo::Unique Mover::getCargo(const Inventory::Item& item) const {
 		case objectTypeID:
 			return std::make_unique<StringWrap>(m_typeName);
 		default: {
-			if (m_parameters && (item.index < m_parameters->size()))
-				return std::make_unique<StringWrap>(*(*m_parameters)[item.index]);
+			if (m_parameters && (item.index < m_parameters->size())) {
+				auto value = dynamic_cast<StringValue*>((*m_parameters)[item.index].get());
+				if (value != nullptr)
+					return std::make_unique<StringWrap>(value->data);
+			}
 		}
 	}
 	return nullptr;

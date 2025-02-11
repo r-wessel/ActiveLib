@@ -60,6 +60,12 @@ namespace active::serialise {
 		 @param handler A package handler to reconstruct incoming packages
 		 */
 		Mover(Handler::Shared handler);
+		/*!
+		 Destructor
+		 */
+		~Mover();
+		
+		Mover& operator=(const Mover& source);
 
 		// MARK: - Functions (const)
 		
