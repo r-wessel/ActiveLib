@@ -81,6 +81,8 @@ namespace active::serialise {
 		
 			///Get the wrapped identity
 		const Identity& identity() const { return m_id.identity(); }
+			///True if the item is managed
+		bool isManaged() const { return management() != nullptr; }
 			///Get any management applied to this item (nullptr = unmanaged)
 		Management* management() const;
 		/*
@@ -93,11 +95,6 @@ namespace active::serialise {
 			@return True if the entry is repeating
 		*/
 		bool isRepeating() const { return (!m_maximum || (m_maximum > 1)); }
-		/*!
-			Determine if the entry is managed
-			@return True if the entry is managed
-		*/
-		bool isManaged() const;
 		/*!
 			The maximum number of instances against this entry (nullopt = unlimited)
 			@return The maximum number of instances

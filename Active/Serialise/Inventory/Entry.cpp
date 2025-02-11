@@ -15,13 +15,3 @@ using namespace active::serialise;
 Management* Entry::management() const {
 	return inventory == nullptr ? nullptr : inventory->management();
 } //Entry::management
-
-
-/*--------------------------------------------------------------------
-	Determine if the entry is managed
- 
-	return: True if the entry is managed
-  --------------------------------------------------------------------*/
-bool Entry::isManaged() const {
-	return inventory == nullptr ? false : inventory->isManaged();
-} //Entry::isManaged
