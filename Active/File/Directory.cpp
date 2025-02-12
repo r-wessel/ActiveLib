@@ -122,7 +122,7 @@ Directory::Option Directory::appData() {
 	char directorypath[4 * PATH_MAX];
 	auto state = sysdir_start_search_path_enumeration(SYSDIR_DIRECTORY_APPLICATION_SUPPORT,
 													  SYSDIR_DOMAIN_MASK_USER);
-	if ((state = sysdir_get_next_search_path_enumeration(state, directorypath))) {
+	if ((state = sysdir_get_next_search_path_enumeration(state, directorypath)); state != 0) {
 			//Expand the returned path, e.g. replacing "~" with user home directory path
 		if (auto expandedPath = expandPath(directorypath); expandedPath)
 			result = Directory{*expandedPath};
