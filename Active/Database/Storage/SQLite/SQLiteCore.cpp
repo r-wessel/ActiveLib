@@ -140,8 +140,8 @@ SettingList::Unique SQLiteCore::Transaction::operator++() {
 /*--------------------------------------------------------------------
 	Execute a single-step process, e.g. erase, insert etc
  --------------------------------------------------------------------*/
-void SQLiteCore::Transaction::execute() const {
-	
+void SQLiteCore::Transaction::execute() {
+	++(*this);
 } //SQLiteCore::Transaction::execute
 
 
@@ -170,6 +170,32 @@ String SQLiteCore::toSQLiteString(const String& text) {
 
 
 /*--------------------------------------------------------------------
+	Get the SQLite type identifier for a specified setting
+ 
+	return: The type identifier, e.g. "TEXT", "INTEGER" etc
+ --------------------------------------------------------------------*/
+String SQLiteCore::getTypeID(const Setting& setting) {
+	using enum setting::Value::Type;
+	if (auto value = dynamic_cast<const ValueSetting*>(&setting); (value != nullptr) && (value->getDefaultType() || !value->empty())) {
+		auto valueType = value->getDefaultType().value_or(value->front()->getType());
+		switch (valueType) {
+			case stringType:
+			case idType:
+			case timeType:
+				return "TEXT";
+			case boolType: case intType:
+				return "INTEGER";
+			case floatType:
+				return "REAL";
+			case null:
+				return "NULL";
+		}
+	}
+	return "BLOB";	//All non-value settings are designated as blob storage by default
+} //SQLiteCore::getTypeID
+
+
+/*--------------------------------------------------------------------
 	Destructor
  --------------------------------------------------------------------*/
 SQLiteCore::~SQLiteCore() {
@@ -191,5 +217,53 @@ void* SQLiteCore::getHandle() const {
 	if (auto status = sqlite3_open_v2(String{m_path}.data(), (sqlite3**) &m_handle, flags, nullptr); status != SQLITE_OK)
 		throw std::system_error(makeError(static_cast<Status>(status)));
 		//TODO: Ensure dbase schema is applied to newly created files, and ensure schema field order matches file order
-	return m_handle;
+	if (m_handle == nullptr)
+		return nullptr;
+	if (validateSchema())
+		return m_handle;
+	sqlite3_finalize((sqlite3_stmt*) m_handle);
+	m_handle = nullptr;
+	return nullptr;
 } //SQLiteCore::getHandle
+
+
+/*--------------------------------------------------------------------
+	Validate the SQLite database table/column schema
+ 
+	return: True on successful validation
+--------------------------------------------------------------------*/
+bool SQLiteCore::validateSchema() const {
+		//First confirm tables exist (and create when missing)
+	for (auto& table : m_schema) {
+		utility::String statement{"CREATE TABLE IF NOT EXISTS " + table.ID + " ("};
+		for (auto index = 0; index < table.size(); ++index) {
+			auto& field{*table[index]};
+			statement += field.name() + " " + getTypeID(field);
+			if (index == table.globalIndex)
+				statement += " PRIMARY KEY NOT NULL";
+			if (table.size() - index > 1)
+				statement += ",";
+		}
+		statement += ") WITHOUT ROWID;";
+		makeTransaction(statement).execute();
+	}
+		//Then validate field names and types
+	for (auto& table : m_schema) {
+		for (auto index = 0; index < table.size(); ++index) {
+			auto& field{*table[index]};
+			const char* dataType = nullptr;
+			int primaryKey;
+			if (auto result = sqlite3_table_column_metadata((sqlite3*) getHandle(), nullptr, table.ID.data(), field.name().data(), &dataType,
+															nullptr, nullptr, &primaryKey, nullptr); result != SQLITE_OK) {
+				utility::String statement{"ALTER TABLE " + table.ID + " ADD COLUMN " + field.name() + " " + getTypeID(field)};
+				if (index == table.globalIndex)
+					statement += " PRIMARY KEY";
+				statement += ";";
+				makeTransaction(statement).execute();
+				continue;
+			}
+				//TODO: SQLite doesn't directly support changing column metadata, e.g. type. Implement some of this functionality as required
+		}
+	}
+	return true;
+} //SQLiteCore::validateSchema

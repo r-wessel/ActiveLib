@@ -30,7 +30,7 @@ namespace active::serialise {
 			@param howMany The number of bytes to export (nullopt = to eof)
 			@return True if no errors occurred
 		*/
-		bool send(const utility::BufferIn& source, const utility::BufferOut& destination, utility::Memory::sizeOption howMany = std::nullopt) const;
+		bool send(const utility::BufferIn&& source, const utility::BufferOut& destination, utility::Memory::sizeOption howMany = std::nullopt) const;
 		/*!
 			Receive specified data from a stream of hex characters
 			@param destination The buffer to receive the data
@@ -38,7 +38,7 @@ namespace active::serialise {
 			@param howMany The number of bytes to import (nullopt = to eof)
 			@return True if the import was successful
 		*/
-		bool receive(const utility::BufferOut& destination, const utility::BufferIn& source, utility::Memory::sizeOption howMany = std::nullopt) const;
+		bool receive(const utility::BufferOut&& destination, const utility::BufferIn& source, utility::Memory::sizeOption howMany = std::nullopt) const;
 		/*!
 			Receive an integer from the specified hex chars
 			@param source The hex stream source

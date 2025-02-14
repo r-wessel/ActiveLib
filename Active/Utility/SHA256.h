@@ -7,6 +7,7 @@
 #define ACTIVE_UTILITY_SHA256
 
 #include "Active/Utility/BufferIn.h"
+#include "Active/Utility/Guid.h"
 #include "Active/Utility/Hash.h"
 #include "Active/Utility/Memory.h"
 #include "Active/Utility/String.h"
@@ -65,7 +66,7 @@ namespace active::utility {
 		 @param format The required hash format
 		 @return The hash product formatted as specified
 		 */
-		String product(HashFormat format) const { return (format == HashFormat::asHex) ? hexHash() : base64Hash(); }
+		String product(HashFormat format) const;
 		/*!
 		 Get the data hash
 		 @return The hash (as hex digits)
@@ -76,6 +77,11 @@ namespace active::utility {
 		 @return The hash (as base64 digits)
 		 */
 		String base64Hash() const;
+		/*!
+		 Get a guid from the hash
+		 @return A guid (NB: significantly reduces complexity)
+		 */
+		Guid guid() const;
 		/*!
 		 Get the raw data hash table (8 x unsigned 32-bit integers)
 		 @return The raw hash (as hex digits)

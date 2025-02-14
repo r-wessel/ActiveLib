@@ -68,6 +68,14 @@ namespace active::database {
 									  std::optional<utility::String> tableID = std::nullopt,
 									  std::optional<DocID> documentID = std::nullopt) const override { return {}; }	//Implement when required
 		/*!
+		 Determine if the database contains a specified object
+		 @param objID The object ID
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @return True if the database contains a matching record
+		 */
+		bool contains(const ObjID& objID, utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
 		 Get an object by index
 		 @param ID The object ID
 		 @param tableID Optional table ID (defaults to the first table)
@@ -110,6 +118,16 @@ namespace active::database {
 		virtual void write(Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
 						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
+		 Write the serialised content of an object to the database
+		 @param content The content to write (pre-serialised with the storage Transport)
+		 @param objID The object ID
+		 @param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 */
+		virtual void writeContent(const utility::String& content, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const;
+		/*!
 		 Erase an object by index
 		 @param ID The object ID
 		 @param tableID Optional table ID (defaults to the first table)
@@ -151,6 +169,27 @@ namespace active::database {
 		
 	
 	/*--------------------------------------------------------------------
+		Determine if the database contains a specified object
+	 
+		objID: The object ID
+		tableID: Optional table ID (defaults to the first table)
+		documentID: Optional document ID (when the object is bound to a specific document)
+	 
+		return: True if the database contains a matching record
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	bool SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::contains(const ObjID& objID, utility::String::Option tableID,
+																		  std::optional<DocID> documentID) const {
+		auto table = getTable(tableID);
+		auto keyFieldIndex = documentID && table->documentIndex ? *table->documentIndex : table->globalIndex;
+		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = '" + objID + "';");
+		auto result = ++transaction;
+		return result.operator bool();
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::contains
+
+
+	/*--------------------------------------------------------------------
 		Get an object by index
 	 
 		index: The object index
@@ -165,7 +204,7 @@ namespace active::database {
 																						   std::optional<DocID> documentID)  const {
 		auto table = getTable(tableID);
 		auto keyFieldIndex = documentID && table->documentIndex ? *table->documentIndex : table->globalIndex;
-		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = " + ID + ";");
+		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = '" + ID + "';");
 		auto result = runTransaction(transaction, *table);
 		return result.empty() ? nullptr : result.release(result.begin());
 	} //SQLiteEngine<Obj, Transport, DocID, ObjID>::getObject
@@ -243,17 +282,34 @@ namespace active::database {
 																	   utility::String::Option tableID, std::optional<DocID> documentID) const {
 		utility::String content;
 		Transport{}.send(serialise::PackageWrap(object), serialise::Identity{}, content);
+		writeContent(content, objID, objDocID, tableID, documentID);
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write
+	
+	
+	/*--------------------------------------------------------------------
+		Write the serialised content of an object to the database
+		@param content The content to write (pre-serialised with the storage Transport)
+		@param objID The object ID
+		@param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		@param tableID Optional table ID (defaults to the first table)
+		@param documentID Optional document ID (when the object is bound to a specific document)
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	void SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::writeContent(const utility::String& content,
+																			  const ObjID& objID, std::optional<ObjID> objDocID,
+																			  utility::String::Option tableID, std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
 		bool isDocIndexed = objDocID && table->documentIndex;
 		utility::String statement{"INSERT INTO " + table->ID + " (" + (*table)[table->globalIndex]->name() + ", "};
 		if (isDocIndexed)
 			statement += (*table)[*table->documentIndex]->name() + ", ";
-		statement += (*table)[table->contentIndex]->name() + ") VALUES (" + toSQLiteString(objID) + ", ";
+		statement += (*table)[table->contentIndex]->name() + ") VALUES ('" + toSQLiteString(objID) + "', ";
 		if (isDocIndexed)
-			statement += toSQLiteString(*objDocID) + ", ";
-		statement += toSQLiteString(content.data()) + ");";
+			statement += "'" + toSQLiteString(*objDocID) + "', ";
+		statement += "'" + toSQLiteString(content.data()) + "');";
 		makeTransaction(statement).execute();
-	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::write
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::writeContent
 	
 	
 	/*--------------------------------------------------------------------
@@ -271,7 +327,7 @@ namespace active::database {
 																	   std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
 		auto keyFieldIndex = documentID && table->documentIndex ? *table->documentIndex : table->globalIndex;
-		makeTransaction("DELETE FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = " + ID + ";").execute();
+		makeTransaction("DELETE FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = '" + toSQLiteString(ID) + "';").execute();
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::erase
 	
 	

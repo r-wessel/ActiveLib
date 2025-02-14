@@ -70,6 +70,12 @@ namespace active::database {
 		// MARK: - Functions (const)
 		
 		/*!
+		 Determine if the cache contains a specified record
+		 @param objID The record ID
+		 @return True if the cache contains a matching record
+		 */
+		virtual bool contains(const ObjID& objID) const;
+		/*!
 		 Read a record by index
 		 @param objID The record ID
 		 @return The requested record (nullptr on failure). NB: The returned record is a clone of the original in storage
@@ -147,6 +153,20 @@ namespace active::database {
 	};
 
 	
+	/*--------------------------------------------------------------------
+		Determine if the cache contains a specified record
+	 
+		objID: The record ID
+	 
+		return: True if the cache contains a matching record
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
+	requires IsRecordType<Obj, ObjWrapper, ObjID>
+	bool RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::contains(const ObjID& objID) const {
+		return base::contains(objID);
+	} //RecordCache::<Obj, ObjID>::contains
+
+
 	/*--------------------------------------------------------------------
 		Read a record by index
 	 

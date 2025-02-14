@@ -80,6 +80,26 @@ SHA256& SHA256::operator<<(BufferIn&& source) {
 
 
 /*--------------------------------------------------------------------
+	Get the hash product (NB: This does not prevent additional data from being written to the hash)
+ 
+	format: The required hash format
+ 
+	return: The hash product formatted as specified
+  --------------------------------------------------------------------*/
+String SHA256::product(HashFormat format) const {
+	switch (format) {
+		case HashFormat::asHex:
+			return hexHash();
+		case HashFormat::asBase64:
+			return base64Hash();
+		case HashFormat::asGuid:
+			return guid().operator String();
+	}
+	return (format == HashFormat::asHex) ? hexHash() : base64Hash();
+} //SHA256::product
+
+
+/*--------------------------------------------------------------------
 	Get the data hash
  
 	return: The hash (as hex digits)
@@ -101,6 +121,27 @@ String SHA256::base64Hash() const {
 	Base64Transport().send(BufferIn{getHash()}, result);
 	return result;
 } //SHA256::base64Hash
+
+
+/*--------------------------------------------------------------------
+	Get a guid from the hash
+ 
+	return: A guid (NB: significantly reduces complexity)
+  --------------------------------------------------------------------*/
+Guid SHA256::guid() const {
+	auto finalHash = finalise();
+	std::array<Guid::Raw, 2> output;
+	int16_t index = 0;
+	for (auto& raw : output) {
+		raw.first = static_cast<uint64_t>(finalHash[index]) << 32 | static_cast<uint64_t>(finalHash[index + 1]);
+		index += 2;
+		raw.second = static_cast<uint64_t>(finalHash[index]) << 32 | static_cast<uint64_t>(finalHash[index + 1]);
+		index += 2;
+	}
+	output[0].first ^= output[1].first;
+	output[0].second ^= output[1].second;
+	return Guid{output[0]};
+} //SHA256::guid
 
 
 /*--------------------------------------------------------------------

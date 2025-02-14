@@ -12,6 +12,7 @@ namespace active::utility {
 	enum HashFormat {
 		asHex,	///>Format the hash as hex digits
 		asBase64,	///>Format the hash as base64 digits
+		asGuid,	///>Format as a GUID (128 bits - loses complexity)
 	};
 	
 }

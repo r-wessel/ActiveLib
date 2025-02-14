@@ -57,7 +57,8 @@ Guid::Guid(const String& uuidString) {
 		//Convert the incoming hex to 64-bit integers
 	BufferIn source{incoming};
 	HexTransport transport;
-	if (!transport.receive(Memory{m_value.first}, source, 16) || !transport.receive(Memory{m_value.second}, source, 16))
+	if (!transport.receive(Memory{m_value.first}, source, 16) ||
+			!transport.receive(Memory{m_value.second}, source, 16))
 		return;
 	m_value.first = Memory::fromBigEndian(m_value.first);
 	m_value.second = Memory::fromBigEndian(m_value.second);

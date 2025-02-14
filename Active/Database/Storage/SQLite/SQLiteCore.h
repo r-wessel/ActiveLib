@@ -58,7 +58,7 @@ namespace active::database {
 			 Execute a single-step process, e.g. erase, insert etc
 			 @throw Exception thrown on SQL error
 			 */
-			void execute() const;
+			void execute();
 			/*!
 			 Conversion operator
 			 @return True if the transaction is not done
@@ -98,6 +98,11 @@ namespace active::database {
 		 @return An SQLite string literal
 		 */
 		static utility::String toSQLiteString(const utility::String& text);
+		/*!
+		 Get the SQLite type identifier for a specified setting
+		 @return The type identifier, e.g. "TEXT", "INTEGER" etc
+		 */
+		static utility::String getTypeID(const setting::Setting& setting);
 
 		// MARK: - Constructors
 		
@@ -106,7 +111,7 @@ namespace active::database {
 		 @param path Path to the SQLite dbase
 		 @param schema Database schema
 		 */
-		SQLiteCore(const active::file::Path& path, SQLiteSchema&& schema) : m_path(path), m_schema(schema) {}
+		SQLiteCore(const file::Path& path, SQLiteSchema&& schema) : m_path(path), m_schema(schema) {}
 		/*!
 		 Destructor
 		 */
@@ -127,7 +132,7 @@ namespace active::database {
 		 @param statement The statement to be executed by the transaction
 		 @return The SQLite handle (nullptr = failure to open database connection)
 		 */
-		Transaction makeTransaction(const active::utility::String& statement) const { return Transaction{this, statement}; }
+		Transaction makeTransaction(const utility::String& statement) const { return Transaction{this, statement}; }
 		
 	protected:
 		/*!
@@ -135,12 +140,17 @@ namespace active::database {
 		 @return The SQLite handle (nullptr = failure to open database connection)
 		 */
 		void* getHandle() const;
+		/*!
+		 Validate the SQLite database table/column schema
+		 @return True on successful validation
+		 */
+		bool validateSchema() const;
 
 	private:
 			///The database
 		SQLiteSchema m_schema;
 			///Path to the database
-		active::file::Path m_path;
+		file::Path m_path;
 			///The SQLite connection handle
 		mutable void* m_handle = nullptr;
 	};
