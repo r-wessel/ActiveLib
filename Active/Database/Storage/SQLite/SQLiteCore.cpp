@@ -257,7 +257,7 @@ bool SQLiteCore::validateSchema() const {
 															nullptr, nullptr, &primaryKey, nullptr); result != SQLITE_OK) {
 				utility::String statement{"ALTER TABLE " + table.ID + " ADD COLUMN " + field.name() + " " + getTypeID(field)};
 				if (index == table.globalIndex)
-					statement += " PRIMARY KEY";
+					statement += " PRIMARY KEY NOT NULL";
 				statement += ";";
 				makeTransaction(statement).execute();
 				continue;
