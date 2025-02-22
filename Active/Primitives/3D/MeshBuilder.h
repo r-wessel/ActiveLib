@@ -12,8 +12,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <optional>
 
 namespace active::attribute {
-	class Colour;
-	class Finish;
+	struct Colour;
+	struct Finish;
 }
 
 namespace active::geometry {

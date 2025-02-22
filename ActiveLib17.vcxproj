@@ -98,6 +98,7 @@
     <ClInclude Include="Active\Primitives\3D\Face.h" />
     <ClInclude Include="Active\Primitives\3D\Index.h" />
     <ClInclude Include="Active\Primitives\3D\Mesh.h" />
+    <ClInclude Include="Active\Primitives\3D\MeshBuilder.h" />
     <ClInclude Include="Active\Primitives\3D\Vertex.h" />
     <ClInclude Include="Active\Serialise\Cargo.h" />
     <ClInclude Include="Active\Serialise\CargoHold.h" />
@@ -190,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\Attribute\Colour.cpp" />
+    <ClCompile Include="Active\Attribute\Finish.cpp" />
     <ClCompile Include="Active\Database\Content\Record.cpp" />
     <ClCompile Include="Active\Database\Storage\RecordCache.cpp" />
     <ClCompile Include="Active\Database\Storage\SQLite\SQLiteCore.cpp" />
@@ -222,6 +224,7 @@
     <ClCompile Include="Active\Primitives\2D\PrimPoint.cpp" />
     <ClCompile Include="Active\Primitives\2D\Primitive.cpp" />
     <ClCompile Include="Active\Primitives\2D\Text.cpp" />
+    <ClCompile Include="Active\Primitives\3D\MeshBuilder.cpp" />
     <ClCompile Include="Active\Primitives\3D\Vertex.cpp" />
     <ClCompile Include="Active\Serialise\Document\Object.cpp" />
     <ClCompile Include="Active\Serialise\DOM\Node.cpp" />

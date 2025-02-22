@@ -577,6 +577,9 @@
     <ClInclude Include="Active\Utility\NameID.h">
       <Filter>Active\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Primitives\3D\MeshBuilder.h">
+      <Filter>Active\Primitives\3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -803,6 +806,12 @@
     </ClCompile>
     <ClCompile Include="Active\Utility\NameID.cpp">
       <Filter>Active\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Primitives\3D\MeshBuilder.cpp">
+      <Filter>Active\Primitives\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Attribute\Finish.cpp">
+      <Filter>Active\Attributes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
