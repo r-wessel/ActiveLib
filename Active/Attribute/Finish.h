@@ -51,7 +51,7 @@ namespace active::attribute {
 			///Metalness (0.0 -> 1.0)
 		double metalness = 0.0;
 			///Roughness (0.0 -> 1.0)
-		double roughness = 0.0;
+		double roughness = 1.0;
 			///Finish name (optional - application-specific)
 		utility::String name;
 			///Finish identifier (optional - application-specific)
