@@ -77,6 +77,16 @@ namespace active::attribute {
 		 @return The hash formatted as specified
 		 */
 		utility::String hash(utility::HashFormat format = utility::HashFormat::asBase64) const;
+
+		// MARK: - Functions (mutating)
+		
+		/*!
+		 Copy a specified colour
+		 @param source The colour to copy
+		 @param isAlphaCopied True if the alpha channel is also copied
+		 @return A reference to this
+		 */
+		Colour& copy(const Colour& source, bool isAlphaCopied = true);
 	};
 	
 	namespace colour {

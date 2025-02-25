@@ -78,3 +78,21 @@ String Colour::hash(HashFormat format) const {
 	hasher << r << g << b << a;
 	return hasher.product(format);
 } //Colour::hash
+
+
+/*--------------------------------------------------------------------
+	Copy a specified colour
+ 
+	source: The colour to copy
+	isAlphaCopied: True if the alpha channel is also copied
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Colour& Colour::copy(const Colour& source, bool isAlphaCopied) {
+	r = source.r;
+	g = source.g;
+	b = source.b;
+	if (isAlphaCopied)
+		a = source.a;
+	return *this;
+} //Colour::copy
