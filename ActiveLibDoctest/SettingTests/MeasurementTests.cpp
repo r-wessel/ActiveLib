@@ -14,7 +14,7 @@ using namespace active::utility;
 
 TEST_SUITE(TESTQ(MeasurementTests)) TEST_SUITE_OPEN
 
-		///Tests for creating/modifying time
+		///Tests for length values
 	TEST_CASE(TESTQ(testLengthValues)) {
 		using enum LengthType;
 			//Fractional feet/inches precision 1/64
@@ -32,7 +32,7 @@ TEST_SUITE(TESTQ(MeasurementTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(isEqual(lengthMetre.data, 3.0, 1e-4), TEST_MESSAGE(Conversion from feet and fractional inches to metres failed));
 	}
 
-		///Tests for time calculations
+		///Tests for angle values
 	TEST_CASE(TESTQ(testAngleValues)) {
 		using enum AngleType;
 		AngleValue angleValue;
@@ -47,16 +47,16 @@ TEST_SUITE(TESTQ(MeasurementTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(isEqual(angleValue, 5.276619), TEST_MESSAGE(Conversion from surveyor bearings failed));
 	}
 
-		///Tests for time calculations
+		///Tests for for mass values
 	TEST_CASE(TESTQ(testMassValues)) {
 		using enum MassType;
-		MassValue areaValue;
-		areaValue = "100g";
-		CHECK_MESSAGE(isEqual(areaValue, 0.1, 1e-4), TEST_MESSAGE(Conversion from grams to kilos failed));
-		areaValue.setUnit(MassUnit::pounds());
-		CHECK_MESSAGE(areaValue.operator String() == "0.2205lb", TEST_MESSAGE(Conversion to pounds failed));
-		areaValue = "5";
-		CHECK_MESSAGE(isEqual(areaValue, 2.267962, 1e-4), TEST_MESSAGE(Conversion from pounds to kilos failed));
+		MassValue massValue;
+		massValue = "100g";
+		CHECK_MESSAGE(isEqual(massValue, 0.1, 1e-4), TEST_MESSAGE(Conversion from grams to kilos failed));
+		massValue.setUnit(MassUnit::pounds());
+		CHECK_MESSAGE(massValue.operator String() == "0.2205lb", TEST_MESSAGE(Conversion to pounds failed));
+		massValue = "5";
+		CHECK_MESSAGE(isEqual(massValue, 2.267962, 1e-4), TEST_MESSAGE(Conversion from pounds to kilos failed));
 	}
 
 TEST_SUITE_CLOSE
