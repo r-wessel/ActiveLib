@@ -67,10 +67,11 @@ bool App::makeTransaction(database::Transaction& transaction) {
 	bool result = performTransaction(transaction);
 	{
 		const std::lock_guard<std::mutex> lock{m_transactionIDLock};
-		if (m_activeTransactionID == transaction.getID())
+		if (m_activeTransactionID == transaction.getID()) {
+			finaliseTransaction(transaction, result);
 			m_activeTransactionID.reset();
+		}
 	}
-	finaliseTransaction(transaction, result);
 	return result;
 } //App::makeTransaction
 
@@ -87,7 +88,7 @@ bool App::isTransacting() const {
 
 
 /*--------------------------------------------------------------------
-	Determine if a speciifc transaction is being performed
+	Determine if a specific transaction is being performed
  
 	return: True if the specified transaction is being performed
  --------------------------------------------------------------------*/
