@@ -181,6 +181,11 @@ namespace active::file {
 			@return True if the path has a file name
 		*/
 		bool hasFileName() const;
+		/*!
+			Determine if the path exists
+			@return True if the path exists
+		*/
+		bool exists() const;
 		
 		// MARK: - Functions (mutating)
 		
