@@ -32,6 +32,7 @@ namespace {
 	
 		///Struct to pair matching vertices
 	struct VertexMatch : public Vertex {
+		bool operator== (const VertexMatch& ref) const { return !((*this < ref) || (ref < *this)); }
 		bool operator< (const VertexMatch& ref) const {
 			return (isLess(x, ref.x, coordTolerance) || (isEqual(x, ref.x, coordTolerance) &&
 					(isLess(y, ref.y, coordTolerance) || (isEqual(y, ref.y, coordTolerance) &&
@@ -41,6 +42,7 @@ namespace {
 
 		///Struct to pair matching normals
 	struct NormalMatch : public Vector3 {
+		bool operator== (const NormalMatch& ref) const { return !((*this < ref) || (ref < *this)); }
 		bool operator< (const NormalMatch& ref) const {
 			return (isLess((*this)[0], ref[0], coordTolerance) || (isEqual((*this)[0], ref[0], coordTolerance) &&
 					(isLess((*this)[1], ref[1], coordTolerance) || (isEqual((*this)[1], ref[0], coordTolerance) &&
@@ -100,11 +102,7 @@ MeshBuilder::~MeshBuilder() {}
 Index MeshBuilder::addColour(const Colour& colour) {
 	auto colourID = colour.hash();
 	auto& colours{m_cache->colours};
-	if (auto iter = colours.find(colourID); iter != colours.end())
-		return iter->second.first;
-	auto result = static_cast<Index>(colours.size());
-	colours[colourID] = {result, colour};
-	return result;
+	return colours.insert({colourID, {colours.size(), colour}}).first->second.first;
 } //MeshBuilder::addColour
 
 
@@ -125,11 +123,7 @@ std::optional<Index> MeshBuilder::addEdge(const Vertex& start, const Vertex& end
 	if (!match)
 		return std::nullopt;
 	auto& edges{m_cache->edges};
-	if (auto iter = edges.find(match); iter != edges.end())
-		return iter->second.first;
-	auto result = static_cast<Index>(edges.size());
-	edges[match] = {result, edge};
-	return result;
+	return edges.insert({match, {edges.size(), edge}}).first->second.first;
 } //MeshBuilder::addEdge
 
 
@@ -194,11 +188,7 @@ std::optional<Index> MeshBuilder::addFace(const std::vector<RawEdge>& vertices, 
 	auto hash = hasher.base64Hash();
 		//Determine if the face is exists
 	auto& faces{m_cache->faces};
-	if (auto iter = faces.find(hash); iter != faces.end())
-		return iter->second.first;
-	auto result = static_cast<Index>(faces.size());
-	faces[hash] = {result, face};
-	return result;
+	return faces.insert({hash, {faces.size(), face}}).first->second.first;
 } //MeshBuilder::addFace
 
 
@@ -259,13 +249,8 @@ Mesh MeshBuilder::product(bool findSoftEdges) const {
 	return: The index of the vertex in the mesh table
   --------------------------------------------------------------------*/
 Index MeshBuilder::addVertex(const Vertex& vertex) {
-	VertexMatch match{vertex};
 	auto& vertices{m_cache->vertices};
-	if (auto iter = vertices.find(match); iter != vertices.end())
-		return iter->second;
-	auto result = static_cast<Index>(vertices.size());
-	vertices[match] = result;
-	return result;
+	return vertices.insert({VertexMatch{vertex}, vertices.size()}).first->second;
 } //MeshBuilder::addVertex
 
 
@@ -277,13 +262,8 @@ Index MeshBuilder::addVertex(const Vertex& vertex) {
 	return: The index of the normal in the mesh table
   --------------------------------------------------------------------*/
 Index MeshBuilder::addNormal(const Vector3& normal) {
-	VertexMatch match{normal};
 	auto& normals{m_cache->normals};
-	if (auto iter = normals.find(match); iter != normals.end())
-		return iter->second;
-	auto result = static_cast<Index>(normals.size());
-	normals[match] = result;
-	return result;
+	return normals.insert({VertexMatch{normal}, normals.size()}).first->second;
 } //MeshBuilder::addNormal
 
 
@@ -297,9 +277,5 @@ Index MeshBuilder::addNormal(const Vector3& normal) {
 Index MeshBuilder::addFinish(const active::attribute::Finish& finish) {
 	auto finishID = finish.hash();
 	auto& finishes{m_cache->finishes};
-	if (auto iter = finishes.find(finishID); iter != finishes.end())
-		return iter->second.first;
-	auto result = static_cast<Index>(finishes.size());
-	finishes[finishID] = {result, finish};
-	return result;
+	return finishes.insert({finishID, {finishes.size(), finish}}).first->second.first;
 } //MeshBuilder::addFinish
