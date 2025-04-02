@@ -975,7 +975,7 @@ namespace {
 						isAttributeReadingComplete = true;
 						break;
 					}
-					if (!container.validate())
+					if (!container.validate(importer.management()))
 						throw std::system_error(makeJSONError(invalidObject));	//The incoming data was rejected as invalid
 					return;
 			}

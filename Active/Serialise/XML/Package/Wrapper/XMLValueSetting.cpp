@@ -141,9 +141,11 @@ void XMLValueSetting::setDefault() {
 /*--------------------------------------------------------------------
 	Validate the cargo data
  
+	management: The cargo transport management (nullptr = no management)
+ 
 	return: True if the data has been validated
   --------------------------------------------------------------------*/
-bool XMLValueSetting::validate() {
+bool XMLValueSetting::validate(Management* management) {
 	Guid settingGuid{m_id};
 	if (!m_name.empty() || settingGuid) {
 		base::get().identity = std::make_optional<NameID>(m_name, settingGuid);

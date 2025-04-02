@@ -183,7 +183,7 @@ public:
 		///Inserts a newly deserialised object container into the target (identified by an inventory item)
 	bool insert(active::serialise::Cargo::Unique&& cargo, const active::serialise::Inventory::Item& item) override;
 		///Validate the content of the target after import - nothing to do in this case (and could be omitted) but included for illustration
-	bool validate() override { return true; }
+	bool validate(active::serialise::Management* management) override { return true; }
 
 private:
 		///The target to be (de)serialised

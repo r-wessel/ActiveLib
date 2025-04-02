@@ -84,14 +84,14 @@ namespace active::serialise {
 		 */
 		const auto& attributeTag() const {
 			return m_attributeTag;
-		} //reconstruct
+		} //attributeTag
 		/*!
 		 Get any parameter tags for reading package construction parameters
 		 @return The parameter tage
 		 */
 		const auto& parameterTags() const {
 			return m_parameterTags;
-		} //reconstruct
+		} //parameterTags
 		/*!
 			Find the tag associated with a specified object type
 			@param info The object type info

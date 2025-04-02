@@ -118,9 +118,10 @@ namespace active::serialise {
 		void setDefault() override;
 		/*!
 		 Validate the cargo data
+		 @param management The cargo transport management (nullptr = no management)
 		 @return True if the data has been validated
 		 */
-		bool validate() override;
+		bool validate(Management* management) override;
 		/*!
 		 Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
 		 @param isScopeEnded True if the scope for finding more attributes is ended (all found or the object content is all read)

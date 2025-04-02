@@ -168,12 +168,14 @@ void Mover::setDefault() {
 /*--------------------------------------------------------------------
 	Validate the cargo data
  
+	management: The cargo transport management (nullptr = no management)
+ 
 	return: True if the data has been validated
   --------------------------------------------------------------------*/
-bool Mover::validate() {
+bool Mover::validate(Management* management) {
 	if (!m_wrapper)
 		return true;
-	if (!m_wrapper->validate())
+	if (!m_wrapper->validate(management))
 		return false;
 	if (m_unique)
 		m_unique->set(std::move(m_wrapper));

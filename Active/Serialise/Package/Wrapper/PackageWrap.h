@@ -105,7 +105,7 @@ namespace active::serialise {
 			Validate the cargo data
 			@return True if the data has been validated
 		*/
-		bool validate() override { return get().validate(); }
+		bool validate(Management* management) override { return get().validate(management); }
 		/*!
 			Read the cargo data from the specified string
 			@param source The string to read

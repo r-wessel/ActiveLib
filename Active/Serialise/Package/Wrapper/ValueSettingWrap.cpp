@@ -70,9 +70,11 @@ void ValueSettingWrap::setDefault() {
 /*--------------------------------------------------------------------
 	Validate the cargo data
  
+	management: The cargo transport management (nullptr = no management)
+ 
 	return: True if the data has been validated
   --------------------------------------------------------------------*/
-bool ValueSettingWrap::validate() {
+bool ValueSettingWrap::validate(Management* management) {
 	return true;
 } //ValueSettingWrap::validate
 

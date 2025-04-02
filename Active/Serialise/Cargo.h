@@ -148,9 +148,10 @@ namespace active::serialise {
 		virtual void setDefault() = 0;
 		/*!
 			Validate the cargo data
+			@param management The cargo transport management (nullptr = no management)
 			@return True if the data has been validated
 		*/
-		virtual bool validate() { return true; }
+		virtual bool validate(Management* management) { return true; }
 		
 		// MARK: - Functions (mutating)
 		

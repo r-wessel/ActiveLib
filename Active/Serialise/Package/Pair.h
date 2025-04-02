@@ -92,7 +92,7 @@ namespace active::serialise {
 			Validate the cargo data
 			@return True if the data has been validated
 		*/
-		virtual bool validate();
+		virtual bool validate(Management* management);
 		/*!
 			Release the pair key
 			@return The pair key (caller takes ownership - the key held by this package is reset to nullptr)

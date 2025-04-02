@@ -759,7 +759,7 @@ namespace {
 		instructionImporter.setEncoding(importer.getEncoding());
 		XMLProlog declaration;
 		doXMLImport(declaration, instruction, instructionImporter);
-		declaration.validate();
+		declaration.validate(nullptr);
 		importer.setEncoding(declaration.encoding);
 	} //processInstruction
 	
@@ -821,7 +821,7 @@ namespace {
 					if ((identity.name != containerIdentity.name) ||	//Check this tag pairs with the opening tag
 						(containerIdentity.group && (identity.group != containerIdentity.group))) //…and namespace when specified
 						throw std::system_error(makeXMLError(unbalancedScope));
-					if (!container.validate()) //And the received cargo is valid
+					if (!container.validate(nullptr)) //And the received cargo is valid
 						throw std::system_error(makeXMLError(badElement));
 					return;
 				case dataTag:
@@ -878,7 +878,7 @@ namespace {
 							throw std::system_error(makeXMLError(badElement));
 					}
 					if (isEmpty) {
-						if (!cargo->validate())
+						if (!cargo->validate(nullptr))
 							throw std::system_error(makeXMLError(badElement));
 					} else
 						doXMLImport(*cargo, identity, importer);

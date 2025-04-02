@@ -633,7 +633,7 @@ The `Inventory` is essentially the serialisation schema and should be populated 
 This function should return a `Cargo` container to send or receive data associated with the passed `Inventory::Item` (which combines an `Entry` with an `Identity`). The serialisation process will serialise and export the returned cargo. Deserialisation will populate the returned cargo with the imported deserialised data.
 	- `void setDefault()`	
 Called during deserialisation only, before any deserialised data is retrieved. The target object/value should reset all its fields to their default state. For an array, this probably means clearing any existing content. This function should only be implemented where there is a suitable default state. Values subclassed from `Item` typically do not need this function.
-	- `bool validate()`	
+	- `bool validate(Management* management)`	
 Called during deserialisation only, after all the data relevant to the target has been deserialised and populated into the target. The target object/value should return `true` if the deserialised data is valid, but this can also be used as an opportunity for completion processes, e.g. migrating legacy data, caching data for objects that can't be constructed yet, or amalgamating disparate items into a more complex structure. This function can be omitted if none of these processes are required. Sometimes required for subclasses of `Item`, but rarely. 
 	- `bool insert(Cargo::Unique&& cargo, const Inventory::Item& item)`   
 Required for deserialising arrays/dictionaries. When a new array instance is found, a `Cargo` instance is requested (using *getCargo*) to receive the deserialised data. Once the instance has been read and validated, this *insert* function is called. The *cargo* parameter is the new instance to be inserted, and *item* associates the *cargo* with an inventory entry (essential for objects that hold multiple arrays).
@@ -780,7 +780,7 @@ In this case, the default state is for all the fields to be empty. However, some
 Once `Cargo` has been fully deserialised, it is asked to validate the content:
 
 ```cpp
-bool Object::validate() {
+bool Object::validate(Management* management) {
 	return !docType.empty();
 }
 ```
