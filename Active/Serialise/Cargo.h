@@ -151,7 +151,7 @@ namespace active::serialise {
 			@param management The cargo transport management (nullptr = no management)
 			@return True if the data has been validated
 		*/
-		virtual bool validate(Management* management) { return true; }
+		virtual bool validate(Management* management = nullptr) { return true; }
 		
 		// MARK: - Functions (mutating)
 		
