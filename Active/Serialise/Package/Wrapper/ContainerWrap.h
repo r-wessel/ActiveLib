@@ -16,6 +16,13 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active::serialise {
 	
+		///Concept for a mutable container type
+	template<typename Cont>
+	concept IsMutableContainer = requires(Cont cont) {
+		{ cont.clear() };
+	};
+	
+	
 	/*!
 	 A wrapper class to (de)serialising a container of objects
 	 @tparam Container The container type, e.g. std::vector<String>, Vector<Point> etc
@@ -164,52 +171,58 @@ namespace active::serialise {
 		/*!
 		 Set to the default package content
 		*/
-		void setDefault() override { base::get().clear(); }
+		void setDefault() override {
+			if constexpr(IsMutableContainer<Container>) {
+				base::get().clear();
+			}
+		}
 		/*!
 		 Insert specified cargo into the package - used for cargo with many instances sharing the same ID (e.g. from an array/map)
 		 @param cargo The cargo to insert
 		 @param item The inventory item linked with the cargo
 		 */
 		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override {
-			if (item.ownerType != &typeid(wrapped_t))
-				return true;
-			switch (item.index) {
-				case itemID:
-					if constexpr (active::utility::Dereferenceable<Obj>) {
-						using Value = typename Obj::element_type;
-						using PackType = serialise::CargoHold<ObjWrapper, Value>;
-						using ItemType = serialise::CargoHold<serialise::ItemWrap, Value>;
-						if constexpr (std::is_base_of_v<Package, Value>) {
-							if (auto holder = dynamic_cast<PackType*>(cargo.get()); holder != nullptr)
-								base::get().emplace_back(holder->get());
-						} else {
-							if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
-								base::get().emplace_back(holder->get());
-						}
-					} else {
-						using PackType = serialise::CargoHold<ObjWrapper, Obj>;
-						using ItemType = serialise::CargoHold<serialise::ItemWrap, Obj>;
-						using ValueType = serialise::CargoHold<serialise::ValueWrap<Obj>, Obj>;
-						if constexpr (std::is_base_of_v<Package, Obj>) {
-							if (auto holder = dynamic_cast<PackType*>(cargo.get()); holder != nullptr)
-								base::get().emplace_back(holder->get());
-						} else {
-							if constexpr (IsWrappableValue<Obj>) {
-								if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr) {
-									if constexpr (IsInsertion<Container, ValueType>)
-										base::get().insert(holder->get());
-									else
-										base::get().emplace_back(holder->get());
-								}
+			if constexpr(IsMutableContainer<Container>) {
+				if (item.ownerType != &typeid(wrapped_t))
+					return true;
+				switch (item.index) {
+					case itemID:
+						if constexpr (active::utility::Dereferenceable<Obj>) {
+							using Value = typename Obj::element_type;
+							using PackType = serialise::CargoHold<ObjWrapper, Value>;
+							using ItemType = serialise::CargoHold<serialise::ItemWrap, Value>;
+							if constexpr (std::is_base_of_v<Package, Value>) {
+								if (auto holder = dynamic_cast<PackType*>(cargo.get()); holder != nullptr)
+									base::get().emplace_back(holder->get());
 							} else {
 								if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
 									base::get().emplace_back(holder->get());
 							}
+						} else {
+							using PackType = serialise::CargoHold<ObjWrapper, Obj>;
+							using ItemType = serialise::CargoHold<serialise::ItemWrap, Obj>;
+							using ValueType = serialise::CargoHold<serialise::ValueWrap<Obj>, Obj>;
+							if constexpr (std::is_base_of_v<Package, Obj>) {
+								if (auto holder = dynamic_cast<PackType*>(cargo.get()); holder != nullptr)
+									base::get().emplace_back(holder->get());
+							} else {
+								if constexpr (IsWrappableValue<Obj>) {
+									if (auto holder = dynamic_cast<ValueType*>(cargo.get()); holder != nullptr) {
+										if constexpr (IsInsertion<Container, ValueType>)
+											base::get().insert(holder->get());
+										else
+											base::get().emplace_back(holder->get());
+									}
+								} else {
+									if (auto holder = dynamic_cast<ItemType*>(cargo.get()); holder != nullptr)
+										base::get().emplace_back(holder->get());
+								}
+							}
 						}
-					}
-					break;
-				default:
-					break;
+						break;
+					default:
+						break;
+				}
 			}
 			return true;
 		}
