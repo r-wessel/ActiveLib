@@ -63,7 +63,7 @@ namespace {
 	String::sizeOption getByteCountCharLimited(const char* text, String::sizeOption howMany = std::nullopt, bool isCountRequired = false,
 												DataFormat format = DataFormat{}) {
 			//A null pointer can be a valid input if there is no specific requirement for content, in which case we can say it has zero bytes
-		if ((howMany == 0) || (*text == 0))
+		if ((howMany == 0) || (text == nullptr) || (*text == 0))
 			return (!howMany || !isCountRequired) ? std::optional(0) : std::nullopt;
 			//Start by pointing to the first char, then bump up for each successive char
 		const auto* endPos = text;
@@ -95,6 +95,8 @@ namespace {
 	*/
 	std::optional<std::vector<String::size_type>> collectCharByteCount(const char* text, String::sizeOption howMany = std::nullopt,
 																		DataFormat format = DataFormat{}) {
+		if (text == nullptr)
+			return std::nullopt;
 			//Array to collect character sizes
 		std::vector<String::size_type> charLength;
 			//Note: loop still works as expected even when howMany = nullopt
@@ -119,7 +121,7 @@ namespace {
 		@return The number of characters in the array
 	*/
 	String::size_type getStringLength(const char* text, String::sizeOption howMany = std::nullopt, DataFormat format = DataFormat{}) {
-		if (howMany == 0)
+		if ((howMany == 0) || (text == nullptr))
 			return 0;
 		String::size_type charCount = 0;
 			//Loop until we hit a null char (or run out of bytes - checked within loop)
@@ -171,6 +173,9 @@ namespace {
 	*/
 	String::size_type makeString(std::string& target, const char* text, String::sizeOption howMany = std::nullopt,
 			String::sizeOption charCount = std::nullopt, DataFormat format = DataFormat{}) {
+		target.clear();
+		if (text == nullptr)
+			return 0;
 		String::size_type dataSize = 0;
 		switch (format.encoding) {
 			case UTF8: case ascii: {
@@ -270,6 +275,8 @@ namespace {
 																				  String::size_type startPos = 0,
 																				  String::sizeOption howMany = std::nullopt,
 																				  bool isHowManyChars = false) {
+		if (text == nullptr)
+			return std::nullopt;
 			//Find the byte offset to the start char
 		auto startByte = (startPos == 0) ? 0 : getByteCountCharLimited(text, startPos, true);
 		if (!startByte)
@@ -508,7 +515,7 @@ String::String(String&& source) noexcept :
 String::size_type String::getValidByteCount(const char* text, sizeOption howMany, sizeOption charCount, DataFormat format) {
 	bool isOpen = !charCount;
 		//Detect empty strings or null requests
-	if ((howMany == 0) || (!isOpen && (*charCount < 1)))
+	if ((text == nullptr) || (howMany == 0) || (!isOpen && (*charCount < 1)))
 		return 0;
 	const auto* endPos = text;
 	do {
@@ -538,7 +545,7 @@ String::size_type String::getValidByteCount(const char* text, sizeOption howMany
 	return: The character width in bytes (nullopt on failure, either null char or bad encoding)
   --------------------------------------------------------------------*/
 String::sizeOption String::getCharacterByteCount(const char* text, sizeOption howMany, DataFormat format) {
-	if (howMany == 0)
+	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	switch (format.encoding) {
 		case UTF8: {
@@ -602,7 +609,7 @@ String::sizeOption String::getCharacterByteCount(const char* text, sizeOption ho
 	return: The nummber of characters found
   --------------------------------------------------------------------*/
 String::sizeOption String::getCharacterCount(const char* text, sizeOption howMany, DataFormat format) {
-	if (howMany == 0)
+	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	size_type totalChars = 0;
 		//Keep checking the next char until we hit the string end, run out of bytes or find bad encoding
@@ -632,6 +639,8 @@ String::sizeOption String::getCharacterCount(const char* text, sizeOption howMan
 	return: The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/
 std::pair<char32_t, String::size_type> String::getUnicodeChar(const char* text, sizeOption howMany, DataFormat format) {
+	if (text == nullptr)
+		return {};
 	switch (format.encoding) {
 		case UTF8:
 			return getUTF32CharFromUTF8(text, howMany.value_or(possibleCharWidth));
@@ -721,6 +730,8 @@ std::optional<String> String::fromUnicode(const char32_t*& text, bool isBigEndia
 	return: The unicode code point for the specified chars (nullopt on failure)
   --------------------------------------------------------------------*/
 std::optional<std::u32string> String::toUnicode(const char*& text, String::sizeOption howMany, bool isCountRequired) {
+	if (text == nullptr)
+		return std::nullopt;
 	std::u32string uniString;
 	if (howMany == 0)
 		return std::optional(uniString);	//An empty string is not an error, so we don't return std::nullopt
