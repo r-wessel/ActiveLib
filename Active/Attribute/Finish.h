@@ -17,7 +17,12 @@ namespace active::attribute {
 		NB: This structure is likely to expand over time as additiona attributes are added to the definition of a finish, e.g. texture-mapping
 	*/
 	struct Finish {
+		
+		// MARK: Types
 
+			///Optional
+		using Option = std::optional<Finish>;
+		
 		// MARK: Constructors
 
 		/*!

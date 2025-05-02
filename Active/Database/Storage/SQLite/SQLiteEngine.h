@@ -64,7 +64,7 @@ namespace active::database {
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
 		 @return A list containing IDs of found elements (empty if none found)
 		 */
-		virtual ObjIDList findObjects(const Filter* filter = nullptr, const ObjIDList& subset = {},
+		ObjIDList findObjects(const Filter* filter = nullptr, const ObjIDList& subset = {},
 									  std::optional<utility::String> tableID = std::nullopt,
 									  std::optional<DocID> documentID = std::nullopt) const override { return {}; }	//Implement when required
 		/*!
@@ -95,7 +95,7 @@ namespace active::database {
 		 Get all objects
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
-		 @return The requested objects (nullptr on failure)
+		 @return The requested objects (empty on failure)
 		 */
 		container::Vector<Obj> getObjects(utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
@@ -103,10 +103,20 @@ namespace active::database {
 		 @param filter The object filter
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (filter for this document only - nullopt = all objects)
-		 @return The filtered objects (nullptr on failure)
+		 @return The filtered objects (empty on failure)
 		 */
 		active::container::Vector<Obj> getObjects(const Filter& filter, utility::String::Option tableID = std::nullopt,
 														  std::optional<DocID> documentID = std::nullopt) const override;
+		/*!
+		 Read the serialised content of an object from the database
+		 @param objID The object ID
+		 @param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @return The serialised content (nullopt on failure)
+		 */
+		virtual utility::String::Option readContent(const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const;
 		/*!
 		 Write an object to the database
 		 @param object The object to write
@@ -115,7 +125,7 @@ namespace active::database {
 		 @param tableID Optional table ID (defaults to the first table)
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 */
-		virtual void write(Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
+		void write(Obj& object, const ObjID& objID, std::optional<ObjID> objDocID = std::nullopt,
 						   utility::String::Option tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const override;
 		/*!
 		 Write the serialised content of an object to the database
@@ -245,6 +255,34 @@ namespace active::database {
 		auto transaction = makeTransaction("SELECT * FROM " + table->ID + ";");
 		return runTransaction(transaction, *table);
 	} //SQLiteEngine<Obj, Transport, DocID, ObjID>::getObjects
+	
+	
+	/*--------------------------------------------------------------------
+		Read the serialised content of an object from the database
+	 
+		objID The object ID
+		objDocID: The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		tableID: Optional table ID (defaults to the first table)
+		documentID: Optional document ID (when the object is bound to a specific document)
+	 
+		return: The serialised content
+	  --------------------------------------------------------------------*/
+	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
+	requires SQLiteStorable<Obj, ObjWrapper, Transport>
+	utility::String::Option SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::readContent(const ObjID& objID, std::optional<ObjID> objDocID,
+																								utility::String::Option tableID,
+																								std::optional<DocID> documentID) const {
+		auto table = getTable(tableID);
+		auto keyFieldIndex = documentID && table->documentIndex ? *table->documentIndex : table->globalIndex;
+		auto transaction = makeTransaction("SELECT * FROM " + table->ID + " WHERE " + (*table)[keyFieldIndex]->name() + " = '" + objID + "';");
+		auto row = ++transaction;
+		if (!row)
+			return std::nullopt;
+		auto content = table->getContent(*row);
+		if (content == nullptr)
+			throw std::system_error(makeError(Status::contentNotFound));
+		return content->operator utility::String();
+	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::readContent
 	
 	
 	/*--------------------------------------------------------------------

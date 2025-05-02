@@ -348,7 +348,7 @@ namespace active::serialise::dom {
 		 Determine if the cargo is null, i.e. has no defined content
 		 @return True if the cargo is a null
 		 */
-		bool isNull() const override { return base::valueless_by_exception(); }
+		bool isNull() const override { return index() == Index::undefined; }
 		/*!
 		 Determine if the node contains a sub-node with a specified name
 		 @param name The name to search for
