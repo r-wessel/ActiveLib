@@ -77,13 +77,8 @@ namespace active::serialise {
 		 */
 		virtual ~CargoHold() = default;
 		
-		// MARK: - Constructors
+		// MARK: - Functions (const)
 		
-		/*!
-		 Get a reference to the wrapped object
-		 @return A reference to the wrapped object
-		 */
-		ObjT& get() { return const_cast<ObjT&>(const_cast<const CargoHold<WrapT, ObjT>*>(this)->get()); }
 		/*!
 		 Get a reference to the wrapped object
 		 @return A reference to the wrapped object
@@ -97,12 +92,34 @@ namespace active::serialise {
 						return *obj;
 				}
 			}
+			if (m_object == nullptr)
+				throw std::bad_alloc();
 			return *m_object;
+		}
+		
+		// MARK: - Functions (mutating)
+		
+		/*!
+		 Get a reference to the wrapped object
+		 @return A reference to the wrapped object
+		 */
+		ObjT& get() { return const_cast<ObjT&>(const_cast<const CargoHold<WrapT, ObjT>*>(this)->get()); }
+		/*!
+		 Release the cached object
+		 @return The cached object (nullptr if no object has been received/allocated)
+		 */
+		std::unique_ptr<ObjT> release() {
+			WrapT::operator=(m_nullCargo);
+			m_object = nullptr;
+			return std::move(m_cache);
 		}
 
 	private:
+			///Placeholder to provide a reference when no object is available
 		static typename CargoPicker<WrapT>::CargoType m_nullCargo;
+			///Pointer to the stored object
 		ObjT* m_object = nullptr;
+			///Allocated object
 		std::unique_ptr<ObjT> m_cache;
 	};
 	

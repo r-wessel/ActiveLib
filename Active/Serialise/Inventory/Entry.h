@@ -100,6 +100,11 @@ namespace active::serialise {
 			@return The maximum number of instances
 		*/
 		std::optional<size_t> maximum() const { return isAttribute() ? 1 : m_maximum; }
+		/*!
+			Get the entry value type (on receive, only relevant for serialisation types that can partially identify value type, e.g. JSON)
+			@return The entry value type
+		*/
+		std::optional<active::setting::Value::Type> valueType() const { return m_valueType; }
 
 		// MARK: - Functions (mutating)
 		
@@ -120,6 +125,15 @@ namespace active::serialise {
 		*/
 		Entry& withRole(Identity::Role role) {
 			m_role = role;
+			return *this;
+		}
+		/*!
+			Set the entry value type
+			@param valType The The entry value type
+			@return A reference to this
+		*/
+		Entry& withValueType(std::optional<active::setting::Value::Type> valType) {
+			m_valueType = valType;
 			return *this;
 		}
 		/*!
@@ -189,6 +203,8 @@ namespace active::serialise {
 		std::optional<size_t> m_maximum = 1;
 			///The entry type
 		Identity::Role m_role = element;
+			///The entry value type
+		std::optional<active::setting::Value::Type> m_valueType = std::nullopt;
 	};
 	
 }  // namespace active::serialise

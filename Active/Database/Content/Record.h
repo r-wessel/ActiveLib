@@ -71,7 +71,7 @@ namespace active::database {
 		/*!
 		 Destructor
 		 */
-		virtual ~Record() {}
+		~Record() {}
 		
 		/*!
 			Object cloning

@@ -259,6 +259,12 @@ namespace {
 		*/
 		JSONIdentity(Type tagType) : Identity{} { type = tagType; }
 		/*!
+			Constructor
+			@param tagType The tag type
+			@param valType The value type
+		*/
+		JSONIdentity(Type tagType, std::optional<active::setting::Value::Type> valType) : Identity{String{}, valType} { type = tagType; }
+		/*!
 			Copy constructor
 			@param source The object to copy
 		*/
@@ -584,7 +590,7 @@ namespace {
 		if (!m_buffer)
 			throw std::system_error(makeJSONError(badSource));
 		switch (stage) {
-			case root: case array:	//Either at the document root or in an array
+			case root: case array: {	//Either at the document root or in an array
 				switch (leader.first) {
 					case objectLeader:
 						return objectStart;
@@ -597,16 +603,24 @@ namespace {
 				}
 				if (valueLeaders.find(leader.first) == std::u32string::npos)
 					throw std::system_error(makeJSONError(badValue));
-					//Check for a null item
-				if (leader.first == nullLeader) {
+				JSONIdentity result;
+				if (leader.first == textLeader) {
+					result = {valueStart, active::setting::Value::Type::stringType};
+				} else if (leader.first == nullLeader) {
 					String text{"n"};
 					m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
 					if (text != nullValue)
 						throw std::system_error(makeJSONError(badValue));
-					return nullItem;
-				}
+					return {nullItem, active::setting::Value::Type::null};
+				} else if (numberLeader.find(leader.first) != std::u32string::npos) {
+					result = {valueStart, active::setting::Value::Type::intType};
+				} else if (boolLeader.find(leader.first) != std::u32string::npos) {
+					result = {valueStart, active::setting::Value::Type::boolType};
+				} else
+					throw std::system_error(makeJSONError(badValue));
 				m_buffer.rewind(leader.second);	//Put the leading value back into the buffer
-				return valueStart;
+				return result;
+			}
 			case object: {	//In an object
 				if (leader.first == valueDelimiter)
 					return delimiter;
@@ -802,8 +816,9 @@ namespace {
 	void getArrayIdentity(Cargo& container, const Inventory& inventory, const JSONIdentity& containerIdentity, JSONIdentity& identity) {
 		if (!identity.name.empty())
 			return;	//It already has a name
-		auto type = identity.type;	//Preserve the original type
-		if ((containerIdentity.type == arrayStart) && !containerIdentity.name.empty())
+		auto type = identity.type;	//Preserve the original types
+		auto valueType = identity.valueType;
+		if ((containerIdentity.type == arrayStart) && !containerIdentity.name.empty() && (inventory.empty() || inventory.contains(containerIdentity)))
 				//If the outer container is named, use that
 			identity = containerIdentity;
 		else {
@@ -811,6 +826,7 @@ namespace {
 				identity = JSONIdentity{iter->identity(), undefined};
 		}
 		identity.type = type;
+		identity.valueType = valueType;
 	} //getArrayIdentity
 	
 	
@@ -926,6 +942,7 @@ namespace {
 									incomingItem = inventory.end();
 								} else {
 									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
+									incomingItem->withValueType(identity.valueType); //Useful for ambiguous content
 									cargo = container.getCargo(*incomingItem);
 									if (cargo != nullptr) {
 										cargo->setDefault();
@@ -990,7 +1007,6 @@ namespace {
 					throw std::system_error(makeJSONError(invalidObject));
 				inventory = getImportInventoryFor(container, importer);	//The inventory will probably change here
 				parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
-
 			}
 		}
 	} //doJSONImport

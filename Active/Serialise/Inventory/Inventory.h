@@ -72,6 +72,11 @@ namespace active::serialise {
 		*/
 		Entry front() const { return base::front(); }
 		/*!
+			Determine if the inventory contains a specified item
+ 			@return True if the inventory contains the item
+		*/
+		bool contains(const Identity& identity) const;
+		/*!
 			Find an array entry in the inventory (e.g. in JSON for anonymous arrays)
 			@return An iterator at the requested entry (end() on failure)
 		*/
