@@ -745,7 +745,7 @@ void PolyEdge::extend(double len, bool byEnd) {
 
 
 /*--------------------------------------------------------------------
-	Extend the edge to the point nearest te specified point
+	Extend the edge to the point nearest the specified point
 	
 	ref: The point to extend to
  	byEnd: True to extend the edge by the endpoint

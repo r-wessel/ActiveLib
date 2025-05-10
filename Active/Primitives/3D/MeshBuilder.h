@@ -6,7 +6,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_PRIMITIVE_MESH_BUILDER
 #define ACTIVE_PRIMITIVE_MESH_BUILDER
 
-#include "Active/Primitives/3D/Mesh.h"
+#include "Active/Geometry/Vector3.h"
+#include "Active/Primitives/3D/Edge.h"
+#include "Active/Primitives/3D/Index.h"
+#include "Active/Primitives/3D/Vertex.h"
 
 #include <memory>
 #include <optional>
@@ -21,6 +24,8 @@ namespace active::geometry {
 }
 
 namespace active::primitive {
+	
+	class Mesh;
 	
 	/*!
 	 Class for building meshes from vertices, edges, faces etc
@@ -82,9 +87,9 @@ namespace active::primitive {
 		/*!
 		 Get the mesh product from the builder
 		 @param findSoftEdges True to set the visibility/softness attributes of edges based on the normals of adjacent faces
-		 @return The mesh created by the builder from the contributed faces etc
+		 @return The mesh created by the builder from the contributed faces etc (nullptr if the mesh is empty)
 		 */
-		Mesh product(bool findSoftEdges = false) const;
+		std::unique_ptr<Mesh> product(bool findSoftEdges = false) const;
 		
 	protected:
 		/*!

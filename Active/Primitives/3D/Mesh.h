@@ -8,8 +8,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Attribute/Colour.h"
 #include "Active/Attribute/Finish.h"
-#include "Active/Geometry/Box.h"
-#include "Active/Geometry/Matrix4x4.h"
 #include "Active/Geometry/Vector3.h"
 #include "Active/Primitives/3D/Edge.h"
 #include "Active/Primitives/3D/Face.h"
@@ -18,6 +16,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <vector>
 
 namespace active::geometry {
+	class Box;
 	class Matrix3x3;
 	class Matrix4x4;
 }
@@ -129,10 +128,16 @@ namespace active::primitive {
 			///True if the mesh has no content
 		bool empty() const { return vertices.empty() || edges.empty(); }
 		/*!
+		 Get a sequential list of vertices in a face
+		 @param faceIndex The index of the target face
+		 @return A list of the vertex indices for a face in sequential order
+		 */
+		std::vector<Index> faceVertices(Index faceIndex) const;
+		/*!
 		 Get the mesh bounding box
 		 @return The bounding box (mullopt if no bounds can be calculated)
 		 */
-		geometry::Box::Option bounds() const;
+		std::optional<geometry::Box> bounds() const;
 	};
 
 		///A body comprised of any number of meshes

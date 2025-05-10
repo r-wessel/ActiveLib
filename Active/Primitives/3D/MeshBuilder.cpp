@@ -9,7 +9,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Geometry/Matrix3x3.h"
 #include "Active/Geometry/Matrix4x4.h"
 #include "Active/Geometry/Plane.h"
-#include "Active/Geometry/Vector3.h"
 #include "Active/Geometry/Vector4.h"
 #include "Active/Primitives/3D/Mesh.h"
 #include "Active/Utility/MathFunctions.h"
@@ -207,37 +206,37 @@ void MeshBuilder::reset() {
  
 	return: The mesh created by the builder from the contributed faces etc
   --------------------------------------------------------------------*/
-Mesh MeshBuilder::product(bool findSoftEdges) const {
-	Mesh result;
+std::unique_ptr<Mesh> MeshBuilder::product(bool findSoftEdges) const {
+	auto result = std::make_unique<Mesh>();
 	auto& colours{m_cache->colours};
-	result.colours.resize(colours.size());
+	result->colours.resize(colours.size());
 	for (auto& colour : colours)
-		result.colours[colour.second.first] = colour.second.second;
+		result->colours[colour.second.first] = colour.second.second;
 	auto& vertices{m_cache->vertices};
-	result.vertices.resize(vertices.size());
+	result->vertices.resize(vertices.size());
 	for (auto& vertex : vertices)
-		result.vertices[vertex.second] = vertex.first;
+		result->vertices[vertex.second] = vertex.first;
 	auto& normals{m_cache->normals};
-	result.normals.resize(normals.size());
+	result->normals.resize(normals.size());
 	for (auto& normal : normals)
-		result.normals[normal.second] = normal.first;
+		result->normals[normal.second] = normal.first;
 	auto& edges{m_cache->edges};
-	result.edges.resize(edges.size());
+	result->edges.resize(edges.size());
 	for (auto& edge : edges)
-		result.edges[edge.second.first] = edge.second.second;
+		result->edges[edge.second.first] = edge.second.second;
 	auto& finishes{m_cache->finishes};
-	result.finishes.resize(finishes.size());
+	result->finishes.resize(finishes.size());
 	for (auto& finish : finishes)
-		result.finishes[finish.second.first] = finish.second.second;
+		result->finishes[finish.second.first] = finish.second.second;
 	auto& faces{m_cache->faces};
-	result.faces.resize(faces.size());
+	result->faces.resize(faces.size());
 	for (auto& face : faces) {
-		result.faces[face.second.first] = face.second.second;
+		result->faces[face.second.first] = face.second.second;
 			//Mark the face adjacencies in the mesh edges
 		for (auto& edge : face.second.second.edges)
-			result.edges[edge].addFace(face.second.first);
+			result->edges[edge].addFace(face.second.first);
 	}
-	return result;
+	return result->empty() ? nullptr : std::move(result);
 } //MeshBuilder::product
 
 
