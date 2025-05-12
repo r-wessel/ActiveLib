@@ -108,6 +108,13 @@ namespace active::math {
 	inline bool isGreater(double val1, double val2, double prec = eps)
 		{ return (val1 - val2 > prec); }
 	/*!
+	 	Determine if a floating point value is a valid number, e.g. not 'inf' or 'nan'
+		@param val The value to test
+		@return True if the value is valid
+	*/
+	inline bool isValid(double val)
+		{ return ((val == val) && (val <= std::numeric_limits<double>::max()) && (val >= std::numeric_limits<double>::min())); }
+	/*!
 	 	Compare two floating point values (with precision)
 		@param val1 The first value
 		@param val2 The second value

@@ -36,6 +36,17 @@ namespace active::serialise::dom {
 			stringType,
 		};
 		
+		// MARK: - Constructors
+		
+		using base::base;
+		/*!
+		 Constructor
+		 @param source The object to copy
+		 */
+		Value(const active::setting::Value& source);
+		
+		// MARK: - Operators
+		
 		/*!
 		 Conversion operator
 		 @return An equivalent boolean value
@@ -53,6 +64,12 @@ namespace active::serialise::dom {
 		 */
 		template<typename T> requires IsFloat<T>
 		operator T() const { return static_cast<T>(setting().operator double()); }
+		/*!
+		 Assignment operator
+		 @param source The object to assign
+		 @return A reference to this
+		 */
+		Value& operator=(const active::setting::Value& source);
 		/*!
 		 Conversion operator
 		 @return An equivalent boolean value

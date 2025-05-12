@@ -70,6 +70,29 @@ Node::Node(const std::initializer_list<Node>& nodes) {
 
 
 /*--------------------------------------------------------------------
+	Constructor
+ 
+	source: The object to copy
+  --------------------------------------------------------------------*/
+dom::Value::Value(const setting::Value& source) {
+	switch (source.getType()) {
+		case setting::Value::boolType:
+			base::operator=(source.operator bool());
+			break;
+		case setting::Value::intType:
+			base::operator=(source.operator int64_t());
+			break;
+		case setting::Value::floatType:
+			base::operator=(source.operator double());
+			break;
+		default:
+			base::operator=(source.operator String());
+			break;
+	}
+} //Value::Value
+
+
+/*--------------------------------------------------------------------
 	Get the value setting (allowing for anonymous conversion to a variety of value types)
  
 	return: The value setting
