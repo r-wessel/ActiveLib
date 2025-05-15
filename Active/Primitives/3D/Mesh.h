@@ -96,6 +96,25 @@ namespace active::primitive {
 		Mesh operator- (const geometry::Point& offset) const { return *this + (offset * -1.0); }
 		/*!
 		 Multiplication operator
+		 @param scale The value to multiply the mesh vertices by
+		 @return A mesh multiplied by the scaling factor
+		 */
+		Mesh operator*(double scale) const {
+			Mesh result{*this};
+			result *= scale;
+			return result;
+		}
+		/*!
+		 Multiplication operator
+		 @param scale The value to divide the mesh vertices by
+		 @return A mesh divided by the scaling factor
+		 */
+		Mesh operator/(double scale) const {
+			scale = 1.0 / scale;
+			return *this * scale;
+		}
+		/*!
+		 Multiplication operator
 		 @param matrix A matrix to multiply the mesh vertices by
 		 @return A mesh multiplied by the matrix
 		 */
@@ -116,6 +135,21 @@ namespace active::primitive {
 		 @return A reference to this
 		 */
 		Mesh& operator-= (const geometry::Point& offset) { return *this += (offset * -1.0); }
+		/*!
+		 Multiplication assignment operator
+		 @param scale The value to multiply the mesh vertices by
+		 @return A reference to this
+		 */
+		Mesh& operator*= (double scale);
+		/*!
+		 Division assignment operator
+		 @param scale The value to divide the mesh vertices by
+		 @return A reference to this
+		 */
+		Mesh& operator/= (double scale) {
+			scale = 1.0 / scale;
+			return *this *= scale;
+		}
 		/*!
 		 Multiplication assignment operator
 		 @param matrix A matrix to multiply the mesh vertices by

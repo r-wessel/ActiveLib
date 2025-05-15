@@ -34,6 +34,20 @@ Mesh& Mesh::operator+= (const Point& offset) {
 /*--------------------------------------------------------------------
 	Multiplication assignment operator
  
+	scale: The value to multiply the mesh vertices by
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Mesh& Mesh::operator*= (double scale) {
+	for (auto& vertex : vertices)
+		vertex *= scale;
+	return *this;
+} //Mesh::operator*=
+
+
+/*--------------------------------------------------------------------
+	Multiplication assignment operator
+ 
 	matrix: A matrix to multiply the mesh vertices by
  
 	return: A reference to this

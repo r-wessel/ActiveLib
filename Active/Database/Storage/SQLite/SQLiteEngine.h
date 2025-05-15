@@ -326,11 +326,12 @@ namespace active::database {
 	
 	/*--------------------------------------------------------------------
 		Write the serialised content of an object to the database
-		@param content The content to write (pre-serialised with the storage Transport)
-		@param objID The object ID
-		@param objDocID The object document-specific ID (unique within a specific document - nullopt if not document-bound)
-		@param tableID Optional table ID (defaults to the first table)
-		@param documentID Optional document ID (when the object is bound to a specific document)
+	 
+		content: The content to write (pre-serialised with the storage Transport)
+		objID: The object ID
+		objDocID: The object document-specific ID (unique within a specific document - nullopt if not document-bound)
+		tableID: Optional table ID (defaults to the first table)
+		documentID: Optional document ID (when the object is bound to a specific document)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename Transport, typename DocID, typename ObjID>
 	requires SQLiteStorable<Obj, ObjWrapper, Transport>
