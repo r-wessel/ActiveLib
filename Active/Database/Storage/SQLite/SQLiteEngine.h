@@ -44,6 +44,8 @@ namespace active::database {
 		using Filter = base::Filter;
 		using Outline = base::Outline;
 		using ObjIDList = base::ObjIDList;
+		using DBaseID = utility::String;
+		using TableID = utility::String;
 
 		// MARK: - Constructors
 		
