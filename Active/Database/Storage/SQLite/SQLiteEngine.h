@@ -342,13 +342,20 @@ namespace active::database {
 																			  utility::String::Option tableID, std::optional<DocID> documentID) const {
 		auto table = getTable(tableID);
 		bool isDocIndexed = objDocID && table->documentIndex;
-		utility::String statement{"INSERT INTO " + table->ID + " (" + (*table)[table->globalIndex]->name() + ", "};
-		if (isDocIndexed)
-			statement += (*table)[*table->documentIndex]->name() + ", ";
-		statement += (*table)[table->contentIndex]->name() + ") VALUES ('" + toSQLiteString(objID) + "', ";
-		if (isDocIndexed)
-			statement += "'" + toSQLiteString(*objDocID) + "', ";
-		statement += "'" + toSQLiteString(content.data()) + "');";
+		utility::String statement;
+			//If the database already contains this record, we need to update rather than insert
+		if (contains(objID, tableID, documentID))
+			statement = "UPDATE " + table->ID + " SET " + (*table)[table->contentIndex]->name() + " = '" + toSQLiteString(content.data()) +
+					"' WHERE " + (*table)[table->globalIndex]->name() + " = '" + toSQLiteString(objID) + "';";
+		else {
+			statement = "INSERT INTO " + table->ID + " (" + (*table)[table->globalIndex]->name() + ", ";
+			if (isDocIndexed)
+				statement += (*table)[*table->documentIndex]->name() + ", ";
+			statement += (*table)[table->contentIndex]->name() + ") VALUES ('" + toSQLiteString(objID) + "', ";
+			if (isDocIndexed)
+				statement += "'" + toSQLiteString(*objDocID) + "', ";
+			statement += "'" + toSQLiteString(content.data()) + "');";
+		}
 		makeTransaction(statement).execute();
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::writeContent
 	
