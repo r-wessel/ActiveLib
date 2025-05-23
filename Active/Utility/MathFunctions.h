@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_MATH_FUNCTIONS
 
 #include <cmath>
+#include <limits>
 #include <numbers>
 
 /*!

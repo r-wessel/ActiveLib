@@ -232,6 +232,7 @@
     <ClCompile Include="Active\Primitives\2D\PrimPoint.cpp" />
     <ClCompile Include="Active\Primitives\2D\Primitive.cpp" />
     <ClCompile Include="Active\Primitives\2D\Text.cpp" />
+    <ClCompile Include="Active\Primitives\3D\Mesh.cpp" />
     <ClCompile Include="Active\Primitives\3D\MeshBuilder.cpp" />
     <ClCompile Include="Active\Primitives\3D\Vertex.cpp" />
     <ClCompile Include="Active\Serialise\Document\Object.cpp" />

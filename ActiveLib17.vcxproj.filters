@@ -813,6 +813,9 @@
     <ClCompile Include="Active\Attribute\Finish.cpp">
       <Filter>Active\Attributes</Filter>
     </ClCompile>
+    <ClCompile Include="Active\Primitives\3D\Mesh.cpp">
+      <Filter>Active\Primitives\3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Active\CMakeLists.txt">
