@@ -175,7 +175,13 @@ namespace active::primitive {
 	};
 
 		///A body comprised of any number of meshes
-	struct Body : std::vector<Mesh> {};
+	struct Body : std::vector<Mesh> {
+		/*!
+		 Get the body content merged into a single mesh
+		 @return The merged mesh
+		 */
+		Mesh merged() const;
+	};
 	
 }
 
