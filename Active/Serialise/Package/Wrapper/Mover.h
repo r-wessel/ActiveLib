@@ -65,6 +65,11 @@ namespace active::serialise {
 		 */
 		~Mover();
 		
+		/*!
+		 Assignment operator
+		 @param source The object to copy
+		 @return A reference to this
+		 */
 		Mover& operator=(const Mover& source);
 
 		// MARK: - Functions (const)

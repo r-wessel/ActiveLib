@@ -65,6 +65,13 @@ Mover::Mover(Handler::Shared handler) : m_handler{handler} {
 Mover::~Mover() {}
 
 
+/*--------------------------------------------------------------------
+	Assignment operator
+ 
+	source: The object to copy
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
 Mover& Mover::operator=(const Mover& source) {
 	m_handler = source.m_handler;
 	m_typeName = source.m_typeName;
@@ -73,7 +80,7 @@ Mover& Mover::operator=(const Mover& source) {
 	m_transportPhase = source.m_transportPhase;
 	m_parameters.reset();
 	return *this;
-}
+} //Mover::operator=
 
 
 /*--------------------------------------------------------------------
