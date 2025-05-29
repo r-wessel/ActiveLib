@@ -65,6 +65,8 @@ namespace active::attribute {
 
 			///True if the colour is transparent
 		bool isTransparent() const { return math::isZero(a); }
+			///True if the colour is opaque
+		bool isOpaque() const { return math::isEqual(a, 1.0); }
 		/*!
 			Get the colour in hex digits
 			@param isAlpha True to include the alpha value
