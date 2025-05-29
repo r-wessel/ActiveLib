@@ -870,14 +870,14 @@ namespace {
 	 
 		return: The completed inventory
 	  --------------------------------------------------------------------*/
-	Inventory getImportInventoryFor(Cargo& container, JSONImporter& importer) {
-		Inventory inventory{importer.management()};
+	void getImportInventoryFor(Cargo& container, Inventory& inventory, JSONImporter& importer) {
+		inventory.clear();
+		inventory.useManagement(importer.management());
 		if (!container.fillInventory(inventory) && !container.isItem())
 			throw std::system_error(makeJSONError(missingInventory));
 		inventory.resetAvailable();	//Reset the availability of each entry to zero so we can count incoming items
 		if (importer.isEveryEntryRequired())
 			inventory.setAllRequired();
-		return inventory;
 	} //getImportInventoryFor
 	
 	
@@ -890,7 +890,8 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
-		Inventory inventory = getImportInventoryFor(container, importer);
+		Inventory inventory;
+		getImportInventoryFor(container, inventory, importer);
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
 		auto* package = dynamic_cast<Package*>(&container);
@@ -1005,7 +1006,7 @@ namespace {
 				}
 				if (!isAttributeFinalised && !package->finaliseAttributes(true))
 					throw std::system_error(makeJSONError(invalidObject));
-				inventory = getImportInventoryFor(container, importer);	//The inventory will probably change here
+				getImportInventoryFor(container, inventory, importer);	//The inventory will probably change here
 				parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 			}
 		}

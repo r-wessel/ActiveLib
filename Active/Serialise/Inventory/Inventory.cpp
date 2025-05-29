@@ -140,6 +140,16 @@ void Inventory::resetAvailable() {
 
 
 /*--------------------------------------------------------------------
+	Clear the inventory content
+  --------------------------------------------------------------------*/
+void Inventory::clear() {
+	base::clear();
+	m_isFilled = false;
+	m_management = nullptr;
+} //Inventory::clear
+
+
+/*--------------------------------------------------------------------
 	Find an entry by identity and optionally owner type
  
 	identity: The entry identity

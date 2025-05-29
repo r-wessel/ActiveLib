@@ -34,13 +34,13 @@ namespace {
 	};
 	
 		///The package inventory
-	auto myInventory = Inventory{
+	Inventory myInventory{
 		{
 			{ fieldID[x], x, attribute },
 			{ fieldID[y], y, attribute },
 			{ fieldID[z], z, attribute },
-		}
-	}.withType(&typeid(XMLPoint));
+		}, &typeid(XMLPoint)
+	};
 
 }  // namespace
 

@@ -11,8 +11,6 @@
 #include <vector>
 #include <map>
 
-#include <iostream>
-
 using namespace active;
 using namespace active::math;
 using namespace active::serialise;
