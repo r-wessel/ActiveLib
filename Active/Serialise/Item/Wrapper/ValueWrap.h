@@ -66,7 +66,8 @@ namespace active::serialise {
 			}
 			if constexpr (active::utility::Dereferenceable<T>) {
 				return !isNull();	//Should not be attempting to write a null value to a string (null != "")
-			}	
+			}
+			return false;
 		}
 		
 		// MARK: - Functions (mutating)

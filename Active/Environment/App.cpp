@@ -64,13 +64,21 @@ bool App::makeTransaction(database::Transaction& transaction) {
 		if (!m_activeTransactionID)
 			m_activeTransactionID = transaction.getID();
 	}
-	bool result = performTransaction(transaction);
-	{
+	auto closeTransaction = [this, &transaction](bool result){
 		const std::lock_guard<std::mutex> lock{m_transactionIDLock};
-		if (m_activeTransactionID == transaction.getID())
+		if (m_activeTransactionID == transaction.getID()) {
+			finaliseTransaction(transaction, result);
 			m_activeTransactionID.reset();
+		}
+	};
+	bool result = false;
+	try {
+		result = performTransaction(transaction);
+	} catch(...) {
+		closeTransaction(false);
+		throw;	//Although we need to close the transaction, any exceptions should be handed over to the caller
 	}
-	finaliseTransaction(transaction, result);
+	closeTransaction(result);
 	return result;
 } //App::makeTransaction
 
@@ -87,7 +95,7 @@ bool App::isTransacting() const {
 
 
 /*--------------------------------------------------------------------
-	Determine if a speciifc transaction is being performed
+	Determine if a specific transaction is being performed
  
 	return: True if the specified transaction is being performed
  --------------------------------------------------------------------*/

@@ -19,7 +19,7 @@ using namespace active::math;
 	
 	return: The requested rotation matrix
   --------------------------------------------------------------------*/
-Matrix4x4 Matrix4x4::createXRotate(const double& angle) {
+Matrix4x4 Matrix4x4::createXRotate(double angle) {
 	return Matrix4x4(	1.0,	0.0,		0.0,			0.0,
 						0.0,	cos(angle),	-sin(angle),	0.0,
 						0.0,	sin(angle),	cos(angle),		0.0,
@@ -34,7 +34,7 @@ Matrix4x4 Matrix4x4::createXRotate(const double& angle) {
 	
 	return: The requested rotation matrix
   --------------------------------------------------------------------*/
-Matrix4x4 Matrix4x4::createYRotate(const double& angle) {
+Matrix4x4 Matrix4x4::createYRotate(double angle) {
 	return Matrix4x4(	cos(angle),		0.0,	sin(angle),	0.0,
 						0.0,			1.0,	0.0,		0.0,
 						-sin(angle),	0.0,	cos(angle),	0.0,
@@ -49,7 +49,7 @@ Matrix4x4 Matrix4x4::createYRotate(const double& angle) {
 	
 	return: The requested rotation matrix
   --------------------------------------------------------------------*/
-Matrix4x4 Matrix4x4::createZRotate(const double& angle) {
+Matrix4x4 Matrix4x4::createZRotate(double angle) {
 	return Matrix4x4(	cos(angle),	-sin(angle),	0.0,	0.0,
 						sin(angle),	cos(angle),		0.0,	0.0,
 						0.0,		0.0,			1.0,	0.0,
@@ -66,7 +66,7 @@ Matrix4x4 Matrix4x4::createZRotate(const double& angle) {
 	
 	return: The requested scaling matrix
   --------------------------------------------------------------------*/
-Matrix4x4 Matrix4x4::createScale(const double& x, const double& y, const double& z) {
+Matrix4x4 Matrix4x4::createScale(double x, double y, double z) {
 	Matrix4x4 result;
 	result.m_matrix[0][0] = x;
 	result.m_matrix[1][1] = y;
@@ -85,7 +85,7 @@ Matrix4x4 Matrix4x4::createScale(const double& x, const double& y, const double&
 	
 	return: The requested transformation matrix
   --------------------------------------------------------------------*/
-Matrix4x4 Matrix4x4::createTranslate(const double& x, const double& y, const double& z) {
+Matrix4x4 Matrix4x4::createTranslate(double x, double y, double z) {
 	Matrix4x4 result;
 	result.m_matrix[0][0] = 1;
 	result.m_matrix[1][1] = 1;

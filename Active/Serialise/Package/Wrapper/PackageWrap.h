@@ -84,6 +84,12 @@ namespace active::serialise {
 			@return The requested cargo (nullptr on failure)
 		*/
 		Cargo::Unique getCargo(const Inventory::Item& item) const override { return get().getCargo(item); }
+		/*!
+		 Get a specified cargo manager
+		 @param index The manager index (0 -> number of managers, anything out of bounds returns nullptr)
+		 @return The requested manager (nullptr = no more management)
+		 */
+		Manager* getManager(size_t index) const override { return get().getManager(index); }
 	
 		// MARK: - Functions (mutating)
 		
@@ -99,7 +105,7 @@ namespace active::serialise {
 			Validate the cargo data
 			@return True if the data has been validated
 		*/
-		bool validate() override { return get().validate(); }
+		bool validate(Management* management) override { return get().validate(management); }
 		/*!
 			Read the cargo data from the specified string
 			@param source The string to read
@@ -120,9 +126,10 @@ namespace active::serialise {
 		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override { return get().insert(std::move(cargo), item); }
 		/*!
 			Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
+			@param isScopeEnded True if the scope for finding more attributes is ended (all found or the object content is all read)
 			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
 		*/
-		bool finaliseAttributes() override { return get().finaliseAttributes(); }
+		bool finaliseAttributes(bool isScopeEnded) override { return get().finaliseAttributes(isScopeEnded); }
 		/*!
 		 Allocate inventory for new (incoming) cargo
 		 @param inventory The inventory to extend

@@ -154,6 +154,16 @@ bool Path::hasFileName() const {
 
 
 /*--------------------------------------------------------------------
+	Determine if the path exists
+ 
+	return: True if the path exists
+  --------------------------------------------------------------------*/
+bool Path::exists() const {
+	return std::filesystem::exists(m_path);
+} //Path::exists
+
+
+/*--------------------------------------------------------------------
 	Appends a name to the path (with a prefixed directory separator)
  
 	toAppend: The string to append to this path (with a directory separator)

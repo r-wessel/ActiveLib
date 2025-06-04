@@ -19,9 +19,12 @@ namespace active::serialise {
 	class Management : public std::vector<Manager*> {
 	public:
 		
+		using base = std::vector<Manager*>;
 			///Shared pointer
 		using Shared = std::shared_ptr<Management>;
 
+		using base::base;
+		
 		// MARK: - Functions (const)
 		
 		/*!
@@ -50,6 +53,12 @@ namespace active::serialise {
 			}
 			if (auto manager = dynamic_cast<Manager*>(&cargo))
 				push_back(manager);
+			for (auto i = 0; ; ++i) {
+				if (auto manager = cargo.getManager(i); manager != nullptr)
+					push_back(manager);
+				else
+					break;
+			}
 		}
 	};
 	

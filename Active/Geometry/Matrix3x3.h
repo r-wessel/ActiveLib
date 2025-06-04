@@ -114,7 +114,7 @@ namespace active::geometry {
 			@param col The required column
 			@return The value at the specified position
 		*/
-		const double& operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
+		double operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
 		/*!
 			Subscript operator
 			@param row The required row

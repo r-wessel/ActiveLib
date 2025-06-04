@@ -259,6 +259,12 @@ namespace {
 		*/
 		JSONIdentity(Type tagType) : Identity{} { type = tagType; }
 		/*!
+			Constructor
+			@param tagType The tag type
+			@param valType The value type
+		*/
+		JSONIdentity(Type tagType, std::optional<active::setting::Value::Type> valType) : Identity{String{}, valType} { type = tagType; }
+		/*!
 			Copy constructor
 			@param source The object to copy
 		*/
@@ -584,7 +590,7 @@ namespace {
 		if (!m_buffer)
 			throw std::system_error(makeJSONError(badSource));
 		switch (stage) {
-			case root: case array:	//Either at the document root or in an array
+			case root: case array: {	//Either at the document root or in an array
 				switch (leader.first) {
 					case objectLeader:
 						return objectStart;
@@ -597,16 +603,24 @@ namespace {
 				}
 				if (valueLeaders.find(leader.first) == std::u32string::npos)
 					throw std::system_error(makeJSONError(badValue));
-					//Check for a null item
-				if (leader.first == nullLeader) {
+				JSONIdentity result;
+				if (leader.first == textLeader) {
+					result = {valueStart, active::setting::Value::Type::stringType};
+				} else if (leader.first == nullLeader) {
 					String text{"n"};
 					m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
 					if (text != nullValue)
 						throw std::system_error(makeJSONError(badValue));
-					return nullItem;
-				}
+					return {nullItem, active::setting::Value::Type::null};
+				} else if (numberLeader.find(leader.first) != std::u32string::npos) {
+					result = {valueStart, active::setting::Value::Type::intType};
+				} else if (boolLeader.find(leader.first) != std::u32string::npos) {
+					result = {valueStart, active::setting::Value::Type::boolType};
+				} else
+					throw std::system_error(makeJSONError(badValue));
 				m_buffer.rewind(leader.second);	//Put the leading value back into the buffer
-				return valueStart;
+				return result;
+			}
 			case object: {	//In an object
 				if (leader.first == valueDelimiter)
 					return delimiter;
@@ -802,8 +816,9 @@ namespace {
 	void getArrayIdentity(Cargo& container, const Inventory& inventory, const JSONIdentity& containerIdentity, JSONIdentity& identity) {
 		if (!identity.name.empty())
 			return;	//It already has a name
-		auto type = identity.type;	//Preserve the original type
-		if ((containerIdentity.type == arrayStart) && !containerIdentity.name.empty())
+		auto type = identity.type;	//Preserve the original types
+		auto valueType = identity.valueType;
+		if ((containerIdentity.type == arrayStart) && !containerIdentity.name.empty() && (inventory.empty() || inventory.contains(containerIdentity)))
 				//If the outer container is named, use that
 			identity = containerIdentity;
 		else {
@@ -811,6 +826,7 @@ namespace {
 				identity = JSONIdentity{iter->identity(), undefined};
 		}
 		identity.type = type;
+		identity.valueType = valueType;
 	} //getArrayIdentity
 	
 	
@@ -854,14 +870,14 @@ namespace {
 	 
 		return: The completed inventory
 	  --------------------------------------------------------------------*/
-	Inventory getImportInventoryFor(Cargo& container, JSONImporter& importer) {
-		Inventory inventory{importer.management()};
+	void getImportInventoryFor(Cargo& container, Inventory& inventory, JSONImporter& importer) {
+		inventory.clear();
+		inventory.useManagement(importer.management());
 		if (!container.fillInventory(inventory) && !container.isItem())
 			throw std::system_error(makeJSONError(missingInventory));
 		inventory.resetAvailable();	//Reset the availability of each entry to zero so we can count incoming items
 		if (importer.isEveryEntryRequired())
 			inventory.setAllRequired();
-		return inventory;
 	} //getImportInventoryFor
 	
 	
@@ -874,7 +890,8 @@ namespace {
 		depth: The recursion depth into the JSON hierarchy
 	  --------------------------------------------------------------------*/
 	void doJSONImport(Cargo& container, const JSONIdentity& containerIdentity, JSONImporter& importer, int32_t depth) {
-		Inventory inventory = getImportInventoryFor(container, importer);
+		Inventory inventory;
+		getImportInventoryFor(container, inventory, importer);
 		auto attributesRemaining = inventory.attributeSize(true);	//This is tracked where the container requires attributes first
 		auto parsingStage = containerIdentity.stage;
 		auto* package = dynamic_cast<Package*>(&container);
@@ -889,6 +906,7 @@ namespace {
 			auto identity = importer.getIdentity(parsingStage);	//Get the identity of the next item in the JSON source
 			if (identity.type != JSONIdentity::Type::undefined)
 				identity.entryRole = (identity.type == arrayStart) ? Identity::Role::array : Identity::Role::element;
+			bool isAttributeReadingComplete = false, isAttributeFinalised = false;
 			switch (identity.type) {
 				case undefined:	//End of file
 					if (depth != 0)	//Failure if tags haven't been balanced correctly
@@ -925,13 +943,19 @@ namespace {
 									incomingItem = inventory.end();
 								} else {
 									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
+									incomingItem->withValueType(identity.valueType); //Useful for ambiguous content
 									cargo = container.getCargo(*incomingItem);
 									if (cargo != nullptr) {
 										cargo->setDefault();
 										if (!incomingItem->bumpAvailable())
 											throw std::system_error(makeJSONError(inventoryBoundsExceeded));
-										if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required)
+										if ((attributesRemaining > 0) && incomingItem->isAttribute() && incomingItem->required) {
+											if (package->finaliseAttributes(false)) {
+												isAttributeReadingComplete = isAttributeFinalised = true;
+												break;
+											}
 											--attributesRemaining;
+										}
 									}
 								}
 							}
@@ -966,19 +990,24 @@ namespace {
 					if (containerIdentity.stage != (identity.type == objectEnd ? object : array))
 						throw std::system_error(makeJSONError(unbalancedScope));	//The scope end couldn't be paired with the atart
 					if (restorePoint) {
-						isReadingAttribute = false;
-						importer.setPosition(*restorePoint);	//Move the read position back to the first non-attribute
-						restorePoint.reset();
-						attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
-						if (!package->finaliseAttributes())
-							throw std::system_error(makeJSONError(invalidObject));
-						inventory = getImportInventoryFor(container, importer);	//The inventory will probably change here
-						parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
+						isAttributeReadingComplete = true;
 						break;
 					}
-					if (!container.validate())
+					if (!container.validate(importer.management()))
 						throw std::system_error(makeJSONError(invalidObject));	//The incoming data was rejected as invalid
 					return;
+			}
+			if (isAttributeReadingComplete) {
+				isReadingAttribute = false;
+				attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
+				if (restorePoint) {
+					importer.setPosition(*restorePoint);	//Move the read position back to the first non-attribute
+					restorePoint.reset();
+				}
+				if (!isAttributeFinalised && !package->finaliseAttributes(true))
+					throw std::system_error(makeJSONError(invalidObject));
+				getImportInventoryFor(container, inventory, importer);	//The inventory will probably change here
+				parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 			}
 		}
 	} //doJSONImport

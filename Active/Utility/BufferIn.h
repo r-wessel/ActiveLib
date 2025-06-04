@@ -72,7 +72,7 @@ namespace active::utility {
 			Bool operator
 			@return True if the source is not is a failed state
 		*/
-		operator bool () const { return !fail(); }
+		operator bool() const { return !fail(); }
 		/*!
 			Read operator (the next word)
 			@param str A string to read

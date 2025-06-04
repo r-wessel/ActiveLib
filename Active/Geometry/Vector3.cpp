@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Geometry/Matrix3x3.h"
 #include "Active/Geometry/Matrix4x4.h"
 #include "Active/Geometry/Vector4.h"
-#include "Active/Geometry/Vertex.h"
+#include "Active/Primitives/3D/Vertex.h"
 
 using namespace active::geometry;
 using namespace active::math;
@@ -52,11 +52,13 @@ Vector3::Vector3(const Point& source) {
 
 /*--------------------------------------------------------------------
 	Constructor
-	
-	source: The vertex to copy
+ 
+	source: A vertex to construct the vector from
   --------------------------------------------------------------------*/
-Vector3::Vector3(const Vertex& source) {
-	*this = source;
+Vector3::Vector3(const active::primitive::Vertex& source) {
+	m_vector[0] = source.x;
+	m_vector[1] = source.y;
+	m_vector[2] = source.z;
 } //Vector3::Vector3
 
 
@@ -103,7 +105,7 @@ Vector3& Vector3::operator=(const Point& source) {
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Vector3& Vector3::operator=(const Vertex& source) {
+Vector3& Vector3::operator=(const primitive::Vertex& source) {
 	m_vector[0] = source.x;
 	m_vector[1] = source.y;
 	m_vector[2] = source.z;
@@ -291,8 +293,8 @@ Vector3::operator Point() const {
 	
 	return: A vertex derived from this vector
   --------------------------------------------------------------------*/
-Vector3::operator Vertex() const {
-	return Vertex(m_vector[0], m_vector[1], m_vector[2]);
+Vector3::operator active::primitive::Vertex() const {
+	return active::primitive::Vertex(m_vector[0], m_vector[1], m_vector[2]);
 } //Vector3::operator Vertex
 
 // MARK: - Functions (const)

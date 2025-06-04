@@ -57,9 +57,10 @@ public:
 	Cargo::Unique getCargo(const Inventory::Item& item) const override;
 	/*!
 		Validate the cargo data
+		@param management The cargo transport management (nullptr = no management)
 		@return True if the data has been validated
 	*/
-	bool validate() override {
+	bool validate(Management* management) override {
 		return !m_name.empty() && m_shape.isValid();
 	}
 	

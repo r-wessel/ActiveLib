@@ -47,7 +47,7 @@ namespace active::geometry {
 			@param angle The sweep angle to this position (0 = straight line)
 		 	@param id The point ID
 		*/
-		PolyPoint(const double& x, const double& y, const double& z = 0.0, double angle = 0.0, vertex_id id = 0) :
+		PolyPoint(double x, double y, double z = 0.0, double angle = 0.0, vertex_id id = 0) :
 				PolyPoint{Point{x, y, z}, angle, id}	{}
 		/*!
 			Constructor

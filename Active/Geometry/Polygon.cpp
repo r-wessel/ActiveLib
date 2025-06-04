@@ -746,11 +746,11 @@ Polygon& Polygon::operator-= (const Point& offset) {
 /*--------------------------------------------------------------------
 	Multiplication operator
 	
-	mult: The amount to scale the polygon by
+	mult: The amount to multiply the polygon by
 	
 	return: A scaled copy of this
   --------------------------------------------------------------------*/
-Polygon Polygon::operator* (const double& mult) const {
+Polygon Polygon::operator* (double mult) const {
 	return *clone(*this) *= mult;
 } //Polygon::operator*
 
@@ -758,11 +758,40 @@ Polygon Polygon::operator* (const double& mult) const {
 /*--------------------------------------------------------------------
 	Multiplication with assignment operator
 	
-	mult: The amount to scale the polygon by
+	mult: The amount to multiply the polygon by
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Polygon& Polygon::operator*= (const double& mult) {
+Polygon& Polygon::operator*= (double mult) {
+	for (auto hole = getHoleSize() + 1; hole--; ) {
+		auto& poly = getShape(hole);
+		for (auto vertex = poly.vertSize(); vertex--; )
+			*(poly[vertex]) *= mult;
+	}
+	return *this;
+} //Polygon::operator*=
+
+
+/*--------------------------------------------------------------------
+	Multiplication operator
+	
+	mult: The amount to multiply the polygon by
+	
+	return: A scaled copy of this
+  --------------------------------------------------------------------*/
+Polygon Polygon::operator* (const Point& mult) const {
+	return *clone(*this) *= mult;
+} //Polygon::operator*
+
+
+/*--------------------------------------------------------------------
+	Multiplication with assignment operator
+	
+	mult: The amount to multiply the polygon by
+	
+	return: A reference to this
+  --------------------------------------------------------------------*/
+Polygon& Polygon::operator*= (const Point& mult) {
 	for (auto hole = getHoleSize() + 1; hole--; ) {
 		auto& poly = getShape(hole);
 		for (auto vertex = poly.vertSize(); vertex--; )
@@ -853,7 +882,7 @@ Polygon& Polygon::operator*= (const Matrix4x4& mult) {
 	
 	return: A scaled copy of this
   --------------------------------------------------------------------*/
-Polygon Polygon::operator/ (const double& mult) const {
+Polygon Polygon::operator/ (double mult) const {
 	return *clone(*this) /= mult;
 } //Polygon::operator/
 
@@ -865,7 +894,7 @@ Polygon Polygon::operator/ (const double& mult) const {
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Polygon& Polygon::operator/= (const double& mult) {
+Polygon& Polygon::operator/= (double mult) {
 	for (auto hole = getHoleSize() + 1; hole--; ) {
 		auto& poly = getShape(hole);
 		for (auto vertex = poly.vertSize(); vertex--; )

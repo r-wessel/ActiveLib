@@ -81,6 +81,8 @@ namespace active::serialise {
 		
 			///Get the wrapped identity
 		const Identity& identity() const { return m_id.identity(); }
+			///True if the item is managed
+		bool isManaged() const { return management() != nullptr; }
 			///Get any management applied to this item (nullptr = unmanaged)
 		Management* management() const;
 		/*
@@ -94,15 +96,15 @@ namespace active::serialise {
 		*/
 		bool isRepeating() const { return (!m_maximum || (m_maximum > 1)); }
 		/*!
-			Determine if the entry is managed
-			@return True if the entry is managed
-		*/
-		bool isManaged() const;
-		/*!
 			The maximum number of instances against this entry (nullopt = unlimited)
 			@return The maximum number of instances
 		*/
 		std::optional<size_t> maximum() const { return isAttribute() ? 1 : m_maximum; }
+		/*!
+			Get the entry value type (on receive, only relevant for serialisation types that can partially identify value type, e.g. JSON)
+			@return The entry value type
+		*/
+		std::optional<active::setting::Value::Type> valueType() const { return m_valueType; }
 
 		// MARK: - Functions (mutating)
 		
@@ -123,6 +125,15 @@ namespace active::serialise {
 		*/
 		Entry& withRole(Identity::Role role) {
 			m_role = role;
+			return *this;
+		}
+		/*!
+			Set the entry value type
+			@param valType The The entry value type
+			@return A reference to this
+		*/
+		Entry& withValueType(std::optional<active::setting::Value::Type> valType) {
+			m_valueType = valType;
 			return *this;
 		}
 		/*!
@@ -192,6 +203,8 @@ namespace active::serialise {
 		std::optional<size_t> m_maximum = 1;
 			///The entry type
 		Identity::Role m_role = element;
+			///The entry value type
+		std::optional<active::setting::Value::Type> m_valueType = std::nullopt;
 	};
 	
 }  // namespace active::serialise

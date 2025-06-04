@@ -72,7 +72,7 @@ namespace {
 			m_text.clear();
 		}
 			///Called when deserialisation is complete - we can assign the retrieved data to the object members
-		bool validate() override {
+		bool validate(Management* management) override {
 			m_targetA->setText(m_text);	//The proxy received the data, and now we can call the setter to populate the deserialised object
 			return true;
 		}
@@ -117,7 +117,7 @@ namespace {
 			}
 			return nullptr;
 		}
-		bool validate() override {
+		bool validate(Management* management) override {
 			m_targetB->setVal(m_val);
 			return true;
 		}
@@ -230,8 +230,8 @@ namespace {
 			return m_wrapper ? m_wrapper->releaseIncoming() : nullptr;
 		}
 			///Called when deserialisation is complete
-		bool validate() override {
-			return m_wrapper && m_wrapper->validate();	//Valid if we have a valid, wrapped `Foo` instance
+		bool validate(Management* management) override {
+			return m_wrapper && m_wrapper->validate(management);	//Valid if we have a valid, wrapped `Foo` instance
 		}
 			///Reset the data to a default state in preparation for deserialisation
 		void setDefault() override {
@@ -240,8 +240,8 @@ namespace {
 			m_wrapper.reset();	//This will be populated once the type and guid are deserialised
 		}
 			///Called when the attributes have been read (which means we should have an object type and guid for creating an object instance)
-		bool finaliseAttributes() override {
-			if (!m_isReadingAttributes.has_value() || !*m_isReadingAttributes || m_wrapper || !m_id)
+		bool finaliseAttributes(bool isScopeEnded) override {
+			if (!isScopeEnded || !m_isReadingAttributes.has_value() || !*m_isReadingAttributes || m_wrapper || !m_id)
 				return false;
 			m_isReadingAttributes = false;
 				//Use the deserialised type name to lookup the correct binding

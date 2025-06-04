@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_MATH_FUNCTIONS
 
 #include <cmath>
+#include <limits>
 #include <numbers>
 
 /*!
@@ -108,6 +109,13 @@ namespace active::math {
 	inline bool isGreater(double val1, double val2, double prec = eps)
 		{ return (val1 - val2 > prec); }
 	/*!
+	 	Determine if a floating point value is a valid number, e.g. not 'inf' or 'nan'
+		@param val The value to test
+		@return True if the value is valid
+	*/
+	inline bool isValid(double val)
+		{ return ((val == val) && (val <= std::numeric_limits<double>::max()) && (val >= std::numeric_limits<double>::min())); }
+	/*!
 	 	Compare two floating point values (with precision)
 		@param val1 The first value
 		@param val2 The second value
@@ -157,10 +165,10 @@ namespace active::math {
 	inline const T& maxVal(const T& val1, const T& val2) { return (val1 > val2) ? val1 : val2; }
 
 		///Rounding functions
-	inline double round(const double& val, double module = eps)
+	inline double round(double val, double module = eps)
 		{ return floor((val / module) + 0.5) * module; }
 
-	inline double roundUp(const double& val, double module = eps, double tolerance = eps) {
+	inline double roundUp(double val, double module = eps, double tolerance = eps) {
 			//If tolerances differ from the module size and the current value is within the tolerances of a module, we accept that module size
 		if (module > tolerance) {
 			double rounded = round(val, module);
@@ -170,7 +178,7 @@ namespace active::math {
 		return ceil(val / module) * module;
 	} //roundUp
 
-	inline double roundDown(const double& val, double module = eps, double tolerance = eps) {
+	inline double roundDown(double val, double module = eps, double tolerance = eps) {
 			//If tolerances differ from the module size and the current value is within the tolerances of a module, we accept that module size
 		if (module > tolerance) {
 			double rounded = round(val, module);
@@ -181,7 +189,7 @@ namespace active::math {
 	} //roundDown
 
 
-	inline double sign(const double& val, double prec = eps)
+	inline double sign(double val, double prec = eps)
 		{ return isZero(val, prec) ? 0.0 : ((val < 0) ? -1.0 : 1.0); }
 	
 	

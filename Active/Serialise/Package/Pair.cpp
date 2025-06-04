@@ -109,8 +109,10 @@ void Pair::setDefault() {
 /*--------------------------------------------------------------------
 	Validate the cargo data
  
+	management: The cargo transport management (nullptr = no management)
+ 
 	return: True if the data has been validated
   --------------------------------------------------------------------*/
-bool Pair::validate() {
-	return ((!m_key || m_key->validate()) && (!m_value || m_value->validate()));
+bool Pair::validate(Management* management) {
+	return ((!m_key || m_key->validate(management)) && (!m_value || m_value->validate(management)));
 } //Pair::validate

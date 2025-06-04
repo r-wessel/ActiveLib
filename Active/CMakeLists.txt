@@ -6,7 +6,7 @@ IF (WIN32)
 ENDIF()
 
 add_library(
-    ActiveLib
+	ActiveLib
 )
 
 	#Add the sources for a module
@@ -52,9 +52,9 @@ add_library(${namespace}ActiveLib ALIAS ActiveLib)
 
 IF (WIN32)
 	target_compile_definitions(ActiveLib PRIVATE
-        WINDOWS
-        _LIB
-    )
+		WINDOWS
+		_LIB
+	)
 ENDIF()
 
 target_compile_features(ActiveLib PUBLIC
@@ -62,19 +62,19 @@ target_compile_features(ActiveLib PUBLIC
 )
 
 set_target_properties(ActiveLib PROPERTIES
-    OUTPUT_NAME "${ActiveLib_lib_name}"
+	OUTPUT_NAME "${ActiveLib_lib_name}"
 )
 
 target_include_directories(
-    ActiveLib PUBLIC
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
-    $<INSTALL_INTERFACE:include>
+	ActiveLib PUBLIC
+	$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}>
+	$<INSTALL_INTERFACE:include>
 )
 
 # ---- library installation ----
 install(
-    TARGETS ActiveLib
-    EXPORT "${targets_export_name}"
-    FILE_SET HEADERS
-    INCLUDES DESTINATION "${include_install_dir}"
+	TARGETS ActiveLib
+	EXPORT "${targets_export_name}"
+	FILE_SET HEADERS
+	INCLUDES DESTINATION "${include_install_dir}"
 )

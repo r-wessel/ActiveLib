@@ -7,6 +7,8 @@
 #define ACTIVE_UTILITY_SHA256
 
 #include "Active/Utility/BufferIn.h"
+#include "Active/Utility/Guid.h"
+#include "Active/Utility/Hash.h"
 #include "Active/Utility/Memory.h"
 #include "Active/Utility/String.h"
 
@@ -29,6 +31,7 @@ namespace active::utility {
 	 */
 	class SHA256 {
 	public:
+		using HashTable = std::array<uint32_t, 8>;
 		
 		// MARK: Constructors
 		
@@ -59,15 +62,31 @@ namespace active::utility {
 		// MARK: Functions (const)
 		
 		/*!
-		 Get the data hash (NB: This does not prevent additional data from being written to the hash)
+		 Get the hash product (NB: This does not prevent additional data from being written to the hash)
+		 @param format The required hash format
+		 @return The hash product formatted as specified
+		 */
+		String product(HashFormat format) const;
+		/*!
+		 Get the data hash
 		 @return The hash (as hex digits)
 		 */
 		String hexHash() const;
 		/*!
 		 Get the data hash
-		 @return The hash (as hex digits)
+		 @return The hash (as base64 digits)
 		 */
 		String base64Hash() const;
+		/*!
+		 Get a guid from the hash
+		 @return A guid (NB: significantly reduces complexity)
+		 */
+		Guid guid() const;
+		/*!
+		 Get the raw data hash table (8 x unsigned 32-bit integers)
+		 @return The raw hash (as hex digits)
+		 */
+		HashTable rawHash() const { return finalise(); }
 		
 		// MARK: Functions (mutating)
 		
@@ -77,8 +96,6 @@ namespace active::utility {
 		void reset();
 		
 	private:
-		using HashTable = std::array<uint32_t, 8>;
-		
 		/*!
 		 Run the compression algorithm using the next chunk of 512 bits
 		 @param chunk Pointer to chunk start

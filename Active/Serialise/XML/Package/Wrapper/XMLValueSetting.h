@@ -102,7 +102,7 @@ namespace active::serialise::xml {
 			Validate the cargo data
 			@return True if the data has been validated
 		*/
-		bool validate() override;
+		bool validate(Management* management) override;
 		/*!
 			Insert specified cargo into the package - used for cargo with many instances sharing the same ID (e.g. from an array/map)
 			@param cargo The cargo to insert

@@ -31,7 +31,7 @@ Point::Point() {
 	y: Y coordinate
 	z: Z coordinate
   --------------------------------------------------------------------*/
-Point::Point(const double& x, const double& y, const double& z) {
+Point::Point(double x, double y, double z) {
 	this->x = x;
 	this->y = y;
 	this->z = z;
@@ -147,7 +147,7 @@ Point& Point::operator-= (const Point& offset) {
 	return: The result of the multiplication of this and the
 				specified factor
   --------------------------------------------------------------------*/
-Point Point::operator* (const double& mult) const {
+Point Point::operator* (double mult) const {
 	return Point(*this) *= mult;
 } //Point::operator*
 
@@ -195,7 +195,7 @@ Point Point::operator* (const Matrix4x4& matrix) const {
 
 	return: A reference to this
   --------------------------------------------------------------------*/
-Point& Point::operator*= (const double& mult) {
+Point& Point::operator*= (double mult) {
 	x *= mult;
 	y *= mult;
 	z *= mult;
@@ -249,7 +249,7 @@ Point& Point::operator*= (const Matrix4x4& matrix) {
 
 	return: The result of the division of this by the specified factor
   --------------------------------------------------------------------*/
-Point Point::operator/ (const double& mult) const {
+Point Point::operator/ (double mult) const {
 	return Point(*this) /= mult;
 } //Point::operator/
 
@@ -261,7 +261,7 @@ Point Point::operator/ (const double& mult) const {
 
 	return: A reference to this
   --------------------------------------------------------------------*/
-Point& Point::operator/= (const double& mult) {
+Point& Point::operator/= (double mult) {
 	x /= mult;
 	y /= mult;
 	z /= mult;

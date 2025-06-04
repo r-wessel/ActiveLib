@@ -121,7 +121,7 @@ namespace active::serialise::xml {
 			Validate the cargo data
 			@return True if the data has been validated
 		*/
-		bool validate() override {
+		bool validate(Management* management) override {
 			base::get().setTopID(m_topID);
 			return true;
 		}

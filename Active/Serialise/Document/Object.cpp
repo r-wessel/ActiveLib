@@ -157,9 +157,11 @@ void Object::setDefault() {
 /*--------------------------------------------------------------------
 	Validate the cargo data
  
+	management: The cargo transport management (nullptr = no management)
+ 
 	return: True if the data has been validated
   --------------------------------------------------------------------*/
-bool Object::validate() {
+bool Object::validate(Management* management) {
 	return !docType.empty();	//Can't construct an object without a type identifier
 } //Object::validate
 

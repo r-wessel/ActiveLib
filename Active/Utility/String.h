@@ -42,9 +42,6 @@ namespace active::utility {
 		
 		The String class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
 		Conversion operators and constructors provide interoperability with a range of common types, e.g. std::string, std::u32string etc
-	 
-		In line with current C++ standards, any ranges passed by a pointer and length must be valid, e.g. the atart address must not be nullptr,
-		or behaviour will be undefined
 	*/
 	class String {
 	public:

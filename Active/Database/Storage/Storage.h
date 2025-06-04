@@ -79,6 +79,16 @@ namespace active::database {
 		// MARK: - Functions (const)
 		
 		/*!
+		 Determine if storage contains a specified object
+		 @param objID The object ID
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @return True if storage contains a matching record
+		 */
+		bool contains(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const {
+			return m_engine->contains(objID, tableID, documentID);
+		}
+		/*!
 		 Get an object by index
 		 @param index The object index
 		 @param tableID Optional table ID (defaults to the first table)
@@ -165,6 +175,13 @@ namespace active::database {
 		 */
 		std::unique_ptr<active::serialise::Cargo> wrapper() const { return std::make_unique<Wrapper>(*this); }
 
+	protected:
+		/*!
+		 Get the storage engine
+		 @return The storage engine
+		 */
+		Engine* getEngine() const { return m_engine.get(); }
+		
 	private:
 		std::shared_ptr<Engine> m_engine;
 	};

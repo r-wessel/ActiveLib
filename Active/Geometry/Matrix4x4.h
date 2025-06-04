@@ -34,19 +34,19 @@ namespace active::geometry {
 			@param angle The rotation angle
 			@return The requested rotation matrix
 		*/
-		static Matrix4x4 createXRotate(const double& angle);
+		static Matrix4x4 createXRotate(double angle);
 		/*!
 			Create a rotation matrix about the y axis
 			@param angle The rotation angle
 			@return The requested rotation matrix
 		*/
-		static Matrix4x4 createYRotate(const double& angle);
+		static Matrix4x4 createYRotate(double angle);
 		/*!
 			Create a rotation matrix about the z axis
 			@param angle The rotation angle
 			@return The requested rotation matrix
 		*/
-		static Matrix4x4 createZRotate(const double& angle);
+		static Matrix4x4 createZRotate(double angle);
 		/*!
 			Create a scaling matrix
 			@param x The scale in the x axis
@@ -54,7 +54,7 @@ namespace active::geometry {
 			@param z The scale in the z axis
 			@return The requested scaling matrix
 		*/
-		static Matrix4x4 createScale(const double& x, const double& y, const double& z);
+		static Matrix4x4 createScale(double x, double y, double z);
 		/*!
 			Create a translation matrix
 			@param x The offset in the x axis
@@ -62,7 +62,7 @@ namespace active::geometry {
 			@param z The offset in the z axis
 			@return The requested transformation matrix
 		*/
-		static Matrix4x4 createTranslate(const double& x, const double& y, const double& z);
+		static Matrix4x4 createTranslate(double x, double y, double z);
 		/*!
 			Create an identity matrix
 			@return The requested identity matrix
@@ -134,7 +134,7 @@ namespace active::geometry {
 			@param col The required column
 			@return The value at the specified position
 		*/
-		const double& operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
+		double operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
 		
 		// MARK: Functions (const)
 

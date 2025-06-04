@@ -61,6 +61,14 @@ namespace active::database {
 		virtual ObjIDList findObjects(const Filter* filter = nullptr, const ObjIDList& subset = {}, std::optional<TableID> tableID = std::nullopt,
 									  std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
+		 Determine if the database contains a specified object
+		 @param objID The object ID
+		 @param tableID Optional table ID (defaults to the first table)
+		 @param documentID Optional document ID (when the object is bound to a specific document)
+		 @return True if the database contains a matching record
+		 */
+		virtual bool contains(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
+		/*!
 		 Get an object by index
 		 @param objID The object ID
 		 @param tableID Optional table ID (defaults to the first table)

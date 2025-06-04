@@ -50,7 +50,7 @@ namespace {
  
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
-bool HexTransport::send(const BufferIn& source, const BufferOut& destination, Memory::sizeOption howMany) const {
+bool HexTransport::send(const BufferIn&& source, const BufferOut& destination, Memory::sizeOption howMany) const {
 	bool isOpen = (howMany == std::nullopt);
 	unsigned char incoming;
 	while (!source.eof() && (isOpen || ((*howMany)-- > 0))) {
@@ -72,7 +72,7 @@ bool HexTransport::send(const BufferIn& source, const BufferOut& destination, Me
  
 	return: True if the import was successful
   --------------------------------------------------------------------*/
-bool HexTransport::receive(const BufferOut& destination, const BufferIn& source, Memory::sizeOption howMany) const {
+bool HexTransport::receive(const BufferOut&& destination, const BufferIn& source, Memory::sizeOption howMany) const {
 	bool isUnlimited = howMany == std::nullopt;
 	if (!isUnlimited) {
 		if (*howMany == 0)

@@ -66,12 +66,12 @@ namespace active::database {
 		 @param ID The object document identifier
 		 @param globID The global identifier
 		 */
-		Record(const ObjID& ID, const ObjID& globID) : m_ID{ID}, m_globalID(globID) {}
+		Record(const ObjID& ID, const ObjID& globID = ObjID{}) : m_ID{ID}, m_globalID(globID) {}
 		Record(const Record&) = default;
 		/*!
 		 Destructor
 		 */
-		virtual ~Record() {}
+		~Record() {}
 		
 		/*!
 			Object cloning

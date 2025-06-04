@@ -109,7 +109,7 @@ namespace active::serialise::xml {
 			Validate the transported data
 			@return True if the data is valid
 		*/
-		bool validate() override	{ return m_valid; }
+		bool validate(Management* management) override	{ return m_valid; }
 		/*!
 			Read the item data from the specified string
 			@param source The string to read

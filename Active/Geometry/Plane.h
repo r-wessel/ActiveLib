@@ -74,49 +74,49 @@ namespace active::geometry {
 			@param offset The amount to offset this by
 			@return The result of the addition
 		*/
-		virtual Plane operator+ (const Point& offset);
+		Plane operator+ (const Point& offset);
 		/*!
 			Addition and assignment operator
 			@param offset The amount to offset this by
 			@return A reference to this
 		*/
-		virtual Plane& operator+= (const Point& offset);
+		Plane& operator+= (const Point& offset);
 		/*!
 			Multiplication operator
 			@param mult The factor to multiply this by
 			@return The result of the multiplication of this and the specified factor
 		*/
-		virtual Plane operator* (const double& mult) const;
+		Plane operator* (double mult) const;
 		/*!
 			Multiplication operator
 			@param matrix The matrix to multiply this by
 			@return The result of the multiplication
 		*/
-		virtual Plane operator* (const Matrix3x3& matrix) const;
+		Plane operator* (const Matrix3x3& matrix) const;
 		/*!
 			Multiplication operator
 			@param matrix The matrix to multiply this by
 			@return The result of the multiplication
 		*/
-		virtual Plane operator* (const Matrix4x4& matrix) const;
+		Plane operator* (const Matrix4x4& matrix) const;
 		/*!
 			Multiplication and assignment operator
 			@param mult The factor to multiply this by
 			@return A reference to this
 		*/
-		virtual Plane& operator*= (const double& mult);
+		Plane& operator*= (double mult);
 		/*!
 			Multiplication and assignment operator
 			@param matrix The matrix to multiply this by
 			@return A reference to this
 		*/
-		virtual Plane& operator*= (const Matrix3x3& matrix);
+		Plane& operator*= (const Matrix3x3& matrix);
 		/*!
 			Multiplication and assignment operator
 			@param matrix The matrix to multiply this by
 			@return A reference to this
 		*/
-		virtual Plane& operator*= (const Matrix4x4& matrix);
+		Plane& operator*= (const Matrix4x4& matrix);
 		
 		// MARK: - Functions (const)
 		

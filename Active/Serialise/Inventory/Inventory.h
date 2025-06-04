@@ -54,6 +54,17 @@ namespace active::serialise {
 			@param management The cargo management to use
 		*/
 		Inventory(base entries, Management* management = nullptr) : base(entries), m_management{management} { m_isFilled = true; }
+		/*!
+			Constructor
+			@param entries The inventory entries
+			@param ownerType The owner type (typically used to link entries to objects within a hierarchical structure)
+		*/
+		Inventory(base entries, const std::type_info* ownerType) : base(entries) {
+			m_isFilled = true;
+			withType(ownerType);
+		}
+			//Copying inventories is potentially expensive and can always be avoided
+		Inventory(const Inventory&) = delete;
 		
 		// MARK: - Variables
 		
@@ -71,6 +82,11 @@ namespace active::serialise {
  			@return The front inventory entry
 		*/
 		Entry front() const { return base::front(); }
+		/*!
+			Determine if the inventory contains a specified item
+ 			@return True if the inventory contains the item
+		*/
+		bool contains(const Identity& identity) const;
 		/*!
 			Find an array entry in the inventory (e.g. in JSON for anonymous arrays)
 			@return An iterator at the requested entry (end() on failure)
@@ -138,6 +154,10 @@ namespace active::serialise {
 			Reset the availability per entry to zero (typically just prior to importing)
 		*/
 		void resetAvailable();
+		/*!
+		 Clear the inventory content
+		*/
+		void clear();
 		/*!
 			Find an entry by identity and optionally owner type
 			@param identity The entry identity

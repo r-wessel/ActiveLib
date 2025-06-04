@@ -6,6 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_ATTRIBUTE_COLOUR
 #define ACTIVE_ATTRIBUTE_COLOUR
 
+#include "Active/Utility/Hash.h"
 #include "Active/Utility/String.h"
 
 namespace active::attribute {
@@ -48,19 +49,46 @@ namespace active::attribute {
 		char8_t g = 0;
 			///Blue component
 		char8_t b = 0;
-			///Alpha component
+			///Alpha component (0.0=transparent -> 1.0=opaque)
 		float a = 1.0;
+
+		// MARK: - Operators
+		
+		/*!
+		 Equality operator
+		 @param ref The object to compare
+		 @return True if the objects are identical
+		 */
+		bool operator== (const Colour& ref) const { return (r == ref.r) && (g == ref.g) && (b == ref.b) && math::isEqual(a, ref.a); }
 
 		// MARK: - Functions (const)
 
 			///True if the colour is transparent
 		bool isTransparent() const { return math::isZero(a); }
+			///True if the colour is opaque
+		bool isOpaque() const { return math::isEqual(a, 1.0); }
 		/*!
 			Get the colour in hex digits
 			@param isAlpha True to include the alpha value
 			@return The colour as hex
 		*/
 		utility::String hex(bool isAlpha = false) const;
+		/*!
+		 Get a hash value for the colour
+		 @param format The required has format
+		 @return The hash formatted as specified
+		 */
+		utility::String hash(utility::HashFormat format = utility::HashFormat::asBase64) const;
+
+		// MARK: - Functions (mutating)
+		
+		/*!
+		 Copy a specified colour
+		 @param source The colour to copy
+		 @param isAlphaCopied True if the alpha channel is also copied
+		 @return A reference to this
+		 */
+		Colour& copy(const Colour& source, bool isAlphaCopied = true);
 	};
 	
 	namespace colour {

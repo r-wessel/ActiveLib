@@ -33,12 +33,12 @@ namespace {
 	};
 	
 		///The package inventory
-	auto myInventory = Inventory{
+	Inventory myInventory{
 		{
 			{ fieldID[sweep], sweep, attribute },
 			{ fieldID[id], id, attribute },
-		}
-	}.withType(&typeid(XMLPolyPoint));
+		}, &typeid(XMLPolyPoint)
+	};
 
 }  // namespace
 

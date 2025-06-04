@@ -11,6 +11,18 @@ using namespace active::serialise;
 using namespace active::utility;
 
 /*--------------------------------------------------------------------
+	Determine if the inventory contains a specified item
+ 
+	return: True if the inventory contains the item
+  --------------------------------------------------------------------*/
+bool Inventory::contains(const Identity& identity) const {
+	return std::find_if(begin(), end(), [&](auto& i) {
+		return i.identity() == identity;
+	}) != end();
+} //Inventory::contains
+
+
+/*--------------------------------------------------------------------
 	Find an array entry in the inventory (e.g. in JSON for anonymous arrays)
  
 	return: An iterator at the requested entry (end() on failure)
@@ -125,6 +137,16 @@ Inventory::iterator Inventory::registerIncoming(const Identity& identity) {
 void Inventory::resetAvailable() {
 	std::for_each(begin(), end(), [&](auto& i) { i.available = 0; });
 } //Inventory::resetAvailable
+
+
+/*--------------------------------------------------------------------
+	Clear the inventory content
+  --------------------------------------------------------------------*/
+void Inventory::clear() {
+	base::clear();
+	m_isFilled = false;
+	m_management = nullptr;
+} //Inventory::clear
 
 
 /*--------------------------------------------------------------------

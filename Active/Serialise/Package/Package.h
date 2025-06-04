@@ -76,10 +76,11 @@ namespace active::serialise {
 		*/
 		void setRoot(bool state) { m_isRoot = state; }
 		/*!
-			Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
-			@return True if the attributes have been successfully finalised (returning false will cause an exception to be thrown)
-		*/
-		virtual bool finaliseAttributes() { return true; }
+		 Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
+		 @param isScopeEnded True if the scope for finding more attributes is ended (all found or the object content is all read)
+		 @return True if the attributes have been successfully finalised (returning false when isScopeEnded == true will throw)
+		 */
+		virtual bool finaliseAttributes(bool isScopeEnded) { return true; }
 		/*!
 		 Allocate inventory for new (incoming) cargo
 		 @param inventory The inventory to extend

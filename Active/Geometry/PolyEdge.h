@@ -381,7 +381,7 @@ namespace active::geometry {
 		*/
 		void extend(double len, bool byEnd = true);
 		/*!
-			Extend the edge to the point nearest te specified point
+			Extend the edge to the point nearest the specified point
 			@param ref The point to extend to
  			@param byEnd True to extend the edge by the endpoint
 		*/

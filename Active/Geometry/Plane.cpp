@@ -56,7 +56,7 @@ Plane::Option Plane::create(const Point& p1, const Point& p2, const Point& p3) {
 	Vector3 pt1(p1 - p2);
 	Vector3 pt2(p3 - p2);
 	Vector3 norm(pt1.vectorProduct(pt2).normalised());
-	return norm.isEmpty() ? std::nullopt : std::make_optional(Plane(norm.dotProduct(Vector3{p1}), norm));
+	return norm.isEmpty() ? std::nullopt : std::make_optional(Plane(norm.dotProduct(p1), norm));
 } //Plane::create
 		
 // MARK: - Constructors
@@ -157,7 +157,7 @@ Plane& Plane::operator+= (const Point& offset) {
 	
 	return: The result of the multiplication of this and the specified factor
   --------------------------------------------------------------------*/
-Plane Plane::operator* (const double& mult) const {
+Plane Plane::operator* (double mult) const {
 	return Plane{*this} *= mult;
 } //Plane::operator*
 
@@ -193,7 +193,7 @@ Plane Plane::operator* (const Matrix4x4& matrix) const {
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-Plane& Plane::operator*= (const double& mult) {
+Plane& Plane::operator*= (double mult) {
 	m_offset *= mult;
 	if (mult < 0.0)
 		m_normal *= -1.0;
@@ -240,7 +240,7 @@ Plane& Plane::operator*= (const Matrix4x4& matrix) {
 	return: The relative point position
   --------------------------------------------------------------------*/
 Position Plane::positionOf(const Point& ref, double prec) const {
-	double len = m_normal.dotProduct(Vector3{ref});
+	double len = m_normal.dotProduct(ref);
 	if (isLess(len, m_offset, prec))
 		return Point::back;
 	else if (isGreater(len, m_offset, prec))
@@ -258,7 +258,7 @@ Position Plane::positionOf(const Point& ref, double prec) const {
   --------------------------------------------------------------------*/
 Point Plane::closestPointTo(const Point& ref) const {
 	Point result{ref};
-	double scal = (m_offset - m_normal.dotProduct(Vector3{ref})) / m_normal.dotProduct(m_normal);
+	double scal = (m_offset - m_normal.dotProduct(ref)) / m_normal.dotProduct(m_normal);
 	result.x += scal * m_normal[0];
 	result.y += scal * m_normal[1];
 	result.z += scal * m_normal[2];
@@ -274,7 +274,7 @@ Point Plane::closestPointTo(const Point& ref) const {
 	return: The minimum distance between the point and this plane
   --------------------------------------------------------------------*/
 double Plane::lengthTo(const Point& ref) const {
-	return (m_normal.dotProduct(Vector3{ref}) - m_offset) / m_normal.modulus();
+	return (m_normal.dotProduct(ref) - m_offset) / m_normal.modulus();
 } //Plane::lengthTo
 
 
@@ -306,7 +306,7 @@ XPoint::Option Plane::intersectionWith(const Line& ref, double prec) const {
 	if (isZero(dot, prec))
 		return std::nullopt;
 	auto result = std::make_optional<XPoint>(ref.origin);
-	double scal = (m_offset - m_normal.dotProduct(Vector3{*result})) / dot;
+	double scal = (m_offset - m_normal.dotProduct(*result)) / dot;
 	result->x += vect[0] * scal;
 	result->y += vect[1] * scal;
 	result->z += vect[2] * scal;

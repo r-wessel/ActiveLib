@@ -35,7 +35,6 @@ namespace active::serialise {
 		Identity(const utility::String& nameIn = utility::String{}) {
 			name = nameIn;
 		}
-
 		/*!
 			Default constructor
 			@param nameIn An identifying name
@@ -44,6 +43,15 @@ namespace active::serialise {
 		Identity(const utility::String& nameIn, const utility::String::Option groupIn) {
 			name = nameIn;
 			group = groupIn;
+		}
+		/*!
+			Default constructor
+			@param nameIn An identifying name
+			@param valType An optional value type
+		*/
+		Identity(const utility::String& nameIn, std::optional<setting::Value::Type> valType) {
+			name = nameIn;
+			valueType = valType;
 		}
 		
 		// MARK: - Variables
