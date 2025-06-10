@@ -72,6 +72,7 @@
 		21329F562BFB8E9B00B5C7AF /* Mover.h in Headers */ = {isa = PBXBuildFile; fileRef = 21329F552BFB8E9B00B5C7AF /* Mover.h */; };
 		21329F572BFB9C7400B5C7AF /* ContainerTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 219987FE2BD709080035E5EA /* ContainerTests.cpp */; };
 		2138F9EF2BA303D400D3C90A /* Item.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2138F9EE2BA303D400D3C90A /* Item.cpp */; };
+		2140BE5D2DF5EACD006351F3 /* ValueHold.h in Headers */ = {isa = PBXBuildFile; fileRef = 2140BE5C2DF5EACD006351F3 /* ValueHold.h */; };
 		214661992C263C550048BBA7 /* Colour.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 214661912C263C550048BBA7 /* Colour.cpp */; };
 		2146619A2C263C550048BBA7 /* Colour.h in Headers */ = {isa = PBXBuildFile; fileRef = 214661922C263C550048BBA7 /* Colour.h */; };
 		2146619C2C263C550048BBA7 /* Finish.h in Headers */ = {isa = PBXBuildFile; fileRef = 214661942C263C550048BBA7 /* Finish.h */; };
@@ -333,6 +334,7 @@
 		21329F642BFD457000B5C7AF /* Event.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = Event.md; sourceTree = "<group>"; };
 		21379E082AE47A6400A1584C /* libActiveLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libActiveLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2138F9EE2BA303D400D3C90A /* Item.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Item.cpp; sourceTree = "<group>"; };
+		2140BE5C2DF5EACD006351F3 /* ValueHold.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueHold.h; sourceTree = "<group>"; };
 		214661912C263C550048BBA7 /* Colour.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Colour.cpp; sourceTree = "<group>"; };
 		214661922C263C550048BBA7 /* Colour.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Colour.h; sourceTree = "<group>"; };
 		214661942C263C550048BBA7 /* Finish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Finish.h; sourceTree = "<group>"; };
@@ -712,6 +714,7 @@
 				21BCA0512BA0BA7000F7D29A /* AnyValueWrap.h */,
 				2199BB4D2CD8C6AE00A4BEEC /* FastDoubleWrap.h */,
 				212A836D2AE47AD9001EAFE7 /* ItemWrap.h */,
+				2140BE5C2DF5EACD006351F3 /* ValueHold.h */,
 				215F08492C97351700CD343B /* ValueItem.h */,
 				21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */,
 				212A836B2AE47AD9001EAFE7 /* ValueWrap.h */,
@@ -1196,6 +1199,7 @@
 				21932D3F2BE13F4D005DB06E /* AreaValue.h in Headers */,
 				215106B92AE96EFF0022CD24 /* HashMap.h in Headers */,
 				2123DD632D414CF00090A4FE /* Vertex.h in Headers */,
+				2140BE5D2DF5EACD006351F3 /* ValueHold.h in Headers */,
 				2146619C2C263C550048BBA7 /* Finish.h in Headers */,
 				2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */,
 				214EA4EE2BAAF8D7008E5358 /* XMLLength.h in Headers */,

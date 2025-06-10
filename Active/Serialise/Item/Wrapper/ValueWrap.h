@@ -18,10 +18,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::serialise {
 	
 	/*!
-		Interface for a lightweight wrapper for passing a reference to item data into (de)serialise functions
+		Interface for a lightweight wrapper to pass a value item reference into (de)serialise functions
+		Note: This class does not own the referenced data - the referenced variable must persist for the expected lifetime of the referencing instance, i.e. it will not be suitable for a stack-based value. This enables sending from or receiving into the referenced variable. Use `ValueHold` for sending temporary values
 	 
-		Template parameters are:
-		T: Value native type
+		@tparam T Value native type
 	*/
 	template<class T>
 	class ValueWrap : public virtual ValueItem, public Item, public std::reference_wrapper<T> {

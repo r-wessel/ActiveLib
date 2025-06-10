@@ -65,6 +65,20 @@ namespace active::serialise {
 		*/
 		Handler(const utility::String& attributeTag, std::initializer_list<active::utility::String> const& parameter = {}) :
 				m_attributeTag{attributeTag}, m_parameterTags{parameter} {}
+
+		/*!
+		 Handler factory
+		 @param attributeTag The tag identifying a package type
+		 @param tag a package type tag
+		 @param parameter Any tags for optional parameter attributes required for instantiating a package
+		 @return A new handler
+		*/
+		template<typename T> requires std::is_base_of_v<Package, T>
+		static Handler makeHandler(const utility::String& attributeTag, const utility::String& tag, std::initializer_list<active::utility::String> const& parameter = {}) {
+			Handler result{attributeTag, parameter};
+			result.add<T>(tag);
+			return result;
+		}
 		
 		// MARK: Functions (const)
 		
@@ -144,6 +158,14 @@ namespace active::serialise {
 		template<typename T> requires std::is_base_of_v<Package, T>
 		void add(const Filter& filter) {
 			filteredReconstruction.push_back({filter, &typeid(T), makeFunc<T>});
+		}
+		/*!
+		 Merge the reconstruction functions of another handler into this
+		 @param handler The handler to merge
+		 */
+		void merge(const Handler& handler) {
+			for (const auto& item : handler.reconstruction)
+				reconstruction[item.first] = item.second;
 		}
 		
 	private:
