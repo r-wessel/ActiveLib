@@ -692,11 +692,18 @@ namespace {
 				value = std::make_unique<NullValue>();
 			else {
 					//Finally check for an incoming numeric value - test for chars not complying with an integer
-				if (text.findIf([](char32_t uniChar){ return !isNumeric(uniChar); }))
+				if (text.findIf([](char32_t uniChar){ return !isNumeric(uniChar); })) {
 					value = std::make_unique<DoubleValue>();	//Assume a double
-				else
-					value = std::make_unique<Int64Value>();	//Assume an integer
-				*value = text;
+					*value = text;
+				} else {
+					value = std::make_unique<Int64Value>();	//First try an integer
+					*value = text;
+					if (value->status == Value::bad) {
+							//The most likely failure is an overflow - fallback is to try a double
+						value = std::make_unique<DoubleValue>();
+						*value = text;
+					}
+				}
 				if (value->status == Value::bad)
 					throw std::system_error(makeJSONError(badValue));
 			}
