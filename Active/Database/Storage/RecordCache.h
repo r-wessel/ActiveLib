@@ -65,7 +65,7 @@ namespace active::database {
 			Record cloning
 			@return A clone of this record
 		*/
-		virtual RecordCache* clonePtr() const override { return new RecordCache(*this); };
+		RecordCache* clonePtr() const override { return new RecordCache(*this); };
 		
 		// MARK: - Functions (const)
 		

@@ -52,7 +52,7 @@ namespace active::primitive {
 			Clone method
 			@return A clone of this object
 		*/
-		virtual Text* clonePtr() const override  { return new Text(*this); }
+		Text* clonePtr() const override  { return new Text(*this); }
 
 		// MARK: Public variables
 
@@ -68,27 +68,27 @@ namespace active::primitive {
 		// MARK: - Functions (const)
 		
 			///True if the primitive has visible content
-		virtual bool isVisible() const override { return !text.empty() && Point::isVisible(); }
+		bool isVisible() const override { return !text.empty() && Point::isVisible(); }
 		/*!
 			Get the rendering pen (describes weight, 0 = minimum renderable thickness)
 			@return The rendering pen
 		*/
-		virtual attribute::Pen getPen() const override { return style.outlinePen; }
+		attribute::Pen getPen() const override { return style.outlinePen; }
 		/*!
 			Get the rendering edge colour
 			@return The rendering edge colour (nullopt = no edges)
 		*/
-		virtual attribute::Colour::Option getEdgeColour() const override { return style.outlineColour; }
+		attribute::Colour::Option getEdgeColour() const override { return style.outlineColour; }
 		/*!
 			Get the rendering fill colour
 			@return The rendering fill colour (nullopt = no fill)
 		*/
-		virtual attribute::Colour::Option getFillColour() const override { return style.bodyColour; }
+		attribute::Colour::Option getFillColour() const override { return style.bodyColour; }
 		/*!
 			Get the anchor position of the origin of a render-sized primitive
 			@return anchor The anchor position (nullopt = determined by primitive)
 		*/
-		virtual std::optional<geometry::Anchor2D> getRenderAnchor() const override { return style.anchor; }
+		std::optional<geometry::Anchor2D> getRenderAnchor() const override { return style.anchor; }
 
 		// MARK: - Functions (mutating)
 		
@@ -96,22 +96,22 @@ namespace active::primitive {
 			Set the rendering pen (describes weight/thickness)
 			@param pen The rendering pen
 		*/
-		virtual void setPen(attribute::Pen pen) override { style.outlinePen = pen; }
+		void setPen(attribute::Pen pen) override { style.outlinePen = pen; }
 		/*!
 			Set the rendering edge colour
 			@param colour The rendering edge colour (nullopt = no edges)
 		*/
-		virtual void setEdgeColour(attribute::Colour::Option colour) override { style.outlineColour = colour; }
+		void setEdgeColour(attribute::Colour::Option colour) override { style.outlineColour = colour; }
 		/*!
 			Set the rendering fill colour
 			@param colour The rendering fill colour (nullopt = no fill)
 		*/
-		virtual void setFillColour(attribute::Colour::Option colour) override { style.bodyColour = colour; }
+		void setFillColour(attribute::Colour::Option colour) override { style.bodyColour = colour; }
 		/*!
 			Set the anchor position of the origin of a render-sized primitive
 			@param anchor The anchor position (nullopt = determined by primitive)
 		*/
-		virtual void setRenderAnchor(std::optional<geometry::Anchor2D> anchor) override { style.anchor = anchor.value_or(geometry::Anchor2D::centreHalf); }
+		void setRenderAnchor(std::optional<geometry::Anchor2D> anchor) override { style.anchor = anchor.value_or(geometry::Anchor2D::centreHalf); }
 	};
 	
 }

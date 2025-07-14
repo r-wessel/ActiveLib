@@ -32,7 +32,8 @@ namespace {
 	return: The encoding type (nullopt if no match found)
  --------------------------------------------------------------------*/
 std::optional<TextEncoding> active::utility::encodingFromName(const String& name) {
-	if (auto match = std::find_if(encodingNames.begin(), encodingNames.end(), [&](const auto& i){ return (i.second == name); });
+	String lowerName = name.lowercase();
+	if (auto match = std::find_if(encodingNames.begin(), encodingNames.end(), [&](const auto& i){ return (i.second == lowerName); });
 			match != encodingNames.end()) {
 		return match->first;
 	}

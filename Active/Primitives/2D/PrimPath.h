@@ -46,7 +46,7 @@ namespace active::primitive {
 			Clone method
 			@return A clone of this object
 		*/
-		virtual Path* clonePtr() const override { return new Path(*this); }
+		Path* clonePtr() const override { return new Path(*this); }
 		
 		// MARK: Functions (const)
 
@@ -54,7 +54,7 @@ namespace active::primitive {
 		 Get the primitive rectilinear bounds
 		 @return The primitive bounds
 		 */
-		virtual geometry::Box::Option bounds() const override { return geometry::Polygon::bounds(); }
+		geometry::Box::Option bounds() const override { return geometry::Polygon::bounds(); }
 
 		// MARK: Functions (mutating)
 
@@ -63,21 +63,21 @@ namespace active::primitive {
 		 @param toAdd The point to add
 		 @return A reference to this
 		 */
-		virtual Primitive& add(const geometry::Point& toAdd) override;
+		Primitive& add(const geometry::Point& toAdd) override;
 		/*!
 		 Multiply by a specified factor
 		 @param toMultiply The factor to multiply the primitive by
 		 @param isRenderOffset True to also scale the render offset (where relevant)
 		 @return A reference to this
 		 */
-		virtual Primitive& multiply(double toMultiply, bool isRenderOffset = false) override;
+		Primitive& multiply(double toMultiply, bool isRenderOffset = false) override;
 		/*!
 		 Multiply by the coordinates of a point
 		 @param toMultiply The point coords to multiply by
 		 @param isRenderOffset True to also scale the render offset (where relevant)
 		 @return A reference to this
 		 */
-		virtual Primitive& multiply(const geometry::Point& toMultiply, bool isRenderOffset = false) override;
+		Primitive& multiply(const geometry::Point& toMultiply, bool isRenderOffset = false) override;
 		/*!
 		 Multiply by a 3x3 matrix
 		 @param toMultiply A 3x3 matrix
@@ -85,7 +85,7 @@ namespace active::primitive {
 		 @param isRenderTranslation True if the matrix translation applies to render-sized geometry
 		 @return A reference to this
 		 */
-		virtual Primitive& multiply(const geometry::Matrix3x3& toMultiply, bool includeRenderSized = false, bool isRenderTranslation = false) override;
+		Primitive& multiply(const geometry::Matrix3x3& toMultiply, bool includeRenderSized = false, bool isRenderTranslation = false) override;
 	};
 	
 }

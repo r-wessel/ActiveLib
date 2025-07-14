@@ -115,7 +115,64 @@ namespace active::serialise::dom {
 	 
 	 Object members are expected to be paired with a name, i.e. as a dictionary
 	 */
-	using Object = std::unordered_map<utility::String, Node>;
+	struct Object : public std::vector<std::pair<utility::String, Node>> {
+		using base = std::vector<std::pair<utility::String, Node>>;
+		using const_iterator = base::const_iterator;
+		using iterator = base::iterator;
+		using value_type = typename base::value_type;
+		using base::base;
+		
+		// MARK: - Operators
+		
+		/*!
+		 Subscript operator
+		 @param name The required node name
+		 @return The subscripted node (throws if name not found)
+		 */
+		const Node& operator[](const utility::String& name) const;
+		/*!
+		 Subscript operator
+		 @param name The required node name
+		 @return The subscripted node (created if not found)
+		 */
+		Node& operator[](const utility::String& name);
+		
+		// MARK: - Functions (const)
+		
+		/*!
+		 Find a node by name
+		 @param name The required node name
+		 @return An iterator pointing to the requested node (end on failure)
+		 */
+		const_iterator find(const utility::String& name) const;
+		/*!
+		 Determine if the object contains a node with a specified name
+		 @param name The node name to lookup
+		 @return True if the object contains the specified named node
+		 */
+		bool contains(const utility::String& name) const;
+		
+		// MARK: - Functions (mutating)
+		
+		/*!
+		 Find a node by name
+		 @param name The required node name
+		 @return An iterator pointing to the requested node (end on failure)
+		 */
+		iterator find(const utility::String& name);
+		/*!
+		 Insert a new value into the object
+		 @param value The name/node pair to insert
+		 @return An iterator pointing to the inserted value
+		 */
+		iterator insert(const value_type& value);
+		/*!
+		 Emplace a new rvalue into the object
+		 @param value The name/node pair to emplace
+		 @return An iterator pointing to the emplaced value
+		 */
+		iterator emplace(value_type&& value);
+	};
 	
 	/*!
 	 An array in a generic document object model (DOM) for serialised data transport
@@ -502,6 +559,96 @@ namespace active::serialise::dom {
 		 */
 		Inventory::iterator allocateArray(Inventory& inventory, Inventory::iterator item) override;
 	};
+
+
+	/*--------------------------------------------------------------------
+		Subscript operator
+	 
+		name: The required node name
+	 
+		return: The subscripted node (throws if name not found)
+	  --------------------------------------------------------------------*/
+	inline const Node& Object::operator[](const utility::String& name) const {
+		if (auto iter = find(name); iter != end())
+			return iter->second;
+		throw std::out_of_range("");
+	} //Object::operator[]
+
+
+	/*--------------------------------------------------------------------
+		Subscript operator
+	 
+		name: The required node name
+	 
+		return: The subscripted node (throws if name not found)
+	  --------------------------------------------------------------------*/
+	inline Node& Object::operator[](const utility::String& name) {
+		if (auto iter = find(name); iter != end())
+			return iter->second;
+		return insert({name, {}})->second;
+	} //Object::operator[]
+
+
+	/*--------------------------------------------------------------------
+		Find a node by name
+	 
+		name: The required node name
+	 
+		return: An iterator pointing to the requested node (end on failure)
+	  --------------------------------------------------------------------*/
+	inline Object::const_iterator Object::find(const utility::String& name) const {
+		return const_cast<Object*>(this)->find(name);
+	} //Object::find
+
+
+	/*--------------------------------------------------------------------
+		Determine if the object contains a node with a specified name
+	 
+		name: The node name to lookup
+	 
+		return: True if the object contains the specified named node
+	  --------------------------------------------------------------------*/
+	inline bool Object::contains(const utility::String& name) const {
+		return find(name) != end();
+	} //Object::contains
+
+	
+	/*--------------------------------------------------------------------
+		Find a node by name
+	 
+		name: The required node name
+	 
+		return: An iterator pointing to the requested node (end on failure)
+	  --------------------------------------------------------------------*/
+	inline Object::iterator Object::find(const utility::String& name) {
+		return std::find_if(begin(), end(), [&name](auto& node){ return node.first == name; });
+	} //Object::find
+
+
+	/*--------------------------------------------------------------------
+		Insert a new value into the object
+	 
+		value: The name/node pair to insert
+	 
+		return: An iterator pointing to the inserted value
+	  --------------------------------------------------------------------*/
+	inline Object::iterator Object::insert(const value_type& value) {
+		push_back(value);
+		return std::next(end(), -1);
+	} //Object::insert
+	
+	
+	/*--------------------------------------------------------------------
+		Emplace a new rvalue into the object
+	 
+		value: The name/node pair to emplace
+	 
+		return: An iterator pointing to the emplaced rvalue
+	  --------------------------------------------------------------------*/
+	inline Object::iterator Object::emplace(value_type&& value) {
+		emplace_back(value);
+		return std::next(end(), -1);
+	} //Object::emplace
 
 }
 

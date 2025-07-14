@@ -181,6 +181,11 @@ namespace {
 			dataTag,		///<CDATA section, e.g. <![CDATA[UmFscGggV2Vzc2Vs]]>
 			endTag,			///<End tag, e.g. </Person>
 			comment,		///<Comment, e.g. <!-- About me -->
+			docType,		///<DOCTYPE
+			element,		///<ELEMENT
+			attList,		///<ATTLIST
+			entity,			///<ENTITY
+			notation,		///<NOTATION
 		};
 		
 		// MARK: Constructors
@@ -246,6 +251,11 @@ namespace {
 				(*this)["?"] = std::make_pair(instruction, "?");
 				(*this)["!--"] = std::make_pair(comment, "--");
 				(*this)["![CDATA["] = std::make_pair(dataTag, "]]");
+				(*this)["!DOCTYPE"] = std::make_pair(docType, "");
+				(*this)["!ELEMENT"] = std::make_pair(element, "");
+				(*this)["!ATTLIST"] = std::make_pair(attList, "");
+				(*this)["!ENTITY"] = std::make_pair(entity, "");
+				(*this)["!NOTATION"] = std::make_pair(notation, "");
 			}
 			String terminator;
 			for (auto& i : *this) {
@@ -257,8 +267,8 @@ namespace {
 			return std::nullopt;
 		}
 	};
-	
 
+	
 	/*!
 		A glossary of reserved XML symbols and the equivalent long-form representation in plain text, e.g. '&' = '&amp'
 	*/
@@ -815,8 +825,8 @@ namespace {
 					processInstruction(importer, container, identity, attributes);
 					break;
 				}
-				case comment:
-					break;	//Not processing these yet
+				case comment: case docType: case element: case attList: case entity: case notation:
+					break;	//TODO: Add processing for these cases
 				case endTag:
 					if ((identity.name != containerIdentity.name) ||	//Check this tag pairs with the opening tag
 						(containerIdentity.group && (identity.group != containerIdentity.group))) //…and namespace when specified

@@ -28,6 +28,22 @@ namespace {
 		uint32_t c = 0;
 	};
 	
+	const char* plistExample =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			"<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"
+			"<plist version=\"1.0\">"
+			"<dict>"
+			"	<key>NSWindow Frame mainWindowFrame</key>"
+			"	<string>72 33 814 976 0 0 1680 1028 </string>"
+			"	<key>SUHasLaunchedBefore</key>"
+			"	<true/>"
+			"	<key>SULastCheckTime</key>"
+			"	<date>2009-12-26T14:42:01Z</date>"
+			"	<key>rootDir</key>"
+			"	<string>/</string>"
+			"</dict>"
+			"</plist>";
+	
 }
 
 namespace active::serialise::dom {
@@ -154,6 +170,14 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		assigned = fromXML["assign"];
 		validateNode(fromXML);
 		validateNode(fromXML["object"], 6);
+	}
+
+
+		///Tests for sending and receiving data via a DOM
+	TEST_CASE(TESTQ(testDOMplist)) {
+		Node node;
+		XMLTransport().receive(node, Identity{"plist"}, String{plistExample});
+		CHECK_MESSAGE(node.index() == Node::Index::object, TEST_MESSAGE(plist node import is not an object));
 	}
 
 TEST_SUITE_CLOSE
