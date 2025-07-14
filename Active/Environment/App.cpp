@@ -54,7 +54,7 @@ App::~App() {
  
 	return: True if the transaction was successfully processed
  --------------------------------------------------------------------*/
-bool App::makeTransaction(database::Transaction& transaction) {
+bool App::makeTransaction(database::Transaction&& transaction) {
 	if (!canTransactionStart())
 		return false;
 	if (!prepareTransaction(transaction))

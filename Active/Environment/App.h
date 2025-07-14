@@ -43,7 +43,8 @@ namespace active::environment {
 		 @param transaction The transaction
 		 @return True if the transaction was successfully processed
 		 */
-		bool makeTransaction(database::Transaction& transaction);
+		bool makeTransaction(database::Transaction&& transaction);
+		bool makeTransaction(database::Transaction& transaction) { return makeTransaction(std::forward<database::Transaction&&>(transaction)); }
 		
 	protected:
 		/*!
