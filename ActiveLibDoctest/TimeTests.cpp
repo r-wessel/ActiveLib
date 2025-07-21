@@ -19,11 +19,11 @@ TEST_SUITE(TESTQ(TimeTests)) TEST_SUITE_OPEN
 	  Time another{current};
 	  CHECK_MESSAGE(another == current, TEST_MESSAGE(Time equality failed));
 	  current.setHour(10);
-	  current.setUTCOffset(1);
+	  current.setUTCOffset(60);
 	  another.setHour(8);
-	  another.setUTCOffset(-1);
+	  another.setUTCOffset(-60);
 	  CHECK_MESSAGE(another == current, TEST_MESSAGE(Time equality with UTC offset failed));
-	  another.setUTCOffset(-2);
+	  another.setUTCOffset(-120);
 	  CHECK_MESSAGE(another > current, TEST_MESSAGE(Time greater-than failed));
 	  another.setUTCOffset(0);
 	  CHECK_MESSAGE(another < current, TEST_MESSAGE(Time less-than failed));
@@ -34,7 +34,13 @@ TEST_SUITE(TESTQ(TimeTests)) TEST_SUITE_OPEN
 	  Time current;
 	  auto changed = current;
 	  changed.addMinutes(-2);
-	  CHECK_MESSAGE(isEqual(current.differenceInSeconds(changed), -120), TEST_MESSAGE(Time equality failed));
+	  CHECK_MESSAGE(isEqual(current.differenceInSeconds(changed), -120), TEST_MESSAGE(Time delta failed));
+	  Time lateAM{2025, std::chrono::July, 21, 12, 45};
+	  lateAM.setUTCOffset(60);
+	  auto earlyPM{lateAM};
+	  earlyPM.addMinutes(30);
+	  CHECK_MESSAGE(earlyPM > lateAM, TEST_MESSAGE(Time comparison failed));
+	  CHECK_MESSAGE(isEqual(lateAM.differenceInMinutes(earlyPM), 30), TEST_MESSAGE(Time delta failed));
   }
 
 TEST_SUITE_CLOSE

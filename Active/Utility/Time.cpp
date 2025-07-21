@@ -102,7 +102,7 @@ Time::Time(time_t time) {
 #ifdef WINDOWS
 	m_utcOffset = getLocalUTCOffset();
 #else
-	m_utcOffset = utcTime.tm_gmtoff;
+	m_utcOffset = utcTime.tm_gmtoff / 60;
 #endif
 }
 
@@ -434,7 +434,7 @@ std::chrono::system_clock::time_point Time::makeTimePoint(std::optional<double> 
 	if (prec)
 		microsecs = static_cast<uint32_t>(secondsToMicroseconds * round(static_cast<double>(microsecs) / secondsToMicroseconds, *prec));
 	timePoint += hours{m_hour} + minutes{m_minute} + seconds{m_second} + microseconds{microsecs};
-	timePoint -= hours{m_utcOffset};
+	timePoint -= minutes{m_utcOffset};
 	return timePoint;
 } //Time::makeTimePoint
 
