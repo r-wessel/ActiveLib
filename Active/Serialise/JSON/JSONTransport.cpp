@@ -912,7 +912,7 @@ namespace {
 		});
 		auto containerIn = &container;
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
-			Memory::size_type readPoint = importer.getPosition();
+			auto readPoint = importer.getPosition();
 			auto identity = importer.getIdentity(parsingStage);	//Get the identity of the next item in the JSON source
 			if (identity.type != JSONIdentity::Type::undefined)
 				identity.entryRole = (identity.type == arrayStart) ? Identity::Role::array : Identity::Role::element;
@@ -952,7 +952,6 @@ namespace {
 									cargo = makeWrapper(*containerIn, containerIdentity, inventory, identity);
 									incomingItem = inventory.end();
 								} else {
-									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
 									incomingItem->withValueType(identity.valueType); //Useful for ambiguous content
 									cargo = containerIn->getCargo(*incomingItem);
 									if (cargo != nullptr) {
@@ -967,6 +966,7 @@ namespace {
 											--attributesRemaining;
 										}
 									}
+									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
 								}
 							}
 						}
@@ -1007,12 +1007,13 @@ namespace {
 						throw std::system_error(makeJSONError(invalidObject));	//The incoming data was rejected as invalid
 					return;
 			}
-			if (isAttributeReadingComplete) {
+			if (isReadingAttribute && (isAttributeReadingComplete || (attributesRemaining == 0))) {
 				isReadingAttribute = false;
 				attributesRemaining = 0;	//It may not be an error is this is not already zero - the container will validate the result
 				if (restorePoint) {
 					importer.setPosition(*restorePoint);	//Move the read position back to the first non-attribute
 					restorePoint.reset();
+					parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 				}
 				if (!isAttributeFinalised && !package->finaliseAttributes(true)) {
 					if (!importer.isUnknownSkipped())
@@ -1020,7 +1021,6 @@ namespace {
 					containerIn = &m_unknown; //Dummy package will simply skip over unknown content
 				}
 				getImportInventoryFor(*containerIn, inventory, importer);	//The inventory will probably change here
-				parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 			}
 		}
 	} //doJSONImport

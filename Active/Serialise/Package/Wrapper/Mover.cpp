@@ -5,7 +5,9 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/Package/Wrapper/Mover.h"
 
+#include "Active/Serialise/Item/Wrapper/AnyValueWrap.h"
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
+#include "Active/Serialise/Package/Wrapper/ValueSettingWrap.h"
 #include "Active/Setting/SettingList.h"
 #include "Active/Setting/ValueSetting.h"
 #include "Active/Setting/Values/StringValue.h"
@@ -134,10 +136,10 @@ Cargo::Unique Mover::getCargo(const Inventory::Item& item) const {
 		case objectTypeID:
 			return std::make_unique<StringWrap>(m_typeName);
 		default: {
-			if (m_parameters && (item.index < m_parameters->size())) {
-				auto value = dynamic_cast<StringValue*>((*m_parameters)[item.index].get());
+			if (m_parameters && (item.index <= m_parameters->size())) {
+				auto value = dynamic_cast<ValueSetting*>((*m_parameters)[item.index - 1].get());
 				if (value != nullptr)
-					return std::make_unique<StringWrap>(value->data);
+					return std::make_unique<AnyValueWrap>(*(*value)[0]);
 			}
 		}
 	}
@@ -157,12 +159,13 @@ void Mover::setDefault() {
 		if (m_package != nullptr)
 			m_package->setDefault();
 			//Create a list of values for input parameters if specified by the handler
-		if (!m_handler->parameterTags().empty()) {
+		if (m_handler->parameterTags().empty())
+			m_parameters.reset();
+		else {
 			m_parameters = std::make_unique<SettingList>();
 			for (auto& parameter : m_handler->parameterTags())
 				m_parameters->emplace_back(ValueSetting{StringValue{}, parameter});
-		} else
-			m_parameters.reset();
+		}
 	} else if ((m_package == nullptr) && m_unique && m_unique->canMake()) {
 			//Otherwise, we must be dealing with a fixed type and can get the wrapper to make an object (if we don't have one)
 		if (!m_wrapper)
