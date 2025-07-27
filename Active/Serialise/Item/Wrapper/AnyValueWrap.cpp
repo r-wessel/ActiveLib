@@ -44,8 +44,8 @@ bool AnyValueWrap::read(const utility::String& source) {
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
 bool AnyValueWrap::readSetting(const Value& source) {
-	read(source);	//Read the value as usual in case this is preferred
 	m_incoming = clone(source);	//If we receive an incoming value type, we use this in preference to any specified concrete type
+	read(source);	//But we still read the value as usual in case this is preferred
 	return true;
 } //AnyValueWrap::readSetting
 
