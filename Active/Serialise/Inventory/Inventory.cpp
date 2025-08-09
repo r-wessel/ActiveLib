@@ -158,7 +158,7 @@ void Inventory::clear() {
 	return: An iterator at the requested entry (end() on failure)
   --------------------------------------------------------------------*/
 Inventory::iterator Inventory::findEntry(const Identity& identity, const std::type_info* owner) {
-	return std::find_if(begin(), end(), [&](auto& i) {
+	return std::find_if(begin(), end(), [&identity, owner](auto& i) {
 		return ((i.identity() == identity) && ((owner == nullptr) || (i.ownerType == owner)));
 	});
 } //Inventory::findEntry

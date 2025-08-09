@@ -22,26 +22,27 @@ namespace active::utility {
 	
 	/// A Unicode-aware string class
 	/*!
-		The String class is a wrapper for std::string and leans heavily on existing functionality it provides, extending it with
-		awareness of Unicode encodings for character positioning. This also provides easy access to the underlying std::string
+		The `String` class is a wrapper for `std::string` and leans heavily on existing functionality it provides, extending it with
+		awareness of Unicode encodings for character positioning. This also provides easy access to the underlying `std::string`
 		for easy interoperability with any code working with that type.
 		
-		String content is internally encoded/validated as UTF-8, but it can be encode/decode UTF8, UTF16, UTF32, ASCII and ISO8859.
+		String content is internally encoded/validated as UTF-8, but it can encode/decode to/from UTF16, UTF32, ASCII and ISO8859.
+		All content must be valid UTF-8, i.e. you cannot embed arbitrary binary data or null characters in a `String` (use `Memory` instead).
 		Character positions are calculated to allow indexing, but the time to find a position averages O(n)
-		It is recommended to use classes like BufferIn to analyse by-character content on large blocks of text efficiently
+		It is recommended to use classes like `BufferIn` to analyse by-character content on large blocks of text efficiently
 	 
-		This class does not use a 'special' value to denote non-existent or unspecified positions, e.g. like string::npos
+		This class does not use a 'special' value to denote non-existent or unspecified positions, e.g. like `string::npos`
 		Rather, an optional is used for these cases, e.g. if searching for a dot outside the first 5 characters of some text,
 		using std::string could look like this:
 	
 			if (auto pos = text.find("."); (pos != nos) && (pos > 4))
 		
-		With this string class, the optional response simplifies the syntax:
+		With this `String` class, the optional response simplifies the syntax:
 	 
 			if (auto pos = text.find("."); pos > 4)
 		
-		The String class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
-		Conversion operators and constructors provide interoperability with a range of common types, e.g. std::string, std::u32string etc
+		The `String` class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
+		Conversion operators and constructors provide interoperability with a range of common types, e.g. `std::string`, `std::u32string` etc
 	*/
 	class String {
 	public:
@@ -349,18 +350,6 @@ namespace active::utility {
 			@return The relationship between this and ref (less, equal, greater)
 		*/
 		std::strong_ordering operator<=> (const String& ref) const { return compare(ref); }
-		/*!
-			Equality operator
-			@param ref The string to compare this to
-			@return True if the strings are identical
-		*/
-		bool operator== (const String& ref) const { return m_string == ref.m_string; }
-		/*!
-			Inequality operator
-			@param ref The string to compare this to
-			@return True if the strings differ
-		*/
-		bool operator!= (const String& ref) const { return !(*this == ref); }
 		/*!
 			Addition with assignment operator
 			@param source The string to append
@@ -734,6 +723,36 @@ namespace active::utility {
 	};
 	
 		
+	/*!
+	 Equality operator
+	 @param str1 The first string
+	 @param str2 The second string
+	 @return True if the strings are identical
+	 */
+	inline bool operator== (const String& str1, const String& str2) {
+		switch (str1.empty() + (2 * str2.empty())) {
+			case 0: [[likely]]
+				return std::strcmp(str1.data(), str2.data()) == 0;
+			case 3:
+				return true;
+			default:
+				break;
+		}
+		return false;
+	}
+	
+	
+	/*!
+	 Inequality operator
+	 @param str1 The first string
+	 @param str2 The second string
+	 @return True if the strings differ
+	 */
+	inline bool operator!= (const String& str1, const String& str2) {
+		return !(str1 == str2);
+	}
+
+
 	/*!
 		Addition operator
 		@param str1 The first string
