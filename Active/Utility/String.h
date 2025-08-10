@@ -59,8 +59,12 @@ namespace active::utility {
 		using Option = std::optional<String>;
 			///Class size type
 		using size_type = std::string::size_type;
-			///Optional size type (used to indicate an unspecified or non-existant position)
+			///Optional size type (nullopt used to indicate an unspecified or non-existant position)
 		using sizeOption = std::optional<size_type>;
+			///Character size type (bytes)
+		using char_size = unsigned char;
+			///Optional character size type (nullopt used to indicate an unspecified or invalid size)
+		using charSizeOption = std::optional<char_size>;
 			///Unary predicate for filtering strings
 		using Filter = std::function<bool(char32_t)>;
 			///Unary functions for processing string characters
@@ -239,7 +243,7 @@ namespace active::utility {
 			@param format The text data format
 			@return The character width in bytes (nullopt for bad encoding)
 		*/
-		static sizeOption getCharacterByteCount(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
+		static charSizeOption getCharacterByteCount(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
 			Get the number of valid characters found at a specified address
 			@param text The source text
@@ -255,7 +259,7 @@ namespace active::utility {
 			@param format The source data format
 			@return The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
 		*/
-		static std::pair<char32_t, size_type> getUnicodeChar(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
+		static std::pair<char32_t, char_size> getUnicodeChar(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
 			Get a UTF-32 string from a UTF-8 source
 			@param text The source UTF-8 text (advances to the byte beyond the last counted character)

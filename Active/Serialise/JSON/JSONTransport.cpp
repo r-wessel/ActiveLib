@@ -49,6 +49,8 @@ namespace {
 	const std::u32string numberContent{numberLeader + U"+.eE"};
 		//Possible leading characters for a boolean value
 	const std::u32string boolLeader{U"tf"};
+		///All white space characters
+	const std::u32string allWhiteSpace32{U" \t\r\n"};
 		//Leading characters for a null value
 	constexpr char32_t nullLeader{U'n'};
 		//A JSON null value
@@ -678,11 +680,23 @@ namespace {
 			value = std::make_unique<StringValue>(fromJSONString(text, m_glossary));
 		} else {
 			text.append(content.first);
-			m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
-				//Trim trailing white-space chars
-			auto lastChar = text.findLastNotOf(String::allWhiteSpace);
-			if (!lastChar)
+			char32_t endChar = 0;
+			m_buffer.findIf([&endChar](char32_t uniChar){
+				if (!isValueTerminator(uniChar))
+					return false;
+				endChar = uniChar;
+				return true;
+			}, &text);
+			if (text.empty())
 				throw std::system_error(makeJSONError(valueMissing));
+			String::sizeOption lastChar;
+			if (allWhiteSpace32.find(endChar) != std::u32string::npos) {
+					//Trim trailing white-space chars
+				lastChar = text.findLastNotOf(String::allWhiteSpace);
+				if (!lastChar)
+					throw std::system_error(makeJSONError(valueMissing));
+			} else
+				lastChar = text.size() - 1;
 			text = text.substr(0, *lastChar + 1);
 				//Check for an incoming bool value
 			if (text == "true")
