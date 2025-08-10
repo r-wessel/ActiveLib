@@ -15,6 +15,15 @@ using namespace active::utility;
 
 using enum TextEncoding;
 
+namespace {
+	
+		///Default bounds of small cache to accumulate small buffer writes, e.g. single chars or small strings
+	const size_t smallCacheBounds = 0x200;
+		///Max size of data to be written to the small cache
+	const size_t smallDataBounds = 0x80;
+
+}
+
 // MARK: - Constructors
 
 /*--------------------------------------------------------------------
@@ -161,7 +170,10 @@ Memory::sizeOption BufferOut::getPosition() const {
 	return: True if no errors were encountered
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::flushBuffer() const {
-	if (!good() || (m_bufferPos == 0))
+	if (!good())
+		return *this;
+	validateSmallCache(true);
+	if (m_bufferPos == 0)
 		return *this;
 	if (m_file != nullptr) {
 		try {
@@ -228,16 +240,15 @@ const BufferOut& BufferOut::write(const String& toWrite, DataFormat format) cons
 	return: A reference to this
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::write(const char* toWrite, Memory::size_type length) const {
-	if (!good() || !confirmBuffer())
+	if (!good())
 		return *this;
 		//Check if we need to write a BOM
-	if ((getPosition() == 0) && m_format.isBOM) {
+	if ((getPosition() == 0) && m_smallCache.empty() && m_format.isBOM) {
 		if (auto bom = m_format.toBOM(); bom)
 			if (!performWrite(bom->data(), bom->size()))
 				return *this;
 	}
-	performWrite(toWrite, length);
-	return *this;
+	return (length < smallDataBounds) ? writeToSmallCache(toWrite, length) : performWrite(toWrite, length);
 } //BufferOut::write
 
 
@@ -249,7 +260,9 @@ const BufferOut& BufferOut::write(const char* toWrite, Memory::size_type length)
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::write(unsigned char toWrite) const {
-	return write(reinterpret_cast<const char*>(&toWrite), 1);
+	if (good())
+		m_smallCache.push_back(toWrite);
+	return validateSmallCache();
 } //BufferOut::write
 
 
@@ -322,6 +335,38 @@ void BufferOut::setDestination(String* destString) {
 
 
 /*--------------------------------------------------------------------
+	Write to the small cache
+ 
+	toWrite: The block address
+	length: The number of bytes to write
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
+const BufferOut& BufferOut::writeToSmallCache(const char* toWrite, Memory::size_type length) const {
+	auto readPos = toWrite;
+	for ( ; length-- > 0; ++readPos)
+		m_smallCache.push_back(*readPos);
+	return validateSmallCache();
+} //BufferOut::writeToSmallCache
+
+
+/*--------------------------------------------------------------------
+	Validate the small cache content (write when full)
+ 
+	isWriteForced: True to force the cache content to written immediately
+ 
+	return: A reference to this
+  --------------------------------------------------------------------*/
+const BufferOut& BufferOut::validateSmallCache(bool isWriteForced) const {
+	if (m_smallCache.empty() || (!isWriteForced && (m_smallCache.size() < smallCacheBounds)))
+		return *this;
+	std::vector<char> cache(std::move(m_smallCache));
+	performWrite(cache.data(), cache.size());
+	return *this;
+} //BufferOut::validateSmallCache
+
+
+/*--------------------------------------------------------------------
 	Write a specified memory block
  
 	toWrite: The block address
@@ -332,6 +377,7 @@ void BufferOut::setDestination(String* destString) {
 const BufferOut& BufferOut::performWrite(const char* toWrite, Memory::size_type length) const {
 	if ((length == 0) || !good() || !confirmBuffer())
 		return *this;
+	validateSmallCache(true);
 	Memory::size_type start = 0;
 	while (length > 0) {
 		Memory::size_type count = std::min(length, m_buffer.size() - m_bufferPos);
@@ -355,6 +401,7 @@ const BufferOut& BufferOut::performWrite(const char* toWrite, Memory::size_type 
   --------------------------------------------------------------------*/
 void BufferOut::initialise(Memory* memory, File* fileDest, String* stringDest) {
 	IOBase::clear();
+	m_smallCache.reserve(smallCacheBounds);
 	m_bufferPos = 0;
 	m_file = fileDest;
 	m_memory = memory;

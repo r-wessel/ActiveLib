@@ -412,7 +412,7 @@ String::String(const char* source, sizeOption howMany, DataFormat format) {
  --------------------------------------------------------------------*/
 String::String(const std::u16string& source, sizeOption howMany) {
 	const char16_t* text = source.data();
-		//First convert tp UTF-32
+		//First convert to UTF-32
 	if (auto string32 = fromUTF16(text, Memory::defaultEndian, howMany); string32) {
 			//Then convert UTF-32 to UTF-8
 		const char32_t* text32 = string32->data();
@@ -542,7 +542,7 @@ String::size_type String::getValidByteCount(const char* text, sizeOption howMany
 	howMany: The number of bytes in the array
 	format: The text data format
  
-	return: The character width in bytes (nullopt on failure, either null char or bad encoding)
+	return: The character width in bytes (nullopt on failure, i.e. bad encoding)
   --------------------------------------------------------------------*/
 String::sizeOption String::getCharacterByteCount(const char* text, sizeOption howMany, DataFormat format) {
 	if ((howMany == 0) || (text == nullptr))
