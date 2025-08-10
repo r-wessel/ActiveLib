@@ -60,7 +60,7 @@ namespace active::attribute {
 			///Finish name (optional - application-specific)
 		utility::String name;
 			///Finish identifier (optional - application-specific)
-		utility::String id;
+		mutable utility::String id;
 
 		// MARK: Functions (const)
 
