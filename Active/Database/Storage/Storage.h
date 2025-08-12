@@ -126,7 +126,7 @@ namespace active::database {
 		 */
 		active::container::Vector<Obj> getObjects(const Filter& filter, std::optional<TableID> tableID = std::nullopt,
 												  std::optional<DocID> documentID = std::nullopt) const {
-			return m_engine->getObjects(tableID, documentID);
+			return m_engine->getObjects(filter, tableID, documentID);
 		}
 		/*!
 		 Write an object to the database

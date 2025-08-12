@@ -454,12 +454,13 @@ namespace active::database {
 			else
 				wrapper = std::make_unique<serialise::CargoHold<ObjWrapper, Obj>>();
 			Transport{}.receive(std::forward<serialise::Cargo&&>(*wrapper), serialise::Identity{}, content->operator utility::String());
+			std::unique_ptr<Obj> incoming;
 			if constexpr (std::is_same_v<ObjWrapper, Obj>)
-				result.emplace_back(std::make_unique<Obj>(dynamic_cast<serialise::CargoHold<serialise::PackageWrap, Obj>*>(wrapper.get())->get()));
-			else {
-				if (auto incoming = wrapper.release(); incoming)
-					result.emplace(incoming);
-			}
+				incoming = std::make_unique<Obj>(dynamic_cast<serialise::CargoHold<serialise::PackageWrap, Obj>*>(wrapper.get())->get());
+			else
+				incoming = wrapper.release();
+			if (incoming && ((filter == nullptr) || (*filter)(*incoming)))
+				result.emplace_back(incoming);
 		} while (transaction);
 		return result;
 	} //SQLiteEngine<Obj, ObjWrapper, Transport, DocID, ObjID>::runTransaction
