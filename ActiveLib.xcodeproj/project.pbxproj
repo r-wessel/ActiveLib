@@ -151,6 +151,7 @@
 		21D0BD852C8B56530077E104 /* Concepts.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D0BD842C8B56530077E104 /* Concepts.h */; };
 		21D0BDA12C8F2C430077E104 /* RecordCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BDA02C8F2C430077E104 /* RecordCache.cpp */; };
 		21D25A522DCC0A3F002F8EF9 /* Mesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D25A512DCC0A3F002F8EF9 /* Mesh.cpp */; };
+		21EF178C2E4D2B07005DC5A3 /* Case.h in Headers */ = {isa = PBXBuildFile; fileRef = 21EF178B2E4D2B07005DC5A3 /* Case.h */; };
 		21F69F5E2C6CE911008B6A06 /* ValueSettingWrap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */; };
 		21F69F632C6D4AEE008B6A06 /* CargoHold.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F69F622C6D4AEE008B6A06 /* CargoHold.h */; };
 		21F93ACB2B2B5DA2009A2C5B /* NameID.h in Headers */ = {isa = PBXBuildFile; fileRef = 21F93AC92B2B5DA2009A2C5B /* NameID.h */; };
@@ -471,6 +472,7 @@
 		21D0BD9F2C8F1F1C0077E104 /* RecordCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordCache.h; sourceTree = "<group>"; };
 		21D0BDA02C8F2C430077E104 /* RecordCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RecordCache.cpp; sourceTree = "<group>"; };
 		21D25A512DCC0A3F002F8EF9 /* Mesh.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Mesh.cpp; sourceTree = "<group>"; };
+		21EF178B2E4D2B07005DC5A3 /* Case.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Case.h; sourceTree = "<group>"; };
 		21F0AE562CECD40C003AD722 /* Transaction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Transaction.h; sourceTree = "<group>"; };
 		21F69F5C2C6CE911008B6A06 /* ValueSettingWrap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValueSettingWrap.cpp; sourceTree = "<group>"; };
 		21F69F5D2C6CE911008B6A06 /* ValueSettingWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueSettingWrap.h; sourceTree = "<group>"; };
@@ -864,6 +866,7 @@
 				212A83C62AE47AD9001EAFE7 /* BufferIn.h */,
 				212A83CB2AE47AD9001EAFE7 /* BufferOut.cpp */,
 				212A83C42AE47AD9001EAFE7 /* BufferOut.h */,
+				21EF178B2E4D2B07005DC5A3 /* Case.h */,
 				212A83C32AE47AD9001EAFE7 /* Cloner.h */,
 				2167E27E2C49123E000827D3 /* CMakeLists.txt */,
 				21D0BD842C8B56530077E104 /* Concepts.h */,
@@ -1201,6 +1204,7 @@
 				2123DD632D414CF00090A4FE /* Vertex.h in Headers */,
 				2140BE5D2DF5EACD006351F3 /* ValueHold.h in Headers */,
 				2146619C2C263C550048BBA7 /* Finish.h in Headers */,
+				21EF178C2E4D2B07005DC5A3 /* Case.h in Headers */,
 				2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */,
 				214EA4EE2BAAF8D7008E5358 /* XMLLength.h in Headers */,
 				218484C62AF92D7300280FEF /* UniqueString.h in Headers */,

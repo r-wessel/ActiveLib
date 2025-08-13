@@ -87,26 +87,28 @@ SHA256& SHA256::operator<<(BufferIn&& source) {
 	return: The hash product formatted as specified
   --------------------------------------------------------------------*/
 String SHA256::product(HashFormat format) const {
-	switch (format) {
+	switch (format.type) {
 		case HashFormat::asHex:
-			return hexHash();
+			return hexHash(format.inCase);
 		case HashFormat::asBase64:
 			return base64Hash();
-		case HashFormat::asGuid:
-			return guid().operator String();
+		default:
+			break;
 	}
-	return (format == HashFormat::asHex) ? hexHash() : base64Hash();
+	return guid().string(format.inCase);
 } //SHA256::product
 
 
 /*--------------------------------------------------------------------
 	Get the data hash
  
+	inCase: The hex digit case
+ 
 	return: The hash (as hex digits)
   --------------------------------------------------------------------*/
-String SHA256::hexHash() const {
+String SHA256::hexHash(Case inCase) const {
 	String result;
-	HexTransport().send(BufferIn{getHash()}, result);
+	HexTransport(inCase).send(BufferIn{getHash()}, result);
 	return result;
 } //SHA256::hexHash
 

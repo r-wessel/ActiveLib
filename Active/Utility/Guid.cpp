@@ -68,13 +68,15 @@ Guid::Guid(const String& uuidString) {
 /*--------------------------------------------------------------------
 	Return a string representation of the guid
  
+	inCase: The digit case
+ 
 	return: A string representation
   --------------------------------------------------------------------*/
-String Guid::string() const {
+String Guid::string(Case inCase) const {
 	String first, second;
 		//Convert the first half to hex and format
 	auto val = Memory::toBigEndian(m_value.first);
-	if (!HexTransport().send(Memory{val}, first) || (first.length() != 16))
+	if (!HexTransport(inCase).send(Memory{val}, first) || (first.length() != 16))
 		first = nullHex;
 	first.insert(8, "-");
 	first.insert(13, "-");

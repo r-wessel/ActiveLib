@@ -78,7 +78,7 @@ namespace active::attribute {
 		 @param format The required has format
 		 @return The hash formatted as specified
 		 */
-		utility::String hash(utility::HashFormat format = utility::HashFormat::asBase64) const;
+		utility::String hash(utility::HashFormat format = {}) const;
 
 		// MARK: - Functions (mutating)
 		
