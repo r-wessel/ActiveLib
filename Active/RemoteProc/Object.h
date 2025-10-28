@@ -46,7 +46,7 @@ namespace active::rpc {
 		// MARK: - Functions (const)
 		
 		/*!
-		 Get the object name (as expressed to JS)
+		 Get the object name (as expressed to to the server portal)
 		 @return The object name
 		 */
 		const auto& getName() const { return m_name; }

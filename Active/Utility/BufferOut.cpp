@@ -361,6 +361,7 @@ const BufferOut& BufferOut::validateSmallCache(bool isWriteForced) const {
 	if (m_smallCache.empty() || (!isWriteForced && (m_smallCache.size() < smallCacheBounds)))
 		return *this;
 	std::vector<char> cache(std::move(m_smallCache));
+	m_smallCache = {};
 	performWrite(cache.data(), cache.size());
 	return *this;
 } //BufferOut::validateSmallCache

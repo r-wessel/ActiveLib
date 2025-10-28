@@ -6,8 +6,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_RPC_NAMED_FUNCTION
 #define ACTIVE_RPC_NAMED_FUNCTION
 
-#include "BIMLib/UI/Browser/JSBinding.h"
-
 #include "Active/RemoteProc/Functional.h"
 #include "Active/Serialise/Cargo.h"
 #include "Active/Serialise/Inventory/Identity.h"
@@ -64,10 +62,10 @@ namespace active::rpc {
 		
 		/*!
 		 Constructor
-		 @param jsName The function name (as called from JavaScript)
+		 @param name The function name (as called remotely)
 		 @param function The C++ function bound to the name
 		 */
-		NamedFunction(const active::utility::String& jsName, Function function) : active::utility::NameID{jsName}, m_function{function} {}
+		NamedFunction(const active::utility::String& name, Function function) : active::utility::NameID{name}, m_function{function} {}
 		/*!
 		 Copy constructor
 		 @param source The object to copy

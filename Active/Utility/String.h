@@ -101,7 +101,7 @@ namespace active::utility {
 		/*!
 			Constructor from an input char array
 			@param source The character array to be copied
-			@param howMany The number of bytes to copy (nullopt for full length)
+			@param howMany The number of bytes to copy (nullopt fornull-terminated)
 			@param format The source text data format
 		*/
 		String(const char* source, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
@@ -109,7 +109,7 @@ namespace active::utility {
 		/*!
 			Constructor from an input UTF8 char array
 			@param source The character array to be copied
-			@param howMany The number of bytes to copy (nullopt for full length)
+			@param howMany The number of bytes to copy (nullopt for null-terminated)
 		*/
 		String(const char8_t* source, sizeOption howMany = std::nullopt) : String{reinterpret_cast<const char*>(source), howMany, DataFormat{}} {}
 #endif
@@ -214,12 +214,12 @@ namespace active::utility {
 			Copy constructor
 			@param source The string to copy
 		*/
-		String(const String& source);
+		String(const String& source) : m_string{source.m_string} {}
 		/*!
 			Move constructor
 			@param source The object to move
 		*/
-		String(String&& source) noexcept;
+		String(String&& source) noexcept : m_string{std::move(source.m_string)} {}
 		/*!
 			Destructor
 		*/

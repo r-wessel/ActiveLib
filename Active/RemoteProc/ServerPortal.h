@@ -34,13 +34,13 @@ namespace active::rpc {
 		// MARK: - Functions (mutating)
 		
 		/*!
-		 Install a JS function object
+		 Install a function object for handling RPC calls
 		 @param object The object to install
 		 @return True if the object was successfully installed
 		 */
 		std::shared_ptr<Object<FunctionBinding>> install(std::shared_ptr<Object<FunctionBinding>> object) = 0;
 		/*!
-		 Install a JS function object
+		 Install a function object for handling RPC calls
 		 @return True if the object was successfully installed
 		 @tparam T The type of object to install
 		 */

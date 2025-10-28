@@ -482,29 +482,6 @@ String::String(double val, double prec, bool padZero) {
 
 
 /*--------------------------------------------------------------------
-	Copy constructor
-
-	source: The object to be copied
-	startPos: The position to begin copying from
-	howMany: The number of characters to copy
-  --------------------------------------------------------------------*/
-String::String(const String& source) {
-	m_string = source.m_string;
-} //String::String
-
-
-/*--------------------------------------------------------------------
-	Move constructor
- 
-	source: The object to move
-  --------------------------------------------------------------------*/
-String::String(String&& source) noexcept :
-		m_string{std::move(source.m_string)} {
-}
-
-//MARK: - Static functions
-
-/*--------------------------------------------------------------------
 	Get the number of bytes in the specified text (counting only valid UTF-8 characters)
  
 	text: The source text

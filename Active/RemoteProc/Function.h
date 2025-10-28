@@ -42,10 +42,10 @@ namespace active::rpc {
 		
 		/*!
 		 Constructor
-		 @param jsName The function name (as called from JavaScript)
+		 @param name The function name (as called remotely)
 		 @param function The C++ function bound to the name
 		 */
-		Function(const active::utility::String& jsName, Function function) : base{jsName, function} {}
+		Function(const active::utility::String& name, Function function) : base{name, function} {}
 		/*!
 		 Copy constructor
 		 @param source The object to copy
