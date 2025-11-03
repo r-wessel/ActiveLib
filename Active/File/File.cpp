@@ -331,7 +331,7 @@ void File::write(const String& text, String::sizeOption howMany, TextEncoding en
 	validate();
 	if (text.empty())
 		return;	//No data isn't an error
-	String::Unique temp;
+	std::unique_ptr<String> temp;
 	const String* target = &text;
 	if (howMany) {
 		temp = std::make_unique<String>(text.substr(0, *howMany));

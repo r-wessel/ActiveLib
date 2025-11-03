@@ -17,12 +17,6 @@ namespace active::serialise {
 	*/
 	class NullPackage : public virtual Package {
 	public:
-
-			///Unique pointer
-		using Unique = std::unique_ptr<NullPackage>;
-			///Shared pointer
-		using Shared = std::shared_ptr<NullPackage>;
-		
 		// MARK: - Functions (const)
 		
 		/*!
@@ -41,7 +35,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override { return nullptr; }
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override { return nullptr; }
 	};
 	
 	class NullContainer : public NullPackage {};

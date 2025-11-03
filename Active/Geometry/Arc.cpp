@@ -370,10 +370,10 @@ Plane Arc::getPlane() const {
 	
 	return: The bounds of the arc
   --------------------------------------------------------------------*/
-Box::Unique Arc::bounds() const {
+std::unique_ptr<Box> Arc::bounds() const {
 		//Is the arc level?
 	if (normal.isParallelTo(Vector3(0, 0, 1))) {
-		Box* bounds = new Box(getOrigin(), getEnd());
+		auto bounds = std::make_unique<Box>(getOrigin(), getEnd());
 		double initAngle = startAngle, endAngle = getEndAngle();
 		if (sweep < 0)
 			std::swap(initAngle, endAngle);
@@ -385,7 +385,7 @@ Box::Unique Arc::bounds() const {
 			bounds->merge(centre + Point(radius * cos(quad), radius * sin(quad)));
 			quad += pi / 2.0;
 		}
-		return Box::Unique(bounds);
+		return bounds;
 	}
 		//The bounds of 3D arcs TBC
 	return nullptr;

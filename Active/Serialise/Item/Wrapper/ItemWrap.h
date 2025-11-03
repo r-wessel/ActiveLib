@@ -58,7 +58,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override	{ return base::get().getCargo(item); }
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override	{ return base::get().getCargo(item); }
 		/*!
 			Write the item data to a string
 			@param dest The string to write the data to

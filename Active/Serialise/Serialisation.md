@@ -629,13 +629,13 @@ The `Inventory` is essentially the serialisation schema and should be populated 
 		- `isAttribute`: True if this field is an attribute. This is primarily important for XML, but can potentially be significant for JSON too
 		- `required`: Ignored for deserialisation. Can be `false` for serialisation if the field can be skipped, e.g. it's value matches the field default value.
 		- `owner`: The typeid of the field parent type. Used where a serialised element is either a composite or hierarchy of many objects, enabling each field to be bound to its parent.
-	- `Cargo::Unique getCargo(const Inventory::Item& item) const`	
+	- `std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const`	
 This function should return a `Cargo` container to send or receive data associated with the passed `Inventory::Item` (which combines an `Entry` with an `Identity`). The serialisation process will serialise and export the returned cargo. Deserialisation will populate the returned cargo with the imported deserialised data.
 	- `void setDefault()`	
 Called during deserialisation only, before any deserialised data is retrieved. The target object/value should reset all its fields to their default state. For an array, this probably means clearing any existing content. This function should only be implemented where there is a suitable default state. Values subclassed from `Item` typically do not need this function.
 	- `bool validate(Management* management)`	
 Called during deserialisation only, after all the data relevant to the target has been deserialised and populated into the target. The target object/value should return `true` if the deserialised data is valid, but this can also be used as an opportunity for completion processes, e.g. migrating legacy data, caching data for objects that can't be constructed yet, or amalgamating disparate items into a more complex structure. This function can be omitted if none of these processes are required. Sometimes required for subclasses of `Item`, but rarely. 
-	- `bool insert(Cargo::Unique&& cargo, const Inventory::Item& item)`   
+	- `bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item)`   
 Required for deserialising arrays/dictionaries. When a new array instance is found, a `Cargo` instance is requested (using *getCargo*) to receive the deserialised data. Once the instance has been read and validated, this *insert* function is called. The *cargo* parameter is the new instance to be inserted, and *item* associates the *cargo* with an inventory entry (essential for objects that hold multiple arrays).
 3. A subclass of `Item` may also need to implement the following functions (if it isn't already using an existing `Wrapper`:
 	- `bool write(utility::String& dest) const`	
@@ -727,7 +727,7 @@ The inventory is defined as a series of entries (one per field), each pairing th
 A function to provide a value/object instance for transport can look like this:
 
 ```cpp
-Cargo::Unique Object::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> Object::getCargo(const Inventory::Item& item) const {
 		//Ensure this item is from my inventory
 	if (item.second.ownerType != &typeid(Object))
 		return nullptr;
@@ -796,7 +796,7 @@ The only invariant for this `Cargo` is that *docType* (an identifier for the obj
 Following validation, there is one final step for deserialising an object that is an item instance belonging to an array/dictionary - insertion into the parent container:
 
 ```cpp
-bool Object::insert(Cargo::Unique&& cargo, const Inventory::Item& item) {
+bool Object::insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) {
 	if (item.second.ownerType != &typeid(Object))
 		return true;
 	switch (item.second.index) {

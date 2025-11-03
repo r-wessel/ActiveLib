@@ -26,12 +26,6 @@ namespace active::utility {
 		using size_type = std::size_t;
 			///Optional memory size/position
 		using sizeOption = std::optional<size_type>;
-			///Unique pointer
-		using Option = std::optional<Memory>;
-			///Unique pointer
-		using Unique = std::unique_ptr<Memory>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Memory>;
 		
 		// MARK: - Static functions
 		

@@ -51,7 +51,7 @@ namespace {
 	 @param node The node to be wrapped
 	 @return Cargo for transport referencing the node
 	 */
-	active::serialise::Cargo::Unique wrapNode(Node& node) {
+	std::unique_ptr<active::serialise::Cargo> wrapNode(Node& node) {
 		return std::make_unique<PackageWrap>(node);
 	}
 	
@@ -222,7 +222,7 @@ std::optional<Cargo::Type> Node::type() const {
  
 	return: The requested value setting (nullopt on failure)
   --------------------------------------------------------------------*/
-ValueSetting::Option Node::setting(const String& name) const {
+std::optional<ValueSetting> Node::setting(const String& name) const {
 	if (!isObject())
 		return std::nullopt;
 	if (auto iter = object().find(name); (iter != object().end()) && (iter->second.index() == Index::value)) {
@@ -278,7 +278,7 @@ bool Node::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-active::serialise::Cargo::Unique Node::getCargo(const active::serialise::Inventory::Item& item) const {
+std::unique_ptr<active::serialise::Cargo> Node::getCargo(const active::serialise::Inventory::Item& item) const {
 	switch (index()) {
 		case Index::value:
 			return wrapNode(const_cast<Node&>(*this));
@@ -353,7 +353,7 @@ void Node::setDefault() {
  
 	return: True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
   --------------------------------------------------------------------*/
-bool Node::insert(Cargo::Unique&& cargo, const active::serialise::Inventory::Item& item) {
+bool Node::insert(std::unique_ptr<Cargo>&& cargo, const active::serialise::Inventory::Item& item) {
 	return true;
 } //Node::insert
 

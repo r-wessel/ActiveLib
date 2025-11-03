@@ -50,7 +50,7 @@ bool SerialiseTester::fillInventory(Inventory& inventory) const {
 	@param item The inventory item to retrieve
 	@return The requested cargo (nullptr on failure)
 */
-Cargo::Unique SerialiseTester::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> SerialiseTester::getCargo(const Inventory::Item& item) const {
 	switch (item.index) {
 		case FieldIndex::name:
 			return std::make_unique<StringWrap>(m_name);

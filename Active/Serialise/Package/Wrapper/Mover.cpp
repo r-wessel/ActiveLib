@@ -123,7 +123,7 @@ bool Mover::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-Cargo::Unique Mover::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> Mover::getCargo(const Inventory::Item& item) const {
 		//If the item isn't from this wrapper, pass the request to the wrapper for the target subclass
 	if (item.ownerType != &typeid(Mover)) {
 		if (m_package)
@@ -233,6 +233,6 @@ bool Mover::read(const utility::String& source) {
 	cargo: The cargo to insert
 	item: The inventory item linked with the cargo
   --------------------------------------------------------------------*/
-bool Mover::insert(Cargo::Unique&& cargo, const Inventory::Item& item) {
+bool Mover::insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) {
 	return (isNull()) ? true : m_package->insert(std::move(cargo), item);
 } //Mover::insert

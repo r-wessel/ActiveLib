@@ -630,7 +630,7 @@ Polygon::Polygon(Polygon&& source) noexcept : base(std::move(source)) {
  
 	return: A duplicate of this object's geometry
   --------------------------------------------------------------------*/
-Polygon::Unique Polygon::cloneGeometry() const {
+std::unique_ptr<Polygon> Polygon::cloneGeometry() const {
 	auto result = std::make_unique<Polygon>();
 	for (const auto& vertex : *this)
 		result->push_back(new PolyPoint{*vertex});
@@ -1163,7 +1163,7 @@ Polygon::base::const_iterator Polygon::iteratorAt(vertex_index index) const {
 	
 	return: The polygon bounds
   --------------------------------------------------------------------*/
-Box::Option Polygon::bounds() const {
+std::optional<Box> Polygon::bounds() const {
 	if (vertSize() < 1)
 		return std::nullopt;
 	Box result{*(*this)[0], *(*this)[0]};
@@ -1177,7 +1177,7 @@ Box::Option Polygon::bounds() const {
 			result.merge(*(*this)[vertex]);
 	}
 	result.sort();
-	return Box::Option(result);
+	return result;
 } //Polygon::bounds
 
 
@@ -1370,7 +1370,7 @@ bool Polygon::isReflection(vertex_index index, const LinEquation& ref, double pr
 
 	return: A point inside the polygon (nullopt on failure)
   --------------------------------------------------------------------*/
-Point::Option Polygon::getInternalPoint() const {
+std::optional<Point> Polygon::getInternalPoint() const {
 		//First get the polygon rectilinear bounds
 	auto myBounds = bounds();
 	if (!myBounds)
@@ -2102,7 +2102,7 @@ Polygon* Polygon::insertHole(const Polygon& hole) {
 	return: The inserted hole
   --------------------------------------------------------------------*/
 Polygon* Polygon::insertHole(Polygon* hole) {
-	return emplaceHole(Unique(hole));
+	return emplaceHole(std::unique_ptr<Polygon>{hole});
 } //Polygon::insertHole
 
 
@@ -2113,7 +2113,7 @@ Polygon* Polygon::insertHole(Polygon* hole) {
  
 	return: The emplaced hole
   --------------------------------------------------------------------*/
-Polygon* Polygon::emplaceHole(Polygon::Unique&& hole) {
+Polygon* Polygon::emplaceHole(std::unique_ptr<Polygon>&& hole) {
 	hole->isHole = true;
 		//Holes can't contain holes
 	hole->setHoles();
@@ -2156,7 +2156,7 @@ void Polygon::removeHole(part_index which) {
 	
 	return: The released hole polygon
   --------------------------------------------------------------------*/
-Polygon::Unique Polygon::releaseHole(part_index which) {
+std::unique_ptr<Polygon> Polygon::releaseHole(part_index which) {
 	if (!m_hole || (which < 0) || (which >= m_hole->size()))
 		throw std::out_of_range("");
 	auto pos = m_hole->begin() + which;
@@ -2172,7 +2172,7 @@ Polygon::Unique Polygon::releaseHole(part_index which) {
 	
 	holes: The list of holes to set in the polygon
   --------------------------------------------------------------------*/
-void Polygon::setHoles(PolyVector::Unique&& holes) {
+void Polygon::setHoles(std::unique_ptr<PolyVector>&& holes) {
 	m_hole = std::move(holes);
 } //Polygon::setHoles
 
@@ -2182,7 +2182,7 @@ void Polygon::setHoles(PolyVector::Unique&& holes) {
 	
 	return: The holes in the polygon
   --------------------------------------------------------------------*/
-PolyVector::Unique Polygon::releaseHoles() {
+std::unique_ptr<PolyVector> Polygon::releaseHoles() {
 	return std::move(m_hole);
 } //Polygon::releaseHoles
 

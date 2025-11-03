@@ -16,12 +16,6 @@ namespace active::serialise {
 	*/
 	class Package : public virtual Cargo {
 	public:
-
-			///Unique pointer
-		using Unique = std::unique_ptr<Package>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Package>;
-		
 		// MARK: - Functions (const)
 		
 		/*!
@@ -63,7 +57,7 @@ namespace active::serialise {
 			@param item The inventory item linked with the cargo
 			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		*/
-		virtual bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) { return true; }
+		virtual bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) { return true; }
 		/*!
 			Import the package from a string
 			@param source The string to read

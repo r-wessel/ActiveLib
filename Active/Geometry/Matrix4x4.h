@@ -20,12 +20,6 @@ namespace active::geometry {
 		using row_t = std::array<double, 4>;
 			//Matrix container
 		using base_t = std::array<row_t, 4>;
-			///Unique pointer
-		using Unique = std::unique_ptr<Matrix4x4>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Matrix4x4>;
-			///Optional
-		using Option = std::optional<Matrix4x4>;
 		
 		// MARK: Factory functions
 

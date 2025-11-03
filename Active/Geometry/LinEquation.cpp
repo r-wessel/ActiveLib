@@ -22,7 +22,7 @@ using namespace active::math;
 	
 	return: A linear equation (nullopt if input is invalid)
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::create(const Point& source) {
+std::optional<LinEquation> LinEquation::create(const Point& source) {
 	return getEquation(Point(), source);
 } //LinEquation::create
 
@@ -35,7 +35,7 @@ LinEquation::Option LinEquation::create(const Point& source) {
 	
 	return: A linear equation (nullopt if input is invalid)
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::create(const Point& start, const Point& end) {
+std::optional<LinEquation> LinEquation::create(const Point& start, const Point& end) {
 	return getEquation(start, end);
 } //LinEquation::create
 
@@ -47,7 +47,7 @@ LinEquation::Option LinEquation::create(const Point& start, const Point& end) {
 	
 	return: A linear equation (nullopt if input is invalid)
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::create(const Line& source) {
+std::optional<LinEquation> LinEquation::create(const Line& source) {
 	return getEquation(source.origin, source.end);
 } //LinEquation::create
 
@@ -116,7 +116,7 @@ void LinEquation::calculate(const Point& start, double dx, double dy) {
 	
 	return: A linear equation (nullopt if input is invalid)
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::getEquation(const Point& start, const Point& end) {
+std::optional<LinEquation> LinEquation::getEquation(const Point& start, const Point& end) {
 	double dx = end.x - start.x;
 	double dy = end.y - start.y;
 	return (isZero(dx) && isZero(dy)) ? std::nullopt : std::make_optional<LinEquation>(Vector3{dx, dy}.azimuthAngle(), start);
@@ -232,7 +232,7 @@ double LinEquation::azimuthAngle() const {
 
 	return: An unique_ptr to the opposite equation
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::getFlipped() const {
+std::optional<LinEquation> LinEquation::getFlipped() const {
 	auto opposite = std::make_optional<LinEquation>(*this);
 	opposite->m_a = -m_a;
 	opposite->m_b = -m_b;
@@ -248,7 +248,7 @@ LinEquation::Option LinEquation::getFlipped() const {
 
 	return: An unique_ptr to the perpendicular equation
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::getPerpendicular(const Point& ref) const {
+std::optional<LinEquation> LinEquation::getPerpendicular(const Point& ref) const {
 	auto perpendicular = std::make_optional<LinEquation>(*this);
 	perpendicular->m_a = m_b;
 	perpendicular->m_b = -m_a;
@@ -264,7 +264,7 @@ LinEquation::Option LinEquation::getPerpendicular(const Point& ref) const {
 
 	return: An unique_ptr to the parallel equation
   --------------------------------------------------------------------*/
-LinEquation::Option LinEquation::getParallel(const Point& ref) const {
+std::optional<LinEquation> LinEquation::getParallel(const Point& ref) const {
 	double angle = azimuthAngle();
 	double x = cos(angle), y = sin(angle);
 	Point dest(x, y);
@@ -295,7 +295,7 @@ double LinEquation::angleTo(const LinEquation& ref) const {
 	
 	return: An unique_ptr for the intersection point (or 0 if parallel)
   --------------------------------------------------------------------*/
-XPoint::Option LinEquation::intersectionWith(const LinEquation& ref) const {
+std::optional<XPoint> LinEquation::intersectionWith(const LinEquation& ref) const {
 	if (isParallelTo(ref))
 		return std::nullopt;
 	double y = ((m_a * ref.m_c - m_c * ref.m_a) / (m_b * ref.m_a - m_a * ref.m_b));

@@ -299,7 +299,7 @@ namespace active::utility {
 			///A string destination for buffered data
 		String* m_str;
 			///Cached memory when passed an rvalue
-		Memory::Unique m_cache;
+		std::unique_ptr<Memory> m_cache;
 			///The buffer for outgoing data
 		mutable Memory m_buffer;
 			///Text encoding of the destination data (relevant only to text writes)

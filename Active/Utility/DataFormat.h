@@ -69,7 +69,7 @@ namespace active::utility {
 			Get a BOM signature for the format
 			@return The BOM signature (nullopt if none defined, e.g. for ascii)
 		*/
-		Memory::Option toBOM() const;
+		std::optional<Memory> toBOM() const;
 	};
 
 }  // namespace active::utility

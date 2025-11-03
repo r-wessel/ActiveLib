@@ -84,7 +84,7 @@ SQLiteCore::Transaction::~Transaction() {
  
 	return: The current transaction row (nullptr = transaction successfully completed)
  --------------------------------------------------------------------*/
-SettingList::Unique SQLiteCore::Transaction::operator++() {
+std::unique_ptr<SettingList> SQLiteCore::Transaction::operator++() {
 		//First check if we need to prepare the statement
 	if (m_handle == nullptr) {
 		auto dbaseHandle = m_sqlite->getHandle();

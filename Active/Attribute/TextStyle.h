@@ -44,9 +44,9 @@ namespace active::attribute {
 			///Text size in points
 		float size = 12.0;
 			///Text body colour (nullopt = no fill colour, e.g. outlined)
-		Colour::Option bodyColour = colour::black;
+		std::optional<Colour> bodyColour = colour::black;
 			///Text outline colour (nullopt = same as body colour)
-		Colour::Option outlineColour;
+		std::optional<Colour> outlineColour;
 			///Text outline pen
 		Pen outlinePen{Pen::standard[Pen::hairline]};
 			///Anchor position for the rectlinear text bounds

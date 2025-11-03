@@ -26,7 +26,7 @@ namespace active::primitive {
 		 @param fillCol The fill colour (nullopt = no fill)
 		*/
 		Path(const geometry::Polygon& polygon, attribute::Pen pn = attribute::Pen{},
-					  attribute::Colour::Option edgeCol = attribute::colour::black, attribute::Colour::Option fillCol = std::nullopt);
+					  std::optional<attribute::Colour> edgeCol = attribute::colour::black, std::optional<attribute::Colour> fillCol = std::nullopt);
 		/*!
 		 Copy constructor
 		 @param source The object to copy
@@ -54,7 +54,7 @@ namespace active::primitive {
 		 Get the primitive rectilinear bounds
 		 @return The primitive bounds
 		 */
-		virtual geometry::Box::Option bounds() const override { return geometry::Polygon::bounds(); }
+		virtual std::optional<geometry::Box> bounds() const override { return geometry::Polygon::bounds(); }
 
 		// MARK: Functions (mutating)
 

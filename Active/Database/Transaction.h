@@ -29,16 +29,6 @@ namespace active::database {
 	 */
 	class Transaction {
 	public:
-
-		//MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Transaction>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Transaction>;
-			///Optional
-		using Option = std::optional<Transaction>;
-
 		//MARK: - Constructors
 		
 		/*!

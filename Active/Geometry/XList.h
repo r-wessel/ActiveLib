@@ -132,7 +132,7 @@ namespace active::geometry {
 			@param pt A new intersection point
 			@return True if the point was inserted
 		*/
-		bool insert(XPoint::Unique&& pt);
+		bool insert(std::unique_ptr<XPoint>&& pt);
 		/*!
 			Erase the intersection at the specified iterator
 			@param iter The iterator pointing to the intersection to erase
@@ -200,7 +200,7 @@ namespace active::geometry {
 	
 	
 		//Compare points on the basis of position in the x-y plane
-	struct ComparePosition : public std::greater<XPoint::Unique> {
+	struct ComparePosition : public std::greater<std::unique_ptr<XPoint>&> {
 	public:
 		/*!
 			Constructor
@@ -218,7 +218,7 @@ namespace active::geometry {
 			@param pos2 The second point to compare
 			@return True if pos1 < pos2
 		*/
-		bool operator() (XPoint::Unique& pos1, XPoint::Unique& pos2) const
+		bool operator() (std::unique_ptr<XPoint>& pos1, std::unique_ptr<XPoint>& pos2) const
 				{ return (math::isLess(pos1->x, pos2->x, m_prec) ||
 						(math::isEqual(pos1->x, pos2->x, m_prec) && math::isLess(pos1->y, pos2->y, m_prec))); }
 	private:
@@ -241,7 +241,7 @@ namespace active::geometry {
 			@param pos2 The second point to compare
 			@return True if pos1 < pos2
 		*/
-		bool operator() (XPoint::Unique& pos1, XPoint::Unique& pos2) const;
+		bool operator() (std::unique_ptr<XPoint>& pos1, std::unique_ptr<XPoint>& pos2) const;
 		
 	private:
 			

@@ -20,16 +20,6 @@ namespace active::geometry {
 	/// Class to represent a line
 	class Line {
 	public:
-		
-		// MARK: - Types
-
-			///Unique pointer
-		using Unique = std::unique_ptr<Line>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Line>;
-			///Optional
-		using Option = std::optional<Line>;
-		
 		// MARK: - Constructors
 		
 		/*!
@@ -222,7 +212,7 @@ namespace active::geometry {
 			@param prec The required precision
 			@return The intersection point (nullopt if no intersection is possible)
 		*/
-		XPoint::Option intersectionWith2D(const Line& ref , double prec = math::eps) const;
+		std::optional<XPoint> intersectionWith2D(const Line& ref , double prec = math::eps) const;
 		/*!
 			Get the intersection point of two lines in 2D
 			@param ref The reference line

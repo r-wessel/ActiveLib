@@ -91,7 +91,7 @@ bool XMLPolyPoint::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-Cargo::Unique XMLPolyPoint::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> XMLPolyPoint::getCargo(const Inventory::Item& item) const {
 	if (item.ownerType != &typeid(XMLPolyPoint))
 		return base::getCargo(item);
 	if (auto* polyPoint = getPolyPoint(); polyPoint != nullptr) {

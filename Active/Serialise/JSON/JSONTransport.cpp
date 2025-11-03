@@ -368,7 +368,7 @@ namespace {
 			@param type The tag type
 			@param depth The tag depth in the JSON hierarchy
 		*/
-		void writeTag(const String& tag, const String::Option& nameSpace, JSONIdentity::Type type, int32_t depth);
+		void writeTag(const String& tag, const std::optional<String>& nameSpace, JSONIdentity::Type type, int32_t depth);
 		/*!
 			Write a phrase to the data destination
 			@param phrase The phrase to write
@@ -749,7 +749,7 @@ namespace {
 		type: The tag type
 		depth: The tag depth in the JSON hierarchy
 	  --------------------------------------------------------------------*/
-	void JSONExporter::writeTag(const String& tag, const String::Option& nameSpace, JSONIdentity::Type type, int32_t depth) {
+	void JSONExporter::writeTag(const String& tag, const std::optional<String>& nameSpace, JSONIdentity::Type type, int32_t depth) {
 		String jsonStr;
 		bool isClosing = (type == objectEnd) || (type == arrayEnd);
 		if ((depth > 0) || isClosing) {
@@ -862,7 +862,7 @@ namespace {
 
 		return: The wrapped cargo
 	  --------------------------------------------------------------------*/
-	Cargo::Unique makeWrapper(Cargo& cargo, const JSONIdentity& containerIdentity, const Inventory& inventory, JSONIdentity& identity) {
+	std::unique_ptr<Cargo> makeWrapper(Cargo& cargo, const JSONIdentity& containerIdentity, const Inventory& inventory, JSONIdentity& identity) {
 		if (auto* package = dynamic_cast<Package*>(&cargo); package != nullptr)
 			return std::make_unique<PackageWrap>(*package);
 		if (auto* item = dynamic_cast<Item*>(&cargo); item != nullptr)
@@ -878,7 +878,7 @@ namespace {
 	 
 		return: A suitable cargo object
 	  --------------------------------------------------------------------*/
-	Cargo::Unique makeUnknown(const JSONIdentity& identity) {
+	std::unique_ptr<Cargo> makeUnknown(const JSONIdentity& identity) {
 		if (identity.type == valueStart)
 			return std::make_unique<UnknownItem>();
 		return std::make_unique<Unknown>();
@@ -947,7 +947,7 @@ namespace {
 				case objectStart: case valueStart: case arrayStart: {
 					if (parsingStage == complete)	//An element has been read, but no delimiter reached - expected a closing symbol
 						throw std::system_error(makeJSONError(unbalancedScope));
-					Cargo::Unique cargo;
+					std::unique_ptr<Cargo> cargo;
 					Inventory::iterator incomingItem = inventory.end();
 					if (parsingStage == array)
 						getArrayIdentity(*containerIn, inventory, containerIdentity, identity);

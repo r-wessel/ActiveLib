@@ -52,7 +52,7 @@ namespace active::serialise {
 			Release the incoming value held by this wrapper
 			@return The incoming value (nullptr if none received)
 		*/
-		setting::Value::Unique releaseIncoming() { return std::move(m_incoming); }
+		std::unique_ptr<setting::Value> releaseIncoming() { return std::move(m_incoming); }
 		/*!
 			Read the item from a string
 			@param source The string to read
@@ -87,7 +87,7 @@ namespace active::serialise {
 			///A null placeholder for cases where a concrete value is no specified
 		setting::NullValue m_placeholder;
 			///An optional incoming value (captured if no concrete value is specified)
-		setting::Value::Unique m_incoming;
+		std::unique_ptr<setting::Value> m_incoming;
 	};
 	
 }

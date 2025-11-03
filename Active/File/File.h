@@ -25,10 +25,6 @@ namespace active::file {
 
 		// MARK: - Types
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<File>;
-			///Shared pointer
-		using Shared = std::shared_ptr<File>;
 			///File position anchors
 		enum Anchor {
 			start,

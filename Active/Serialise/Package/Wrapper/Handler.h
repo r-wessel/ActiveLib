@@ -122,7 +122,7 @@ namespace active::serialise {
 			@param info The object type info
 			@return The serialisation tag associated with this type (unknown type = nullopt)
 		*/
-		utility::String::Option findTagFor(const std::type_info& info) const {
+		std::optional<utility::String> findTagFor(const std::type_info& info) const {
 			if (auto maker = std::find_if(reconstruction.begin(), reconstruction.end(),
 										  [&info](const auto& entry){ return entry.second.first == &info; }); maker != reconstruction.end())
 				return maker->first;

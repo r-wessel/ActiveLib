@@ -18,16 +18,6 @@ namespace active::geometry {
 	/// Class to represent a linear equation
 	class LinEquation {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<LinEquation>;
-			///Shared pointer
-		using Shared = std::shared_ptr<LinEquation>;
-			///Optional
-		using Option = std::optional<LinEquation>;
-		
 		// MARK: - Factory functions
 		
 		/*!
@@ -35,20 +25,20 @@ namespace active::geometry {
 			@param source The end of the line
 			@return A linear equation (nullopt if input is invalid)
 		*/
-		static Option create(const Point& source);
+		static std::optional<LinEquation> create(const Point& source);
 		/*!
 			Create a new linear equation from two points in a line
 			@param start The start of the line
 			@param end The end of the line
 			@return A linear equation (nullopt if input is invalid)
 		*/
-		static Option create(const Point& start, const Point& end);
+		static std::optional<LinEquation> create(const Point& start, const Point& end);
 		/*!
 			Create a new linear equation from a line
 			@param source A line
 			@return A linear equation (nullopt if input is invalid)
 		*/
-		static Option create(const Line& source);
+		static std::optional<LinEquation> create(const Line& source);
 		
 		// MARK: - Constructors
 		
@@ -138,19 +128,19 @@ namespace active::geometry {
 			Create a linear equation opposite to this
 			@return An unique_ptr to the opposite equation
 		*/
-		Option getFlipped() const;
+		std::optional<LinEquation> getFlipped() const;
 		/*!
 			Create a linear equation perpendicular to this which passes through the specified point
 			@param ref The point through which the new equation must pass
 			@return An unique_ptr to the perpendicular equation
 		*/
-		Option getPerpendicular(const Point& ref) const;
+		std::optional<LinEquation> getPerpendicular(const Point& ref) const;
 		/*!
 			Create a linear equation parallel to this which passes through the specified point
 			@param ref The point through which the new equation must pass
 			@return An unique_ptr to the parallel equation
 		*/
-		Option getParallel(const Point& ref) const;
+		std::optional<LinEquation> getParallel(const Point& ref) const;
 		/*!
 			Calculate the angle between two linear equations
 			@param ref The reference line
@@ -162,7 +152,7 @@ namespace active::geometry {
 			@param ref The intersecting line
 			@return An unique_ptr for the intersection point (or 0 if parallel)
 		*/
-		XPoint::Option intersectionWith(const LinEquation& ref) const;
+		std::optional<XPoint> intersectionWith(const LinEquation& ref) const;
 		/*!
 			Determine the relationship of a point to the equation
 			@param ref The point to test
@@ -212,7 +202,7 @@ namespace active::geometry {
 			@param end The end of the line
 			@return A linear equation (nullopt if input is invalid)
 		*/
-		static Option getEquation(const Point& start, const Point& end);
+		static std::optional<LinEquation> getEquation(const Point& start, const Point& end);
 		
 		double m_a;
 		double m_b;

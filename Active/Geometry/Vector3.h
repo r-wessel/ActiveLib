@@ -23,16 +23,6 @@ namespace active::geometry {
 	/// A 1x3 vector class
 	class Vector3 {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Vector3>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Vector3>;
-			///Optional
-		using Option = std::optional<Vector3>;
-		
 		// MARK: - Constructors
 		
 		/*!

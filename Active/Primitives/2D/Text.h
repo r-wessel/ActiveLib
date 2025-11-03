@@ -78,12 +78,12 @@ namespace active::primitive {
 			Get the rendering edge colour
 			@return The rendering edge colour (nullopt = no edges)
 		*/
-		virtual attribute::Colour::Option getEdgeColour() const override { return style.outlineColour; }
+		virtual std::optional<attribute::Colour> getEdgeColour() const override { return style.outlineColour; }
 		/*!
 			Get the rendering fill colour
 			@return The rendering fill colour (nullopt = no fill)
 		*/
-		virtual attribute::Colour::Option getFillColour() const override { return style.bodyColour; }
+		virtual std::optional<attribute::Colour> getFillColour() const override { return style.bodyColour; }
 		/*!
 			Get the anchor position of the origin of a render-sized primitive
 			@return anchor The anchor position (nullopt = determined by primitive)
@@ -101,12 +101,12 @@ namespace active::primitive {
 			Set the rendering edge colour
 			@param colour The rendering edge colour (nullopt = no edges)
 		*/
-		virtual void setEdgeColour(attribute::Colour::Option colour) override { style.outlineColour = colour; }
+		virtual void setEdgeColour(std::optional<attribute::Colour> colour) override { style.outlineColour = colour; }
 		/*!
 			Set the rendering fill colour
 			@param colour The rendering fill colour (nullopt = no fill)
 		*/
-		virtual void setFillColour(attribute::Colour::Option colour) override { style.bodyColour = colour; }
+		virtual void setFillColour(std::optional<attribute::Colour> colour) override { style.bodyColour = colour; }
 		/*!
 			Set the anchor position of the origin of a render-sized primitive
 			@param anchor The anchor position (nullopt = determined by primitive)

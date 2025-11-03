@@ -36,7 +36,7 @@ namespace active::serialise {
 	value: The pair value
 	name: Optional name for the key/value pair
   --------------------------------------------------------------------*/
-Pair::Pair(Cargo::Unique key, Cargo::Unique value, String::Option name) : Package(), m_key(std::move(key)), m_value(std::move(value)), m_name(name) {
+Pair::Pair(std::unique_ptr<Cargo> key, std::unique_ptr<Cargo> value, std::optional<String> name) : Package(), m_key(std::move(key)), m_value(std::move(value)), m_name(name) {
 } //Pair::Pair
 
 
@@ -66,7 +66,7 @@ bool Pair::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-Cargo::Unique Pair::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> Pair::getCargo(const Inventory::Item& item) const {
 		//If this object is the source of the inventory, it also needs to supply the requested cargo items
 	if (item.ownerType == &typeid(Pair)) {
 			//If the cargo doesn't supply an inventory, we assume it's a (single-value) item

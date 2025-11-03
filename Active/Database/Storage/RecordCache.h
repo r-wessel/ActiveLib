@@ -138,7 +138,7 @@ namespace active::database {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		serialise::Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+		std::unique_ptr<serialise::Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 		/*!
 			Set to the default package content
 		*/
@@ -149,7 +149,7 @@ namespace active::database {
 			@param item The inventory item linked with the cargo
 			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		*/
-		bool insert(serialise::Cargo::Unique&& cargo, const serialise::Inventory::Item& item) override;
+		bool insert(std::unique_ptr<serialise::Cargo>&& cargo, const serialise::Inventory::Item& item) override;
 	};
 
 	
@@ -298,7 +298,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
-	serialise::Cargo::Unique RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
+	std::unique_ptr<serialise::Cargo> RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.ownerType != &typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>))
 			return Record<ObjID>::getCargo(item);
 		using namespace active::serialise;
@@ -330,7 +330,7 @@ namespace active::database {
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename ObjWrapper, typename ObjID, typename DBaseID, typename TableID>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
-	bool RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::insert(serialise::Cargo::Unique&& cargo, const serialise::Inventory::Item& item) {
+	bool RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::insert(std::unique_ptr<serialise::Cargo>&& cargo, const serialise::Inventory::Item& item) {
 		if (item.ownerType != &typeid(RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>))
 			return true;
 		using namespace active::serialise;

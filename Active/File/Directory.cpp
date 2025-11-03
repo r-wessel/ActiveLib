@@ -25,8 +25,8 @@ namespace {
 	 @param path The target path
 	 @return The expanded path (nullopt on failure)
 	 */
-	String::Option expandPath(const String& path) {
-		String::Option result;
+	std::optional<String> expandPath(const String& path) {
+		std::optional<String> result;
 		String shellPath{path};
 			//Shell paths can't contain unescaped spaces
 		shellPath.replaceAll("\\ ", " ");	//Can't be certain that some spaces aren't already escaped - reduce all to spaces
@@ -110,8 +110,8 @@ Directory Directory::temporary() {
  
 	return: The directory for application data
   --------------------------------------------------------------------*/
-Directory::Option Directory::appData() {
-	Directory::Option result;
+std::optional<Directory> Directory::appData() {
+	std::optional<Directory> result;
 #ifdef WINDOWS
 	wchar_t* directorypath = nullptr;
 	if (SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &directorypath) == S_OK)
@@ -137,8 +137,8 @@ Directory::Option Directory::appData() {
  
 	return: The directory for user-based configuration data
   --------------------------------------------------------------------*/
-Directory::Option Directory::config() {
-	Directory::Option result;
+std::optional<Directory> Directory::config() {
+	std::optional<Directory> result;
 #ifdef WINDOWS
 	result = Directory::appData();	//Always use app data in Windows
 #endif

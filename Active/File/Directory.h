@@ -17,11 +17,6 @@ namespace active::file {
 		
 		// MARK: Types
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<Directory>;
-			///Optional
-		using Option = std::optional<Directory>;
-		
 		using iterator = std::filesystem::directory_iterator;
 		
 		// MARK: Constructors
@@ -78,12 +73,12 @@ namespace active::file {
 			Get a directory for application data
 			@return The directory for application data
 		*/
-		static Directory::Option appData();
+		static std::optional<Directory> appData();
 		/*!
 			Get a directory for user-based configuration data (for *nix contexts only - prefer appData in most cases) *
 			@return The directory for user-based configuration data
 		*/
-		static Directory::Option config();
+		static std::optional<Directory> config();
 		
 		// MARK: Functions (const)
 		

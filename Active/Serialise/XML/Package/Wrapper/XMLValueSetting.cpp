@@ -101,7 +101,7 @@ bool XMLValueSetting::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-Cargo::Unique XMLValueSetting::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> XMLValueSetting::getCargo(const Inventory::Item& item) const {
 	if (item.ownerType != &typeid(XMLValueSetting))
 		return nullptr;
 	switch (item.index) {
@@ -163,7 +163,7 @@ bool XMLValueSetting::validate(Management* management) {
  
 	return: True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
   --------------------------------------------------------------------*/
-bool XMLValueSetting::insert(Cargo::Unique&& cargo, const Inventory::Item& item) {
+bool XMLValueSetting::insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) {
 	if (item.ownerType != &typeid(XMLValueSetting))
 		return true;
 	switch (item.index) {

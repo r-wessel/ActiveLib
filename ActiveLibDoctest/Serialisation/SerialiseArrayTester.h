@@ -172,7 +172,7 @@ public:
 		///Provides an inventory of the serialisation content (the object schema)
 	bool fillInventory(active::serialise::Inventory& inventory) const override;
 		///Retrieves the data container associated with an item from the inventory
-	Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+	std::unique_ptr<Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 	/*!
 		Get the recommended cargo entry type
 		@return The cargo entry type (nullopt = deduce automatically from cargo characteristics)
@@ -181,7 +181,7 @@ public:
 		///Resets the target object to a default state prior to importing deserialised data
 	void setDefault() override;
 		///Inserts a newly deserialised object container into the target (identified by an inventory item)
-	bool insert(active::serialise::Cargo::Unique&& cargo, const active::serialise::Inventory::Item& item) override;
+	bool insert(std::unique_ptr<active::serialise::Cargo>&& cargo, const active::serialise::Inventory::Item& item) override;
 		///Validate the content of the target after import - nothing to do in this case (and could be omitted) but included for illustration
 	bool validate(active::serialise::Management* management) override { return true; }
 

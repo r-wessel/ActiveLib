@@ -51,12 +51,6 @@ namespace active::utility {
 
 		//MARK: - Types
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<String>;
-			///Shared pointer
-		using Shared = std::shared_ptr<String>;
-			///Optional
-		using Option = std::optional<String>;
 			///Class size type
 		using size_type = std::string::size_type;
 			///Optional size type (nullopt used to indicate an unspecified or non-existant position)

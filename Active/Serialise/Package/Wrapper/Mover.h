@@ -95,7 +95,7 @@ namespace active::serialise {
 		 @param item The inventory item to retrieve
 		 @return The requested cargo (nullptr on failure)
 		 */
-		Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+		std::unique_ptr<Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 		/*!
 		 Get the deserialised package
 		 @return The deserialised package (nullptr on failure)
@@ -107,7 +107,7 @@ namespace active::serialise {
 		 Release the deserialised package
 		 @return The deserialised package (nullptr on failure)
 		 */
-		Package::Unique releaseIncoming() const {
+		std::unique_ptr<Package> releaseIncoming() const {
 			return std::move(m_wrapper);
 		}
 
@@ -144,7 +144,7 @@ namespace active::serialise {
 		 @param cargo The cargo to insert
 		 @param item The inventory item linked with the cargo
 		 */
-		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override;
+		bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) override;
 		
 	private:
 			///Handler for package identification and unboxing
@@ -152,7 +152,7 @@ namespace active::serialise {
 			///The type name extracted from an incoming attribute (used during deserialisation)
 		utility::String m_typeName;
 			///Wrapper for creating a new object during deserialisation
-		mutable Package::Unique m_wrapper;
+		mutable std::unique_ptr<Package> m_wrapper;
 			///Pointer to to the target object (can be to an external object or one of the internal members above)
 		mutable Package* m_package = nullptr;
 			///Transport phase for (de)serialisation - determines inventory content and some deserialisation workflows

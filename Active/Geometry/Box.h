@@ -23,13 +23,6 @@ namespace active::geometry {
 		
 		using enum Anchor2D;
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<Box>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Box>;
-			///Optional
-		using Option = std::optional<Box>;
-		
 		// MARK: - Constructors
 
 		/*!

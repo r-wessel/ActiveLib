@@ -328,7 +328,7 @@ Point Line::closestPointAlong3D(const Point& ref, double prec) const {
  
 	return: The intersection point (nullopt if no intersection is possible)
   --------------------------------------------------------------------*/
-XPoint::Option Line::intersectionWith2D(const Line& ref, double prec) const {
+std::optional<XPoint> Line::intersectionWith2D(const Line& ref, double prec) const {
 	auto eq1 = LinEquation::create(*this);
 	auto eq2 = LinEquation::create(ref);
 	if (eq1 && eq2)

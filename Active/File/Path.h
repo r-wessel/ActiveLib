@@ -16,16 +16,6 @@ namespace active::file {
 		/// Class to represent the path of a node in the local file system
 	class Path: public ::active::utility::Cloner {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Path>;
-			///Unique pointer
-		using Shared = std::shared_ptr<Path>;
-			///Optional
-		using Option = std::optional<Path>;
-		
 		// MARK: - Constants
 		
 		/// The path delimiter expression for the current platform

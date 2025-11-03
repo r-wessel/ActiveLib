@@ -34,12 +34,6 @@ namespace active::serialise::doc {
 		// MARK: - Types
 		
 		using base = serialise::Package;
-			///Unique pointer
-		using Unique = std::unique_ptr<Object>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Object>;
-			///Optional
-		using Option = std::optional<Object>;
 			///Values container - holds all single-value variables from the original class
 		using Values = std::vector<setting::ValueSetting>;
 		
@@ -55,7 +49,7 @@ namespace active::serialise::doc {
 			@param objTag An optional serialisation tag (differentiating the object role when there are many of the same type for different purposes)
 		*/
 		Object(const utility::String& type,
-			   utility::String::Option objTag = std::nullopt);
+			   std::optional<utility::String> objTag = std::nullopt);
 			///Use the default copy
 		Object(const Object& source) = default;
 			///Use the default rvalue copy
@@ -134,7 +128,7 @@ namespace active::serialise::doc {
 			@param name The value name
 			@return The requested value (nullopt on failure)
 		*/
-		const setting::ValueSetting::Option value(const utility::String& name) const;
+		const std::optional<setting::ValueSetting> value(const utility::String& name) const;
 		/*!
 			Fill an inventory with the package items
 			@param inventory The inventory to receive the package items
@@ -146,7 +140,7 @@ namespace active::serialise::doc {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		serialise::Cargo::Unique getCargo(const serialise::Inventory::Item& item) const override;
+		std::unique_ptr<serialise::Cargo> getCargo(const serialise::Inventory::Item& item) const override;
 		/*!
 			Define the handler to reconstruct objects
 			@param handler The handler to reconstruct objects
@@ -171,7 +165,7 @@ namespace active::serialise::doc {
 			@param item The inventory item linked with the cargo
 			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		*/
-		bool insert(Cargo::Unique&& cargo, const serialise::Inventory::Item& item) override;
+		bool insert(std::unique_ptr<Cargo>&& cargo, const serialise::Inventory::Item& item) override;
 		/*!
 			Set the object type
 			@param newType The document object type

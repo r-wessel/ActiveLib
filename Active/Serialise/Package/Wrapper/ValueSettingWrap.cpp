@@ -45,7 +45,7 @@ bool ValueSettingWrap::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-Cargo::Unique ValueSettingWrap::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> ValueSettingWrap::getCargo(const Inventory::Item& item) const {
 	if (item.ownerType != &typeid(ValueSettingWrap))
 		return nullptr;
 	switch (item.index) {
@@ -87,7 +87,7 @@ bool ValueSettingWrap::validate(Management* management) {
  
 	return: True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
   --------------------------------------------------------------------*/
-bool ValueSettingWrap::insert(Cargo::Unique&& cargo, const Inventory::Item& item) {
+bool ValueSettingWrap::insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) {
 	if (item.ownerType != &typeid(ValueSettingWrap))
 		return true;
 	switch (item.index) {

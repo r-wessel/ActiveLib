@@ -54,7 +54,7 @@ public:
 		@param item The inventory item to retrieve
 		@return The requested cargo (nullptr on failure)
 	*/
-	Cargo::Unique getCargo(const Inventory::Item& item) const override;
+	std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override;
 	/*!
 		Validate the cargo data
 		@param management The cargo transport management (nullptr = no management)

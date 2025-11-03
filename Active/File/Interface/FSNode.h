@@ -18,14 +18,6 @@ namespace active::file {
 		/// Class to represent a file system node (directory, file etc)
 	class FSNode: public utility::Cloner {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<FSNode>;
-			///Unique pointer
-		using Shared = std::shared_ptr<FSNode>;
-		
 		// MARK: - Constants
 		
 		/// The path delimiter expression for the current platform

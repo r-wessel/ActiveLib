@@ -22,14 +22,6 @@ namespace active::event {
 	*/
 	class Publisher : public Participant {
 	public:
-				
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Publisher>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Publisher>;
-
 		// MARK: - Constructors
 		
 		/*!

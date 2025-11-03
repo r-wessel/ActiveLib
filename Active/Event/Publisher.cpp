@@ -19,7 +19,7 @@ using enum Subscriber::Action;
 namespace {
 
 		///A list of subscribers backed (where necessary) by shared_pts ensuring weak_ptrs don't go out of scope
-	using PooledSubscribers = std::pair<std::vector<Subscriber*>, std::vector<Subscriber::Shared>>;
+	using PooledSubscribers = std::pair<std::vector<Subscriber*>, std::vector<std::shared_ptr<Subscriber>>>;
 	
 	/*!
 	 Template for a list of subscribers
@@ -245,7 +245,7 @@ namespace active::event {
 		*/
 		PooledSubscribers filter(const utility::NameID::Option eventID = std::nullopt) {
 			PooledSubscribers subscribers;
-			std::vector<Subscriber::Shared> pooled;
+			std::vector<std::shared_ptr<Subscriber>> pooled;
 			m_mutex.lock();
 				//Filter subscribers for those expecting this event (and remove any expired)
 			{

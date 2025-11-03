@@ -16,15 +16,6 @@ namespace active::attribute {
 	*/
 	struct Colour {
 
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Colour>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Colour>;
-			///Optional
-		using Option = std::optional<Colour>;
-
 		// MARK: - Constructors
 
 		/*!

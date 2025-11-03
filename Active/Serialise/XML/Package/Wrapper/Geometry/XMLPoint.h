@@ -62,7 +62,7 @@ namespace active::serialise::xml {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override;
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override;
 		
 		// MARK: - Functions (mutating)
 		
@@ -73,7 +73,7 @@ namespace active::serialise::xml {
 		
 	private:
 			//Optional explicit tag (overrides default)
-		utility::String::Option m_tag;
+		std::optional<utility::String> m_tag;
 	};
 	
 }

@@ -83,7 +83,7 @@ namespace active::database {
 		 @param documentID Optional document ID (when the object is bound to a specific document)
 		 @return The requested wrapped cargo (nullptr on failure)
 		 */
-		virtual active::serialise::Cargo::Unique getObjectCargo(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
+		virtual std::unique_ptr<active::serialise::Cargo> getObjectCargo(const ObjID& objID, std::optional<TableID> tableID = std::nullopt, std::optional<DocID> documentID = std::nullopt) const = 0;
 		/*!
 		 Get all objects
 		 @param tableID Optional table ID (defaults to the first table)
