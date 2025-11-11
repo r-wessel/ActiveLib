@@ -114,7 +114,7 @@ namespace active::geometry {
 			@param index An index into the matrix
 			@return The value at the specified index
 		*/
-		row_t operator[](unsigned short index) { return m_matrix[index]; }
+		row_t& operator[](unsigned short index) { return m_matrix[index]; }
 		/*!
 			Checked subscript method
 			@param row The required row

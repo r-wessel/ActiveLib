@@ -90,9 +90,9 @@ Matrix4x4 Matrix4x4::createTranslate(double x, double y, double z) {
 	result.m_matrix[0][0] = 1;
 	result.m_matrix[1][1] = 1;
 	result.m_matrix[2][2] = 1;
-	result.m_matrix[3][0] = x;
-	result.m_matrix[3][1] = y;
-	result.m_matrix[3][2] = z;
+	result.m_matrix[0][3] = x;
+	result.m_matrix[1][3] = y;
+	result.m_matrix[2][3] = z;
 	result.m_matrix[3][3] = 1;
 	return result;
 } //Matrix4x4::createTranslate
