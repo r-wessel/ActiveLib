@@ -128,7 +128,7 @@ namespace active::geometry {
 			@param col The required column
 			@return The value at the specified position
 		*/
-		double operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
+		const double& operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
 		
 		// MARK: Functions (const)
 
