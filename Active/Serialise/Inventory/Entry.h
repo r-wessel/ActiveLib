@@ -39,7 +39,7 @@ namespace active::serialise {
 		// MARK: - Constructors
 		
 		/*!
-			Constructor  (Single-instance items)
+			Constructor (single-item entries)
 			@param ident The entry identity
 			@param ind An index for the entry
 			@param role Entry role, i.e. attribute/element
@@ -51,10 +51,11 @@ namespace active::serialise {
 		Entry(Identity&& ident, int16_t ind, Identity::Role role, bool mustHave = true, const std::type_info* owner = nullptr) :
 				Entry{ID{std::move(ident)}, ind, role, mustHave, owner} {}
 		/*!
-			Constructor  (Single-instance items)
+			Constructor  (multi-item entries)
 			@param ident The entry identity
 			@param ind An index for the entry
 			@param howMany How many items are currently available
+			@param max The maximum number of items the entry can contain (nullopt = no limit)
 			@param mustHave True if required for export
 			@param owner The owner type
 		*/
