@@ -218,20 +218,20 @@ namespace active::file {
 			@param encoding The text encoding to write
 			@throw std::ios_base::failure Thrown on error
 		*/
-		void write(const utility::String& text, utility::String::sizeOption howMany = std::nullopt, utility::TextEncoding encoding = UTF8);
+		virtual void write(const utility::String& text, utility::String::sizeOption howMany = std::nullopt, utility::TextEncoding encoding = UTF8);
 		/*!
 			Write to the file from a block of memory
 			@param data The data to write
 			@param howMany The data length (nullopt = write allocated memory size)
 			@throw std::ios_base::failure Thrown on error
 		*/
-		void write(const utility::Memory& data, sizeOption howMany = std::nullopt);
+		virtual void write(const utility::Memory& data, sizeOption howMany = std::nullopt);
 		/*!
 			Write the contents of another file to this
 			@param file The file to write
 			@return True if the data was successfully written
 		*/
-		bool write(const File& file);
+		virtual bool write(const File& file);
 		/*!
 			Remove the node path
 			@param isRecursive True if any subnodes should also be recursively removed

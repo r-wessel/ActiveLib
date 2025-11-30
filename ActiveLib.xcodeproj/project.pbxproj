@@ -150,8 +150,8 @@
 		21B4D3BD2D5513850069DB92 /* MeshBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21B4D3BB2D5513850069DB92 /* MeshBuilder.cpp */; };
 		21C253602B92ECF7003B2F63 /* UnknownItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 21C2535F2B92ECF7003B2F63 /* UnknownItem.h */; };
 		21C253622B94578F003B2F63 /* Value.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21C253612B94578F003B2F63 /* Value.cpp */; };
-		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; settings = {COMPILER_FLAGS = "-w"; }; };
-		21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD102C86EC8F0077E104 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w"; }; };
+		21D0BD142C86EC8F0077E104 /* shell.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD0F2C86EC8F0077E104 /* shell.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		21D0BD152C86EC8F0077E104 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD102C86EC8F0077E104 /* sqlite3.c */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		21D0BD362C8727CE0077E104 /* SQLiteCore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD352C8727CE0077E104 /* SQLiteCore.cpp */; };
 		21D0BD4A2C88F4EE0077E104 /* Record.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21D0BD492C88F4EE0077E104 /* Record.cpp */; };
 		21D0BD832C8B4E790077E104 /* ValueOptionWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = 21D0BD822C8B4E790077E104 /* ValueOptionWrap.h */; };
@@ -1319,7 +1319,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1630;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					212A87EE2AE4868C001EAFE7 = {
 						CreatedOnToolsVersion = 15.0;
@@ -1594,6 +1594,7 @@
 				OBJROOT = "$(PROJECT_DIR)/build";
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SYMROOT = "$(PROJECT_DIR)/bin";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../zlib,
@@ -1667,6 +1668,7 @@
 				OBJROOT = "$(PROJECT_DIR)/build";
 				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SYMROOT = "$(PROJECT_DIR)/bin";
 				SYSTEM_HEADER_SEARCH_PATHS = (
 					../zlib,

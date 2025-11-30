@@ -118,7 +118,7 @@ namespace active::serialise {
 			@param type The cargo type, e.g. force an object to export as an array in JSON
 			@return A reference to this
 		*/
-		virtual Cargo& asType(Identity::Role type) {
+		Cargo& asType(Identity::Role type) {
 			m_role = type;
 			return *this;
 		}
