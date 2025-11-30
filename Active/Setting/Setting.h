@@ -14,16 +14,6 @@ namespace active::setting {
 		///Base class for an identified setting for interprocess communication
 	class Setting : public utility::Cloner {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Setting>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Setting>;
-			///Optional
-		using Option = std::optional<Setting>;
-		
 		// MARK: - Constructors
 		
 		/*!
@@ -36,7 +26,7 @@ namespace active::setting {
 			@param name An optional identifying name for the setting
 			@param guid An optional identifying guid for the setting
 		*/
-		Setting(utility::String::Option name, utility::Guid::Option guid = std::nullopt) {
+		Setting(std::optional<utility::String> name, utility::Guid::Option guid = std::nullopt) {
 			if (name || guid)
 				identity = std::make_optional(utility::NameID{name.value_or(utility::String{}), guid.value_or(utility::Guid{})});
 		}

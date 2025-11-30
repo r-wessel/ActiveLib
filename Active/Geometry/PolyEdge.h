@@ -28,12 +28,6 @@ namespace active::geometry {
 		// MARK: - Types
 		
 		using enum Rotation;
-			///Unique pointer
-		using Unique = std::unique_ptr<PolyEdge>;
-			///Shared pointer
-		using Shared = std::shared_ptr<PolyEdge>;
-			///Optional
-		using Option = std::optional<PolyEdge>;
 		
 		// MARK: - Constructors
 		

@@ -54,7 +54,7 @@ std::optional<std::pair<DataFormat, Memory::size_type>> DataFormat::fromBOM(cons
  
 	return: The BOM signature (nullopt if none defined, e.g. for ascii)
   --------------------------------------------------------------------*/
-Memory::Option DataFormat::toBOM() const {
+std::optional<Memory> DataFormat::toBOM() const {
 	switch (encoding) {
 		case UTF8:
 			return Memory{utf8BOM.data(), utf8BOM.size()};

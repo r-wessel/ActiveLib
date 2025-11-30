@@ -69,9 +69,10 @@ namespace active::utility {
 		String product(HashFormat format) const;
 		/*!
 		 Get the data hash
+		 @param inCase The hex digit case
 		 @return The hash (as hex digits)
 		 */
-		String hexHash() const;
+		String hexHash(Case inCase = uppercase) const;
 		/*!
 		 Get the data hash
 		 @return The hash (as base64 digits)

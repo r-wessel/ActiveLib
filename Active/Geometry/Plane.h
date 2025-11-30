@@ -20,16 +20,6 @@ namespace active::geometry {
 	/// Class to represent a plane
 	class Plane {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Plane>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Plane>;
-			///Optional
-		using Option = std::optional<Plane>;
-		
 		// MARK: - Factory functions
 		
 		/*!
@@ -38,14 +28,14 @@ namespace active::geometry {
 			@param norm Normal to the plane
 			@return An unique_ptr to a plane, or 0 if invalid
 		*/
-		static Option create(double offset, const Vector3& norm);
+		static std::optional<Plane> create(double offset, const Vector3& norm);
 		/*!
 			Create a new plane from a point and normal
 			@param point A point on the plane
 			@param norm Normal to the plane
 			@return An unique_ptr to a plane, or 0 if invalid
 		*/
-		static Option create(const Point& point, const Vector3& norm);
+		static std::optional<Plane> create(const Point& point, const Vector3& norm);
 		/*!
 			Create a plane from three points
 			@param p1 First point on the plane
@@ -53,7 +43,7 @@ namespace active::geometry {
 			@param p3 Third point on the plane
 			@return An unique_ptr to a plane, or 0 if invalid
 		*/
-		static Option create(const Point& p1, const Point& p2, const Point& p3);
+		static std::optional<Plane> create(const Point& p1, const Point& p2, const Point& p3);
 		
 		// MARK: - Constructors
 		
@@ -161,21 +151,21 @@ namespace active::geometry {
 			@param prec The required precision
 			@return The point of intersection between the line and plane
 		*/
-		XPoint::Option intersectionWith(const Line& ref, double prec = math::eps) const;
+		std::optional<XPoint> intersectionWith(const Line& ref, double prec = math::eps) const;
 		/*!
 			Get the vector describing the intersection of two planes
 			@param ref The reference plane
 			@param prec The required precision
 			@return The line along which the planes intersect (or 0 if they are parallel)
 		*/
-		Line::Option intersectionWith(const Plane& ref, double prec = math::eps) const;
+		std::optional<Line> intersectionWith(const Plane& ref, double prec = math::eps) const;
 		/*!
 			Get the point at the intersection of three planes
 			@param ref1 The first plane
 			@param ref2 The second plane
 			@return The point at which the planes intersect
 		*/
-		Point::Option intersectionWith(const Plane& ref1, const Plane& ref2) const;
+		std::optional<Plane> intersectionWith(const Plane& ref1, const Plane& ref2) const;
 		/*!
 			Determine whether this plane is parallel to another
 			@param ref The plane to compare

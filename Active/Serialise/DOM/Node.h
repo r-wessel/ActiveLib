@@ -221,12 +221,6 @@ namespace active::serialise::dom {
 		// MARK: - Types
 		
 		using base = std::variant<std::monostate, Value, Object, Array>;
-			///Unique pointer
-		using Unique = std::unique_ptr<Node>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Node>;
-			///Optional
-		using Option = std::optional<Node>;
 			///Indices of possible node values
 		enum class Index {
 			undefined = 0,
@@ -461,7 +455,7 @@ namespace active::serialise::dom {
 		 @param name The value name
 		 @return The requested value setting (nullopt on failure)
 		 */
-		setting::ValueSetting::Option setting(const utility::String& name) const;
+		std::optional<setting::ValueSetting> setting(const utility::String& name) const;
 		/*!
 		 Get the node object
 		 @return The node object (throws if the node does not hold an object)
@@ -483,7 +477,7 @@ namespace active::serialise::dom {
 		 @param item The inventory item to retrieve
 		 @return The requested cargo (nullptr on failure)
 		 */
-		serialise::Cargo::Unique getCargo(const serialise::Inventory::Item& item) const override;
+		std::unique_ptr<serialise::Cargo> getCargo(const serialise::Inventory::Item& item) const override;
 		
 		// MARK: - Functions (mutating)
 		
@@ -542,7 +536,7 @@ namespace active::serialise::dom {
 		 @param item The inventory item linked with the cargo
 		 @return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		 */
-		bool insert(Cargo::Unique&& cargo, const serialise::Inventory::Item& item) override;
+		bool insert(std::unique_ptr<Cargo>&& cargo, const serialise::Inventory::Item& item) override;
 		/*!
 		 Allocate inventory for new (incoming) cargo
 		 @param inventory The inventory to extend

@@ -18,7 +18,7 @@ using namespace active::utility;
 	fillCol: The fill colour (nullopt = no fill)
   --------------------------------------------------------------------*/
 Path::Path(const geometry::Polygon& polygon, attribute::Pen pn,
-							 attribute::Colour::Option edgeCol, attribute::Colour::Option fillCol) :
+							 std::optional<attribute::Colour> edgeCol, std::optional<attribute::Colour> fillCol) :
 		Primitive{pn, edgeCol, fillCol},
 		Polygon{static_cast<vertex_index>(polygon.size()), 0, polygon.isClosed} {
 	for (auto& vertex : polygon)

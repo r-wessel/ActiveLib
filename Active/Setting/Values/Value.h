@@ -33,13 +33,6 @@ namespace active::setting {
 		
 		// MARK: - Types
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<Value>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Value>;
-			///Optional
-		using Option = std::optional<Value>;
-		
 			///The value status (defines whether a value has been explicitly set and (if so) if it's meaningful
 		enum class Status {
 			undefined = 0,
@@ -255,7 +248,7 @@ namespace active::setting {
 		@param rhs The right value to compare
 		@return True if the values are identical
 	*/
-	inline bool operator==(const Value::Unique& lhs, const Value::Unique& rhs) {
+	inline bool operator==(const std::unique_ptr<Value>& lhs, const std::unique_ptr<Value>& rhs) {
 		return (!lhs || !rhs) ? !(!lhs ^ !rhs) : lhs->operator==(*rhs);
 	}
 	
@@ -265,7 +258,7 @@ namespace active::setting {
 		@param rhs The right value to compare
 		@return True if the values are not identical
 	*/
-	inline bool operator!=(const Value::Unique& lhs, const Value::Unique& rhs) {
+	inline bool operator!=(const std::unique_ptr<Value>& lhs, const std::unique_ptr<Value>& rhs) {
 		return !(lhs == rhs);
 	}
 	
@@ -275,7 +268,7 @@ namespace active::setting {
 		@param rhs The right value to compare
 		@return True if lhs is less than rhs
 	*/
-	inline bool operator<(const Value::Unique& lhs, const Value::Unique& rhs) {
+	inline bool operator<(const std::unique_ptr<Value>& lhs, const std::unique_ptr<Value>& rhs) {
 		return (!lhs || !rhs) ? (!lhs && rhs) : lhs->operator<(*rhs);
 	}
 	
@@ -285,7 +278,7 @@ namespace active::setting {
 		@param rhs The right value to compare
 		@return True if the values are identical
 	*/
-	inline bool operator==(const Value::Shared& lhs, const Value::Shared& rhs) {
+	inline bool operator==(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {
 		return (!lhs || !rhs) ? !(!lhs ^ !rhs) : lhs->operator==(*rhs);
 	}
 	
@@ -295,7 +288,7 @@ namespace active::setting {
 		@param rhs The right value to compare
 		@return True if the values are not identical
 	*/
-	inline bool operator!=(const Value::Shared& lhs, const Value::Shared& rhs) {
+	inline bool operator!=(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {
 		return !(lhs == rhs);
 	}
 	
@@ -305,7 +298,7 @@ namespace active::setting {
 		@param rhs The right value to compare
 		@return True if lhs is less than rhs
 	*/
-	inline bool operator<(const Value::Shared& lhs, const Value::Shared& rhs) {
+	inline bool operator<(const std::shared_ptr<Value>& lhs, const std::shared_ptr<Value>& rhs) {
 		return (!lhs || !rhs) ? (!lhs && rhs) : lhs->operator<(*rhs);
 	}
 	

@@ -27,16 +27,6 @@ namespace active::event {
 	*/
 	class Event : public utility::NameID, public setting::SettingList {
 	public:
-				
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Event>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Event>;
-			///Optional
-		using Option = std::optional<Event>;
-		
 		// MARK: - Constructors
 		
 		/*!

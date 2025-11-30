@@ -258,6 +258,19 @@ namespace active::utility {
 		static constexpr Memory::size_type defaultBufferSize = 0xF000;
 
 		/*!
+		 Write to the small cache
+		 @param toWrite The block address
+		 @param length The number of bytes to write
+		 @return A reference to this
+		 */
+		const BufferOut& writeToSmallCache(const char* toWrite, Memory::size_type length) const;
+		/*!
+		 Validate the small cache content (write when full)
+		 @param isWriteForced True to force the cache content to written immediately
+		 @return A reference to this
+		 */
+		const BufferOut& validateSmallCache(bool isWriteForced = false) const;
+		/*!
 			Write a specified memory block
 			@param toWrite The block address
 		 	@param length The number of bytes to write
@@ -277,6 +290,8 @@ namespace active::utility {
 		*/
 		void initialise(Memory* memory = nullptr, file::File* fileDest = nullptr, utility::String* stringDest = nullptr);
 		
+			///A cache to accumulate small writes
+		mutable std::vector<char> m_smallCache;
 			///A file destination for buffered data
 		file::File* m_file;
 			///A memory destination for buffered data
@@ -284,7 +299,7 @@ namespace active::utility {
 			///A string destination for buffered data
 		String* m_str;
 			///Cached memory when passed an rvalue
-		Memory::Unique m_cache;
+		std::unique_ptr<Memory> m_cache;
 			///The buffer for outgoing data
 		mutable Memory m_buffer;
 			///Text encoding of the destination data (relevant only to text writes)

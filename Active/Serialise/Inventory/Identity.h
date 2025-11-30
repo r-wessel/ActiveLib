@@ -40,7 +40,7 @@ namespace active::serialise {
 			@param nameIn An identifying name
 			@param groupIn An optional identifying group
 		*/
-		Identity(const utility::String& nameIn, const utility::String::Option groupIn) {
+		Identity(const utility::String& nameIn, const std::optional<utility::String> groupIn) {
 			name = nameIn;
 			group = groupIn;
 		}
@@ -59,7 +59,7 @@ namespace active::serialise {
 			///An identifying name
 		utility::String name;
 			///Optional named group (in which the name is unique, i.e. to avoid name clashes)
-		utility::String::Option group = std::nullopt;
+		std::optional<utility::String> group = std::nullopt;
 			///The expected inventory role (applicable when a new identity has been parsed)
 		std::optional<Role> entryRole;
 			///The value type (applicable when a new value has been parsed)

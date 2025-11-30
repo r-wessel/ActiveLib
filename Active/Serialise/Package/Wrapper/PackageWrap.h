@@ -83,7 +83,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override { return get().getCargo(item); }
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override { return get().getCargo(item); }
 		/*!
 		 Get a specified cargo manager
 		 @param index The manager index (0 -> number of managers, anything out of bounds returns nullptr)
@@ -123,7 +123,7 @@ namespace active::serialise {
 			@param cargo The cargo to insert
 			@param item The inventory item linked with the cargo
 		*/
-		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override { return get().insert(std::move(cargo), item); }
+		bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) override { return get().insert(std::move(cargo), item); }
 		/*!
 			Finalise the package attributes (called when isAttributeFirst = true and attributes have been imported)
 			@param isScopeEnded True if the scope for finding more attributes is ended (all found or the object content is all read)

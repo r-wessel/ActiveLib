@@ -24,12 +24,6 @@ namespace active::setting {
 		
 			//The base class of this setting
 		using base = container::Vector<Value>;
-			///Unique pointer
-		using Unique = std::unique_ptr<ValueSetting>;
-			///Shared pointer
-		using Shared = std::shared_ptr<ValueSetting>;
-			///Optional
-		using Option = std::optional<ValueSetting>;
 		
 		// MARK: - Constructors
 		

@@ -60,7 +60,7 @@ namespace active::attribute {
 			///Finish name (optional - application-specific)
 		utility::String name;
 			///Finish identifier (optional - application-specific)
-		utility::String id;
+		mutable utility::String id;
 
 		// MARK: Functions (const)
 
@@ -71,7 +71,7 @@ namespace active::attribute {
 		 @param format The required has format
 		 @return The hash formatted as specified
 		 */
-		utility::String hash(utility::HashFormat format = utility::HashFormat::asBase64) const;
+		utility::String hash(utility::HashFormat format = {}) const;
 	};
 	
 }

@@ -26,7 +26,7 @@ namespace active::primitive {
 		 @param fillCol The fill colour (nullopt = no fill)
 		*/
 		Path(const geometry::Polygon& polygon, attribute::Pen pn = attribute::Pen{},
-					  attribute::Colour::Option edgeCol = attribute::colour::black, attribute::Colour::Option fillCol = std::nullopt);
+					  std::optional<attribute::Colour> edgeCol = attribute::colour::black, std::optional<attribute::Colour> fillCol = std::nullopt);
 		/*!
 		 Copy constructor
 		 @param source The object to copy
@@ -46,7 +46,7 @@ namespace active::primitive {
 			Clone method
 			@return A clone of this object
 		*/
-		Path* clonePtr() const override { return new Path(*this); }
+		virtual Path* clonePtr() const override { return new Path(*this); }
 		
 		// MARK: Functions (const)
 
@@ -54,7 +54,7 @@ namespace active::primitive {
 		 Get the primitive rectilinear bounds
 		 @return The primitive bounds
 		 */
-		geometry::Box::Option bounds() const override { return geometry::Polygon::bounds(); }
+		virtual std::optional<geometry::Box> bounds() const override { return geometry::Polygon::bounds(); }
 
 		// MARK: Functions (mutating)
 
@@ -63,21 +63,21 @@ namespace active::primitive {
 		 @param toAdd The point to add
 		 @return A reference to this
 		 */
-		Primitive& add(const geometry::Point& toAdd) override;
+		virtual Primitive& add(const geometry::Point& toAdd) override;
 		/*!
 		 Multiply by a specified factor
 		 @param toMultiply The factor to multiply the primitive by
 		 @param isRenderOffset True to also scale the render offset (where relevant)
 		 @return A reference to this
 		 */
-		Primitive& multiply(double toMultiply, bool isRenderOffset = false) override;
+		virtual Primitive& multiply(double toMultiply, bool isRenderOffset = false) override;
 		/*!
 		 Multiply by the coordinates of a point
 		 @param toMultiply The point coords to multiply by
 		 @param isRenderOffset True to also scale the render offset (where relevant)
 		 @return A reference to this
 		 */
-		Primitive& multiply(const geometry::Point& toMultiply, bool isRenderOffset = false) override;
+		virtual Primitive& multiply(const geometry::Point& toMultiply, bool isRenderOffset = false) override;
 		/*!
 		 Multiply by a 3x3 matrix
 		 @param toMultiply A 3x3 matrix
@@ -85,7 +85,7 @@ namespace active::primitive {
 		 @param isRenderTranslation True if the matrix translation applies to render-sized geometry
 		 @return A reference to this
 		 */
-		Primitive& multiply(const geometry::Matrix3x3& toMultiply, bool includeRenderSized = false, bool isRenderTranslation = false) override;
+		virtual Primitive& multiply(const geometry::Matrix3x3& toMultiply, bool includeRenderSized = false, bool isRenderTranslation = false) override;
 	};
 	
 }

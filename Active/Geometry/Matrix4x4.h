@@ -20,12 +20,6 @@ namespace active::geometry {
 		using row_t = std::array<double, 4>;
 			//Matrix container
 		using base_t = std::array<row_t, 4>;
-			///Unique pointer
-		using Unique = std::unique_ptr<Matrix4x4>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Matrix4x4>;
-			///Optional
-		using Option = std::optional<Matrix4x4>;
 		
 		// MARK: Factory functions
 
@@ -120,7 +114,7 @@ namespace active::geometry {
 			@param index An index into the matrix
 			@return The value at the specified index
 		*/
-		row_t operator[](unsigned short index) { return m_matrix[index]; }
+		row_t& operator[](unsigned short index) { return m_matrix[index]; }
 		/*!
 			Checked subscript method
 			@param row The required row
@@ -134,7 +128,7 @@ namespace active::geometry {
 			@param col The required column
 			@return The value at the specified position
 		*/
-		double operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
+		const double& operator()(unsigned short row, unsigned short col) const { return m_matrix[row][col]; }
 		
 		// MARK: Functions (const)
 

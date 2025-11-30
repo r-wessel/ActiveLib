@@ -25,16 +25,6 @@ namespace active::primitive {
 	 */
 	class Primitive: public Layered, public virtual utility::Cloner {
 	public:
-
-		//MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Primitive>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Primitive>;
-			///Optional
-		using Option = std::optional<Primitive>;
-
 		// MARK: Constructors
 
 		/*!
@@ -47,7 +37,7 @@ namespace active::primitive {
 			@param edgeCol The edge colour (nullopt = no edge)
 			@param fillCol The file colour (nullopt = no fill)
 		*/
-		Primitive(attribute::Pen pn, attribute::Colour::Option edgeCol = std::nullopt, attribute::Colour::Option fillCol = std::nullopt) :
+		Primitive(attribute::Pen pn, std::optional<attribute::Colour> edgeCol = std::nullopt, std::optional<attribute::Colour> fillCol = std::nullopt) :
 				m_pen{pn}, m_edgeColour{edgeCol}, m_fillColour{fillCol} {}
 		/*!
 			Copy constructor
@@ -131,12 +121,12 @@ namespace active::primitive {
 			Get the rendering edge colour
 			@return The rendering edge colour (nullopt = no edges)
 		*/
-		virtual attribute::Colour::Option getEdgeColour() const { return m_edgeColour; }
+		virtual std::optional<attribute::Colour> getEdgeColour() const { return m_edgeColour; }
 		/*!
 			Get the rendering fill colour
 			@return The rendering fill colour (nullopt = no fill)
 		*/
-		virtual attribute::Colour::Option getFillColour() const { return m_fillColour; }
+		virtual std::optional<attribute::Colour> getFillColour() const { return m_fillColour; }
 		/*!
 			Get the anchor position of the origin of a render-sized primitive
 			@return The anchor position (nullopt = determined by primitive)
@@ -146,19 +136,19 @@ namespace active::primitive {
 			Get the midpoint of the primitive
 			@return The primitive midpoint
 		*/
-		virtual geometry::Point::Option midpoint() const;
+		virtual std::optional<geometry::Point> midpoint() const;
 		/*!
 			Get the primitive rectilinear bounds
 			@return The primitive bounds
 		*/
-		virtual geometry::Box::Option bounds() const { return std::nullopt; }
+		virtual std::optional<geometry::Box> bounds() const { return std::nullopt; }
 		/*!
 			Get the primitive rectilinear bounds in world coordinates
 			@param pixelSize The renderer pixel size for the scene
 			@param scale The primitive rendering scale
 			@return The primitive bounds in world coordinates
 		*/
-		virtual geometry::Box::Option worldBounds(double pixelSize, double scale);
+		virtual std::optional<geometry::Box> worldBounds(double pixelSize, double scale);
 		/*!
 			Get the primitive path
 			@param pixelSize The renderer pixel size
@@ -199,12 +189,12 @@ namespace active::primitive {
 			Set the rendering edge colour
 			@param colour The rendering edge colour (nullopt = no edges)
 		*/
-		virtual void setEdgeColour(attribute::Colour::Option colour) { m_edgeColour = colour; }
+		virtual void setEdgeColour(std::optional<attribute::Colour> colour) { m_edgeColour = colour; }
 		/*!
 			Set the rendering fill colour
 			@param colour The rendering fill colour (nullopt = no fill)
 		*/
-		virtual void setFillColour(attribute::Colour::Option colour) { m_fillColour = colour; }
+		virtual void setFillColour(std::optional<attribute::Colour> colour) { m_fillColour = colour; }
 		/*!
 			Set the anchor position of the origin of a render-sized primitive
 			@param anchor The anchor position (nullopt = determined by primitive)
@@ -250,15 +240,15 @@ namespace active::primitive {
 			///Pen for linework
 		attribute::Pen m_pen;
 			///Edge colour (nullopt = no edges)
-		attribute::Colour::Option m_edgeColour = attribute::colour::black;
+		std::optional<attribute::Colour> m_edgeColour = attribute::colour::black;
 			///Fill colour (nullopt = no fill)
-		attribute::Colour::Option m_fillColour;
+		std::optional<attribute::Colour> m_fillColour;
 			///True if the primitive size/bounds is for literal rendered output (pixels), i.e. not sized in scalable world units
 		bool m_isRenderSized = false;
 			///The origin for a render-sized primitive
-		geometry::Point::Unique m_renderOrigin;
+		std::unique_ptr<geometry::Point> m_renderOrigin;
 			///The offset of a render-sized primitive from its origin
-		geometry::Point::Unique m_renderOffset;
+		std::unique_ptr<geometry::Point> m_renderOffset;
 			///The anchor position of the origin of a render-sized primitive (on the rectilinear bounds)
 		std::optional<geometry::Anchor2D> m_renderAnchor;
 	};

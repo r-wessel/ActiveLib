@@ -19,10 +19,13 @@ using namespace active::utility;
 	return: The hash formatted as specified
   --------------------------------------------------------------------*/
 String Finish::hash(HashFormat format) const {
+	if (!id.empty())
+		return id;
 	SHA256 hasher;
 	hasher << name << colour.r << colour.g << colour.b << colour.a <<
 			emissionColour.r << emissionColour.g << emissionColour.b << emissionColour.a <<
 			specularColour.r << specularColour.g << specularColour.b << specularColour.a <<
 			ambientReflection << diffuseReflection << metalness << roughness << specularReflection;
-	return hasher.product(format);
+	id = hasher.product(format);
+	return id;
 } //Finish::hash

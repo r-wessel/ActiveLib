@@ -31,13 +31,6 @@ namespace active::attribute {
 			heavy,
 		};
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<Pen>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Pen>;
-			///Optional
-		using Option = std::optional<Pen>;
-		
 		// MARK: - Static variables
 		
 			///Standard architectural pen weights

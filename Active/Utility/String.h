@@ -22,26 +22,27 @@ namespace active::utility {
 	
 	/// A Unicode-aware string class
 	/*!
-		The String class is a wrapper for std::string and leans heavily on existing functionality it provides, extending it with
-		awareness of Unicode encodings for character positioning. This also provides easy access to the underlying std::string
+		The `String` class is a wrapper for `std::string` and leans heavily on existing functionality it provides, extending it with
+		awareness of Unicode encodings for character positioning. This also provides easy access to the underlying `std::string`
 		for easy interoperability with any code working with that type.
 		
-		String content is internally encoded/validated as UTF-8, but it can be encode/decode UTF8, UTF16, UTF32, ASCII and ISO8859.
+		String content is internally encoded/validated as UTF-8, but it can encode/decode to/from UTF16, UTF32, ASCII and ISO8859.
+		All content must be valid UTF-8, i.e. you cannot embed arbitrary binary data or null characters in a `String` (use `Memory` instead).
 		Character positions are calculated to allow indexing, but the time to find a position averages O(n)
-		It is recommended to use classes like BufferIn to analyse by-character content on large blocks of text efficiently
+		It is recommended to use classes like `BufferIn` to analyse by-character content on large blocks of text efficiently
 	 
-		This class does not use a 'special' value to denote non-existent or unspecified positions, e.g. like string::npos
+		This class does not use a 'special' value to denote non-existent or unspecified positions, e.g. like `string::npos`
 		Rather, an optional is used for these cases, e.g. if searching for a dot outside the first 5 characters of some text,
 		using std::string could look like this:
 	
 			if (auto pos = text.find("."); (pos != nos) && (pos > 4))
 		
-		With this string class, the optional response simplifies the syntax:
+		With this `String` class, the optional response simplifies the syntax:
 	 
 			if (auto pos = text.find("."); pos > 4)
 		
-		The String class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
-		Conversion operators and constructors provide interoperability with a range of common types, e.g. std::string, std::u32string etc
+		The `String` class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
+		Conversion operators and constructors provide interoperability with a range of common types, e.g. `std::string`, `std::u32string` etc
 	*/
 	class String {
 	public:
@@ -50,16 +51,14 @@ namespace active::utility {
 
 		//MARK: - Types
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<String>;
-			///Shared pointer
-		using Shared = std::shared_ptr<String>;
-			///Optional
-		using Option = std::optional<String>;
 			///Class size type
 		using size_type = std::string::size_type;
-			///Optional size type (used to indicate an unspecified or non-existant position)
+			///Optional size type (nullopt used to indicate an unspecified or non-existant position)
 		using sizeOption = std::optional<size_type>;
+			///Character size type (bytes)
+		using char_size = unsigned char;
+			///Optional character size type (nullopt used to indicate an unspecified or invalid size)
+		using charSizeOption = std::optional<char_size>;
 			///Unary predicate for filtering strings
 		using Filter = std::function<bool(char32_t)>;
 			///Unary functions for processing string characters
@@ -96,7 +95,7 @@ namespace active::utility {
 		/*!
 			Constructor from an input char array
 			@param source The character array to be copied
-			@param howMany The number of bytes to copy (nullopt for full length)
+			@param howMany The number of bytes to copy (nullopt fornull-terminated)
 			@param format The source text data format
 		*/
 		String(const char* source, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
@@ -104,7 +103,7 @@ namespace active::utility {
 		/*!
 			Constructor from an input UTF8 char array
 			@param source The character array to be copied
-			@param howMany The number of bytes to copy (nullopt for full length)
+			@param howMany The number of bytes to copy (nullopt for null-terminated)
 		*/
 		String(const char8_t* source, sizeOption howMany = std::nullopt) : String{reinterpret_cast<const char*>(source), howMany, DataFormat{}} {}
 #endif
@@ -209,12 +208,12 @@ namespace active::utility {
 			Copy constructor
 			@param source The string to copy
 		*/
-		String(const String& source);
+		String(const String& source) : m_string{source.m_string} {}
 		/*!
 			Move constructor
 			@param source The object to move
 		*/
-		String(String&& source) noexcept;
+		String(String&& source) noexcept : m_string{std::move(source.m_string)} {}
 		/*!
 			Destructor
 		*/
@@ -238,7 +237,7 @@ namespace active::utility {
 			@param format The text data format
 			@return The character width in bytes (nullopt for bad encoding)
 		*/
-		static sizeOption getCharacterByteCount(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
+		static charSizeOption getCharacterByteCount(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
 			Get the number of valid characters found at a specified address
 			@param text The source text
@@ -254,7 +253,7 @@ namespace active::utility {
 			@param format The source data format
 			@return The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
 		*/
-		static std::pair<char32_t, size_type> getUnicodeChar(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
+		static std::pair<char32_t, char_size> getUnicodeChar(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
 			Get a UTF-32 string from a UTF-8 source
 			@param text The source UTF-8 text (advances to the byte beyond the last counted character)
@@ -349,18 +348,6 @@ namespace active::utility {
 			@return The relationship between this and ref (less, equal, greater)
 		*/
 		std::strong_ordering operator<=> (const String& ref) const { return compare(ref); }
-		/*!
-			Equality operator
-			@param ref The string to compare this to
-			@return True if the strings are identical
-		*/
-		bool operator== (const String& ref) const { return m_string == ref.m_string; }
-		/*!
-			Inequality operator
-			@param ref The string to compare this to
-			@return True if the strings differ
-		*/
-		bool operator!= (const String& ref) const { return !(*this == ref); }
 		/*!
 			Addition with assignment operator
 			@param source The string to append
@@ -734,6 +721,36 @@ namespace active::utility {
 	};
 	
 		
+	/*!
+	 Equality operator
+	 @param str1 The first string
+	 @param str2 The second string
+	 @return True if the strings are identical
+	 */
+	inline bool operator== (const String& str1, const String& str2) {
+		switch (str1.empty() + (2 * str2.empty())) {
+			case 0: [[likely]]
+				return std::strcmp(str1.data(), str2.data()) == 0;
+			case 3:
+				return true;
+			default:
+				break;
+		}
+		return false;
+	}
+	
+	
+	/*!
+	 Inequality operator
+	 @param str1 The first string
+	 @param str2 The second string
+	 @return True if the strings differ
+	 */
+	inline bool operator!= (const String& str1, const String& str2) {
+		return !(str1 == str2);
+	}
+
+
 	/*!
 		Addition operator
 		@param str1 The first string

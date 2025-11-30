@@ -49,7 +49,7 @@ Primitive& Primitive::operator= (const Primitive& source) {
  
 	return: The primitive midpoint
   --------------------------------------------------------------------*/
-Point::Option Primitive::midpoint() const {
+std::optional<Point> Primitive::midpoint() const {
 	if (auto rectBounds = bounds(); rectBounds)
 		return rectBounds->getCentre();
 	return std::nullopt;
@@ -64,7 +64,7 @@ Point::Option Primitive::midpoint() const {
  
 	return: The primitive bounds in world coordinates
   --------------------------------------------------------------------*/
-Box::Option Primitive::worldBounds(double pixelSize, double scale) {
+std::optional<Box> Primitive::worldBounds(double pixelSize, double scale) {
 	if (auto path = worldPath(pixelSize, scale); path)
 		return path->bounds();
 	return std::nullopt;

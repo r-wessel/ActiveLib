@@ -95,7 +95,7 @@ namespace active::serialise::xml {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override {
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override {
 			if (item.ownerType != &typeid(XMLSolidPolygon<Vert>))
 				return nullptr;
 			switch (item.index) {
@@ -131,7 +131,7 @@ namespace active::serialise::xml {
 			@param item The inventory item linked with the cargo
 			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		*/
-		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override {
+		bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) override {
 			if (item.ownerType != &typeid(XMLSolidPolygon<Vert, VertWrap>))
 				return true;
 			switch (item.index) {
@@ -146,7 +146,7 @@ namespace active::serialise::xml {
 		
 	private:
 			///Optional explicit tag (overrides default)
-		utility::String::Option m_tag;
+		std::optional<utility::String> m_tag;
 			///Temporary mutable storage for incoming vertices
 		mutable Vert m_vertex;
 			///Temporary mutable storage of the polygon top ID for i/o
@@ -230,7 +230,7 @@ namespace active::serialise::xml {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override {
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override {
 			if (item.ownerType != &typeid(XMLPolygon<Vert>))
 				return base::getCargo(item);
 			switch (item.index) {
@@ -250,7 +250,7 @@ namespace active::serialise::xml {
 			@param item The inventory item linked with the cargo
 			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		*/
-		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override {
+		bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) override {
 			if (item.ownerType != &typeid(XMLPolygon<Vert, VertWrap, Hole, HoleWrap>))
 				return base::insert(std::move(cargo), item);
 			switch (item.index) {

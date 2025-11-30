@@ -24,7 +24,6 @@ namespace {
 		///Interface for the wrapper classes
 	class BaseWrapper : public Package {
 	public:
-		using Unique = std::unique_ptr<BaseWrapper>;
 			///The method releases a newly deserialised `Foo` instance from the wrapper (which will be inserted into the target array)
 		virtual std::unique_ptr<Foo> releaseIncoming() = 0;
 	};
@@ -60,7 +59,7 @@ namespace {
 			return true;
 		}
 			///Retrieve a wrapper for an immediate member of `BarA` (as requested in the inventory item)
-		Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override {
+		std::unique_ptr<Cargo> getCargo(const active::serialise::Inventory::Item& item) const override {
 			switch (item.index) {
 				case text:
 					return std::make_unique<StringWrap>(m_text);
@@ -110,7 +109,7 @@ namespace {
 			}.withType(&typeid(BWrapper)));
 			return true;
 		}
-		Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override {
+		std::unique_ptr<Cargo> getCargo(const active::serialise::Inventory::Item& item) const override {
 			switch (item.index) {
 				case num:
 					return std::make_unique<DoubleWrap>(m_val);
@@ -133,7 +132,7 @@ namespace {
 
 	
 		///Factory function to create a new `Foo` instance with a specified guid (used during deserialisation)
-	using Factory = std::function<BaseWrapper::Unique(const Foo*, const Guid&)>;
+	using Factory = std::function<std::unique_ptr<BaseWrapper>(const Foo*, const Guid&)>;
 
 	
 		///Binds a typename to the function that create a new instance of the type
@@ -210,7 +209,7 @@ namespace {
 			return true;
 		}
 			///Retrieve wrappers for either the type name or immediate members of `Foo` (as requested in the inventory item)
-		Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override {
+		std::unique_ptr<Cargo> getCargo(const active::serialise::Inventory::Item& item) const override {
 				//If the item isn't from this wrapper, pass the request to the wrapper for the target subclass
 			if (item.ownerType != &typeid(FooWrapper)) {
 				if (m_wrapper)
@@ -255,7 +254,7 @@ namespace {
 	private:
 		String m_type;
 		Guid m_id;
-		mutable BaseWrapper::Unique m_wrapper;
+		mutable std::unique_ptr<BaseWrapper> m_wrapper;
 			//Unused for serialisation - true when deserialising the type and guid attributes
 		std::optional<bool> m_isReadingAttributes;
 	};
@@ -280,7 +279,7 @@ bool SerialiseArrayWrapper::fillInventory(Inventory& inventory) const {
 
 
 	///Retrieve wrappers for immediate members of the array (as requested in the inventory item)
-Cargo::Unique SerialiseArrayWrapper::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> SerialiseArrayWrapper::getCargo(const Inventory::Item& item) const {
 	switch (item.index) {
 		case base:
 			if (item.available < m_test.size())
@@ -298,7 +297,7 @@ void SerialiseArrayWrapper::setDefault() {
 
 
 	///Insert a deserialised object into the array
-bool SerialiseArrayWrapper::insert(Cargo::Unique&& cargo, const Inventory::Item& item) {
+bool SerialiseArrayWrapper::insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) {
 	if (auto* wrapper = dynamic_cast<FooWrapper*>(cargo.get()); (wrapper != nullptr)) {
 		if (auto foo = wrapper->releaseIncoming(); foo) {
 			m_test.emplace_back(foo);

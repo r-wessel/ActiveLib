@@ -32,14 +32,7 @@ namespace active::geometry {
 			target = 0,
 			blade
 		};
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<XPoint>;
-			///Shared pointer
-		using Shared = std::shared_ptr<XPoint>;
-			///Optional
-		using Option = std::optional<XPoint>;
-		
+
 		/*!
 			Constructor
 			@param source The intersection point

@@ -41,12 +41,6 @@ namespace active::event {
 				
 		// MARK: - Types
 		
-			///Unique pointer
-		using Unique = std::unique_ptr<Subscriber>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Subscriber>;
-			///Weak pointer
-		using Weak = std::weak_ptr<Subscriber>;
 			///An event subscription list
 		using Subscription = std::set<NameID>;
 

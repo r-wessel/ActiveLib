@@ -6,6 +6,7 @@
 #ifndef ACTIVE_UTILITY_GUID
 #define ACTIVE_UTILITY_GUID
 
+#include "Active/Utility/Case.h"
 #include "Active/Utility/String.h"
 
 namespace active::utility {
@@ -86,9 +87,10 @@ namespace active::utility {
 		const Raw& raw() const { return m_value; }
 		/*!
 			Return a string representation of the guid
+			@param inCase The digit case
 			@return A string representation
 		*/
-		String string() const;
+		String string(Case inCase = uppercase) const;
 		/*!
 			Determine if the guid is an empty (nil) value
 			@return True if the guid is empty

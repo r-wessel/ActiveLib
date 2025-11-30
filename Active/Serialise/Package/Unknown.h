@@ -30,7 +30,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		virtual Cargo::Unique getCargo(const Inventory::Item& item) const { return nullptr; }	//This package doesn't read/write anything
+		virtual std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const { return nullptr; }	//This package doesn't read/write anything
 	};
 	
 }

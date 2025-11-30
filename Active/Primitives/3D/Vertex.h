@@ -29,17 +29,7 @@ namespace active::primitive {
 	*/
 	class Vertex {
 	public:
-		
-		// MARK: - Types
-		
 		using enum geometry::Position;
-
-			///Unique pointer
-		using Unique = std::unique_ptr<Vertex>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Vertex>;
-			///Optional
-		using Option = std::optional<Vertex>;
 		
 		// MARK: Constructors
 			

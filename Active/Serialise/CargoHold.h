@@ -28,16 +28,6 @@ namespace active::serialise {
 	template<typename WrapT, typename ObjT> requires std::is_base_of_v<Cargo, WrapT>
 	class CargoHold : public WrapT {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<CargoHold>;
-			///Shared pointer
-		using Shared = std::shared_ptr<CargoHold>;
-		
-		
-		
 		// MARK: - Constructors
 		
 		/*!

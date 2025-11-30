@@ -6,6 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_SERIALISE_HEX_TRANSPORT
 #define ACTIVE_SERIALISE_HEX_TRANSPORT
 
+#include "Active/Utility/Case.h"
 #include "Active/Utility/Memory.h"
 
 namespace active::utility {
@@ -23,6 +24,12 @@ namespace active::serialise {
 	*/
 	class HexTransport {
 	public:
+		/*!
+		 Default constructor
+		 @param inCase The hex digit case
+		 */
+		HexTransport(utility::Case inCase = utility::Case::uppercase) : m_case{inCase} {}
+		
 		/*!
 			Export specified data as hex chars
 			@param source The data to send (NB: binary data is assumed to be big-endian - prepare the source accordingly)
@@ -45,6 +52,9 @@ namespace active::serialise {
 			@return The received integer (nullopt on failure)
 		*/
 		std::optional<uint32_t> receive(const utility::String& source) const;
+		
+	private:
+		utility::Case m_case;
 	};
 	
 	

@@ -23,12 +23,6 @@ namespace active::setting {
 		using iterator = typename base::iterator;
 			///Storage iterator
 		using const_iterator = typename base::const_iterator;
-			///Shared pointer
-		using Shared = std::shared_ptr<SettingList>;
-			///Shared pointer
-		using Unique = std::unique_ptr<SettingList>;
-			///Optional
-		using Option = std::optional<SettingList>;
 		
 		// MARK: - Constructors
 		

@@ -21,16 +21,6 @@ namespace active::geometry {
 	/// Base class for rotation classes
 	class Rotater : public utility::Cloner {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Rotater>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Rotater>;
-			///Optional
-		using Option = std::optional<Rotater>;
-		
 		// MARK: - Constructors
 		
 		/*!

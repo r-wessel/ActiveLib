@@ -53,7 +53,7 @@ namespace active::database {
 			 @return The current transaction row (nullptr = engine is busy: https://sqlite.org/rescode.html#busy)
 			 @throw Exception thrown on SQL error
 			 */
-			active::setting::SettingList::Unique operator++();
+			std::unique_ptr<active::setting::SettingList> operator++();
 			/*!
 			 Execute a single-step process, e.g. erase, insert etc
 			 @throw Exception thrown on SQL error

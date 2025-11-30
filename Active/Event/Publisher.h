@@ -22,14 +22,6 @@ namespace active::event {
 	*/
 	class Publisher : public Participant {
 	public:
-				
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Publisher>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Publisher>;
-
 		// MARK: - Constructors
 		
 		/*!
@@ -73,7 +65,7 @@ namespace active::event {
 		bool add(std::shared_ptr<Subscriber> subscriber);
 		/*!
 			Add a managed subscriber, i.e. the subscription continues until the publisher is explicitly instructed to end it
-			@param subscriber The new subscriber. NB: The caller retains ownership o fthe object and must manage it accordingly
+			@param subscriber The new subscriber. NB: The caller retains ownership of the object and must manage it accordingly
 			@return True if subscriber was added
 		*/
 		bool addManaged(Subscriber* subscriber);

@@ -23,16 +23,6 @@ namespace active::geometry {
 	*/
 	class PolyPoint : public Point {
 	public:
-		
-		// MARK: - Types
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<PolyPoint>;
-			///Shared pointer
-		using Shared = std::shared_ptr<PolyPoint>;
-			///Optional
-		using Option = std::optional<PolyPoint>;
-		
 		// MARK: - Constructors
 		
 		/*!

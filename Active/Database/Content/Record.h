@@ -44,12 +44,6 @@ namespace active::database {
 	public:
 
 		// MARK: - Types
-		
-		using Unique = std::unique_ptr<Record>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Record>;
-			///Optional
-		using Option = std::optional<Record>;
 			///Record index type
 		using Index = active::database::Index<ObjID>;
 			///Record link type
@@ -155,7 +149,7 @@ namespace active::database {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+		std::unique_ptr<Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 		/*!
 			Set to the default package content
 		*/
@@ -203,7 +197,7 @@ namespace active::database {
 		@return The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename ObjID>
-	active::serialise::Cargo::Unique Record<ObjID>::getCargo(const active::serialise::Inventory::Item& item) const {
+	std::unique_ptr<active::serialise::Cargo> Record<ObjID>::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.ownerType != &typeid(Record<ObjID>))
 			return nullptr;
 		using namespace active::serialise;

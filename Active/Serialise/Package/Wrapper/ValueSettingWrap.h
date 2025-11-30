@@ -54,7 +54,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		Cargo::Unique getCargo(const Inventory::Item& item) const override;
+		std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const override;
 		
 		// MARK: - Functions (mutating)
 		
@@ -73,7 +73,7 @@ namespace active::serialise {
 			@param item The inventory item linked with the cargo
 			@return True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
 		*/
-		bool insert(Cargo::Unique&& cargo, const Inventory::Item& item) override;
+		bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item) override;
 		
 	private:
 			///Temporary mutable storage for incoming values

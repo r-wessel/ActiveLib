@@ -92,7 +92,7 @@ bool XList::insert(XPoint&& pt) {
 	
 	return: True if the point was inserted
   --------------------------------------------------------------------*/
-bool XList::insert(XPoint::Unique&& pt) {
+bool XList::insert(std::unique_ptr<XPoint>&& pt) {
 	pt->setVertex(XPoint::target, m_filter[XPoint::target].vertexIndex);
 	pt->setPart(XPoint::target, m_filter[XPoint::target].partIndex);
 	pt->setVertex(XPoint::blade, m_filter[XPoint::blade].vertexIndex);
@@ -145,7 +145,7 @@ AlongLengthOf::AlongLengthOf(const PolyEdge& edge) : m_origin(edge.origin) {
  
 	return: True if the transaction is viable (will not run otherwise)
   --------------------------------------------------------------------*/
-bool AlongLengthOf::operator() (XPoint::Unique& pos1, XPoint::Unique& pos2) const {
+bool AlongLengthOf::operator() (std::unique_ptr<XPoint>& pos1, std::unique_ptr<XPoint>& pos2) const {
 	using enum Rotation;
 	PolyEdge edge1(m_origin, *pos1, m_radius, (m_isClockwise) ? clockwise : anticlockwise);
 	PolyEdge edge2(m_origin, *pos2, m_radius, (m_isClockwise) ? clockwise : anticlockwise);

@@ -36,10 +36,6 @@ namespace active::serialise {
 			iso8601,			///< ISO 8601
 			secondsSince1970,	///< Unix (posix) epoch
 		};
-			///Unique pointer
-		using Unique = std::unique_ptr<Cargo>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Cargo>;
 		
 		// MARK: - Constructors
 		
@@ -102,7 +98,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		virtual Cargo::Unique getCargo(const Inventory::Item& item) const = 0;
+		virtual std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const = 0;
 		/*!
 			Use a specified date/time format for serialisation
 			@param format The date/time format
@@ -122,7 +118,7 @@ namespace active::serialise {
 			@param type The cargo type, e.g. force an object to export as an array in JSON
 			@return A reference to this
 		*/
-		virtual Cargo& asType(Identity::Role type) {
+		Cargo& asType(Identity::Role type) {
 			m_role = type;
 			return *this;
 		}
@@ -147,10 +143,10 @@ namespace active::serialise {
 		*/
 		virtual void setDefault() = 0;
 		/*!
-			Validate the cargo data
-			@param management The cargo transport management (nullptr = no management)
-			@return True if the data has been validated
-		*/
+		 Validate the cargo data
+		 @param management The cargo transport management (nullptr = no management)
+		 @return True if the data has been validated
+		 */
 		virtual bool validate(Management* management = nullptr) { return true; }
 		
 		// MARK: - Functions (mutating)

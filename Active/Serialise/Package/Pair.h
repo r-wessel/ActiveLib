@@ -41,7 +41,7 @@ namespace active::serialise {
 		 	@param value The pair value
 			@param name Optional name for the key/value pair
 		*/
-		Pair(Cargo::Unique key, Cargo::Unique value, utility::String::Option name = std::nullopt);
+		Pair(std::unique_ptr<Cargo> key, std::unique_ptr<Cargo> value, std::optional<utility::String> name = std::nullopt);
 			///No copy constructor
 		Pair(const Pair& source) = delete;
 			///Destructor
@@ -80,7 +80,7 @@ namespace active::serialise {
 			@param item The inventory item to retrieve
 			@return The requested cargo (nullptr on failure)
 		*/
-		virtual Cargo::Unique getCargo(const Inventory::Item& item) const;
+		virtual std::unique_ptr<Cargo> getCargo(const Inventory::Item& item) const;
 		
 		// MARK: - Functions (mutating)
 		
@@ -106,11 +106,11 @@ namespace active::serialise {
 		
 	private:
 			///The pair key
-		Cargo::Unique m_key;
+		std::unique_ptr<Cargo> m_key;
 			///The pair value
-		Cargo::Unique m_value;
+		std::unique_ptr<Cargo> m_value;
 			///Optional pair name
-		utility::String::Option m_name;
+		std::optional<utility::String> m_name;
 	};
 	
 }

@@ -15,7 +15,8 @@ using namespace active::utility;
 namespace {
 	
 		///The base hex numerals
-	const char* hexNumerals = "0123456789ABCDEF";
+	const char* upperHexNumerals = "0123456789ABCDEF";
+	const char* lowerHexNumerals = "0123456789abcdef";
 		///The number of hex numerals required for a 32-bit integer
 	const String::size_type hexIntLength = 8;
 
@@ -28,15 +29,15 @@ namespace {
 		unsigned char incoming;
 		if (!source.good() || !source.get(incoming))
 			return std::nullopt;
-		if (incoming <= hexNumerals[9]) {
-			if (incoming < hexNumerals[0])
+		if (incoming <= upperHexNumerals[9]) {
+			if (incoming < upperHexNumerals[0])
 				return std::nullopt;
-			return incoming - hexNumerals[0];
+			return incoming - upperHexNumerals[0];
 		}
 		incoming = std::toupper(incoming);
-		if ((incoming < hexNumerals[10]) || (incoming > hexNumerals[15]))
+		if ((incoming < upperHexNumerals[10]) || (incoming > upperHexNumerals[15]))
 			return std::nullopt;
-		return incoming - hexNumerals[10] + 10;
+		return incoming - upperHexNumerals[10] + 10;
 	} //getHexValue
 	
 }  // namespace
@@ -53,11 +54,12 @@ namespace {
 bool HexTransport::send(const BufferIn&& source, const BufferOut& destination, Memory::sizeOption howMany) const {
 	bool isOpen = (howMany == std::nullopt);
 	unsigned char incoming;
+	auto numerals = (m_case == uppercase) ? upperHexNumerals : lowerHexNumerals;
 	while (!source.eof() && (isOpen || ((*howMany)-- > 0))) {
 		if (!source.get(incoming))
 			break;
-		destination.write(hexNumerals[incoming >> 4]);
-		destination.write(hexNumerals[incoming & 0x0F]);
+		destination.write(numerals[incoming >> 4]);
+		destination.write(numerals[incoming & 0x0F]);
 	}
 	return (destination.good() && (isOpen || ((*howMany + 1) == 0))) && destination.flush();
 } //HexTransport::send

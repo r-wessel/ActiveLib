@@ -348,7 +348,7 @@ namespace {
 			@param type The tag type
 			@param depth The tag depth in the XML hierarchy
 		*/
-		void writeTag(const String& tag, const String::Option& nameSpace, XMLIdentity::Type type, int32_t depth);
+		void writeTag(const String& tag, const std::optional<String>& nameSpace, XMLIdentity::Type type, int32_t depth);
 		/*!
 			Write a phrase to the data destination
 			@param phrase The phrase to write
@@ -452,7 +452,7 @@ namespace {
 			Get content from the data source, e.g. the data between the opening and closing tags
 			@return The XML content
 		*/
-		String::Option getContent();
+		std::optional<String> getContent();
 		/*!
 			Add an entity to the glossary
 			@param entity The entity to add
@@ -610,7 +610,7 @@ namespace {
 	 
 		return: The XML content (nullopt on failure)
 	  --------------------------------------------------------------------*/
-	String::Option XMLImporter::getContent() {
+	std::optional<String> XMLImporter::getContent() {
 		String content;
 		if (!m_buffer.findIf([](char32_t uniChar){ return uniChar == U'<'; }, &content))
 			return std::nullopt;	//Not finding a tag is not necessarily an error - the caller will determine
@@ -654,7 +654,7 @@ namespace {
 		type: The tag type
 		depth: The tag depth in the XML hierarchy
 	  --------------------------------------------------------------------*/
-	void XMLExporter::writeTag(const String& tag, const String::Option& nameSpace, XMLIdentity::Type type, int32_t depth) {
+	void XMLExporter::writeTag(const String& tag, const std::optional<String>& nameSpace, XMLIdentity::Type type, int32_t depth) {
 		String xmlStr(tag), prefix;
 		if (m_isTagged && isLineFeeds && (type != endTag))
 			prefix.append("\n");
@@ -781,7 +781,7 @@ namespace {
 
 		return: The wrapped cargo
 	  --------------------------------------------------------------------*/
-	Cargo::Unique wrapped(Cargo& cargo) {
+	std::unique_ptr<Cargo> wrapped(Cargo& cargo) {
 		if (auto* package = dynamic_cast<Package*>(&cargo); package != nullptr)
 			return std::make_unique<PackageWrap>(*package);
 		if (auto* item = dynamic_cast<Item*>(&cargo); item != nullptr)
@@ -841,7 +841,7 @@ namespace {
 					isEmpty = true;	//NB: Deliberate fall-through to startTag (they are essentially the same, just no end tag for an empty tag)
 				case startTag: {
 					auto attributes = readAttributes(identity.name);
-					Cargo::Unique cargo;
+					std::unique_ptr<Cargo> cargo;
 					Inventory::iterator incomingItem = inventory.end();
 					if (containerIdentity.isRoot) {	//Inventory is for contained items - the outermost transport wrapper (or root) is not included
 						if (containerIdentity.name != identity.name)	//Check the root element tag matches the root container identity

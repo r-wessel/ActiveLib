@@ -58,7 +58,7 @@ namespace active::utility {
 			Move constructor
 			@param source The object to move
 		*/
-		Defer(Defer&& source) {
+		Defer(Defer&& source) noexcept {
 			m_action = std::exchange(source.m_action, nullptr);
 		}
 		Defer(const Defer&) = delete;	//No copy constructor

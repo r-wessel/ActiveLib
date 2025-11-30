@@ -330,7 +330,7 @@ double PolyEdge::length3D() const {
  
 	return: The edge as an arc (nullopt if the edge is not an arc)
   --------------------------------------------------------------------*/
-Arc::Option PolyEdge::asArc(double prec) const {
+std::optional<Arc> PolyEdge::asArc(double prec) const {
 	return isArc(prec) ? std::make_optional<Arc>(origin, end) : std::nullopt;
 } //PolyEdge::asArc
 

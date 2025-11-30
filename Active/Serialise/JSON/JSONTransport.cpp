@@ -49,6 +49,8 @@ namespace {
 	const std::u32string numberContent{numberLeader + U"+.eE"};
 		//Possible leading characters for a boolean value
 	const std::u32string boolLeader{U"tf"};
+		///All white space characters
+	const std::u32string allWhiteSpace32{U" \t\r\n"};
 		//Leading characters for a null value
 	constexpr char32_t nullLeader{U'n'};
 		//A JSON null value
@@ -70,6 +72,8 @@ namespace {
 	const String escapeStr{std::u32string{escapeChar}};
 		//The JSON replacement for an escape character
 	String escapeCharSymbol{"\\\\"};
+		//Proxy package for unknown objects during import
+	Unknown m_unknown;
 
 		///Determine if a specified char is a value terminator
 	bool isValueTerminator(char32_t uniChar) {
@@ -364,7 +368,7 @@ namespace {
 			@param type The tag type
 			@param depth The tag depth in the JSON hierarchy
 		*/
-		void writeTag(const String& tag, const String::Option& nameSpace, JSONIdentity::Type type, int32_t depth);
+		void writeTag(const String& tag, const std::optional<String>& nameSpace, JSONIdentity::Type type, int32_t depth);
 		/*!
 			Write a phrase to the data destination
 			@param phrase The phrase to write
@@ -676,11 +680,23 @@ namespace {
 			value = std::make_unique<StringValue>(fromJSONString(text, m_glossary));
 		} else {
 			text.append(content.first);
-			m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
-				//Trim trailing white-space chars
-			auto lastChar = text.findLastNotOf(String::allWhiteSpace);
-			if (!lastChar)
+			char32_t endChar = 0;
+			m_buffer.findIf([&endChar](char32_t uniChar){
+				if (!isValueTerminator(uniChar))
+					return false;
+				endChar = uniChar;
+				return true;
+			}, &text);
+			if (text.empty())
 				throw std::system_error(makeJSONError(valueMissing));
+			String::sizeOption lastChar;
+			if (allWhiteSpace32.find(endChar) != std::u32string::npos) {
+					//Trim trailing white-space chars
+				lastChar = text.findLastNotOf(String::allWhiteSpace);
+				if (!lastChar)
+					throw std::system_error(makeJSONError(valueMissing));
+			} else
+				lastChar = text.size() - 1;
 			text = text.substr(0, *lastChar + 1);
 				//Check for an incoming bool value
 			if (text == "true")
@@ -733,7 +749,7 @@ namespace {
 		type: The tag type
 		depth: The tag depth in the JSON hierarchy
 	  --------------------------------------------------------------------*/
-	void JSONExporter::writeTag(const String& tag, const String::Option& nameSpace, JSONIdentity::Type type, int32_t depth) {
+	void JSONExporter::writeTag(const String& tag, const std::optional<String>& nameSpace, JSONIdentity::Type type, int32_t depth) {
 		String jsonStr;
 		bool isClosing = (type == objectEnd) || (type == arrayEnd);
 		if ((depth > 0) || isClosing) {
@@ -846,7 +862,7 @@ namespace {
 
 		return: The wrapped cargo
 	  --------------------------------------------------------------------*/
-	Cargo::Unique makeWrapper(Cargo& cargo, const JSONIdentity& containerIdentity, const Inventory& inventory, JSONIdentity& identity) {
+	std::unique_ptr<Cargo> makeWrapper(Cargo& cargo, const JSONIdentity& containerIdentity, const Inventory& inventory, JSONIdentity& identity) {
 		if (auto* package = dynamic_cast<Package*>(&cargo); package != nullptr)
 			return std::make_unique<PackageWrap>(*package);
 		if (auto* item = dynamic_cast<Item*>(&cargo); item != nullptr)
@@ -862,7 +878,7 @@ namespace {
 	 
 		return: A suitable cargo object
 	  --------------------------------------------------------------------*/
-	Cargo::Unique makeUnknown(const JSONIdentity& identity) {
+	std::unique_ptr<Cargo> makeUnknown(const JSONIdentity& identity) {
 		if (identity.type == valueStart)
 			return std::make_unique<UnknownItem>();
 		return std::make_unique<Unknown>();
@@ -908,6 +924,7 @@ namespace {
 			if (importer.isMissingEntryFailed() && (inventory.countRequired() > 0))
 				importer.setStatus(instanceMissing);
 		});
+		auto containerIn = &container;
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
 			Memory::size_type readPoint = importer.getPosition();
 			auto identity = importer.getIdentity(parsingStage);	//Get the identity of the next item in the JSON source
@@ -930,13 +947,13 @@ namespace {
 				case objectStart: case valueStart: case arrayStart: {
 					if (parsingStage == complete)	//An element has been read, but no delimiter reached - expected a closing symbol
 						throw std::system_error(makeJSONError(unbalancedScope));
-					Cargo::Unique cargo;
+					std::unique_ptr<Cargo> cargo;
 					Inventory::iterator incomingItem = inventory.end();
 					if (parsingStage == array)
-						getArrayIdentity(container, inventory, containerIdentity, identity);
+						getArrayIdentity(*containerIn, inventory, containerIdentity, identity);
 					if (parsingStage == root) {	//At root level we're importing to the container we already have
 						if (!isReadingAttribute)
-							cargo = makeWrapper(container, containerIdentity, inventory, identity);
+							cargo = makeWrapper(*containerIn, containerIdentity, inventory, identity);
 					} else {
 						incomingItem = inventory.registerIncoming(identity);	//Seek the incoming element in the inventory
 						if ((incomingItem == inventory.end()) && inventory.isEveryItemAccepted && (package != nullptr))
@@ -946,12 +963,12 @@ namespace {
 								incomingItem = inventory.end();
 							else {
 								if ((identity.type == arrayStart) && !(incomingItem->maximum() == 1)) {
-									cargo = makeWrapper(container, containerIdentity, inventory, identity);
+									cargo = makeWrapper(*containerIn, containerIdentity, inventory, identity);
 									incomingItem = inventory.end();
 								} else {
 									incomingItem->required = false;	//Doesn't change import behaviour - flags we have found at least one instance
 									incomingItem->withValueType(identity.valueType); //Useful for ambiguous content
-									cargo = container.getCargo(*incomingItem);
+									cargo = containerIn->getCargo(*incomingItem);
 									if (cargo != nullptr) {
 										cargo->setDefault();
 										if (!incomingItem->bumpAvailable())
@@ -1000,7 +1017,7 @@ namespace {
 						isAttributeReadingComplete = true;
 						break;
 					}
-					if (!container.validate(importer.management()))
+					if (!containerIn->validate(importer.management()))
 						throw std::system_error(makeJSONError(invalidObject));	//The incoming data was rejected as invalid
 					return;
 			}
@@ -1011,9 +1028,12 @@ namespace {
 					importer.setPosition(*restorePoint);	//Move the read position back to the first non-attribute
 					restorePoint.reset();
 				}
-				if (!isAttributeFinalised && !package->finaliseAttributes(true))
-					throw std::system_error(makeJSONError(invalidObject));
-				getImportInventoryFor(container, inventory, importer);	//The inventory will probably change here
+				if (!isAttributeFinalised && !package->finaliseAttributes(true)) {
+					if (!importer.isUnknownSkipped())
+						throw std::system_error(makeJSONError(invalidObject));
+					containerIn = &m_unknown; //Dummy package will simply skip over unknown content
+				}
+				getImportInventoryFor(*containerIn, inventory, importer);	//The inventory will probably change here
 				parsingStage = object;	//Resuming reading at non-attributes is always in the context of an object
 			}
 		}

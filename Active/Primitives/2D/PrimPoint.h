@@ -28,7 +28,7 @@ namespace active::primitive {
 		 @param edgeCol The edge colour (nullopt = no edge)
 		*/
 		Point(const geometry::Point& point, attribute::Pen pn = attribute::Pen{},
-					   attribute::Colour::Option edgeCol = attribute::colour::black) :
+					   std::optional<attribute::Colour> edgeCol = attribute::colour::black) :
 				Primitive{pn, edgeCol}, geometry::Point{point} {}
 		/*!
 		 Copy constructor
@@ -57,7 +57,7 @@ namespace active::primitive {
 		 Get the primitive rectilinear bounds
 		 @return The primitive bounds
 		 */
-		geometry::Box::Option bounds() const override { return geometry::Box{*this}; }
+		std::optional<geometry::Box> bounds() const override { return geometry::Box{*this}; }
 
 		// MARK: Functions (mutating)
 

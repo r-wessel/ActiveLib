@@ -28,13 +28,6 @@ namespace active::geometry {
 		// MARK: - Types
 		
 		using enum Position;
-		
-			///Unique pointer
-		using Unique = std::unique_ptr<Arc>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Arc>;
-			///Optional
-		using Option = std::optional<Arc>;
 
 		// MARK: - Constructors
 		
@@ -210,7 +203,7 @@ namespace active::geometry {
 			Get the bounds of the arc
 			@return The bounds of the arc
 		*/
-		Box::Unique bounds() const;
+		std::unique_ptr<Box> bounds() const;
 		/*!
 			Get the length of the arc in 2D
 			@return The 2D arc length

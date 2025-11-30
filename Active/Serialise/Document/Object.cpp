@@ -42,7 +42,7 @@ namespace {
 	type: The document object type - used to reconstruct the original object. NB: Can use type_info.name, but isn't consistent
 	objTag: An optional serialisation tag (differentiating the object role when there are many of the same type for different purposes)
   --------------------------------------------------------------------*/
-Object::Object(const String& type, String::Option objTag) {
+Object::Object(const String& type, std::optional<String> objTag) {
 	docType = type;
 	if (objTag)
 		tag = *objTag;
@@ -70,7 +70,7 @@ const Object* Object::object(const String& tag) const {
  
 	return: The requested value (nullopt on failure)
   --------------------------------------------------------------------*/
-const ValueSetting::Option Object::value(const String& name) const {
+const std::optional<ValueSetting> Object::value(const String& name) const {
 	if (const auto& match = std::find_if(values.begin(), values.end(), [&](auto& value) { return value.name() == name; }); match != values.end())
 		return *match;
 	return std::nullopt;
@@ -105,7 +105,7 @@ bool Object::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-active::serialise::Cargo::Unique Object::getCargo(const active::serialise::Inventory::Item& item) const {
+std::unique_ptr<active::serialise::Cargo> Object::getCargo(const active::serialise::Inventory::Item& item) const {
 	if (item.ownerType != &typeid(Object))
 		return nullptr;
 	using namespace active::serialise;
@@ -174,7 +174,7 @@ bool Object::validate(Management* management) {
  
 	return: True if the cargo was accepted (false will trigger an import failure - simply discard if this is not an error)
   --------------------------------------------------------------------*/
-bool Object::insert(Cargo::Unique&& cargo, const active::serialise::Inventory::Item& item) {
+bool Object::insert(std::unique_ptr<Cargo>&& cargo, const active::serialise::Inventory::Item& item) {
 	if (item.ownerType != &typeid(Object))
 		return true;
 	switch (item.index) {

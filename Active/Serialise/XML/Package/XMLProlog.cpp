@@ -69,7 +69,7 @@ bool XMLProlog::fillInventory(Inventory& inventory) const {
  
 	return: The requested cargo (nullptr on failure)
   --------------------------------------------------------------------*/
-Cargo::Unique XMLProlog::getCargo(const Inventory::Item& item) const {
+std::unique_ptr<Cargo> XMLProlog::getCargo(const Inventory::Item& item) const {
 	switch (item.index) {
 		case FieldIndex::version:
 			return std::make_unique<StringWrap>(version);

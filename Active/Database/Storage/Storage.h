@@ -44,14 +44,14 @@ namespace active::database {
 			public:
 				Table(const Storage& storage, const std::pair<TableID, std::unordered_set<ObjID>>& table) : m_storage{storage}, m_table(table) {}
 				bool fillInventory(active::serialise::Inventory& inventory) const override;
-				active::serialise::Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+				std::unique_ptr<active::serialise::Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 			private:
 				const Storage& m_storage;
 				const std::pair<TableID, std::unordered_set<ObjID>>& m_table;
 			};
 			Wrapper(const Storage& storage) : m_storage{storage}, m_outline(storage.m_engine->getOutline()) {}
 			bool fillInventory(active::serialise::Inventory& inventory) const override;
-			active::serialise::Cargo::Unique getCargo(const active::serialise::Inventory::Item& item) const override;
+			std::unique_ptr<active::serialise::Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 		private:
 			const Storage& m_storage;
 			Engine::Outline m_outline;
@@ -126,7 +126,7 @@ namespace active::database {
 		 */
 		active::container::Vector<Obj> getObjects(const Filter& filter, std::optional<TableID> tableID = std::nullopt,
 												  std::optional<DocID> documentID = std::nullopt) const {
-			return m_engine->getObjects(tableID, documentID);
+			return m_engine->getObjects(filter, tableID, documentID);
 		}
 		/*!
 		 Write an object to the database
@@ -213,7 +213,7 @@ namespace active::database {
 		return: The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID, typename TableType>
-	active::serialise::Cargo::Unique Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID, TableType>::Wrapper::getCargo(const active::serialise::Inventory::Item& item) const {
+	std::unique_ptr<active::serialise::Cargo> Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID, TableType>::Wrapper::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.available >= m_outline.size())
 			return nullptr;
 		auto source = m_outline.begin();
@@ -245,7 +245,7 @@ namespace active::database {
 		return: The requested cargo (nullptr on failure)
 	  --------------------------------------------------------------------*/
 	template<typename Obj, typename Transport, typename DocID, typename ObjID, typename DBaseID, typename TableID, typename TableType>
-	active::serialise::Cargo::Unique Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID, TableType>::Wrapper::Table::getCargo(const active::serialise::Inventory::Item& item) const {
+	std::unique_ptr<active::serialise::Cargo> Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID, TableType>::Wrapper::Table::getCargo(const active::serialise::Inventory::Item& item) const {
 		if (item.available >= m_table.second.size())
 			return nullptr;
 		auto iter = m_table.second.begin();

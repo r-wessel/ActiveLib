@@ -93,12 +93,12 @@ namespace {
 		
 		@return An array containing the byte size of each character found (nullopt if no valid chars found)
 	*/
-	std::optional<std::vector<String::size_type>> collectCharByteCount(const char* text, String::sizeOption howMany = std::nullopt,
+	std::vector<String::char_size> collectCharByteCount(const char* text, String::sizeOption howMany = std::nullopt,
 																		DataFormat format = DataFormat{}) {
-		if (text == nullptr)
-			return std::nullopt;
 			//Array to collect character sizes
-		std::vector<String::size_type> charLength;
+		std::vector<String::char_size> charLength;
+		if (text == nullptr)
+			return charLength;
 			//Note: loop still works as expected even when howMany = nullopt
 		while (!howMany || (*howMany)--) {
 			if (auto nextLen = String::getCharacterByteCount(text, std::nullopt, format); nextLen && (nextLen > 0)) {
@@ -107,7 +107,7 @@ namespace {
 			} else
 				break;
 		}
-		return charLength.empty() ? std::nullopt : std::optional(charLength);
+		return charLength;
 	} //collectCharByteCount
 	
 	
@@ -234,16 +234,17 @@ namespace {
 	 
 		@return An array of single and multi-byte charsfrom the source string (nullopt on failure)
 	*/
-	std::optional<std::vector<String>> splitSingleChars(const String& source) {
+	std::vector<String> splitSingleChars(const String& source) {
+		std::vector<String> result;
 		auto charBytes = collectCharByteCount(source.data());
-		if (!charBytes)
-			return std::nullopt;
+		if (charBytes.empty())
+			return result;
 			//The first string in the result is reserved for single-byte chars
 		std::string singleChars;
 		std::set<String> multiChar;
 		const auto* text = source.data();
 			//Iterate through all chars, either appending to the single-bytes chars item or collecting in a set of unique multi-byte chars
-		for (auto& charSize : *charBytes) {
+		for (auto& charSize : charBytes) {
 			if (charSize == 1) {
 					//Make sure we don't have the char already
 				if (singleChars.find(text[0]) == std::string::npos)
@@ -253,11 +254,12 @@ namespace {
 				//Move to the next char
 			text += charSize;
 		}
-		std::vector<String> splitString{String{singleChars}};
+		result.reserve(multiChar.size() + 1);
+		result.emplace_back(String{singleChars});
 			//Append the unique multi-byte chars to the result
 		for (const auto& i : multiChar)
-			splitString.push_back(i);
-		return std::optional(splitString);
+			result.emplace_back(i);
+		return result;
 	} //splitSingleChars
 	
 	
@@ -325,15 +327,15 @@ namespace {
 	 
 		return: A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
 	  --------------------------------------------------------------------*/
-	std::pair<char32_t, short> getUTF32CharFromUTF8(const char*& text, String::size_type howMany) {
-		std::pair<char32_t, short> result{0, 0};
+	std::pair<char32_t, String::char_size> getUTF32CharFromUTF8(const char*& text, String::size_type howMany) {
+		std::pair<char32_t, String::char_size> result{0, 0};
 			//Determine text points to a valid character and get the size
 		auto size = String::getCharacterByteCount(text, howMany, UTF8);
 		if (!size || (size == 0))
 			return result;
 			//Get the first byte to initialise the code point
 		result.first = static_cast<unsigned char>(*text);
-		result.second = static_cast<short>(*size);
+		result.second = *size;
 		++text;
 			//If this is a single-byte character, we're done
 		if (result.second > 1) {
@@ -355,8 +357,8 @@ namespace {
 	 
 		return: A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
 	  --------------------------------------------------------------------*/
-	std::pair<char32_t, short> getUTF32CharFromUTF16(const char16_t*& text, bool isBigEndian, String::size_type howMany) {
-		std::pair<char32_t, short> result{0, 0};
+	std::pair<char32_t, String::char_size> getUTF32CharFromUTF16(const char16_t*& text, bool isBigEndian, String::size_type howMany) {
+		std::pair<char32_t, String::char_size> result{0, 0};
 		if (howMany < sizeof(char16_t))
 			return result;	//No chars to read from source
 		result.first = static_cast<char32_t>(*text);
@@ -412,7 +414,7 @@ String::String(const char* source, sizeOption howMany, DataFormat format) {
  --------------------------------------------------------------------*/
 String::String(const std::u16string& source, sizeOption howMany) {
 	const char16_t* text = source.data();
-		//First convert tp UTF-32
+		//First convert to UTF-32
 	if (auto string32 = fromUTF16(text, Memory::defaultEndian, howMany); string32) {
 			//Then convert UTF-32 to UTF-8
 		const char32_t* text32 = string32->data();
@@ -480,29 +482,6 @@ String::String(double val, double prec, bool padZero) {
 
 
 /*--------------------------------------------------------------------
-	Copy constructor
-
-	source: The object to be copied
-	startPos: The position to begin copying from
-	howMany: The number of characters to copy
-  --------------------------------------------------------------------*/
-String::String(const String& source) {
-	m_string = source.m_string;
-} //String::String
-
-
-/*--------------------------------------------------------------------
-	Move constructor
- 
-	source: The object to move
-  --------------------------------------------------------------------*/
-String::String(String&& source) noexcept :
-		m_string{std::move(source.m_string)} {
-}
-
-//MARK: - Static functions
-
-/*--------------------------------------------------------------------
 	Get the number of bytes in the specified text (counting only valid UTF-8 characters)
  
 	text: The source text
@@ -520,7 +499,7 @@ String::size_type String::getValidByteCount(const char* text, sizeOption howMany
 	const auto* endPos = text;
 	do {
 			//Get the size of the next char
-		if (auto nextLen = String::getCharacterByteCount(endPos, howMany, format); nextLen && (nextLen > 0)) {
+		if (auto nextLen = String::getCharacterByteCount(endPos, howMany, format); nextLen && (*nextLen > 0)) {
 			endPos += *nextLen;
 				//If the source is byte-limited, ensure the remaining count is updated
 			if (howMany) {
@@ -542,16 +521,16 @@ String::size_type String::getValidByteCount(const char* text, sizeOption howMany
 	howMany: The number of bytes in the array
 	format: The text data format
  
-	return: The character width in bytes (nullopt on failure, either null char or bad encoding)
+	return: The character width in bytes (nullopt on failure, i.e. bad encoding)
   --------------------------------------------------------------------*/
-String::sizeOption String::getCharacterByteCount(const char* text, sizeOption howMany, DataFormat format) {
+String::charSizeOption String::getCharacterByteCount(const char* text, sizeOption howMany, DataFormat format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	switch (format.encoding) {
 		case UTF8: {
 			if (*text == 0)
 				return 0;
-			size_type result = 1;
+			char_size result = 1;
 				//If the upper bit is clear, it's a 1-byte char
 			if ((*text & 0x80) != 0) {
 					//Check for other UTF-8 byte sizes
@@ -584,8 +563,8 @@ String::sizeOption String::getCharacterByteCount(const char* text, sizeOption ho
 			auto uniChar = *(reinterpret_cast<const char16_t*>(text));
 			if (uniChar == 0)
 				return 0;
-			size_type size = isWithinBMP(uniChar) ? 2 : 4;
-			return (howMany && (howMany < size)) ? std::nullopt : sizeOption(size);
+			char_size size = isWithinBMP(uniChar) ? 2 : 4;
+			return (howMany && (howMany < size)) ? std::nullopt : charSizeOption(size);
 		}
 		case UTF32:
 			if (howMany && (howMany < 4))
@@ -593,7 +572,7 @@ String::sizeOption String::getCharacterByteCount(const char* text, sizeOption ho
 			auto uniChar = *(reinterpret_cast<const char32_t*>(text));
 			if (uniChar == 0)
 				return 0;
-			return isValidUnicode(uniChar) ? sizeOption(4) : std::nullopt;
+			return isValidUnicode(uniChar) ? charSizeOption(4) : std::nullopt;
 	}
 	return 0;
 } //String::getCharacterByteCount
@@ -634,11 +613,11 @@ String::sizeOption String::getCharacterCount(const char* text, sizeOption howMan
  
 	text: The source text
 	howMany: The number of bytes in the text
-			@param format The source data format
+	format: The source data format
  
 	return: The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/
-std::pair<char32_t, String::size_type> String::getUnicodeChar(const char* text, sizeOption howMany, DataFormat format) {
+std::pair<char32_t, String::char_size> String::getUnicodeChar(const char* text, sizeOption howMany, DataFormat format) {
 	if (text == nullptr)
 		return {};
 	switch (format.encoding) {
@@ -650,7 +629,7 @@ std::pair<char32_t, String::size_type> String::getUnicodeChar(const char* text, 
 			return result;
 		}
 		case UTF32: {
-			std::pair<char32_t, String::size_type> result{0, 0};
+			std::pair<char32_t, String::char_size> result{0, 0};
 			if (howMany && (*howMany < sizeof(char32_t)))
 				return result;
 			auto source = reinterpret_cast<const char32_t*>(text);
@@ -663,7 +642,7 @@ std::pair<char32_t, String::size_type> String::getUnicodeChar(const char* text, 
 			return result;
 		}
 		case ascii: case ISO8859_1:
-			std::pair<char32_t, String::size_type> result{0, 0};
+			std::pair<char32_t, String::char_size> result{0, 0};
 			if (howMany && (*howMany < 1))
 				return result;
 			result.first = static_cast<char32_t>(text[0]);
@@ -1313,14 +1292,14 @@ String::sizeOption String::findIf(const Filter& filter) const {
   --------------------------------------------------------------------*/
 String::sizeOption String::findFirstOf(const String& toFind, size_type startPos) const {
 	auto splitString = splitSingleChars(toFind);
-	if (!splitString)
+	if (splitString.empty())
 		return std::nullopt;
 	auto firstPos = npos;
 	auto startByte = (startPos == 0) ? 0 : getByteCountCharLimited(m_string.data(), startPos, true);
 	if (!startByte)
 		return std::nullopt;
 	bool isFirst = true;
-	for (auto& iter : *splitString) {
+	for (auto& iter : splitString) {
 		auto nextPos = isFirst ? m_string.find_first_of(iter.m_string, *startByte) : m_string.find(iter.m_string, *startByte);
 		isFirst = false;
 		if (nextPos < firstPos) {
@@ -1343,26 +1322,26 @@ String::sizeOption String::findFirstOf(const String& toFind, size_type startPos)
   --------------------------------------------------------------------*/
 String::sizeOption String::findFirstNotOf(const String& toFind, size_type startPos) const {
 	auto splitString = splitSingleChars(toFind);
-	if (!splitString)
+	if (splitString.empty())
 		return std::nullopt;
 	auto charBytes = collectCharByteCount(data());
-	if (!charBytes)
+	if (charBytes.empty())
 		return std::nullopt;
-	std::vector<size_type> minPos(splitString->size());
+	std::vector<size_type> minPos(splitString.size());
 	size_type startByte = 0;
-	for (int sizeIndex = 0; sizeIndex < charBytes->size(); ++sizeIndex) {
-		auto size = (*charBytes)[sizeIndex];
+	for (int sizeIndex = 0; sizeIndex < charBytes.size(); ++sizeIndex) {
+		auto size = charBytes[sizeIndex];
 		if (sizeIndex < startPos) {
 			startByte += size;
 			continue;
 		}
 		size_type lowest = npos;
-		for (int charIndex = 0; charIndex < splitString->size(); ++charIndex) {
+		for (int charIndex = 0; charIndex < splitString.size(); ++charIndex) {
 			if (minPos[charIndex] > startByte)
 				continue;
 			minPos[charIndex] = (charIndex == 0) ?
-					m_string.find_first_of((*splitString)[charIndex].m_string, startByte) :
-					m_string.find((*splitString)[charIndex].m_string, startByte);
+					m_string.find_first_of((splitString)[charIndex].m_string, startByte) :
+					m_string.find((splitString)[charIndex].m_string, startByte);
 			if (minPos[charIndex] < lowest)
 				lowest = minPos[charIndex];
 		}
@@ -1385,12 +1364,12 @@ String::sizeOption String::findFirstNotOf(const String& toFind, size_type startP
   --------------------------------------------------------------------*/
 String::sizeOption String::findLastOf(const String& toFind, sizeOption lastPos) const {
 	auto splitString = splitSingleChars(toFind);
-	if (!splitString)
+	if (splitString.empty())
 		return std::nullopt;
 	auto firstPos = npos;
 	auto startByte = (lastPos == npos) ? npos : getByteCountCharLimited(m_string.data(), lastPos, false);
 	bool isFirst = true;
-	for (auto& iter : *splitString) {
+	for (auto& iter : splitString) {
 		auto nextPos = isFirst ? m_string.find_last_of(iter.m_string, *startByte) : m_string.rfind(iter.m_string, *startByte);
 		isFirst = false;
 		if (nextPos < firstPos) {
@@ -1414,30 +1393,30 @@ String::sizeOption String::findLastOf(const String& toFind, sizeOption lastPos) 
 String::sizeOption String::findLastNotOf(const String& toFind, sizeOption lastPos) const {
 		//Divide the chars to find into single-byte and multi-byte chars
 	auto splitString = splitSingleChars(toFind);
-	if (!splitString)
+	if (splitString.empty())
 		return std::nullopt;
 		//Calculate the number of bytes for each character in the string to be searched (allows us to iterate backward)
 	auto charBytes = collectCharByteCount(data(), lastPos);
-	if (!charBytes)
+	if (charBytes.empty())
 		return std::nullopt;
 		//If the character to start from is not specified, use the last character in the string
 	if ((lastPos == std::nullopt) || (lastPos == npos))
-		lastPos = charBytes->size() - 1;
+		lastPos = charBytes.size() - 1;
 		//Add up all the bytes in the string (total number of bytes used by the string)
-	auto lastByte = std::reduce(charBytes->begin(), charBytes->end());
-	std::vector<size_type> maxPos(splitString->size(), lastByte);
-	for (auto iter = charBytes->rbegin(); iter != charBytes->rend(); ++iter, --(*lastPos)) {
+	auto lastByte = std::reduce(charBytes.begin(), charBytes.end());
+	std::vector<size_type> maxPos(splitString.size(), lastByte);
+	for (auto iter = charBytes.rbegin(); iter != charBytes.rend(); ++iter, --(*lastPos)) {
 		auto charStart = lastByte - *iter;
 		--lastByte;
 		if (*iter == 1) {
-			if ((*splitString)[0].m_string.find(m_string[charStart]) == npos)
+			if (splitString.front().m_string.find(m_string[charStart]) == npos)
 				return lastPos;
 		} else {
 			String::sizeOption highest;
-			for (auto index = 1; index < splitString->size(); ++index) {
+			for (auto index = 1; index < splitString.size(); ++index) {
 				if ((maxPos[index] < charStart) || (maxPos[index] == npos))
 					continue;
-				maxPos[index] = m_string.rfind((*splitString)[index].m_string, lastByte);
+				maxPos[index] = m_string.rfind(splitString[index].m_string, lastByte);
 				if ((maxPos[index] != npos) && (!highest || (maxPos[index] > *highest)))
 					highest = maxPos[index];
 			}

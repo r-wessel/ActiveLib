@@ -35,17 +35,7 @@ namespace active::geometry {
 	*/
 	class Point : public virtual utility::Cloner {
 	public:
-		
-		// MARK: - Types
-		
 		using enum Position;
-
-			///Unique pointer
-		using Unique = std::unique_ptr<Point>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Point>;
-			///Optional
-		using Option = std::optional<Point>;
 		
 		// MARK: Constructors
 			

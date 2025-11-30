@@ -25,7 +25,7 @@ using namespace active::math;
 	
 	return: An unique_ptr to a plane, or 0 if invalid
   --------------------------------------------------------------------*/
-Plane::Option Plane::create(double offset, const Vector3& norm) {
+std::optional<Plane> Plane::create(double offset, const Vector3& norm) {
 	return norm.isEmpty() ? std::nullopt : std::make_optional(Plane(offset, norm));
 } //Plane::create
 
@@ -38,7 +38,7 @@ Plane::Option Plane::create(double offset, const Vector3& norm) {
 	
 	return: An unique_ptr to a plane, or 0 if invalid
   --------------------------------------------------------------------*/
-Plane::Option Plane::create(const Point& point, const Vector3& norm) {
+std::optional<Plane> Plane::create(const Point& point, const Vector3& norm) {
 	return norm.isEmpty() ? std::nullopt : std::make_optional(Plane(norm.normalised().dotProduct(Vector3(point)), norm));
 } //Plane::create
 
@@ -52,7 +52,7 @@ Plane::Option Plane::create(const Point& point, const Vector3& norm) {
 	
 	return: An unique_ptr to a plane, or 0 if invalid
   --------------------------------------------------------------------*/
-Plane::Option Plane::create(const Point& p1, const Point& p2, const Point& p3) {
+std::optional<Plane> Plane::create(const Point& p1, const Point& p2, const Point& p3) {
 	Vector3 pt1(p1 - p2);
 	Vector3 pt2(p3 - p2);
 	Vector3 norm(pt1.vectorProduct(pt2).normalised());
@@ -300,7 +300,7 @@ double Plane::heightAt(const Point& ref, double prec) const {
 	
 	return: The point of intersection between the line and plane
   --------------------------------------------------------------------*/
-XPoint::Option Plane::intersectionWith(const Line& ref, double prec) const {
+std::optional<XPoint> Plane::intersectionWith(const Line& ref, double prec) const {
 	Vector3 vect{Vector3(ref).normalised()};
 	double dot = m_normal.dotProduct(vect);
 	if (isZero(dot, prec))
@@ -321,7 +321,7 @@ XPoint::Option Plane::intersectionWith(const Line& ref, double prec) const {
 	
 	return: The line at which the planes intersect (or 0 if they are parallel)
   --------------------------------------------------------------------*/
-Line::Option Plane::intersectionWith(const Plane& ref, double prec) const {
+std::optional<Line> Plane::intersectionWith(const Plane& ref, double prec) const {
 	Vector3 ortho{m_normal.vectorProduct(ref.m_normal)};
 	if (ortho.isEmpty())
 		return std::nullopt;

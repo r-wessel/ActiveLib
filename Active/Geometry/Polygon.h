@@ -61,12 +61,6 @@ namespace active::geometry {
 
 			///Base storage class for Polygon
 		using base = container::Vector<PolyPoint>;
-			///Unique pointer
-		using Unique = std::unique_ptr<Polygon>;
-			///Shared pointer
-		using Shared = std::shared_ptr<Polygon>;
-			///Optional
-		using Option = std::optional<Polygon>;
 
 		/// The default number of vertices in a new polygon
 		static const vertex_index defSize = 5;
@@ -129,7 +123,7 @@ namespace active::geometry {
 			Clone method, copying just the raw geometry (all vertices will be reduced to PolyPoints)
 			@return A duplicate of this object's geometry
 		*/
-		virtual Polygon::Unique cloneGeometry() const;
+		virtual std::unique_ptr<Polygon> cloneGeometry() const;
 		
 		// MARK: - Public variables
 		
@@ -319,7 +313,7 @@ namespace active::geometry {
 			Get the polygon bounds
 			@return The polygon bounds
 		*/
-		Box::Option bounds() const;
+		std::optional<Box> bounds() const;
 		/*!
 			Calculate the polygon perimeter (non-closure handled)
 			@return The total perimeter (plan only)
@@ -369,7 +363,7 @@ namespace active::geometry {
 			Get a point inside the polygon
 			@return A point inside the polygon (nullopt on failure)
 		*/
-		Point::Option getInternalPoint() const;
+		std::optional<Point> getInternalPoint() const;
 		/*!
 			Find a vertex with the specified ID (optionally searching holes)
 			@param ID The ID to search for
@@ -553,7 +547,7 @@ namespace active::geometry {
 			@param hole The hole to emplace
 			@return The emplaced hole
 		*/
-		Polygon* emplaceHole(Polygon::Unique&& hole);
+		Polygon* emplaceHole(std::unique_ptr<Polygon>&& hole);
 		/*!
 			Emplace a hole in the polygon
 			@param hole The hole to emplace
@@ -580,7 +574,7 @@ namespace active::geometry {
 			@param which The index of the hole to release
 			@return The released hole polygon
 		*/
-		Polygon::Unique releaseHole(part_index which);
+		std::unique_ptr<Polygon> releaseHole(part_index which);
 		/*!
 			Introduce a new node along the specified polygon edge
 			@param ID The ID of the edge vertex to start searching from
@@ -667,12 +661,6 @@ namespace active::geometry {
 		using base = container::Vector<Polygon>;
 			///Size type for indexing etc
 		using size_type = typename base::size_type;
-			///Unique pointer
-		using Unique = std::unique_ptr<PolyVector>;
-			///Shared pointer
-		using Shared = std::shared_ptr<PolyVector>;
-			///Optional
-		using Option = std::optional<PolyVector>;
  
 		//MARK: - Constructors
 		
