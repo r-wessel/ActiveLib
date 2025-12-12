@@ -98,7 +98,7 @@ namespace active::serialise {
 		*/
 		bool readSetting(const setting::Value& source) override {
 				//If Value supports conversion to this type, assign directly
-			if constexpr(requires (setting::Value& v) { base::get() = v; }) {
+			if constexpr(requires (const setting::Value& v) { base::get() = v; }) {
 				base::get() = source;
 				return true;
 			}

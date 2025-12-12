@@ -50,6 +50,7 @@ namespace active::database {
 				const std::pair<TableID, std::unordered_set<ObjID>>& m_table;
 			};
 			Wrapper(const Storage& storage) : m_storage{storage}, m_outline(storage.m_engine->getOutline()) {}
+			virtual const Storage& getStore() const { return m_storage; }
 			bool fillInventory(active::serialise::Inventory& inventory) const override;
 			std::unique_ptr<active::serialise::Cargo> getCargo(const active::serialise::Inventory::Item& item) const override;
 		private:
@@ -218,7 +219,7 @@ namespace active::database {
 			return nullptr;
 		auto source = m_outline.begin();
 		std::advance(source, item.available);
-		return std::make_unique<Wrapper::Table>(m_storage, *source);
+		return std::make_unique<Wrapper::Table>(getStore(), *source);
 	} //Storage<Obj, Transport, DocID, ObjID, DBaseID, TableID>::Wrapper::getCargo
 	
 
