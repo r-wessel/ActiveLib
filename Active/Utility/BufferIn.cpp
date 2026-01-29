@@ -695,7 +695,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 	bool isCharMatched = false,	//True if multiple characters are to be matched and at least one has been found
 		 isEscaped = false;	//True if the next char is escaped
 	Memory::sizeOption foundStart;
-	auto seekScope = defer([&]{
+	auto seekScope = defer([this, &isCharMatched, &foundBuffer, &dataBuffer, &isFoundSkipped, &foundStart, &isFoundPooled, &pool]{
 		if (isCharMatched)
 			std::swap(foundBuffer, dataBuffer);
 			//If a found expression is to remain in the buffer, rewind to where it started
@@ -716,7 +716,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 		if (uniChar.second == 0)
 			return isContiguousMatch && isCharMatched && !isAllMatched;
 			//Once a char is read, the following code must be executed for any exit from this scope
-		auto loopScope = defer([&]{
+		auto loopScope = defer([&dataBuffer, &uniChar]{
 			if (dataBuffer && (uniChar.second > 0))
 				dataBuffer->push_back(uniChar.first);
 		});
