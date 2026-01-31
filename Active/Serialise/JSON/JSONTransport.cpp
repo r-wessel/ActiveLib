@@ -1114,8 +1114,10 @@ namespace {
 			}
 			for (entryItem.available = 0; entryItem.available < limit; ++entryItem.available) {
 				auto content = cargo.getCargo(entryItem);
-				if (!content)
+				if (!content) {
+					isFirstItem = isFirstValue = false;
 					break;	//Discontinue an inventory item when the supply runs out
+				}
 				if (isFirstItem)
 					isFirstItem = false;	//This has been delayed until a first value is actually written
 				else {
