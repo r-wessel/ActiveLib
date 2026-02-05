@@ -45,12 +45,14 @@ namespace active::math {
 	constexpr double metreToDecimetre = 10;
 	constexpr double metreToCentimetre = 1e2;
 	constexpr double metreToMillimetre = 1e3;
+	constexpr double metreToMicron = 1e6;
 	constexpr double metreToInch = metreToMillimetre / inchToMillimetre;
 	constexpr double metreToFoot = metreToInch / footToInch;
 	constexpr double metreToYard = metreToFoot / yardToFoot;
 	constexpr double metreToMile = 0.0006213712;
 	
 		///Area unit conversions
+	constexpr double metre2ToMicron2 = metreToMicron * metreToMicron;
 	constexpr double metre2ToMillimetre2 = metreToMillimetre * metreToMillimetre;
 	constexpr double metre2ToCentimetre2 = metreToCentimetre * metreToCentimetre;
 	constexpr double metre2ToAre = 0.01;
@@ -59,11 +61,12 @@ namespace active::math {
 	constexpr double metre2ToFoot2 = metreToFoot * metreToFoot;
 	constexpr double metre2ToYard2 = metreToYard * metreToYard;
 	constexpr double metre2ToMile2 = metreToMile * metreToMile;
-	
+	constexpr double metre2ToAcre = 0.0002471054;
+
 		///Volume unit conversions
 	constexpr double metre3ToLitre = 1000.0;
-	constexpr double metre3ToCentimetre3 = metre2ToCentimetre2 * metreToMillimetre;
-	constexpr double metre3ToMillimetre3 = metre2ToMillimetre2 * metreToCentimetre;
+	constexpr double metre3ToCentimetre3 = metre2ToCentimetre2 * metreToCentimetre;
+	constexpr double metre3ToMillimetre3 = metre2ToMillimetre2 * metreToMillimetre;
 	constexpr double metre3ToInch3 = metre2ToInch2 * metreToInch;
 	constexpr double metre3ToFoot3 = metre2ToFoot2 * metreToFoot;
 	constexpr double metre3ToYard3 = metre2ToYard2 * metreToYard;

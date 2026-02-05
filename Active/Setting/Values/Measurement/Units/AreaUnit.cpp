@@ -14,6 +14,7 @@ using namespace active::math;
 namespace active::measure {
 
 	std::array<const char*, AreaUnit::areaCount> AreaUnit::tags {
+		"micronSquare",
 		"millimetreSquare",
 		"centimetreSquare",
 		"metreSquare",
@@ -23,10 +24,12 @@ namespace active::measure {
 		"footSquare",
 		"yardSquare",
 		"mileSquare",
+		"acre",
 	};
 
 	
 	std::array<const char*, AreaUnit::areaCount> AreaUnit::abbreviations {
+		"μm2",
 		"mm2",
 		"cm2",
 		"m2",
@@ -36,10 +39,12 @@ namespace active::measure {
 		"ft2",
 		"yd2",
 		"mi2",
+		"ac",
 	};
 
 	
 	std::array<double, AreaUnit::areaCount> AreaUnit::conversions {
+		1.0 / metre2ToMicron2,
 		1.0 / metre2ToMillimetre2,
 		1.0 / metre2ToCentimetre2,
 		1.0,
@@ -48,7 +53,8 @@ namespace active::measure {
 		1.0 / metre2ToInch2,
 		1.0 / metre2ToFoot2,
 		1.0 / metre2ToYard2,
-		1.0 / metreToMile,
+		1.0 / metre2ToMile2,
+		1.0 / metre2ToAcre,
 	};
 
 	
@@ -58,6 +64,8 @@ namespace active::measure {
 		true,
 		true,
 		true,
+		true,
+		false,
 		false,
 		false,
 		false,

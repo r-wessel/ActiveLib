@@ -14,6 +14,7 @@ namespace active::measure {
 	
 		///Enumeration of known length measurement units
 	enum class LengthType : char {
+		micron,
 		millimetre,
 		centimetre,
 		metre,

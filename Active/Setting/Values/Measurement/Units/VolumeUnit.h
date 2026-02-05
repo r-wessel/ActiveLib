@@ -15,7 +15,9 @@ namespace active::measure {
 		millilitre,
 		centilitre,
 		litre,
-		meterCubed,
+		millimetreCubed,
+		centimetreCubed,
+		metreCubed,
 		inchCubed,
 		footCubed,
 		yardCubed,
@@ -35,7 +37,7 @@ namespace active::measure {
 		// MARK: - Static functions
 		
 			//Get unit for cubic metres
-		static VolumeUnit metresCubed(uint8_t prec = 6, bool suffixes = true) { return VolumeUnit{meterCubed, prec, true, suffixes}; }
+		static VolumeUnit metresCubed(uint8_t prec = 6, bool suffixes = true) { return VolumeUnit{metreCubed, prec, true, suffixes}; }
 			//Get unit for cubic feet
 		static VolumeUnit feetCubed(uint8_t prec = 5, bool suffixes = true) { return VolumeUnit{footCubed, prec, true, suffixes}; }
 			//Get unit for gallons
@@ -46,7 +48,7 @@ namespace active::measure {
 		/*!
 			Default constructor
 		*/
-		VolumeUnit() : Unit{meterCubed} {}	//Default to cubic metres - can be overridden as required
+		VolumeUnit() : Unit{metreCubed} {}	//Default to cubic metres - can be overridden as required
 		/*!
 			Constructor
 			@param type The primary unit type

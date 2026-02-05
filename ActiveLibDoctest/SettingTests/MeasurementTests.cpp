@@ -3,6 +3,7 @@
 #include "Active/Setting/Values/Measurement/AngleValue.h"
 #include "Active/Setting/Values/Measurement/LengthValue.h"
 #include "Active/Setting/Values/Measurement/MassValue.h"
+#include "Active/Setting/Values/Measurement/VolumeValue.h"
 #include "Active/Utility/MathFunctions.h"
 
 #include <variant>
@@ -57,6 +58,18 @@ TEST_SUITE(TESTQ(MeasurementTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(massValue.operator String() == "0.2205lb", TEST_MESSAGE(Conversion to pounds failed));
 		massValue = "5";
 		CHECK_MESSAGE(isEqual(massValue, 2.267962, 1e-4), TEST_MESSAGE(Conversion from pounds to kilos failed));
+	}
+
+		///Tests for for mass values
+	TEST_CASE(TESTQ(testVolumeValues)) {
+		using enum active::measure::VolumeType;
+		VolumeValue volumeValue;
+		volumeValue = "1200gal";
+		CHECK_MESSAGE(isEqual(volumeValue, 4.542494, 1e-4), TEST_MESSAGE(Conversion from gallons to cubic metres failed));
+		volumeValue = "6000cm3";
+		CHECK_MESSAGE(isEqual(volumeValue, 0.006), TEST_MESSAGE(Conversion from cubic centimetres to cubic metres failed));
+		volumeValue.setUnit(VolumeUnit::feetCubed());
+		CHECK_MESSAGE(volumeValue.operator String() == "0.21189ft3", TEST_MESSAGE(Conversion to cubic feet failed));
 	}
 
 TEST_SUITE_CLOSE

@@ -17,7 +17,9 @@ namespace active::measure {
 		"millilitre",
 		"centilitre",
 		"litre",
-		"meterCubed",
+		"millimetreCubed",
+		"centimetreCubed",
+		"metreCubed",
 		"inchCubed",
 		"footCubed",
 		"yardCubed",
@@ -29,6 +31,8 @@ namespace active::measure {
 		"ml3",
 		"cm3",
 		"l",
+		"mm3",
+		"cm3",
 		"m3",
 		"in3",
 		"ft3",
@@ -41,6 +45,8 @@ namespace active::measure {
 		1.0 / metre3ToMillimetre3,
 		1.0 / metre3ToCentimetre3,
 		1.0 / metre3ToLitre,
+		metre3ToMillimetre3,
+		metre3ToCentimetre3,
 		1.0,
 		1.0 / metre3ToInch3,
 		1.0 / metre3ToFoot3,
@@ -50,6 +56,8 @@ namespace active::measure {
 
 	
 	std::array<bool, VolumeUnit::volumeCount> VolumeUnit::metric {
+		true,
+		true,
 		true,
 		true,
 		true,

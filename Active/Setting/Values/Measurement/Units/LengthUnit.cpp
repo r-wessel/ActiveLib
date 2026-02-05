@@ -14,6 +14,7 @@ using namespace active::math;
 namespace active::measure {
 	
 	std::array<const char*, LengthUnit::lengthCount> LengthUnit::tags {
+		"micron",
 		"millimetre",
 		"centimetre",
 		"metre",
@@ -26,6 +27,7 @@ namespace active::measure {
 
 	
 	std::array<const char*, LengthUnit::lengthCount> LengthUnit::abbreviations {
+		"μm",
 		"mm",
 		"cm",
 		"m",
@@ -38,6 +40,7 @@ namespace active::measure {
 
 	
 	std::array<double, LengthUnit::lengthCount> LengthUnit::conversions {
+		1.0 / metreToMicron,
 		1.0 / metreToMillimetre,
 		1.0 / metreToCentimetre,
 		1.0,
@@ -50,6 +53,7 @@ namespace active::measure {
 
 	
 	std::array<bool, LengthUnit::lengthCount> LengthUnit::metric {
+		true,
 		true,
 		true,
 		true,

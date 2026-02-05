@@ -12,6 +12,7 @@ namespace active::measure {
 
 		///Enumeration of known area measurement units
 	enum class AreaType : char {
+		micronSquare,
 		millimetreSquare,
 		centimetreSquare,
 		metreSquare,
@@ -21,6 +22,7 @@ namespace active::measure {
 		footSquare,
 		yardSquare,
 		mileSquare,
+		acre,
 	};
 
 	
@@ -68,7 +70,7 @@ namespace active::measure {
 		// MARK: Unit constants
 
 			///The number of supported area measurement units
-		constexpr static int areaCount = static_cast<int>(mileSquare) + 1;
+		constexpr static int areaCount = static_cast<int>(acre) + 1;
 
 		static std::array<const char*, areaCount> tags;
 		static std::array<const char*, areaCount> abbreviations;
