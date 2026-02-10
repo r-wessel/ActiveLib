@@ -264,7 +264,7 @@ namespace active::utility {
 		static std::optional<std::u32string> toUnicode(const char*& text, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		/*!
 			Get a UTF-8 string from a UTF-32 source
-			@param text The source text
+			@param text The source text (when valid, points to the next byte beyond the found character on return)
 			@param isBigEndian True if byte ordering is big-endian
 			@param howMany The number of 32-bit code points in the text (nullopt = null-terminated)
 			@param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
@@ -273,7 +273,7 @@ namespace active::utility {
 		static std::optional<String> fromUnicode(const char32_t*& text, bool isBigEndian, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		/*!
 			Get a UTF-32 string from a UTF-16 (16-bit) source
-			@param text The source text
+			@param text The source text (when valid, points to the next byte beyond the found character on return)
 			@param isBigEndian True if byte ordering is big-endian
 			@param howMany The number of words (16-bit values) in the text (nullopt = null-terminated)
 			@param isCountRequired True if the specified number of words must be valid (ignored if howMany = nullopt)
@@ -282,7 +282,7 @@ namespace active::utility {
 		static std::optional<std::u32string> fromUTF16(const char16_t*& text, bool isBigEndian, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		/*!
 			Get a UTF-16 string from a UTF-32 source
-			@param text The source text
+			@param text The source text (when valid, points to the next byte beyond the found character on return)
 			@param howMany The number of code points in the text (nullopt = null-terminated)
 			@param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
 			@return The UTF-16 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)

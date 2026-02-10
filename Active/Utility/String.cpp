@@ -322,7 +322,7 @@ namespace {
 	/*--------------------------------------------------------------------
 		Get a UTF-32 char from a UTF-8 source
 	 
-		text: The UTF-8 source text
+		text: The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
 		howMany: The number of available bytes in the source
 	 
 		return: A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
@@ -351,7 +351,7 @@ namespace {
 	/*--------------------------------------------------------------------
 		Get a UTF-32 char from a UTF-16 source
 	 
-		text: The UTF-16 source text
+		text: The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
 		isBigEndian: True if byte ordering is big-endian
 		howMany: The number of available bytes in the source
 	 
