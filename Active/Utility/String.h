@@ -7,8 +7,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_UTILITY_STRING
 
 #include "Active/Utility/DataFormat.h"
-#include "Active/Utility/MathFunctions.h"
-#include "Active/Utility/Memory.h"
 
 #include <functional>
 #include <memory>
@@ -16,9 +14,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <string>
 
 namespace active::utility {
-	
-	class BufferIn;
-	class BufferOut;
 	
 	/// A Unicode-aware string class
 	/*!
@@ -68,6 +63,8 @@ namespace active::utility {
 		
 			///Constant to indicate an unspecified or non-existant position in std::string - use std::nullopt in this class
 		static constexpr size_type npos = std::string::npos;
+			///Default length precision (0.01mm)
+		static constexpr double eps = 1e-5;
 			///The line terminating char(s) for the current platform
 		static const String lineTerminator;
 			///All white space characters
@@ -87,11 +84,6 @@ namespace active::utility {
 			Default constructor
 		*/
 		String() {}
-		/*!
-			Constructor from an input buffer
-			@param source The source input buffer
-		*/
-		String(const BufferIn&& source);
 		/*!
 			Constructor from an input char array
 			@param source The character array to be copied
@@ -203,7 +195,7 @@ namespace active::utility {
 			@param prec The required precision
 			@param padZero True to pad the number to the specified precision with zeros
 		*/
-		explicit String(double val, double prec = math::eps, bool padZero = false);
+		explicit String(double val, double prec = eps, bool padZero = false);
 		/*!
 			Copy constructor
 			@param source The string to copy
@@ -222,71 +214,81 @@ namespace active::utility {
 		//MARK: - Static functions
 
 		/*!
-			Get the number of bytes in the specified text (counting only valid UTF8 characters)
-			@param text The source text
-			@param howMany The number of bytes in the text
-			@param charCount The maximum number of (encoded) chars to seek
-			@param format The text data format
-			@return The number of bytes in the text containing valid UTF8 characters
-		*/
+		 Get the number of bytes in the specified text (counting only valid UTF8 characters)
+		 @param text The source text
+		 @param howMany The number of bytes in the text
+		 @param charCount The maximum number of (encoded) chars to seek
+		 @param format The text data format
+		 @return The number of bytes in the text containing valid UTF8 characters
+		 */
 		static size_type getValidByteCount(const char* text, sizeOption howMany = std::nullopt, sizeOption charCount = std::nullopt, DataFormat format = DataFormat{});
 		/*!
-			Get the width of a specified character in bytes
-			@param text The source text
-			@param howMany The number of bytes in the array
-			@param format The text data format
-			@return The character width in bytes (nullopt for bad encoding)
-		*/
+		 Get the width of a specified character in bytes
+		 @param text The source text
+		 @param howMany The number of bytes in the array
+		 @param format The text data format
+		 @return The character width in bytes (nullopt for bad encoding)
+		 */
 		static charSizeOption getCharacterByteCount(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
-			Get the number of valid characters found at a specified address
-			@param text The source text
-			@param format The text data format
-			@param howMany The number of bytes in the array (nullopt = null-terminated)
-			@return The nummber of characters found (nullopt if bad encoding found)
-		*/
+		 Return the length of a string in bytes, limited by a character count
+		 @param text The source text
+		 @param howMany The number of characters to count (nullopt = null-terminated)
+		 @param isCountRequired True if the number of characters must exist in the text (unless howMany = nullopt)
+		 @param format The text data format
+		 @return The number of bytes in the char array (nullopt if isCountRequired and howMany not reached)
+		 */
+		static sizeOption getByteCountCharLimited(const char* text, String::sizeOption howMany = std::nullopt, bool isCountRequired = false,
+												  DataFormat format = DataFormat{});
+		/*!
+		 Get the number of valid characters found at a specified address
+		 @param text The source text
+		 @param format The text data format
+		 @param howMany The number of bytes in the array (nullopt = null-terminated)
+		 @return The nummber of characters found (nullopt if bad encoding found)
+		 */
 		static String::sizeOption getCharacterCount(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
-			Get a unicode (UTF-32) character from a specified source
-			@param text The source text
-			@param howMany The number of bytes in the text
-			@param format The source data format
-			@return The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
-		*/
+		 Get a unicode (UTF-32) character from a specified source
+		 @param text The source text
+		 @param howMany The number of bytes in the text
+		 @param format The source data format
+		 @return The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
+		 */
 		static std::pair<char32_t, char_size> getUnicodeChar(const char* text, sizeOption howMany = std::nullopt, DataFormat format = DataFormat{});
 		/*!
-			Get a UTF-32 string from a UTF-8 source
-			@param text The source UTF-8 text (advances to the byte beyond the last counted character)
-			@param howMany The number of bytes in the text (nullopt = null-terminated)
-			@param isCountRequired True if the specified number of bytes must be valid (ignored if howMany = nullopt)
-			@return The unicode code point for the specified chars (nullopt on failure)
-		*/
+		 Get a UTF-32 string from a UTF-8 source
+		 @param text The source UTF-8 text (advances to the byte beyond the last counted character)
+		 @param howMany The number of bytes in the text (nullopt = null-terminated)
+		 @param isCountRequired True if the specified number of bytes must be valid (ignored if howMany = nullopt)
+		 @return The unicode code point for the specified chars (nullopt on failure)
+		 */
 		static std::optional<std::u32string> toUnicode(const char*& text, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		/*!
-			Get a UTF-8 string from a UTF-32 source
-			@param text The source text (when valid, points to the next byte beyond the found character on return)
-			@param isBigEndian True if byte ordering is big-endian
-			@param howMany The number of 32-bit code points in the text (nullopt = null-terminated)
-			@param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
-			@return The UTF-8 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
-		*/
+		 Get a UTF-8 string from a UTF-32 source
+		 @param text The source text (when valid, points to the next byte beyond the found character on return)
+		 @param isBigEndian True if byte ordering is big-endian
+		 @param howMany The number of 32-bit code points in the text (nullopt = null-terminated)
+		 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
+		 @return The UTF-8 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
+		 */
 		static std::optional<String> fromUnicode(const char32_t*& text, bool isBigEndian, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		/*!
-			Get a UTF-32 string from a UTF-16 (16-bit) source
-			@param text The source text (when valid, points to the next byte beyond the found character on return)
-			@param isBigEndian True if byte ordering is big-endian
-			@param howMany The number of words (16-bit values) in the text (nullopt = null-terminated)
-			@param isCountRequired True if the specified number of words must be valid (ignored if howMany = nullopt)
-			@return The UTF-32 string read from the UTF-16 source (nullopt on error, including failure to meet isCountRequired condition)
-		*/
+		 Get a UTF-32 string from a UTF-16 (16-bit) source
+		 @param text The source text (when valid, points to the next byte beyond the found character on return)
+		 @param isBigEndian True if byte ordering is big-endian
+		 @param howMany The number of words (16-bit values) in the text (nullopt = null-terminated)
+		 @param isCountRequired True if the specified number of words must be valid (ignored if howMany = nullopt)
+		 @return The UTF-32 string read from the UTF-16 source (nullopt on error, including failure to meet isCountRequired condition)
+		 */
 		static std::optional<std::u32string> fromUTF16(const char16_t*& text, bool isBigEndian, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		/*!
-			Get a UTF-16 string from a UTF-32 source
-			@param text The source text (when valid, points to the next byte beyond the found character on return)
-			@param howMany The number of code points in the text (nullopt = null-terminated)
-			@param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
-			@return The UTF-16 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
-		*/
+		 Get a UTF-16 string from a UTF-32 source
+		 @param text The source text (when valid, points to the next byte beyond the found character on return)
+		 @param howMany The number of code points in the text (nullopt = null-terminated)
+		 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
+		 @return The UTF-16 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
+		 */
 		static std::optional<std::u16string> toUTF16(const char32_t*& text, String::sizeOption howMany = std::nullopt, bool isCountRequired = false);
 		
 		//MARK: - Conversion operators
@@ -442,48 +444,6 @@ namespace active::utility {
 		std::optional<float> toFloat() const { try { return std::stof(m_string); } catch(...) { return std::nullopt; } }
 			///Conversion to optional double (nullopt if conversion impossible)
 		std::optional<double> toDouble() const { try { return std::stod(m_string); } catch(...) { return std::nullopt; } }
-		/*!
-			Write this string to a buffer
-			@param buffer The destination buffer
-			@param format The required output format
-			@param isNullAdded True to add a terminating null
-			@param howMany The number of characters to write (nullopt for all)
-			@param maxLen The maximum number of chars to write
-			@return A reference to the destination
-		*/
-		const BufferOut& writeTo(const BufferOut& buffer, DataFormat format = UTF8, bool isNullAdded = true,
-								 sizeOption howMany = std::nullopt, sizeOption maxLen = std::nullopt) const;
-		/*!
-			Write this string to a buffer (as internally encoded)
-			@param buffer The destination buffer
-			@param isNullAdded True to add a terminating null
-			@param howMany The number of characters to write (nullopt for all)
-			@param maxLen The maximum number of bytes the destination can hold (including terminating null - nullopt for full length)
-			@return A reference to the destination
-		*/
-		const BufferOut& writeUTF8(const BufferOut& buffer, bool isNullAdded = true, sizeOption howMany = std::nullopt, sizeOption maxLen = std::nullopt) const;
-		/*!
-			Write this string as UTF-16 to a buffer
-			@param buffer The destination buffer
-			@param isNullAdded True to add a terminating null
-			@param isBigEndian True if byte ordering is big-endian
-			@param howMany The number of characters to write (nullopt for all)
-			@param maxLen The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
-			@return A reference to the destination
-		*/
-		const BufferOut& writeUTF16(const BufferOut& buffer, bool isNullAdded = true, bool isBigEndian = DataFormat::defaultEndian,
-									sizeOption howMany = std::nullopt, sizeOption maxLen = std::nullopt) const;
-		/*!
-			Write this string as UTF-32 to a buffer
-			@param buffer The destination buffer
-			@param isNullAdded True to add a terminating null
-			@param isBigEndian True if byte ordering is big-endian
-			@param howMany The number of characters to write (nullopt for all)
-			@param maxLen The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
-			@return A reference to the destination
-		*/
-		const BufferOut& writeUTF32(const BufferOut& buffer, bool isNullAdded = true, bool isBigEndian = DataFormat::defaultEndian,
-									sizeOption howMany = std::nullopt, sizeOption maxLen = std::nullopt) const;
 		/*!
 			Determine if the string is entirely alphanumeric
 			@param startPos The position to checking from

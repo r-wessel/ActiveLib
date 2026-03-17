@@ -161,11 +161,6 @@ namespace active::math {
 	}
 
 	//MARK: - Common math functions
-	
-	template <class T>
-	inline const T& minVal(const T& val1, const T& val2) { return (val1 < val2) ? val1 : val2; }
-	template <class T>
-	inline const T& maxVal(const T& val1, const T& val2) { return (val1 > val2) ? val1 : val2; }
 
 		///Rounding functions
 	inline double round(double val, double module = eps)

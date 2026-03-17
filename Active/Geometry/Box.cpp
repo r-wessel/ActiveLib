@@ -175,7 +175,7 @@ Point Box::getAnchor2D(Anchor2D anchor) const {
 	return: The greatest length in any dimension
   --------------------------------------------------------------------*/
 double Box::getMaxLength() const {
-	return maxVal(maxVal(getWidth(), getDepth()), getHeight());
+	return std::max(std::max(getWidth(), getDepth()), getHeight());
 } //Box::getMaxLength
 
 
@@ -408,7 +408,7 @@ void Box::rotate(double angle) {
 	ZRotater rotater(angle);
 	rotater.transformPt(topLeft);
 	rotater.transformPt(topRight);
-	Box newBox(2 * maxVal(fabs(topLeft.x), fabs(topRight.x)), 2 * maxVal(fabs(topLeft.y), fabs(topRight.y)));
+	Box newBox(2 * std::max(fabs(topLeft.x), fabs(topRight.x)), 2 * std::max(fabs(topLeft.y), fabs(topRight.y)));
 	newBox.setCentre(getCentre());
 	operator=(newBox);
 } //Box::rotate

@@ -2,6 +2,7 @@
 
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
+#include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/Memory.h"
 #include "Active/Utility/String.h"
 #include "Active/Utility/Time.h"
@@ -99,10 +100,10 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(test16[3] == U'𞢈', TEST_MESSAGE(Unicode string constructed with incorrect content));
 			//Copy to buffer
 		Memory charBuffer;
-		test.writeTo(BufferOut{charBuffer});
+		BufferOut{charBuffer}.write(test);
 		CHECK_MESSAGE(test == String{charBuffer.data()}, TEST_MESSAGE(String.copyTo(char) incorrect content));
 		charBuffer.clear();
-		test.writeTo(BufferOut{charBuffer}, String::UTF32);
+		BufferOut{charBuffer}.write(test, String::UTF32);
 		CHECK_MESSAGE(test == String(charBuffer.data(), std::nullopt, String::UTF32), TEST_MESSAGE(String.copyTo(char32_t) incorrect content));
 		auto upper = test.uppercase();
 		auto lower = upper.lowercase();
@@ -234,6 +235,7 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 			///Search for char by filter
 		firstEmoji = sentence.findIf([&sentence](auto uniChar){ return isEmoji(uniChar); });
 		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(String::findIf failed to find char));
+		auto backup = sentence;
 			//Strip out all emoji
 		sentence.replaceIf([&sentence](auto uniChar){ return isEmoji(uniChar); }, "");
 			//Eliminate double spacing
@@ -241,7 +243,10 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 			if (auto len = sentence.size(); len == sentence.replaceAll("  ", " ").size())
 				break;
 		sentence.replaceAll("with", "without");
-		CHECK_MESSAGE(sentence == "Some text without annoying emojis", TEST_MESSAGE(String.replaceAnyOf failed));
+		CHECK_MESSAGE(sentence == "Some text without annoying emojis", TEST_MESSAGE(String.replaceAll failed));
+		backup.replaceAnyOf("😀😅🥸🤔🤕");
+		firstEmoji = backup.findIf([&sentence](auto uniChar){ return isEmoji(uniChar); });
+		CHECK_MESSAGE(!firstEmoji, TEST_MESSAGE(String::replaceAnyOf failed to replace chars));
 	}
 
 		///Throw random data at String to try to provoke a crash

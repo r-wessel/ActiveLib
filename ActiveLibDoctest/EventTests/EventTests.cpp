@@ -1,5 +1,6 @@
 #include "ActiveLibDoctest/TestingPlatforms.h"
 
+#include "Active/Utility/MathFunctions.h"
 #include "ActiveLibDoctest/EventTests/Button.h"
 #include "ActiveLibDoctest/EventTests/Calculation.h"
 #include "ActiveLibDoctest/EventTests/CalcApp.h"
@@ -7,7 +8,6 @@
 #include "ActiveLibDoctest/EventTests/CalculatorRPN.h"
 
 using namespace active;
-using namespace active::math;
 
 TEST_SUITE(TESTQ(EventTests)) TEST_SUITE_OPEN
 

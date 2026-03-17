@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_ATTRIBUTE_COLOUR
 
 #include "Active/Utility/Hash.h"
+#include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/String.h"
 
 namespace active::attribute {

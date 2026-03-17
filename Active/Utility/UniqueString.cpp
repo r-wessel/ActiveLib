@@ -30,7 +30,7 @@ String UniqueString::generate(const String& seedString, bool addToExisting) {
 				if (textOnly.empty() || (text.find(textOnly) == 0)) {
 					text = text.substr(textOnly.length());
 					if (!text.empty() && !text.findFirstNotOf(String::allDigit))
-						topSuffix = math::maxVal(topSuffix, text.operator uint32_t());
+						topSuffix = std::max(topSuffix, text.operator uint32_t());
 				}
 			}
 			String suffix(String{++topSuffix});

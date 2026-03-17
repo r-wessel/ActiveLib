@@ -21,6 +21,110 @@ namespace {
 	const size_t smallCacheBounds = 0x200;
 		///Max size of data to be written to the small cache
 	const size_t smallDataBounds = 0x80;
+	
+	/*!
+	 Write this string to a buffer (as internally encoded)
+	 @param string The string to write
+	 @param buffer The destination buffer
+	 @param isNullAdded True to add a terminating null
+	 @param howMany The number of characters to write (nullopt for all)
+	 @param maxBytes The maximum number of bytes the destination can hold (including terminating null - nullopt for full length)
+	 @return A reference to the destination
+	 */
+	const BufferOut& writeUTF8(const String& string, const BufferOut& buffer, bool isNullAdded = true,
+							   std::optional<String::size_type> howMany = std::nullopt,
+							   std::optional<String::size_type> maxBytes = std::nullopt) {
+		if ((howMany == 0) || (maxBytes == 0))
+			return buffer;
+		if (!string.empty()) {
+			if (howMany) {
+				if (auto charBytes = String::getByteCountCharLimited(string.data(), howMany); charBytes && (!maxBytes || (maxBytes > *charBytes)))
+					maxBytes = *charBytes;
+			}
+				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
+			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+				maxBytes = *bufferMax;
+			String::size_type byteCount = maxBytes ? String::getValidByteCount(string.data(), *maxBytes - (isNullAdded ? 1 : 0)) : string.dataSize();
+			buffer.write(string.data(), byteCount);
+		}
+		if (isNullAdded)
+			buffer.write(0);
+		return buffer;
+	} //writeUTF8
+
+	/*!
+	 Write this string as UTF-16 to a buffer
+	 @param string The string to write
+	 @param buffer The destination buffer
+	 @param isNullAdded True to add a terminating null
+	 @param isBigEndian True if byte ordering is big-endian
+	 @param howMany The number of characters to write (nullopt for all)
+	 @param maxBytes The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
+	 @return A reference to the destination
+	 */
+	const BufferOut& writeUTF16(const String& string, const BufferOut& buffer, bool isNullAdded = true,
+								bool isBigEndian = DataFormat::defaultEndian,
+								std::optional<String::size_type> howMany = std::nullopt,
+								std::optional<String::size_type> maxBytes = std::nullopt) {
+		if ((howMany == 0) || (maxBytes == 0))
+			return buffer;
+		const auto* text = string.data();
+		if (auto uniString = String::toUnicode(text, howMany); uniString) {
+			const char32_t* text32 = uniString->data();
+			if (auto uniString16 = String::toUTF16(text32); uniString16) {
+					//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
+				if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+					maxBytes = *bufferMax;
+					//NB: When a terminating null is required, deduct this when a max size for the destination is specified
+				String::size_type byteCount = maxBytes ?
+				String::getValidByteCount(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0),
+										  std::nullopt, UTF16) :
+				(uniString->size() * sizeof(char16_t));
+					//Byte-swap the data as required (no action if platform endianess matches requirement)
+				Memory::byteSwap(uniString16->data(), byteCount / sizeof(char16_t), isBigEndian);
+				buffer.write(reinterpret_cast<const char*>(uniString16->data()), byteCount);
+			}
+		}
+		if (isNullAdded)
+			buffer.writeBinary(char16_t());
+		return buffer;
+	} //String::writeUTF16
+	
+	
+	/*!
+	 Write this string as UTF-32 to a buffer
+	 @param string The string to write
+	 @param buffer The destination buffer
+	 @param isNullAdded True to add a terminating null
+	 @param isBigEndian True if byte ordering is big-endian
+	 @param howMany The number of characters to write (nullopt for all)
+	 @param maxBytes The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
+	 @return A reference to the destination
+	 */
+	const BufferOut& writeUTF32(const String& string, const BufferOut& buffer, bool isNullAdded = true,
+								bool isBigEndian = DataFormat::defaultEndian,
+								std::optional<String::size_type> howMany = std::nullopt,
+								std::optional<String::size_type> maxBytes = std::nullopt) {
+		if ((howMany == 0) || (maxBytes == 0))
+			return buffer;
+		const auto* text = string.data();
+		auto uniString = String::toUnicode(text);
+		if (uniString) {
+				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
+			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+				maxBytes = *bufferMax;
+				//NB: When a terminating null is required, deduct this when a max size for the destination is specified
+			String::size_type byteCount = maxBytes ?
+			String::getValidByteCount(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), std::nullopt, UTF32) :
+			(uniString->size() * sizeof(char32_t));
+				//Byte-swap the data as required (no action if platform endianess matches requirement)
+			Memory::byteSwap(uniString->data(), byteCount / sizeof(char32_t), isBigEndian);
+			buffer.write(reinterpret_cast<const char*>(uniString->data()), byteCount);
+		}
+		if (isNullAdded)
+			buffer.writeBinary(char32_t());
+		return buffer;
+	} //String::writeUTF32
 
 }
 
@@ -219,15 +323,28 @@ const BufferOut& BufferOut::flushBuffer() const {
 	
 	toWrite: The string to write
 	format: The data format
+	isNullAdded: True to add a terminating null
+	howMany: The number of characters to write (nullopt for all)
+	maxBytes: The maximum number of bytes to write
 	
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
-const BufferOut& BufferOut::write(const String& toWrite, DataFormat format) const {
+const BufferOut& BufferOut::write(const String& toWrite, DataFormat format, bool isNullAdded,
+								  std::optional<String::size_type> howMany,
+								  std::optional<String::size_type> maxBytes) const {
 	if (m_str != nullptr)
 		format.encoding = UTF8;	//Data written to a string must be UTF8
 	if ((format.encoding == UTF8) || (format.encoding == ascii) || (format.encoding == ISO8859_1))
 		return write(toWrite.data(), toWrite.dataSize());	//NB: This isn't necessarily correct for ascii or ISO8859.1 - update when required
-	return toWrite.writeTo(*this, format, false);
+	switch (format.encoding) {
+		case UTF8: case ascii: case ISO8859_1:
+			return writeUTF8(toWrite, *this, isNullAdded, howMany, maxBytes);
+		case UTF16:
+			return writeUTF16(toWrite, *this, isNullAdded, format.isBigEndian, howMany, maxBytes);
+		case UTF32:
+			return writeUTF32(toWrite, *this, isNullAdded, format.isBigEndian, howMany, maxBytes);
+	}
+	return *this;
 } //BufferOut::write
 
 

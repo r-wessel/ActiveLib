@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SETTING_UINT32_VALUE
 
 #include "Active/Setting/Values/ValueBase.h"
+#include "Active/Utility/MathFunctions.h"
 
 namespace active::setting {
 	

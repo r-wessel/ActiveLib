@@ -3,7 +3,6 @@
 #include "Active/Utility/SHA256.h"
 #include "Active/Utility/BufferIn.h"
 
-using namespace active::math;
 using namespace active::utility;
 
 namespace {

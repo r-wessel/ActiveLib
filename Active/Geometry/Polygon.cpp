@@ -585,7 +585,7 @@ Polygon::Polygon(vertex_index size, part_index holeSize, bool isClosed) : base()
   --------------------------------------------------------------------*/
 Polygon::Polygon(const Box& source, double angle) : base() {
 	reserve(4);
-	double z = minVal(source.origin.z, source.end.z);
+	double z = std::min(source.origin.z, source.end.z);
 	emplace_back(PolyPoint{source.origin.x, source.origin.y, z});
 	emplace_back(PolyPoint{source.end.x, source.origin.y, z});
 	emplace_back(PolyPoint{source.end.x, source.end.y, z});

@@ -169,12 +169,17 @@ namespace active::utility {
 		*/
 		const BufferOut& write(const String& toWrite) const { return write(toWrite, m_format); }
 		/*!
-			Write the specified string (using the specified text encoding)
-			@param toWrite The string to write
-			@param format The data format
-			@return A reference to this
-		*/
-		const BufferOut& write(const String& toWrite, DataFormat format) const;
+		 Write the specified string (using the specified text encoding)
+		 @param toWrite The string to write
+		 @param format The data format
+		 @param isNullAdded True to add a terminating null
+		 @param howMany The number of characters to write (nullopt for all)
+		 @param maxBytes The maximum number of bytes to write
+		 @return A reference to this
+		 */
+		const BufferOut& write(const String& toWrite, DataFormat format, bool isNullAdded = false,
+							   std::optional<String::size_type> howMany = std::nullopt,
+							   std::optional<String::size_type> maxBytes = std::nullopt) const;
 		/*!
 			Write a specified memory block (NB: The data is not assumed to be text - simply a stream of bytes. Avoid when buffering to a string)
 			@param toWrite The block address

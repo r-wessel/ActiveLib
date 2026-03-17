@@ -5,6 +5,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/XML/Item/XMLDateTime.h"
 
+#include "Active/Utility/MathFunctions.h"
+
 #include <ctime>
 
 using namespace active::math;

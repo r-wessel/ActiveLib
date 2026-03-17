@@ -5,9 +5,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/String.h"
 
-#include "Active/Utility/BufferIn.h"
-#include "Active/Utility/BufferOut.h"
-
 #include <cwctype>
 #include <numeric>
 #include <locale>
@@ -49,40 +46,6 @@ namespace {
 	using enum TextEncoding;
 
 	constexpr String::size_type possibleCharWidth = 4;
-
-	/*!
-		Return the length of a string in bytes, limited by a character count
-		
-		@param text The source text
-		@param howMany The number of characters to count (nullopt = null-terminated)
-		@param isCountRequired True if the number of characters must exist in the text (unless howMany = nullopt)
-		@param format The text data format
-		
-		@return The number of bytes in the char array (nullopt if isCountRequired and howMany not reached)
-	*/
-	String::sizeOption getByteCountCharLimited(const char* text, String::sizeOption howMany = std::nullopt, bool isCountRequired = false,
-												DataFormat format = DataFormat{}) {
-			//A null pointer can be a valid input if there is no specific requirement for content, in which case we can say it has zero bytes
-		if ((howMany == 0) || (text == nullptr) || (*text == 0))
-			return (!howMany || !isCountRequired) ? std::optional(0) : std::nullopt;
-			//Start by pointing to the first char, then bump up for each successive char
-		const auto* endPos = text;
-		auto isCountChecked = howMany ? isCountRequired : false;
-			//Ensure the loop is limited where a specific number of chars is specified
-		while (!howMany || (*howMany)--) {
-				//Check if the number of bytes in the next char can be established
-			if (auto nextLen = String::getCharacterByteCount(endPos, std::nullopt, format); nextLen && (nextLen > 0))
-				endPos += *nextLen;	//If so, bump the leading pointer to the next char position
-			else {
-				if (isCountChecked)
-					return std::nullopt;	//If a specific number of chars is required, we haven't reached it - return a fail condition
-				break;
-			}
-		}
-			//The final number of bytes is simply the difference between the original text start and the end point reached
-		return static_cast<String::size_type>(endPos - text);
-	} //getByteCountCharLimited
-	
 	
 	/*!
 		Collect the byte size of each (valid) character from a string into an array
@@ -228,11 +191,9 @@ namespace {
 
 	
 	/*!
-		Split the specified text into single and multi byte chars
-	 
-		@param source The source text
-	 
-		@return An array of single and multi-byte charsfrom the source string (nullopt on failure)
+	 Split the specified text into single and multi byte chars
+	 @param source The source text
+	 @return An array of single and multi-byte chars from the source string (nullopt on failure)
 	*/
 	std::vector<String> splitSingleChars(const String& source) {
 		std::vector<String> result;
@@ -280,7 +241,7 @@ namespace {
 		if (text == nullptr)
 			return std::nullopt;
 			//Find the byte offset to the start char
-		auto startByte = (startPos == 0) ? 0 : getByteCountCharLimited(text, startPos, true);
+		auto startByte = (startPos == 0) ? 0 : String::getByteCountCharLimited(text, startPos, true);
 		if (!startByte)
 			return std::nullopt;
 			//Caller shouldn't use legacy String::npos, but this check enforces the 'optional' approach
@@ -289,7 +250,7 @@ namespace {
 			//Now get the number of bytes or chars to the last char - if successful, return the required offsets
 		if (auto textCount = isHowManyChars ?
 				String::getCharacterCount(text + *startByte, howMany) :
-				getByteCountCharLimited(text + *startByte, howMany); textCount)
+				String::getByteCountCharLimited(text + *startByte, howMany); textCount)
 			return std::optional(std::make_pair(*startByte, *textCount));
 		return std::nullopt;	//Fail condition
 	} //getByteOffsets
@@ -385,16 +346,6 @@ namespace {
 // MARK: - Constructors
 
 /*--------------------------------------------------------------------
-	Constructor from an input buffer
- 
-	source: The source input buffer
-  --------------------------------------------------------------------*/
-String::String(const BufferIn&& source) {
-	source.getString(*this);
-} //String::String
-
-
-/*--------------------------------------------------------------------
 	Constructor
 
 	source: The character array to be copied
@@ -463,7 +414,7 @@ String::String(double val, double prec, bool padZero) {
 #if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
 	std::ostringstream text;
 	text.setf(std::ios::fixed, std::ios::floatfield);
-	auto dp = static_cast<std::string::size_type>(math::round(math::maxVal(0.0, -log10(prec)), 1.0));
+	auto dp = static_cast<std::string::size_type>(math::round(std::max(0.0, -log10(prec)), 1.0));
 	text.precision(dp);
 	text << val;
 	m_string = text.str();
@@ -576,6 +527,39 @@ String::charSizeOption String::getCharacterByteCount(const char* text, sizeOptio
 	}
 	return 0;
 } //String::getCharacterByteCount
+
+
+/*--------------------------------------------------------------------
+	Return the length of a string in bytes, limited by a character count
+	
+	text: The source text
+	howMany: The number of characters to count (nullopt = null-terminated)
+	isCountRequired: True if the number of characters must exist in the text (unless howMany = nullopt)
+	format: The text data format
+	
+	return: The number of bytes in the char array (nullopt if isCountRequired and howMany not reached)
+  --------------------------------------------------------------------*/
+String::sizeOption String::getByteCountCharLimited(const char* text, String::sizeOption howMany, bool isCountRequired, DataFormat format) {
+		//A null pointer can be a valid input if there is no specific requirement for content, in which case we can say it has zero bytes
+	if ((howMany == 0) || (text == nullptr) || (*text == 0))
+		return (!howMany || !isCountRequired) ? std::optional(0) : std::nullopt;
+		//Start by pointing to the first char, then bump up for each successive char
+	const auto* endPos = text;
+	auto isCountChecked = howMany ? isCountRequired : false;
+		//Ensure the loop is limited where a specific number of chars is specified
+	while (!howMany || (*howMany)--) {
+			//Check if the number of bytes in the next char can be established
+		if (auto nextLen = String::getCharacterByteCount(endPos, std::nullopt, format); nextLen && (nextLen > 0))
+			endPos += *nextLen;	//If so, bump the leading pointer to the next char position
+		else {
+			if (isCountChecked)
+				return std::nullopt;	//If a specific number of chars is required, we haven't reached it - return a fail condition
+			break;
+		}
+	}
+		//The final number of bytes is simply the difference between the original text start and the end point reached
+	return static_cast<String::size_type>(endPos - text);
+} //String::getByteCountCharLimited
 
 
 /*--------------------------------------------------------------------
@@ -943,7 +927,15 @@ char32_t String::at(size_type index) const {
 	func: The character function (the returned value is ignored)
   --------------------------------------------------------------------*/
 void String::forEach(const Function& func) const {
-	BufferIn{*this}.forEach([&](char32_t incoming) -> std::optional<char32_t> { return func(incoming); });
+	auto remaining = dataSize();
+	auto text = data();
+	for (;;) {
+		if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			remaining -= consumed;
+			func(incoming);
+		} else
+			break;
+	}
 } //String::forEach
 
 
@@ -1015,132 +1007,6 @@ String String::lowercase() const {
 	}
 	return String(uniString);
 } //String::lowercase
-
-
-/*--------------------------------------------------------------------
-	Write this string to a buffer
- 
-	buffer: The destination buffer
-	format: The required output format
-	isNullAdded: True to add a terminating null
-	howMany: The number of characters to write (nullopt for all)
-	maxBytes: The maximum number of bytes to write
- 
-	return: A reference to the destination
-  --------------------------------------------------------------------*/
-const BufferOut& String::writeTo(const BufferOut& buffer, DataFormat format, bool isNullAdded, sizeOption howMany, sizeOption maxBytes) const {
-	switch (format.encoding) {
-		case UTF8: case ascii: case ISO8859_1:
-			return writeUTF8(buffer, isNullAdded, howMany, maxBytes);
-		case UTF16:
-			return writeUTF16(buffer, isNullAdded, format.isBigEndian, howMany, maxBytes);
-		case UTF32:
-			return writeUTF32(buffer, isNullAdded, format.isBigEndian, howMany, maxBytes);
-	}
-	return buffer;
-} //String::writeTo
-
-
-/*--------------------------------------------------------------------
-	Write this string to a buffer (as internally encoded)
-
-	buffer: The destination buffer
-	isNullAdded: True to add a terminating null
-	howMany: The number of characters to write (nullopt for all)
-	maxBytes: The maximum number of bytes the destination can hold (including terminating null - nullopt for unlimited)
-
-	return: A reference to the destination
-  --------------------------------------------------------------------*/
-const BufferOut& String::writeUTF8(const BufferOut& buffer, bool isNullAdded, sizeOption howMany, sizeOption maxBytes) const {
-	if ((howMany == 0) || (maxBytes == 0))
-		return buffer;
-	if (!m_string.empty()) {
-		if (howMany) {
-			if (auto charBytes = getByteCountCharLimited(data(), howMany); charBytes && (!maxBytes || (maxBytes > *charBytes)))
-				maxBytes = *charBytes;
-		}
-			//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
-		if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
-			maxBytes = *bufferMax;
-		String::size_type byteCount = maxBytes ?
-				getValidByteCount(m_string.data(), *maxBytes - (isNullAdded ? 1 : 0)) :
-				dataSize();
-		buffer.write(data(), byteCount);
-	}
-	if (isNullAdded)
-		buffer.write(0);
-	return buffer;
-} //String::writeUTF8
-
-
-/*--------------------------------------------------------------------
-	Write this string as UTF-16 to a buffer
- 
-	buffer: The destination buffer
-	isNullAdded: True to add a terminating null
-	isBigEndian: True if byte ordering is big-endian
-	howMany: The number of characters to write (nullopt for all)
-	maxBytes: The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
- 
-	return: A reference to the destination
-  --------------------------------------------------------------------*/
-const BufferOut& String::writeUTF16(const BufferOut& buffer, bool isNullAdded, bool isBigEndian, sizeOption howMany, sizeOption maxBytes) const {
-	if ((howMany == 0) || (maxBytes == 0))
-		return buffer;
-	const auto* text = data();
-	if (auto uniString = String::toUnicode(text, howMany); uniString) {
-		const char32_t* text32 = uniString->data();
-		if (auto uniString16 = String::toUTF16(text32); uniString16) {
-				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
-			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
-				maxBytes = *bufferMax;
-				//NB: When a terminating null is required, deduct this when a max size for the destination is specified
-			String::size_type byteCount = maxBytes ?
-					getValidByteCount(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0), std::nullopt, UTF16) :
-							(uniString->size() * sizeof(char16_t));
-				//Byte-swap the data as required (no action if platform endianess matches requirement)
-			Memory::byteSwap(uniString16->data(), byteCount / sizeof(char16_t), isBigEndian);
-			buffer.write(reinterpret_cast<const char*>(uniString16->data()), byteCount);
-		}
-	}
-	if (isNullAdded)
-		buffer.writeBinary(char16_t());
-	return buffer;
-} //String::writeUTF16
-
-
-/*--------------------------------------------------------------------
-	Write this string as UTF-32 to a buffer
- 
-	buffer: The destination buffer
-	isNullAdded: True to add a terminating null
-	isBigEndian: True if byte ordering is big-endian
-	howMany: The number of characters to write (nullopt for all)
-	maxBytes: The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
- 
-	return: A reference to the destination
-  --------------------------------------------------------------------*/
-const BufferOut& String::writeUTF32(const BufferOut& buffer, bool isNullAdded, bool isBigEndian, sizeOption howMany, sizeOption maxBytes) const {
-	if ((howMany == 0) || (maxBytes == 0))
-		return buffer;
-	const auto* text = data();
-	auto uniString = String::toUnicode(text);
-	if (uniString) {
-			//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
-		if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
-			maxBytes = *bufferMax;
-			//NB: When a terminating null is required, deduct this when a max size for the destination is specified
-		String::size_type byteCount = maxBytes ?
-				getValidByteCount(m_string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), std::nullopt, UTF32) :
-				(uniString->size() * sizeof(char32_t));
-			//Byte-swap the data as required (no action if platform endianess matches requirement)
-		Memory::byteSwap(uniString->data(), byteCount / sizeof(char32_t), isBigEndian);
-		buffer.write(reinterpret_cast<const char*>(uniString->data()), byteCount);
-	}
-	if (isNullAdded)
-		buffer.writeBinary(char32_t());
-	return buffer;
-} //String::writeUTF32
 
 
 /*--------------------------------------------------------------------
@@ -1270,15 +1136,17 @@ String::sizeOption String::find(const String& toFind, size_type startPos) const 
 	return: The index where a match is found (nullopt = not found)
   --------------------------------------------------------------------*/
 String::sizeOption String::findIf(const Filter& filter) const {
-	size_type index = 0;
-	if (!BufferIn{*this}.findIf([&](char32_t incoming) {
-		if (filter(incoming))
-			return true;
-		++index;
-		return false;
-	}))
-		return std::nullopt;
-	return index;
+	auto remaining = dataSize();
+	auto text = data();
+	for (size_type index = 0; ; ++index) {
+		if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (filter(incoming))
+				return index;
+			remaining -= consumed;
+		} else
+			break;
+	}
+	return std::nullopt;
 } // String::findIf
 
 
@@ -1487,9 +1355,18 @@ void String::resize(size_type newSize, const String& padding) {
 	func: The character function (the returned value replaces the input character)
   --------------------------------------------------------------------*/
 void String::forEach(const Function& func) {
-	String result;
-	BufferIn{*this}.forEach([&](char32_t incoming) -> std::optional<char32_t> { return func(incoming); }, &result);
-	m_string = std::move(result.m_string);
+	std::u32string result;
+	auto remaining = dataSize();
+	auto text = data();
+	for (;;) {
+		if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			remaining -= consumed;
+			if (auto nextChar = func(incoming); nextChar)
+				result += *nextChar;
+		} else
+			break;
+	}
+	*this = result;
 } //String::forEach
 
 
@@ -1606,11 +1483,30 @@ String& String::replace(sizeOption pos, sizeOption num, const String& source, si
 	return: A reference to this
  --------------------------------------------------------------------*/
 String& String::replaceAll(const String& toFind, const String& replacement) {
-	String result;
-	BufferIn processor(*this);
-	while (processor.find(toFind, &result, true))
-		result.append(replacement);
-	*this = std::move(result);
+	std::u32string searchPattern{toFind}, substitute{replacement}, result;
+	bool found = false;
+	std::u32string::size_type matched = 0;
+	const auto searchSize = searchPattern.size();
+	auto remaining = dataSize();
+	auto text = data();
+	for (;;) {
+		if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			remaining -= consumed;
+			result += incoming;
+			if (searchPattern[matched] == incoming) {
+				++matched;
+				if (matched != searchSize)
+					continue;
+				found = true;
+				result.resize(result.size() - searchSize);
+				result += substitute;
+			}
+			matched = 0;
+		} else
+			break;
+	}
+	if (found)
+		*this = result;
 	return *this;
 } //String::replaceAll
 
@@ -1624,11 +1520,23 @@ String& String::replaceAll(const String& toFind, const String& replacement) {
 	return: A reference to this
  --------------------------------------------------------------------*/
 String& String::replaceIf(const Filter& filter, const String& replacement) {
-	String result;
-	BufferIn processor(*this);
-	while (processor.findIf(filter, &result, true))
-		result.append(replacement);
-	*this = std::move(result);
+	std::u32string substitute{replacement}, result;
+	bool found = false;
+	auto remaining = dataSize();
+	auto text = data();
+	for (;;) {
+		if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			remaining -= consumed;
+			if (filter(incoming)) {
+				found = true;
+				result += substitute;
+			} else
+				result += incoming;
+		} else
+			break;
+	}
+	if (found)
+		*this = result;
 	return *this;
 } //String::replaceAll
 
@@ -1642,11 +1550,26 @@ String& String::replaceIf(const Filter& filter, const String& replacement) {
 	return: A reference to this
  --------------------------------------------------------------------*/
 String& String::replaceAnyOf(const String& charsToFind, const String& replacement) {
-	String result;
-	BufferIn processor(*this);
-	while (processor.findFirstOf(charsToFind, &result, false, false, true))
-		result.append(replacement);
-	*this = std::move(result);
+	std::u32string searchPattern{charsToFind}, substitute{replacement}, result;
+	auto filter = [&searchPattern](char32_t testChar) -> bool {
+		return searchPattern.find(testChar) != npos;
+	};
+	bool found = false;
+	auto remaining = dataSize();
+	auto text = data();
+	for (;;) {
+		if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			remaining -= consumed;
+			if (filter(incoming)) {
+				found = true;
+				result += substitute;
+			} else
+				result += incoming;
+		} else
+			break;
+	}
+	if (found)
+		*this = result;
 	return *this;
 } //String::replaceAnyOf
 

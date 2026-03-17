@@ -6,10 +6,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/BufferIn.h"
 
 #include "Active/File/File.h"
-#include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/BufferOut.h"
 #include "Active/Utility/StackBufferOut.h"
 #include "Active/Utility/Defer.h"
+#include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/Memory.h"
 
 #include <array>
@@ -344,7 +344,7 @@ const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
 		return *this;
 	Memory::size_type toRead = howMany;
 	howMany = 0;
-	Memory::size_type batchSize = minVal(getCapacity(), toRead);
+	Memory::size_type batchSize = std::min(getCapacity(), toRead);
 	while ((toRead > 0) && good()) {
 		Memory::size_type thisBatch = std::min(bufferMin(batchSize), toRead);
 		if (thisBatch == 0)
@@ -438,7 +438,7 @@ const BufferIn& BufferIn::getLine(String& line, bool keepStop) const {
 const BufferIn& BufferIn::skip(Memory::size_type howMany) const {
 		//In case 'len' is bigger than the buffer size, we may need to bufferMin the buffer multiple times and skip the buffer size each time
 	while (good() && (howMany > 0)) {
-		auto batchSize = minVal(howMany, bufferMin(minVal(howMany, getCapacity())));
+		auto batchSize = std::min(howMany, bufferMin(std::min(howMany, getCapacity())));
 		bumpReadPos(batchSize);
 		howMany -= batchSize;
 	}
@@ -633,7 +633,7 @@ bool BufferIn::refillBuffer() const {
 	Memory::size_type unused = (m_readPos >= m_bufferLen) ? 0 : m_bufferLen - m_readPos;
 	if (unused > 0)
 		std::copy(m_buffer + m_readPos, m_buffer + m_bufferLen, m_buffer);
-	Memory::size_type toRead = minVal(m_fileCache->size() - unused, m_remaining);
+	Memory::size_type toRead = std::min(m_fileCache->size() - unused, m_remaining);
 	if ((toRead > 0) && (m_file != nullptr)) {
 		File::size_type incoming = toRead;
 		Memory readBuffer(m_buffer + unused, incoming);
@@ -855,7 +855,7 @@ void BufferIn::updatePosition(unsigned char incoming, uint8_t size) const {
   --------------------------------------------------------------------*/
 Memory::size_type BufferIn::getCapacity() const {
 		///For file buffer, the buffer capacity is the default allocation. In all other cases it's the existing buffer length
-	return maxVal(m_bufferLen, defaultBufferSize);
+	return std::max(m_bufferLen, defaultBufferSize);
 } //BufferIn::getCapacity
 
 
