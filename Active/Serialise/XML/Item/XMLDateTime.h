@@ -34,7 +34,7 @@ namespace active::serialise::xml {
 			@param content The date/time content
 			@param prec The seconds precision (e.g. 1e-6 for microsecond precision, 1.0 for whole seconds only)
 		*/
-		XMLDateTime(utility::Time& time, Content content = Content::dateTimeWithOffset, double prec = 1e-6);
+		XMLDateTime(Time& time, Content content = Content::dateTimeWithOffset, double prec = 1e-6);
 		/*!
 			Constructor
 		 	@param time A time
@@ -42,8 +42,8 @@ namespace active::serialise::xml {
 			@param prec The seconds precision (e.g. 1e-6 for microsecond precision, 1.0 for whole seconds only)
 		*/
 			//NB: Value is only mutated within import processes, in which case the object must be mutable (i.e. const discard is safe)
-		XMLDateTime(const utility::Time& time, Content content = Content::dateTimeWithOffset, double prec = 1e-6) :
-				XMLDateTime(const_cast<utility::Time&>(time), content, prec) {}
+		XMLDateTime(const Time& time, Content content = Content::dateTimeWithOffset, double prec = 1e-6) :
+				XMLDateTime(const_cast<Time&>(time), content, prec) {}
 		
 		// MARK: - Functions (const)
 		
@@ -51,7 +51,7 @@ namespace active::serialise::xml {
 			Get the time
 			@return The time
 		*/
-		virtual const utility::Time& getTime() const { return m_time; }
+		virtual const Time& getTime() const { return m_time; }
 		/*!
 			Get the precision for seconds (e.g. 1e-6 for microsecond precision, 1.0 for whole seconds only)
 			@return The seconds precision
@@ -77,7 +77,7 @@ namespace active::serialise::xml {
 			@param dest The string to write the const data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override;
+		bool write(String& dest) const override;
 		/*!
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
@@ -115,11 +115,11 @@ namespace active::serialise::xml {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override;
+		bool read(const String& source) override;
 		
 	private:
-		utility::Time& m_time;
-		utility::Time m_buffer;
+		Time& m_time;
+		Time m_buffer;
 		double m_secsPrecision = 1e-6;
 		mutable TimeFormat m_format = TimeFormat::iso8601;
 		Content m_content = Content::dateTime;

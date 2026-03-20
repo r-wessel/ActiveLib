@@ -35,7 +35,7 @@ namespace active::serialise {
 			@param isProlog True if an serialisation prolog should be written
 			@throw std::system_error Thrown on write errors, serialisation failure (e.g. invalid names, missing inventory etc)
 		*/
-		virtual void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+		virtual void send(serialise::Cargo&& cargo, const serialise::Identity& identity, BufferOut&& destination,
 						  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const override {};
 		/*!
 			Receive cargo from a serialised data source
@@ -44,7 +44,7 @@ namespace active::serialise {
 			@param source The data source (can be a wrapper for file, memory, string)
 			@throw std::system_error Thrown on read errors, invalid encoding or parsing failure (e.g. ill-formed data)
 		*/
-		void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const override {};
+		void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, BufferIn&& source) const override {};
 	};
 	
 }

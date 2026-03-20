@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_IDENTITY
 
 #include "Active/Setting/Values/Value.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::serialise {
 	
@@ -32,7 +32,7 @@ namespace active::serialise {
 			Default constructor
 			@param nameIn An identifying name
 		*/
-		Identity(const utility::String& nameIn = utility::String{}) {
+		Identity(const String& nameIn = String{}) {
 			name = nameIn;
 		}
 		/*!
@@ -40,7 +40,7 @@ namespace active::serialise {
 			@param nameIn An identifying name
 			@param groupIn An optional identifying group
 		*/
-		Identity(const utility::String& nameIn, const std::optional<utility::String> groupIn) {
+		Identity(const String& nameIn, const std::optional<String> groupIn) {
 			name = nameIn;
 			group = groupIn;
 		}
@@ -49,7 +49,7 @@ namespace active::serialise {
 			@param nameIn An identifying name
 			@param valType An optional value type
 		*/
-		Identity(const utility::String& nameIn, std::optional<setting::Value::Type> valType) {
+		Identity(const String& nameIn, std::optional<setting::Value::Type> valType) {
 			name = nameIn;
 			valueType = valType;
 		}
@@ -57,9 +57,9 @@ namespace active::serialise {
 		// MARK: - Variables
 		
 			///An identifying name
-		utility::String name;
+		String name;
 			///Optional named group (in which the name is unique, i.e. to avoid name clashes)
-		std::optional<utility::String> group = std::nullopt;
+		std::optional<String> group = std::nullopt;
 			///The expected inventory role (applicable when a new identity has been parsed)
 		std::optional<Role> entryRole;
 			///The value type (applicable when a new value has been parsed)
@@ -89,10 +89,10 @@ namespace active::serialise {
 template<>
 struct std::hash<active::serialise::Identity> {
 	std::size_t operator()(const active::serialise::Identity& identity) const noexcept {
-		std::size_t h1 = std::hash<active::utility::String>{}(identity.name);
+		std::size_t h1 = std::hash<active::String>{}(identity.name);
 		if (!identity.group)
 			return h1;
-		std::size_t h2 = std::hash<active::utility::String>{}(*identity.group);
+		std::size_t h2 = std::hash<active::String>{}(*identity.group);
 		return h1 ^ (h2 << 1);
 	}
 };

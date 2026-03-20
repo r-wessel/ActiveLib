@@ -4,7 +4,7 @@
 #include "Active/Utility/Time.h"
 
 using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 TEST_SUITE(TESTQ(TimeTests)) TEST_SUITE_OPEN
 

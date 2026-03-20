@@ -29,7 +29,7 @@ namespace active::rpc {
 		 Get the function name
 		 @return The function name
 		 */
-		virtual active::utility::String getName() const = 0;
+		virtual active::String getName() const = 0;
 		/*!
 		 Execute the function
 		 @param param The transported input parameter

@@ -28,7 +28,7 @@ namespace active::event {
 			Default constructor
 			@param identity Optional name/ID for the subscriber
 		*/
-		Publisher(const utility::NameID& identity = utility::NameID{});
+		Publisher(const NameID& identity = NameID{});
 		/*!
 			Copy constructor
 			@param source The object to copy
@@ -106,7 +106,7 @@ namespace active::event {
 			@param id The ID of the subscriber to remove
 			@return True if subscriber was removed
 		*/
-		bool remove(const utility::Guid& id);
+		bool remove(const Guid& id);
 		/*!
 			Audit the participant environment to ensure it can function
 			@return True if the participant is able to function

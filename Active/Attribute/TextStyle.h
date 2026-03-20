@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Attribute/Colour.h"
 #include "Active/Attribute/Pen.h"
 #include "Active/Geometry/Anchor2D.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::attribute {
 	
@@ -34,13 +34,13 @@ namespace active::attribute {
 			@param anch Anchor position for the rectlinear text bounds
 			@param orientate True if the text can be reorientated to suit reading standards
 		 */
-		TextStyle(const utility::String& font, float sz, const Colour& colour = colour::black, geometry::Anchor2D anch = centreHalf, bool orientate = true) :
+		TextStyle(const String& font, float sz, const Colour& colour = colour::black, geometry::Anchor2D anch = centreHalf, bool orientate = true) :
 				fontName{font}, size{sz}, bodyColour{colour}, anchor{anch}, isReorientated{orientate} {}
 		
 		// MARK: - Public variables
 		
 			///Font name (empty = system default)
-		utility::String fontName;
+		String fontName;
 			///Text size in points
 		float size = 12.0;
 			///Text body colour (nullopt = no fill colour, e.g. outlined)

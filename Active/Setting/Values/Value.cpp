@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <array>
 
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	

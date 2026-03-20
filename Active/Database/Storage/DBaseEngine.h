@@ -19,8 +19,8 @@ namespace active::database {
 	 @tparam TableID The table identifier type
 	 @tparam TableType An identifier for a table type or group
 	 */
-	template<typename Obj, typename ObjID = active::utility::Guid, typename DocID = active::utility::Guid,
-			typename TableID = active::utility::Guid, typename TableType = int32_t>
+	template<typename Obj, typename ObjID = active::Guid, typename DocID = active::Guid,
+			typename TableID = active::Guid, typename TableType = int32_t>
 	class DBaseEngine {
 	public:
 		

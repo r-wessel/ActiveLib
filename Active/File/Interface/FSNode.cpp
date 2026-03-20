@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/File/Interface/FSNode.h"
 
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Constructor
@@ -94,7 +94,7 @@ void FSNode::moveTo(const Path& path) {
  
 	name: The new name
   --------------------------------------------------------------------*/
-void FSNode::rename(const utility::String& name) {
+void FSNode::rename(const String& name) {
 	auto path{getPath()};
 	path.replaceFileName(name);
 	moveTo(path);

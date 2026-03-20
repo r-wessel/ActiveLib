@@ -8,8 +8,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/File/Interface/IOBase.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
-#include "Active/Utility/DataFormat.h"
+#include "Active/string/string_utf8.h"
+#include "Active/string/text_format.h"
 
 namespace active::file {
 	
@@ -17,12 +17,12 @@ namespace active::file {
 
 }
 
-namespace active::utility {
+namespace active {
 	
 		//Class to buffer data to a specified destination
 	class BufferOut: public file::IOBase {
 	public:
-		using enum utility::TextEncoding;
+		using enum text_encoding;
 		
 		/*!
 			Default constructor
@@ -34,28 +34,28 @@ namespace active::utility {
 			@param bufferSize Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
 		 	@param format The destination data format
 		*/
-		BufferOut(file::File& destFile, Memory::sizeOption bufferSize = std::nullopt, DataFormat format = DataFormat{});
+		BufferOut(file::File& destFile, Memory::sizeOption bufferSize = std::nullopt, text_format format = text_format{});
 		/*!
 			Constructor
 			@param memory The destination memory block
 			@param bufferSize Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
 		 	@param format The destination data format
 		*/
-		BufferOut(Memory& memory, Memory::sizeOption bufferSize = std::nullopt, DataFormat format = DataFormat{});
+		BufferOut(Memory& memory, Memory::sizeOption bufferSize = std::nullopt, text_format format = text_format{});
 		/*!
 			Constructor
 			@param memory The destination memory block
 			@param bufferSize Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
 			@param format The destination data format
 		*/
-		BufferOut(Memory&& memory, Memory::sizeOption bufferSize = std::nullopt, DataFormat format = DataFormat{});
+		BufferOut(Memory&& memory, Memory::sizeOption bufferSize = std::nullopt, text_format format = text_format{});
 		/*!
 			Constructor
 			@param destString The destination string
 			@param bufferSize Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
 			@param format The destination data format
 		*/
-		BufferOut(String& destString, Memory::sizeOption bufferSize = std::nullopt, DataFormat format = DataFormat{});
+		BufferOut(String& destString, Memory::sizeOption bufferSize = std::nullopt, text_format format = text_format{});
 		/*!
 			Move constructor
 			@param source The object to move
@@ -156,12 +156,12 @@ namespace active::utility {
 			Get the destination data format
 			@return The data format
 		*/
-		DataFormat format() const { return m_format; }
+		text_format format() const { return m_format; }
 		/*!
 			Get the source text encoding (NB: for text input functionality only)
 			@return The text encoding type
 		*/
-		TextEncoding getEncoding() const { return m_format.encoding; }
+		text_encoding getEncoding() const { return m_format.encoding; }
 		/*!
 			Write the specified string (using the buffer text encoding)
 			@param toWrite The string to write
@@ -177,7 +177,7 @@ namespace active::utility {
 		 @param maxBytes The maximum number of bytes to write
 		 @return A reference to this
 		 */
-		const BufferOut& write(const String& toWrite, DataFormat format, bool isNullAdded = false,
+		const BufferOut& write(const String& toWrite, text_format format, bool isNullAdded = false,
 							   std::optional<String::size_type> howMany = std::nullopt,
 							   std::optional<String::size_type> maxBytes = std::nullopt) const;
 		/*!
@@ -234,7 +234,7 @@ namespace active::utility {
 			Set The source text encoding
 			@param encoding The text encoding type
 		*/
-		void setEncoding(TextEncoding encoding) { m_format.encoding = encoding; }
+		void setEncoding(text_encoding encoding) { m_format.encoding = encoding; }
 		
 	protected:
 		/*!
@@ -293,7 +293,7 @@ namespace active::utility {
 			@param fileDest A file to write the data to
 			@param stringDest A string to write the data to
 		*/
-		void initialise(Memory* memory = nullptr, file::File* fileDest = nullptr, utility::String* stringDest = nullptr);
+		void initialise(Memory* memory = nullptr, file::File* fileDest = nullptr, String* stringDest = nullptr);
 		
 			///A cache to accumulate small writes
 		mutable std::vector<char> m_smallCache;
@@ -308,7 +308,7 @@ namespace active::utility {
 			///The buffer for outgoing data
 		mutable Memory m_buffer;
 			///Text encoding of the destination data (relevant only to text writes)
-		DataFormat m_format;
+		text_format m_format;
 			///The write position in the buffer
 		mutable Memory::size_type m_bufferPos;
 			///Recommended buffer size

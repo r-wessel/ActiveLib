@@ -10,7 +10,7 @@
 
 using namespace active::file;
 using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	String testBufferPath{"BufferTesting"};

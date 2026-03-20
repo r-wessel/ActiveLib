@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active;
 using namespace active::geometry;
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 /*!
 	Serialisation test class
@@ -20,7 +20,7 @@ public:
 	// MARK: - Static variables
 	
 		///The prolog tag
-	inline static utility::String tag = "tester";
+	inline static String tag = "tester";
 		
 	// MARK: - Constructor
 

@@ -29,7 +29,7 @@ namespace active::serialise::doc {
 		// MARK: - Constants
 
 			///The Object tag
-		static inline utility::String defaultTag = "obj";
+		static inline String defaultTag = "obj";
 
 		// MARK: - Types
 		
@@ -48,8 +48,8 @@ namespace active::serialise::doc {
 			@param type The document object type - used to reconstruct the original object. NB: Can use type_info.name, but isn't consistent
 			@param objTag An optional serialisation tag (differentiating the object role when there are many of the same type for different purposes)
 		*/
-		Object(const utility::String& type,
-			   std::optional<utility::String> objTag = std::nullopt);
+		Object(const String& type,
+			   std::optional<String> objTag = std::nullopt);
 			///Use the default copy
 		Object(const Object& source) = default;
 			///Use the default rvalue copy
@@ -58,9 +58,9 @@ namespace active::serialise::doc {
 		// MARK: - Public variables
 		
 			///The document object type - can be used to reconstruct the original object
-		utility::String docType;
+		String docType;
 			///A serialisation tag (identifying the object role)
-		utility::String tag;
+		String tag;
 			///Child objects of this object
 		std::vector<Object> objects;
 			///Child values of this object, i.e. single-value variables in the original object
@@ -105,14 +105,14 @@ namespace active::serialise::doc {
 			@param tag The required object tag
 			@return The requested object (nullptr if not found)
 		*/
-		const Object* object(const utility::String& tag) const;
+		const Object* object(const String& tag) const;
 		/*!
 			Make an object from this object
 			@param tag The required object tag (empty to retrieve this object as an object
 			@return An equivalent object (nullptr on failure)
 		*/
 		template<typename T>
-		std::unique_ptr<T> object(const utility::String& tag = utility::String{}) const {
+		std::unique_ptr<T> object(const String& tag = String{}) const {
 			if (!m_handler)
 				return nullptr;
 			if (!tag.empty()) {
@@ -128,7 +128,7 @@ namespace active::serialise::doc {
 			@param name The value name
 			@return The requested value (nullopt on failure)
 		*/
-		const std::optional<setting::ValueSetting> value(const utility::String& name) const;
+		const std::optional<setting::ValueSetting> value(const String& name) const;
 		/*!
 			Fill an inventory with the package items
 			@param inventory The inventory to receive the package items
@@ -171,7 +171,7 @@ namespace active::serialise::doc {
 			@param newType The document object type
 			@return A reference to this
 		*/
-		Object& withType(const utility::String& newType) {
+		Object& withType(const String& newType) {
 			docType = newType;
 			return *this;
 		}
@@ -180,7 +180,7 @@ namespace active::serialise::doc {
 			@param newTag The object tag
 			@return A reference to this
 		*/
-		Object& withTag(const utility::String& newTag) {
+		Object& withTag(const String& newTag) {
 			tag = newTag;
 			return *this;
 		}

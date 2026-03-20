@@ -19,7 +19,7 @@ namespace active::event {
 		- Initialise, e.g. allocate resources
 		- Shutdown (release resources etc)
 	*/
-	class Participant : public ::active::utility::NameID {
+	class Participant : public ::active::NameID {
 	public:
 		/*!
 			Default constructor

@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/Value.h"
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 using namespace active::setting;
 
 /*--------------------------------------------------------------------

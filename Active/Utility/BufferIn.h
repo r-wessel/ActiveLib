@@ -8,8 +8,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/File/Interface/IOBase.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
-#include "Active/Utility/TextEncoding.h"
+#include "Active/string/string_utf8.h"
+#include "Active/string/text_encoding.h"
 
 namespace active::file {
 	
@@ -17,7 +17,7 @@ namespace active::file {
 	
 }
 
-namespace active::utility {
+namespace active {
 	
 	class Memory;
 	
@@ -27,7 +27,7 @@ namespace active::utility {
 	class BufferIn: public file::IOBase {
 	public:
 		
-		using enum TextEncoding;
+		using enum text_encoding;
 		
 		// MARK: - Constructors
 		
@@ -36,19 +36,19 @@ namespace active::utility {
 			@param sourceFile The source data file. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = attempt to discover format from source)
 		*/
-		BufferIn(const file::File& sourceFile, DataFormat::Option format = DataFormat{});
+		BufferIn(const file::File& sourceFile, std::optional<text_format> format = text_format{});
 		/*!
 			Constructor
 			@param sourceMem A source block of memory. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = attempt to discover format from source)
 		*/
-		BufferIn(const Memory& sourceMem, DataFormat::Option format = DataFormat{});
+		BufferIn(const Memory& sourceMem, std::optional<text_format> format = text_format{});
 		/*!
 			Constructor
 			@param sourceString The source data string. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = attempt to discover format from source)
 		*/
-		BufferIn(const String& sourceString, DataFormat::Option format = DataFormat{});
+		BufferIn(const String& sourceString, std::optional<text_format> format = text_format{});
 		/*!
 			Move constructor
 			@param source The object to move
@@ -147,7 +147,7 @@ namespace active::utility {
 			Get The source text encoding (NB: for text input functionality only)
 			@return The text encoding type
 		*/
-		TextEncoding textEncoding() const { return m_format.encoding; }
+		text_encoding textEncoding() const { return m_format.encoding; }
 		/*!
 			Apply a function to the buffered characters
 			@param func The character function
@@ -268,7 +268,7 @@ namespace active::utility {
 		 	@param howMany The number of whole characters to get (nullopt to read all)
 			@return A reference to this
 		*/
-		const BufferIn& getString(String& dest, String::sizeOption howMany = std::nullopt) const;
+		const BufferIn& getString(String& dest, std::optional<String::size_type> howMany = std::nullopt) const;
 		/*!
 			Get a single line (terminating at any known line ending)
 			@param line The incoming line
@@ -321,30 +321,30 @@ namespace active::utility {
 			Set The source text encoding
 			@param format The source data format
 		*/
-		void setFormat(DataFormat format) { m_format = format; }
+		void setFormat(text_format format) { m_format = format; }
 		/*!
 			Set the source encoding type
 			@param encoding The source encoding type
 		*/
-		void setSourceEncoding(TextEncoding encoding) { m_format.encoding = encoding; }
+		void setSourceEncoding(text_encoding encoding) { m_format.encoding = encoding; }
 		/*!
 			Set the data source
 			@param sourceFile The source data file. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = discover format from source)
 		*/
-		void setSource(const file::File& sourceFile, DataFormat::Option format = DataFormat{});
+		void setSource(const file::File& sourceFile, std::optional<text_format> format = text_format{});
 		/*!
 			Set the data source
 			@param sourceMem A source block of memory. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = discover format from source)
 		*/
-		void setSource(const Memory& sourceMem, DataFormat::Option format = DataFormat{});
+		void setSource(const Memory& sourceMem, std::optional<text_format> format = text_format{});
 		/*!
 			Set the data source
 			@param sourceString The source data string. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = discover format from source)
 		*/
-		void setSource(const String& sourceString, DataFormat::Option format = DataFormat{});
+		void setSource(const String& sourceString, std::optional<text_format> format = text_format{});
 		
 	private:
 		/*!
@@ -399,7 +399,7 @@ namespace active::utility {
 			Discover the source format by analysing the content
 			@return The source format
 		*/
-		DataFormat discoverFormat();
+		text_format discoverFormat();
 		/*!
 			Initialise the buffer source data
 			@param pointerSrc A pointer to the source data
@@ -415,7 +415,7 @@ namespace active::utility {
 			///A buffer allocated for file input
 		std::unique_ptr<Memory> m_fileCache;
 			///Text encoding of the source data (relevant only to text sources)
-		DataFormat m_format;
+		text_format m_format;
 			///The current read position in the data source
 		mutable Memory::size_type m_readPos = 0;
 			///The number of bytes in the buffer

@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_RPC_BINDING
 
 #include "Active/Utility/Cloner.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::rpc {
 	
@@ -35,7 +35,7 @@ namespace active::rpc {
 		 Get the bound function name
 		 @return The bound function name
 		 */
-		virtual utility::String getName() const = 0;
+		virtual String getName() const = 0;
 		/*!
 		 Determine if the function returns void (no return)
 		 @return True if the function returns void

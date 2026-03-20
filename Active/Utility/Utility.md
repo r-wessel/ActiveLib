@@ -47,7 +47,7 @@ File sourceFile;
 JSONTransport().receive(someObject, Identity{}, BufferIn{sourceFile, UTF32});
 ```
 
-BufferIn can also be configured to discover the encoding and byte-order by passing std:nullopt for the `DataFormat`, e.g.:
+BufferIn can also be configured to discover the encoding and byte-order by passing std:nullopt for the `text_format`, e.g.:
 ```Cpp
 File sourceFile;
 JSONTransport().receive(someObject, Identity{}, BufferIn{sourceFile, std::nullopt});
@@ -96,7 +96,7 @@ auto foo2 = clone(*foo);	//foo2 is a deep copy of foo (type Bar)
 ```
 The Container classes, e.g. `Vector`, rely on cloning to support deep copying of container content. The `Clonable` concept is provided to test for clonability, e.g.:
 ```Cpp
-template<class T> requires utility::Clonable<T>
+template<class T> requires Clonable<T>
 class Vector : public std::vector<std::unique_ptr<T>> {
 ```
 

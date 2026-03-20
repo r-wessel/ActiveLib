@@ -25,7 +25,7 @@ namespace active::container {
 		NB: There is no requirement for container items to be non-null. It is entirely up the implementor if this rule should be adopted
 		or enforced
 	*/
-	template<class Key, class T> requires utility::Clonable<T>
+	template<class Key, class T> requires Clonable<T>
 	class Map : public std::map<Key, std::unique_ptr<T>> {
 	public:
 		
@@ -155,7 +155,7 @@ namespace active::container {
 			@param item The item to push
 		*/
 		auto emplace(const Key& key, T&& item) {
-			if constexpr(utility::Movable<T>)
+			if constexpr(Movable<T>)
 				base::emplace(key, cloneMove(std::move(item)));
 			else
 				base::emplace(key, clone(item));

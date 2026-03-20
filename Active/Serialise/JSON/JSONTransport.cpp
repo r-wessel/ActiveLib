@@ -22,14 +22,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
 #include "Active/Utility/Defer.h"
-#include "Active/Utility/TextEncoding.h"
+#include "Active/string/text_encoding.h"
 
 #include <unordered_map>
 
 using namespace active::serialise;
 using namespace active::serialise::json;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 using enum JSONTransport::Status;
 
@@ -198,7 +198,7 @@ namespace {
 		return: A reference to the converted string
 	  --------------------------------------------------------------------*/
 	String& fromJSONString(String& source, JSONGlossary& glossary) {
-		String::sizeOption index = 0;
+		std::optional<String::size_type> index = 0;
 		if (!source.find(escapeStr, *index))
 			return source;
 		BufferIn sourceBuffer{source};
@@ -458,7 +458,7 @@ namespace {
 			Get the encoding of the JSON inout stream
 		 	@return The JSON text encoding
 		*/
-		TextEncoding getEncoding() const { return m_buffer.textEncoding(); }
+		text_encoding getEncoding() const { return m_buffer.textEncoding(); }
 		/*!
 			Set the current read position in the source data (not the read position in the buffer)
 			@param pos The read position (e.g. the read position in a source file)
@@ -513,7 +513,7 @@ namespace {
 			Set the encoding of the JSON inout stream
 		 	@param format The source data format
 		*/
-		void setFormat(DataFormat format) { m_buffer.setFormat(format); }
+		void setFormat(text_format format) { m_buffer.setFormat(format); }
 		/*!
 			Set the transport status
 			@param status The transport status (nominal = no errors)
@@ -689,7 +689,7 @@ namespace {
 			}, &text);
 			if (text.empty())
 				throw std::system_error(makeJSONError(valueMissing));
-			String::sizeOption lastChar;
+			std::optional<String::size_type> lastChar;
 			if (allWhiteSpace32.find(endChar) != std::u32string::npos) {
 					//Trim trailing white-space chars
 				lastChar = text.findLastNotOf(String::allWhiteSpace);

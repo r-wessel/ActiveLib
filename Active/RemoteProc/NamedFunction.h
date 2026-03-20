@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Cargo.h"
 #include "Active/Serialise/Inventory/Identity.h"
 #include "Active/Utility/NameID.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <functional>
 #include <type_traits>
@@ -50,7 +50,7 @@ namespace active::rpc {
 	 @tparam Packaging The packaging type for transporting input parameters and results (Cargo is used as the default for serialisation)
 	*/
 	template<typename Argument, typename Return, typename Packaging = active::serialise::Cargo>
-	class NamedFunction : protected active::utility::NameID, virtual public Functional<Packaging> {
+	class NamedFunction : protected active::NameID, virtual public Functional<Packaging> {
 	public:
 
 		// MARK: - Types
@@ -65,7 +65,7 @@ namespace active::rpc {
 		 @param name The function name (as called remotely)
 		 @param function The C++ function bound to the name
 		 */
-		NamedFunction(const active::utility::String& name, Function function) : active::utility::NameID{name}, m_function{function} {}
+		NamedFunction(const active::String& name, Function function) : active::NameID{name}, m_function{function} {}
 		/*!
 		 Copy constructor
 		 @param source The object to copy
@@ -82,7 +82,7 @@ namespace active::rpc {
 		 Get the function name
 		 @return The function name
 		 */
-		active::utility::String getName() const override { return name; }
+		active::String getName() const override { return name; }
 		/*!
 		 Execute the function
 		 @param arg The transported function argument

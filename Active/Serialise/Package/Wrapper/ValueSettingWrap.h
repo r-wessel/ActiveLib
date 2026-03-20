@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Setting/ValueSetting.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::serialise {
 
@@ -24,7 +24,7 @@ namespace active::serialise {
 		// MARK: - Static variables
 		
 			///The default element tag
-		static inline utility::String tag = "setting";
+		static inline String tag = "setting";
 			
 		// MARK: - Constructor
 
@@ -77,7 +77,7 @@ namespace active::serialise {
 		
 	private:
 			///Temporary mutable storage for incoming values
-		mutable utility::String m_value;
+		mutable String m_value;
 	};
 
 }

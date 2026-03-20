@@ -5,12 +5,12 @@
 #include "Active/Setting/Values/Int64Value.h"
 #include "Active/Setting/Values/StringValue.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 #include "SQLite/sqlite3.h"
 
 using namespace active::database;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 using enum SQLiteCore::Status;
 
@@ -235,7 +235,7 @@ void* SQLiteCore::getHandle() const {
 bool SQLiteCore::validateSchema() const {
 		//First confirm tables exist (and create when missing)
 	for (auto& table : m_schema) {
-		utility::String statement{"CREATE TABLE IF NOT EXISTS " + table.ID + " ("};
+		String statement{"CREATE TABLE IF NOT EXISTS " + table.ID + " ("};
 		for (auto index = 0; index < table.size(); ++index) {
 			auto& field{*table[index]};
 			statement += field.name() + " " + getTypeID(field);
@@ -255,7 +255,7 @@ bool SQLiteCore::validateSchema() const {
 			int primaryKey;
 			if (auto result = sqlite3_table_column_metadata((sqlite3*) getHandle(), nullptr, table.ID.data(), field.name().data(), &dataType,
 															nullptr, nullptr, &primaryKey, nullptr); result != SQLITE_OK) {
-				utility::String statement{"ALTER TABLE " + table.ID + " ADD COLUMN " + field.name() + " " + getTypeID(field)};
+				String statement{"ALTER TABLE " + table.ID + " ADD COLUMN " + field.name() + " " + getTypeID(field)};
 				if (index == table.globalIndex)
 					statement += " PRIMARY KEY NOT NULL";
 				statement += ";";

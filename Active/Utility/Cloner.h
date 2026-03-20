@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <type_traits>
 #include <memory>
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 		Generic base class for any object that can clone itself
@@ -43,6 +43,6 @@ namespace active::utility {
 		return std::unique_ptr<T>{item.clonePtr()};
 	}
 	
-}  // namespace active::utility
+}  // namespace active
 
 #endif	//ACTIVE_UTILITY_CLONABLE

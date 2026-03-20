@@ -73,7 +73,7 @@ namespace active::serialise::doc {
 			@param tags Tag(s) that may be used to identify an object of this type
 		*/
 		template<typename T> requires Transportable<T>
-		void add(std::initializer_list<active::utility::String> const& tags) {
+		void add(std::initializer_list<active::String> const& tags) {
 			for (const auto& tag : tags) {
 				add<T>(tag);
 			}
@@ -84,13 +84,13 @@ namespace active::serialise::doc {
 			@param tag A tag that may be used to identify the object type
 		*/
 		template<typename T> requires Transportable<T>
-		void add(const active::utility::String& tag) {
+		void add(const active::String& tag) {
 			reconstruction[tag] = std::make_pair( &typeid(T), reconstructFunc<T>);
 		}
 		
 	private:
 			///Factory functions to construct objects from received serialised data paired with the typename and type info of the original class
-		std::unordered_map<active::utility::String, std::pair<const std::type_info*, Reconstruction>> reconstruction;
+		std::unordered_map<active::String, std::pair<const std::type_info*, Reconstruction>> reconstruction;
 	};
 
 }  // namespace active::serialise::doc

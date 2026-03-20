@@ -125,7 +125,7 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const utility::String& val) override {
+		Value& operator=(const String& val) override {
 			return assign(val, getUnit());
 		}
 
@@ -133,14 +133,14 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator utility::String() const override {
+		operator String() const override {
 			return (*this)(getUnit());
 		}
 		/*!
 			Get a string value
 			@return A string value
 		*/
-		virtual utility::String operator()(const T& unit) const {
+		virtual String operator()(const T& unit) const {
 				//Pair a value with a unit type
 			using UnitValue = std::pair<double, Type>;
 				//Collect the string from a value (as an integer) before replacing it with the remaining fraction of a specified type
@@ -149,16 +149,16 @@ namespace active::setting {
 				auto total = value.first;
 				value.first = math::roundDown(total, 1.0);
 				otherValue.first = unit.conversion(otherValue.second, unit.conversion(value.second, total - value.first, true));
-				utility::String result;
+				String result;
 				if (unit.isLeadingZero || !math::isZero(value.first, 1.0))
-					result = utility::String{value.first, 1.0} + unit.suffix(value.second);
+					result = String{value.first, 1.0} + unit.suffix(value.second);
 				value = otherValue;
 				return result;
 			};
 
 			bool isSuffix = unit.isUnitSuffix || unit.secondary;
 			UnitValue value{unit.conversion(unit.primary, data), unit.primary};
-			utility::String result;
+			String result;
 				//Split primary and second value when a second unit is specified
 			if (unit.secondary) {
 				result = collect(value, unit, *unit.secondary);
@@ -170,7 +170,7 @@ namespace active::setting {
 			if (unit.isDecimal()) {
 				if (!result.empty())
 					result += " ";
-				result += utility::String{value.first, unit.eps()};
+				result += String{value.first, unit.eps()};
 			} else {
 					//Fractional output
 				auto wholePart = math::roundDown(value.first, 1.0);
@@ -178,7 +178,7 @@ namespace active::setting {
 					value.first -= wholePart;
 					if (!result.empty())
 						result += " ";
-					result += utility::String{wholePart, 1.0};
+					result += String{wholePart, 1.0};
 				}
 				auto dividend = static_cast<uint64_t>(math::round(fabs(value.first) / unit.eps(), 1.0));
 				if (dividend != 0) {
@@ -189,7 +189,7 @@ namespace active::setting {
 					}
 					if (!result.empty())
 						result += " ";
-					result += utility::String{dividend} + "/" + utility::String{divisor};
+					result += String{dividend} + "/" + String{divisor};
 				}
 				if (result.empty())
 					result = "0";
@@ -225,14 +225,14 @@ namespace active::setting {
 			@param unit The input unit
 			@return A reference to this
 		*/
-		virtual Value& assign(const utility::String& val, const T& unit) {
+		virtual Value& assign(const String& val, const T& unit) {
 				//Mark the value as bad until we establish a valid measurement from the text
 			data = 0.0;
 			status = bad;
 				//Find any explicit units in the words to create a list of measurement expressions
-			using UnitExpression = std::pair<utility::String, Type>;
+			using UnitExpression = std::pair<String, Type>;
 			std::vector<UnitExpression> measureExpressions;
-			utility::String::size_type start = 0;
+			String::size_type start = 0;
 			while (start < val.size()) {
 				if (auto match = unit.findSuffix(val, start); match) {
 					if (match->second == 0)
@@ -246,16 +246,16 @@ namespace active::setting {
 			}
 				//Get the localised thousands separator
 			const auto& numPunct{std::use_facet<std::numpunct<char>>(std::locale{})};
-			utility::String thousandsSep{numPunct.thousands_sep()};
+			String thousandsSep{numPunct.thousands_sep()};
 				//Extract measurement values from each expression
 			for (auto& expression : measureExpressions) {
 					//Break the expression into whitespace separated words
-				auto words = utility::BufferIn{expression.first}.readWords();
+				auto words = BufferIn{expression.first}.readWords();
 				if (words.empty())
 					continue;
 				for (auto& word : words) {
 						//Strip out the thousands separator
-					word.replaceAll(thousandsSep, utility::String{});
+					word.replaceAll(thousandsSep, String{});
 						//Values can be expressed as a fraction - allow for dividend/divisor
 					auto dividend = 0.0, divisor = 1.0;
 					DoubleValue number;

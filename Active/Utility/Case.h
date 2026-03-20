@@ -6,7 +6,7 @@
 #ifndef ACTIVE_UTILITY_CASE
 #define ACTIVE_UTILITY_CASE
 
-namespace active::utility {
+namespace active {
 
 		///Text case options
 	enum Case {

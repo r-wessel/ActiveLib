@@ -16,7 +16,7 @@ using namespace active::serialise;
 using namespace active::serialise::json;
 using namespace active::serialise::xml;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 

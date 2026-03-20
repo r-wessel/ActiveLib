@@ -85,19 +85,19 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::utility::String& val) override { return *this; }
+		Value& operator=(const active::String& val) override { return *this; }
 		/*!
 			Assignment operator
 			@param val A guid value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::utility::Guid& val) override { return *this; }
+		Value& operator=(const active::Guid& val) override { return *this; }
 		/*!
 			Assignment operator
 			@param val A time value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::utility::Time& val) override { return *this; }
+		Value& operator=(const active::Time& val) override { return *this; }
 		
 		// MARK: - Conversion operators
 
@@ -130,17 +130,17 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator active::utility::String() const override { return utility::String(); }
+		operator active::String() const override { return String(); }
 		/*!
 			Get a guid value
 			@return A guid value
 		*/
-		operator active::utility::Guid() const override { return utility::Guid(); }
+		operator active::Guid() const override { return Guid(); }
 		/*!
 			Get a time value
 			@return A time value
 		*/
-		operator active::utility::Time() const override  { return utility::Time(); }
+		operator active::Time() const override  { return Time(); }
 		
 		// MARK: - Functions (const)
 		

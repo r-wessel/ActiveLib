@@ -14,7 +14,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::serialise;
 using namespace active::serialise::doc;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 

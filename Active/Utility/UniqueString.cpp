@@ -5,7 +5,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/UniqueString.h"
 
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Make a new unique string from a specified string

@@ -13,7 +13,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Primitives/3D/Mesh.h"
 #include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/SHA256.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <cmath>
 #include <map>
@@ -23,7 +23,7 @@ using namespace active::attribute;
 using namespace active::geometry;
 using namespace active::math;
 using namespace active::primitive;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -181,7 +181,7 @@ std::optional<Index> MeshBuilder::addFace(const std::vector<RawEdge>& vertices, 
 	for (auto& edge : face.edges)
 		edges.push_back(edge);
 	std::sort(edges.begin(), edges.end());
-	active::utility::SHA256 hasher;
+	active::SHA256 hasher;
 	for (auto& edge : edges)
 		hasher << edge;
 	auto hash = hasher.base64Hash();

@@ -44,7 +44,7 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override;
+		bool write(String& dest) const override;
 		
 		// MARK: - Functions (mutating)
 
@@ -58,7 +58,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override;
+		bool read(const String& source) override;
 		/*!
 			Read the cargo data from the specified setting
 			@param source The setting to read

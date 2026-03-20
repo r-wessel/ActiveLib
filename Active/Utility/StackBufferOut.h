@@ -14,7 +14,7 @@ namespace active::file {
 
 }
 
-namespace active::utility {
+namespace active {
 	
 		//Class to buffer data to a specified destination using stack-based storage (no heap allocation)
 	template<size_t S>

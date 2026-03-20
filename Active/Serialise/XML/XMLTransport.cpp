@@ -16,14 +16,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/UInt32Value.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
-#include "Active/Utility/TextEncoding.h"
+#include "Active/string/text_encoding.h"
 
 #include <map>
 
 using namespace active::serialise;
 using namespace active::serialise::xml;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 using enum XMLTransport::Status;
 
@@ -414,7 +414,7 @@ namespace {
 			Get the encoding of the XML inout stream
 		 	@return The XML text encoding
 		*/
-		TextEncoding getEncoding() const { return m_buffer.textEncoding(); }
+		text_encoding getEncoding() const { return m_buffer.textEncoding(); }
 		/*!
 			Determine if the imported is at the end of the data source
 		 	@return True if eof has been reached
@@ -453,12 +453,12 @@ namespace {
 			Set the encoding of the XML inout stream
 		 	@param encoding The source text encoding
 		*/
-		void setEncoding(TextEncoding encoding) { m_buffer.setSourceEncoding(encoding); }
+		void setEncoding(text_encoding encoding) { m_buffer.setSourceEncoding(encoding); }
 		/*!
 			Set the encoding of the XML inout stream
 		 	@param format The source data format
 		*/
-		void setFormat(DataFormat format) { m_buffer.setFormat(format); }
+		void setFormat(text_format format) { m_buffer.setFormat(format); }
 		/*!
 			Determine if unknown tags should be skipped
 		 	@return True if unknown tags should be skipped
@@ -492,7 +492,7 @@ namespace {
 		return: True if the string was converted without errors
 	  --------------------------------------------------------------------*/
 	String& XMLImporter::fromXMLString(String& source) const {
-		String::sizeOption index = 0;
+		std::optional<String::size_type> index = 0;
 		if (!source.find(escapeChar, *index))
 			return source;
 		BufferIn sourceBuffer{source};

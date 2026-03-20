@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <mutex>
 
 using namespace active::event;
-using namespace active::utility;
+using namespace active;
 
 using enum Subscriber::Action;
 
@@ -222,7 +222,7 @@ namespace active::event {
 			@param id The ID of the subscriber to remove
 			@return True if subscriber was removed
 		*/
-		bool remove(const utility::Guid& id) {
+		bool remove(const Guid& id) {
 			bool result = false;
 			if (auto sub = m_shared->findByID(id); sub != m_shared->end()) {
 				m_shared->erase(sub);
@@ -243,7 +243,7 @@ namespace active::event {
 			@param eventID An event identifier to filter the subscribers by (nullopt = pool all active subscribers)
 			@return The filtered subscribers
 		*/
-		PooledSubscribers filter(const utility::NameID::Option eventID = std::nullopt) {
+		PooledSubscribers filter(const NameID::Option eventID = std::nullopt) {
 			PooledSubscribers subscribers;
 			std::vector<std::shared_ptr<Subscriber>> pooled;
 			m_mutex.lock();
@@ -281,7 +281,7 @@ namespace active::event {
  
 	identity: Optional name/ID for the subscriber
   --------------------------------------------------------------------*/
-Publisher::Publisher(const utility::NameID& identity) : Participant{identity} {
+Publisher::Publisher(const NameID& identity) : Participant{identity} {
 	m_subscriber = std::make_unique<SubscriberList>();
 } //Publisher::Publisher
 

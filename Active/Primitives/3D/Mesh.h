@@ -62,7 +62,7 @@ namespace active::primitive {
 		// MARK: - Variables
 
 			///Mesh identifier (optional - application-specific)
-		utility::String id;
+		String id;
 			///Mesh vertices
 		VertexList vertices;
 			///Mesh normals

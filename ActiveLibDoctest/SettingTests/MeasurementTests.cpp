@@ -11,7 +11,7 @@
 using namespace active::math;
 using namespace active::measure;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 TEST_SUITE(TESTQ(MeasurementTests)) TEST_SUITE_OPEN
 

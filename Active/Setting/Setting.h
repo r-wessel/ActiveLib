@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::setting {
 
 		///Base class for an identified setting for interprocess communication
-	class Setting : public utility::Cloner {
+	class Setting : public Cloner {
 	public:
 		// MARK: - Constructors
 		
@@ -20,15 +20,15 @@ namespace active::setting {
 			Constructor
 			@param identifier An optional identifier for the setting
 		*/
-		Setting(utility::NameID::Option identifier = std::nullopt) : identity{identifier}	{}
+		Setting(NameID::Option identifier = std::nullopt) : identity{identifier}	{}
 		/*!
 			Constructor
 			@param name An optional identifying name for the setting
 			@param guid An optional identifying guid for the setting
 		*/
-		Setting(std::optional<utility::String> name, utility::Guid::Option guid = std::nullopt) {
+		Setting(std::optional<String> name, Guid::Option guid = std::nullopt) {
 			if (name || guid)
-				identity = std::make_optional(utility::NameID{name.value_or(utility::String{}), guid.value_or(utility::Guid{})});
+				identity = std::make_optional(NameID{name.value_or(String{}), guid.value_or(Guid{})});
 		}
 		/*!
 			Copy constructor
@@ -36,7 +36,7 @@ namespace active::setting {
 		*/
 		Setting(const Setting& source) {
 			if (source.identity)
-				identity = std::make_optional<utility::NameID>(*source.identity);
+				identity = std::make_optional<NameID>(*source.identity);
 		}
 		
 		/*!
@@ -53,7 +53,7 @@ namespace active::setting {
 		// MARK: - Public variables
 		
 			///Optional setting identity
-		utility::NameID::Option identity;
+		NameID::Option identity;
 		
 		// MARK: Operators
 		
@@ -82,7 +82,7 @@ namespace active::setting {
 		virtual bool empty() const = 0;
 
 			///True if the setting is empty
-		virtual utility::String name() const { return identity.has_value() ? identity->name : utility::String{}; }
+		virtual String name() const { return identity.has_value() ? identity->name : String{}; }
 
 		// MARK: Functions (mutating)
 		

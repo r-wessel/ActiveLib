@@ -8,7 +8,7 @@
 
 #include "Active/Utility/Case.h"
 
-namespace active::utility {
+namespace active {
 
 		///Formatting options for hash generators
 	struct HashFormat {

@@ -31,8 +31,8 @@ namespace active::serialise {
 	
 		///Concept for wrappable values, e.g. double, int32_t, String
 	template<typename Obj>
-	concept IsWrappableValue = requires(Obj obj, active::utility::String& str) {
-		{ !utility::Dereferenceable<Obj> };
+	concept IsWrappableValue = requires(Obj obj, active::String& str) {
+		{ !Dereferenceable<Obj> };
 		{ ValueWrap<Obj>(obj).read(str) };
 	};
 

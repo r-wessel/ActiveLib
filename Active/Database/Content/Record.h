@@ -39,8 +39,8 @@ namespace active::database {
 	 - One as a globally unique identifier - this must not remain the same in copies
 	 @tparam ObjID The object identifier type
 	 */
-	template<typename ObjID = active::utility::Guid>
-	class Record : public active::serialise::Package, public virtual active::utility::Cloner {
+	template<typename ObjID = active::Guid>
+	class Record : public active::serialise::Package, public virtual active::Cloner {
 	public:
 
 		// MARK: - Types
@@ -103,12 +103,12 @@ namespace active::database {
 		 Get the last edit time
 		 @return The edit time
 		 */
-		const active::utility::Time& getEdited() const { return m_editTime; }
+		const active::Time& getEdited() const { return m_editTime; }
 		/*!
 		 Get the created time
 		 @return The created time
 		 */
-		const active::utility::Time& getCreated() const { return m_createTime; }
+		const active::Time& getCreated() const { return m_createTime; }
 		
 		// MARK: - Functions (mutating)
 		
@@ -134,7 +134,7 @@ namespace active::database {
 		 Set the last edit time
 		 @param editTime The edit time
 		 */
-		void setEdited(const active::utility::Time& editTime) { m_editTime = editTime; }
+		void setEdited(const active::Time& editTime) { m_editTime = editTime; }
 		
 		// MARK: - Serialisation
 		
@@ -163,9 +163,9 @@ namespace active::database {
 			///An optional runtime identifier for the object owner in memory - can be used as required for a target application
 		std::any m_ownerID;
 			///The time the object wasor created
-		active::utility::Time m_createTime = active::utility::Time{};
+		active::Time m_createTime = active::Time{};
 			///The time the object was last edited
-		active::utility::Time m_editTime = active::utility::Time{};
+		active::Time m_editTime = active::Time{};
 	};
 
 	/*--------------------------------------------------------------------

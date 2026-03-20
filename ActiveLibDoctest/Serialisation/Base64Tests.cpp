@@ -7,7 +7,7 @@
 
 using namespace active;
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 	///Tests for base64 encoding
 TEST_SUITE(TESTQ(base64Test)) TEST_SUITE_OPEN

@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Wrapper/AnyValueWrap.h"
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 using namespace active::setting;
 
 /*--------------------------------------------------------------------
@@ -16,7 +16,7 @@ using namespace active::setting;
  
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
-bool AnyValueWrap::write(utility::String& dest) const {
+bool AnyValueWrap::write(String& dest) const {
 	dest = getTargetValue();
 	return true;
 } //AnyValueWrap::read
@@ -29,7 +29,7 @@ bool AnyValueWrap::write(utility::String& dest) const {
  
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool AnyValueWrap::read(const utility::String& source) {
+bool AnyValueWrap::read(const String& source) {
 		//NB: Value is only mutated within import processes, in which case the object must be mutable (i.e. const discard is safe)
 	const_cast<Value&>(getTargetValue()) = source;
 	return true;

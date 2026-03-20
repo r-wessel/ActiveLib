@@ -23,7 +23,7 @@ namespace active::container {
 		NB: There is no requirement for container items to be non-null. It is entirely up the implementor if this rule should be adopted
 		or enforced
 	*/
-	template<class T> requires utility::Clonable<T>
+	template<class T> requires Clonable<T>
 	class List : public std::list<std::unique_ptr<T>> {
 	public:
 		
@@ -112,7 +112,7 @@ namespace active::container {
 			@param item The item to push
 		*/
 		void emplace_back(T&& item) {
-			if constexpr(utility::Movable<T>)
+			if constexpr(Movable<T>)
 				base::emplace_back(cloneMove(std::move(item)));
 			else
 				base::emplace_back(clone(item));
@@ -142,7 +142,7 @@ namespace active::container {
 			@param item The item to push
 		*/
 		void emplace_front(T&& item) {
-			if constexpr(utility::Movable<T>)
+			if constexpr(Movable<T>)
 				base::emplace_front(cloneMove(std::move(item)));
 			else
 				base::emplace_front(clone(item));

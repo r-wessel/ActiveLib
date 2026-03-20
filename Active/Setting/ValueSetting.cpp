@@ -15,7 +15,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/UInt32Value.h"
 
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Constructor
@@ -37,7 +37,7 @@ ValueSetting::ValueSetting(const Value& value, size_t rows, size_t cols) {
 	value: A value to populate into the setting
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(Value&& value, utility::NameID::Option nameID) : setting::Setting(nameID) {
+ValueSetting::ValueSetting(Value&& value, NameID::Option nameID) : setting::Setting(nameID) {
 	emplace_back(value);
 } //ValueSetting::ValueSetting
 
@@ -56,7 +56,7 @@ ValueSetting::ValueSetting(ValueSetting&& source) noexcept : Setting(source), ba
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(bool val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(bool val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(BoolValue{val});
 } //ValueSetting::ValueSetting
 
@@ -67,7 +67,7 @@ ValueSetting::ValueSetting(bool val, utility::NameID::Option nameID) : setting::
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(int32_t val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(int32_t val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(Int32Value{val});
 } //ValueSetting::ValueSetting
 
@@ -78,7 +78,7 @@ ValueSetting::ValueSetting(int32_t val, utility::NameID::Option nameID) : settin
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(uint32_t val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(uint32_t val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(UInt32Value{val});
 } //ValueSetting::ValueSetting
 
@@ -89,7 +89,7 @@ ValueSetting::ValueSetting(uint32_t val, utility::NameID::Option nameID) : setti
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(int64_t val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(int64_t val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(Int64Value{val});
 } //ValueSetting::ValueSetting
 
@@ -100,7 +100,7 @@ ValueSetting::ValueSetting(int64_t val, utility::NameID::Option nameID) : settin
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(double val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(double val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(DoubleValue{val});
 } //ValueSetting::ValueSetting
 
@@ -111,7 +111,7 @@ ValueSetting::ValueSetting(double val, utility::NameID::Option nameID) : setting
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(const Guid& val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(const Guid& val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(GuidValue{val});
 } //ValueSetting::ValueSetting
 
@@ -122,7 +122,7 @@ ValueSetting::ValueSetting(const Guid& val, utility::NameID::Option nameID) : se
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(const String& val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(const String& val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(StringValue{val});
 } //ValueSetting::ValueSetting
 
@@ -133,7 +133,7 @@ ValueSetting::ValueSetting(const String& val, utility::NameID::Option nameID) : 
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(const Time& val, utility::NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(const Time& val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(TimeValue{val});
 } //ValueSetting::ValueSetting
 

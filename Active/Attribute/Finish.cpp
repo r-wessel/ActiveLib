@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 using namespace active;
 using namespace active::attribute;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Get a hash value for the finish

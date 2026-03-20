@@ -4,14 +4,30 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 */
 
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <algorithm>
 #include <cstring>
 #include <stdexcept>
 #include <utility>
 
-using namespace active::utility;
+using namespace active;
+
+namespace {
+	
+		// MARK: - Constants
+	
+	const std::array utf8BOM = { '\xEF', '\xBB', '\xBF' };
+	
+	const std::array utf16BEBOM = { '\xFE', '\xFF' };
+	
+	const std::array utf16LEBOM = { '\xFF', '\xFE' };
+	
+	const std::array utf32BEBOM = { '\x00', '\x00', '\xFE', '\xFF' };
+	
+	const std::array utf32LEBOM = { '\xFF', '\xFE', '\x00', '\x00' };
+	
+}
 
 /*--------------------------------------------------------------------
 	Fill memory with a specified character
@@ -43,6 +59,29 @@ Memory::size_type Memory::copy(char* dest, const char* source, Memory::size_type
 
 
 /*--------------------------------------------------------------------
+	Get a BOM signature for the format
+ 
+	return: The BOM signature (nullopt if none defined, e.g. for ascii)
+  --------------------------------------------------------------------*/
+std::optional<Memory> Memory::BOM(const text_format& format) {
+	switch (format.encoding) {
+		case text_encoding::UTF8:
+			return Memory{utf8BOM.data(), utf8BOM.size()};
+			break;
+		case text_encoding::UTF16:
+			return Memory{format.is_big_endian ? utf16BEBOM.data() : utf16LEBOM.data(), utf16BEBOM.size()};
+			break;
+		case text_encoding::UTF32:
+			return Memory{format.is_big_endian ? utf32BEBOM.data() : utf32LEBOM.data(), utf32BEBOM.size()};
+			break;
+		default:
+			break;
+	}
+	return std::nullopt;
+} //Memory::BOM
+
+
+/*--------------------------------------------------------------------
 	Constructor
  
 	location: A pointer to the data location
@@ -52,7 +91,7 @@ Memory::size_type Memory::copy(char* dest, const char* source, Memory::size_type
   --------------------------------------------------------------------*/
 Memory::Memory(const void* location, size_type size, bool makeCopy, bool takeOwnership) {
 	m_location = reinterpret_cast<char*>(const_cast<void*>(location));
-	m_allocSize = (size == 0) ? String::getValidByteCount(m_location) : size;
+	m_allocSize = (size == 0) ? string_function::getValidByteCount(m_location) : size;
 	if (makeCopy)
 		reallocate(m_allocSize);
 	else if (takeOwnership)

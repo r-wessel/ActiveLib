@@ -64,7 +64,7 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override { return base::get().write(dest); }
+		bool write(String& dest) const override { return base::get().write(dest); }
 		/*!
 			Write the cargo data to a specified setting
 			@param dest The setting to write to
@@ -92,7 +92,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override { return base::get().read(source); }
+		bool read(const String& source) override { return base::get().read(source); }
 		/*!
 			Read the cargo data from the specified setting
 			@param source The setting to read

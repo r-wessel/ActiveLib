@@ -14,7 +14,7 @@ using namespace active::geometry;
 using namespace active::math;
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 using enum Identity::Role;
 
@@ -58,7 +58,7 @@ XMLPolyPoint::XMLPolyPoint(geometry::PolyPoint& point) : XMLPoint(point) {}
 	point: The poly-point to wrap for (de)serialisation
 	customTag: A custom tag (overrides the default tag)
   --------------------------------------------------------------------*/
-XMLPolyPoint::XMLPolyPoint(geometry::PolyPoint& point, const utility::String& customTag) : XMLPoint(point, customTag) {}
+XMLPolyPoint::XMLPolyPoint(geometry::PolyPoint& point, const String& customTag) : XMLPoint(point, customTag) {}
 
 // MARK: - Functions (const)
 

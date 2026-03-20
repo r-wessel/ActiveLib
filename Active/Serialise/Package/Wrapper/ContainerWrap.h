@@ -43,7 +43,7 @@ namespace active::serialise {
 	public:
 		
 			//Default container element tag
-		static inline utility::String defaultTag = "Item";
+		static inline String defaultTag = "Item";
 			///Serialisation fields
 		enum FieldIndex {
 			itemID,
@@ -64,7 +64,7 @@ namespace active::serialise {
 		 @param isEmptySent True if the container is still required to be sent even when empty
 		 @param tg The default item tag
 		 */
-		ContainerWrap(Container& container, bool isEmptySent = false, const utility::String& tg = defaultTag) :
+		ContainerWrap(Container& container, bool isEmptySent = false, const String& tg = defaultTag) :
 				base{container}, isEmptyRequired(isEmptySent), tag{tg} {}
 		/*!
 		 Constructor
@@ -72,7 +72,7 @@ namespace active::serialise {
 		 @param isEmptySent True if the container is still required to be sent even when empty
 		 @param tg The default item tag
 		 */
-		ContainerWrap(const Container& container, bool isEmptySent = false, const utility::String& tg = defaultTag) :
+		ContainerWrap(const Container& container, bool isEmptySent = false, const String& tg = defaultTag) :
 				ContainerWrap{const_cast<Container&>(container), isEmptySent, tg} {}
 		/*!
 		 Constructor
@@ -87,7 +87,7 @@ namespace active::serialise {
 		// MARK: - Public variables
 		
 			//The container item tag
-		utility::String tag;
+		String tag;
 			//True if empty containers should still be serialised
 		bool isEmptyRequired;
 			
@@ -114,7 +114,7 @@ namespace active::serialise {
 			using namespace active::serialise;
 			switch (item.index) {
 				case itemID: {
-					if constexpr (active::utility::Dereferenceable<Obj>) {
+					if constexpr (active::Dereferenceable<Obj>) {
 						using Value = typename Obj::element_type;
 						using PackType = serialise::CargoHold<ObjWrapper, Value>;
 						using ItemType = serialise::CargoHold<serialise::ItemWrap, Value>;
@@ -187,7 +187,7 @@ namespace active::serialise {
 					return true;
 				switch (item.index) {
 					case itemID:
-						if constexpr (active::utility::Dereferenceable<Obj>) {
+						if constexpr (active::Dereferenceable<Obj>) {
 							using Value = typename Obj::element_type;
 							using PackType = serialise::CargoHold<ObjWrapper, Value>;
 							using ItemType = serialise::CargoHold<serialise::ItemWrap, Value>;

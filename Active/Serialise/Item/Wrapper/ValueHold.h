@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Utility/Concepts.h"
 #include "Active/Utility/Guid.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::serialise {
 	
@@ -32,7 +32,7 @@ namespace active::serialise {
 	using FloatHold = ValueHold<float>;
 	using Int32Hold = ValueHold<int32_t>;
 	using Int64Hold = ValueHold<int64_t>;
-	using StringHold = ValueHold<utility::String>;
+	using StringHold = ValueHold<String>;
 	using UInt32Hold = ValueHold<uint32_t>;
 
 }  // namespace active::serialise

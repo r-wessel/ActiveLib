@@ -13,7 +13,7 @@ using namespace active::geometry;
 using namespace active::math;
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 

@@ -7,19 +7,19 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_FILE_PATH
 
 #include "Active/Utility/Cloner.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <filesystem>
 
 namespace active::file {
 
 		/// Class to represent the path of a node in the local file system
-	class Path: public ::active::utility::Cloner {
+	class Path: public ::active::Cloner {
 	public:
 		// MARK: - Constants
 		
 		/// The path delimiter expression for the current platform
-		static const utility::String delimiter;
+		static const String delimiter;
 		
 		// MARK: - Constructors
 		
@@ -32,7 +32,7 @@ namespace active::file {
 			@param path The path (typically plaform-specific)
 			@param isRelative True if the path is relative to the current path
 		*/
-		Path(const utility::String& path, bool isRelative = false);
+		Path(const String& path, bool isRelative = false);
 		/*!
 			Constructor
 			@param path A file system path
@@ -88,25 +88,25 @@ namespace active::file {
 			@param toAppend The string to append to this path (with a directory separator)
 			@return The new path
 		*/
-		Path operator/ (const utility::String& toAppend) const { return Path{*this}.append(toAppend); }
+		Path operator/ (const String& toAppend) const { return Path{*this}.append(toAppend); }
 		/*!
 			Addition operator
 			@param toAppend The string to append to this path (as a file node name)
 			@return The new path
 		*/
-		Path operator+ (const utility::String& toAppend) const;
+		Path operator+ (const String& toAppend) const;
 		/*!
 			Append a name to the path (with a prefixed directory separator)
 			@param toAppend The string to append to this path (with a directory separator)
 			@return A reference to this
 		*/
-		Path& operator/= (const utility::String& toAppend) { return append(toAppend); }
+		Path& operator/= (const String& toAppend) { return append(toAppend); }
 		/*!
 			Concatenate a name to the path (with a prefixed directory separator)
 			@param toConcat The string to concatenate to this path (with a directory separator)
 			@return A reference to this
 		*/
-		Path& operator+= (const utility::String& toConcat) { return concat(toConcat); }
+		Path& operator+= (const String& toConcat) { return concat(toConcat); }
 		/*!
 			Conversion operator
 			@return The path as a filesystem::path
@@ -116,7 +116,7 @@ namespace active::file {
 			Conversion operator
 			@return The path as a string
 		*/
-		operator utility::String() const;
+		operator String() const;
 		
 		// MARK: - Functions (const)
 		
@@ -130,17 +130,17 @@ namespace active::file {
 		 	@param isExtensionDeleted True if the extension should be deleted
 			@return The name of the node
 		*/
-		utility::String getNodeName(bool isExtensionDeleted = false) const;
+		String getNodeName(bool isExtensionDeleted = false) const;
 		/*!
 			Get the node name extension, e.g. "xml" (no dot)
 			@return The node name extension
 		*/
-		utility::String getExtension() const;
+		String getExtension() const;
 		/*!
 			Get the path as a platform-specific string
 			@return The path as a platform-specific string
 		*/
-		utility::String platformSpecific() const;
+		String platformSpecific() const;
 		/*!
 			Get the path root directory
 			@return The path root directory path
@@ -184,13 +184,13 @@ namespace active::file {
 			@param toAppend The string to append to this path (with a directory separator)
 			@return A reference to this
 		*/
-		Path& append(const utility::String& toAppend);
+		Path& append(const String& toAppend);
 		/*!
 			Concatenates text to the path (without inserting a path separator - also use /=)
 			@param toConcat The string to concatenate to this path (as a directory node name - also use +=)
 			@return A reference to this
 		*/
-		Path& concat(const utility::String& toConcat);
+		Path& concat(const String& toConcat);
 		/*!
 			Remove the filename component of the path (if any name remains past the last '/')
 			@return A reference to this
@@ -201,13 +201,13 @@ namespace active::file {
 			@param replacement The new name (an emply string simply removes the name)
 			@return A reference to this
 		*/
-		Path& replaceFileName(const utility::String& replacement = utility::String{});
+		Path& replaceFileName(const String& replacement = String{});
 		/*!
 			Replace the file name extension
 			@param replacement The new extension (an emply string simply removes the extension)
 			@return A reference to this
 		*/
-		Path& replaceExtension(const utility::String& replacement = utility::String{});
+		Path& replaceExtension(const String& replacement = String{});
 		
 	private:
 		

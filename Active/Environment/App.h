@@ -27,7 +27,7 @@ namespace active::environment {
 			@param identity Optional name/ID for the subscriber
 			@param isActiveInstance True if this object is the active instance (the primary application)
 		*/
-		App(const utility::NameID& identity = utility::NameID{}, bool isActiveInstance = false);
+		App(const NameID& identity = NameID{}, bool isActiveInstance = false);
 		/*!
 			Copy constructor
 			@param source The object to copy

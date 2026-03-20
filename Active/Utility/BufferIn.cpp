@@ -14,9 +14,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include <array>
 
+using namespace active;
 using namespace active::file;
 using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 
@@ -27,15 +28,15 @@ namespace {
 	constexpr  Memory::size_type possibleCharWidth = 4;
 	
 	using StackBuffer = StackBufferOut<stackBufferSize>;
-	using enum TextEncoding;
+	using enum active::text_encoding;
 	
 		///Text formats that can be detected (in order of priority)
 	std::array supportedFormats = {
-		DataFormat{UTF8},
-		DataFormat{UTF32, false, false},
-		DataFormat{UTF32, false, true},
-		DataFormat{UTF16, false, Memory::defaultEndian},
-		DataFormat{UTF16, false, !Memory::defaultEndian},
+		active::text_format{UTF8},
+		active::text_format{UTF32, false, false},
+		active::text_format{UTF32, false, true},
+		active::text_format{UTF16, false, Memory::defaultEndian},
+		active::text_format{UTF16, false, !Memory::defaultEndian},
 	};
 	
 }  // namespace
@@ -51,7 +52,7 @@ void swap(BufferIn& v1, BufferIn& v2) {
 	sourceFile: The source data file
 	format: The source data format (nullopt = attempt to discover format from source)
   --------------------------------------------------------------------*/
-BufferIn::BufferIn(const File& sourceFile, DataFormat::Option format) {
+BufferIn::BufferIn(const File& sourceFile, std::optional<text_format> format) {
 	setSource(sourceFile, format);
 } //BufferIn::BufferIn
 
@@ -62,7 +63,7 @@ BufferIn::BufferIn(const File& sourceFile, DataFormat::Option format) {
 	sourceMem: A source block of memory
 	format: The source data format (nullopt = attempt to discover format from source)
   --------------------------------------------------------------------*/
-BufferIn::BufferIn(const Memory& sourceMem, DataFormat::Option format) {
+BufferIn::BufferIn(const Memory& sourceMem, std::optional<text_format> format) {
 	setSource(sourceMem, format);
 } //BufferIn::BufferIn
 
@@ -73,7 +74,7 @@ BufferIn::BufferIn(const Memory& sourceMem, DataFormat::Option format) {
 	sourceString: The source data string
 	format: The source data format (nullopt = attempt to discover format from source)
   --------------------------------------------------------------------*/
-BufferIn::BufferIn(const String& sourceString, DataFormat::Option format) {
+BufferIn::BufferIn(const String& sourceString, std::optional<text_format> format) {
 	setSource(sourceString, format);
 } //BufferIn::BufferIn
 
@@ -307,7 +308,7 @@ std::pair<char32_t, Memory::size_type> BufferIn::getEncodedChar(bool isConsumed)
 		setState(std::ios_base::failbit);	//Attempting to read from eof is an error
 		return result;
 	}
-	auto uniChar = String::getUnicodeChar(m_buffer + m_readPos, bufferMin(possibleCharWidth), m_format);
+	auto uniChar = string_function::getUnicodeChar(m_buffer + m_readPos, bufferMin(possibleCharWidth), m_format);
 	if (isConsumed) {
 		updatePosition(m_buffer[m_readPos], static_cast<uint8_t>(uniChar.second));
 		bumpReadPos(uniChar.second);
@@ -402,7 +403,7 @@ std::vector<String> BufferIn::readWords(Memory::sizeOption howMany, const String
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getString(String& dest, String::sizeOption howMany) const {
+const BufferIn& BufferIn::getString(String& dest, std::optional<String::size_type> howMany) const {
 	String encodedChar;
 	auto toRead = howMany.value_or(0);
 	bool isOpen = !howMany;
@@ -530,7 +531,7 @@ void BufferIn::swap(BufferIn& other) {
 	sourceFile: The source data file
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const File& sourceFile, DataFormat::Option format) {
+void BufferIn::setSource(const File& sourceFile, std::optional<text_format> format) {
 	initialise(nullptr, &sourceFile, 0);
 	m_format = format ? *format : discoverFormat();
 } //BufferIn::setSource
@@ -542,7 +543,7 @@ void BufferIn::setSource(const File& sourceFile, DataFormat::Option format) {
 	sourceMem: A source block of memory
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const Memory& sourceMem, DataFormat::Option format) {
+void BufferIn::setSource(const Memory& sourceMem, std::optional<text_format> format) {
 	if (sourceMem)
 		initialise(sourceMem.data(), nullptr, sourceMem.size());
 	else
@@ -557,7 +558,7 @@ void BufferIn::setSource(const Memory& sourceMem, DataFormat::Option format) {
 	sourceString: The source data string
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const String& sourceString, DataFormat::Option format) {
+void BufferIn::setSource(const String& sourceString, std::optional<text_format> format) {
 	if (!sourceString.empty())
 			//NB: Source is never mutated by BufferIn so const discard is safe
 		initialise(const_cast<char*>(sourceString.data()), nullptr, sourceString.dataSize());
@@ -864,14 +865,14 @@ Memory::size_type BufferIn::getCapacity() const {
  
 	return: The source format
   --------------------------------------------------------------------*/
-DataFormat BufferIn::discoverFormat() {
+text_format BufferIn::discoverFormat() {
 	auto position = getPosition();
 	auto row = m_lastRow, column = m_lastColumn;
 	char bom[4];
 	Memory::size_type len = 4;
 	if (!read(bom, len))
-		return DataFormat{};	//No valid content, so result inconsequential
-	if (auto format = DataFormat::fromBOM(bom, len); format) {
+		return text_format{};	//No valid content, so result inconsequential
+	if (auto format = text_format::from_bom(bom, len); format) {
 		setPosition(position + format->second);	//Move to the first byte beyond the BOM
 		m_lastColumn = column + format->second;
 		return format->first;
@@ -879,7 +880,7 @@ DataFormat BufferIn::discoverFormat() {
 	constexpr Memory::size_type sampleSize = 0x400;
 	len = std::min(sampleSize, getSupplyCount());
 		//Try reading a batch of data as a specific coding type
-	DataFormat result{ISO8859_1, false, false};	//Fallback if other encodings fail
+	text_format result{ISO8859_1, false, false};	//Fallback if other encodings fail
 	for (auto format : supportedFormats) {
 		setPosition(position);
 					setFormat(format);

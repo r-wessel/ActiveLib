@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <algorithm>
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Determine if the inventory contains a specified item

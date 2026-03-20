@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_GEOMETRY_ANCHOR_2D
 #define ACTIVE_GEOMETRY_ANCHOR_2D
 
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::geometry {
 	
@@ -49,13 +49,13 @@ namespace active::geometry {
 		@param text The incoming text
 		@return The equivalent anchor
 	*/
-	std::optional<Anchor2D> toAnchor2D(const utility::String& text);
+	std::optional<Anchor2D> toAnchor2D(const String& text);
 	/*!
 		Get the text for a Anchor2D value
 		@param anchor The incoming anchor
 		@return The anchor name as text
 	*/
-	utility::String fromAnchor2D(Anchor2D anchor);
+	String fromAnchor2D(Anchor2D anchor);
 
 }
 

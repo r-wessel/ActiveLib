@@ -4,14 +4,14 @@
 #include "Active/Utility/BufferOut.h"
 #include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 #include "Active/Utility/Time.h"
 
 #include <map>
 
 using namespace active;
 using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	auto sampleText = u8"ਖdਖdਖdਖdabਖdefghabਖdefgh";

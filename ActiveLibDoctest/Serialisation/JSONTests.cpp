@@ -15,9 +15,9 @@ using namespace active::geometry;
 using namespace active::math;
 using namespace active::serialise::json;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
-using enum active::utility::TextEncoding;
+using enum active::text_encoding;
 
 namespace {
 	
@@ -245,7 +245,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			//Send the test object as JSON (encoded as UTF16BE with BOM)
 		memCollector.clear();
 		try {
-			transporter.send(PackageWrap{shapeOut}, SerialiseTester::tag, BufferOut{memCollector, std::nullopt, DataFormat{UTF16, true, true}});
+			transporter.send(PackageWrap{shapeOut}, SerialiseTester::tag, BufferOut{memCollector, std::nullopt, text_format{UTF16, true, true}});
 			CHECK_MESSAGE(!memCollector.empty(), TEST_MESSAGE(JSON send produced no output));
 		} catch(...) {
 			FAIL_CHECK(TEST_MESSAGE(JSON (UTF16 with BOM) send failed));

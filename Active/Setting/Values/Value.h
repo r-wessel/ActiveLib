@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/Cloner.h"
 #include "Active/Utility/Guid.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 #include "Active/Utility/Time.h"
 
 namespace active::setting {
@@ -28,7 +28,7 @@ namespace active::setting {
 
 		Subclasses should override the following functions as appropriate
 	*/
-	class Value : public active::utility::Cloner {
+	class Value : public active::Cloner {
 	public:
 		
 		// MARK: - Types
@@ -61,13 +61,13 @@ namespace active::setting {
 			@param text The incoming text
 			@return The equivalent type (nullopt on failure)
 		*/
-		static std::optional<Type> typeFromName(const utility::String& text);
+		static std::optional<Type> typeFromName(const String& text);
 		/*!
 			Get the text for a Value::Type
 			@param type The incoming type
 			@return The type name as text
 		*/
-		static utility::String nameForType(Type type);
+		static String nameForType(Type type);
 		
 		// MARK: - Constructors
 		
@@ -153,25 +153,25 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		virtual Value& operator=(const active::utility::String& val) = 0;
+		virtual Value& operator=(const active::String& val) = 0;
 		/*!
 			Assignment operator
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		virtual Value& operator=(const char* val) { return operator=(utility::String{val}); }
+		virtual Value& operator=(const char* val) { return operator=(String{val}); }
 		/*!
 			Assignment operator
 			@param val A guid value to assign
 			@return A reference to this
 		*/
-		virtual Value& operator=(const active::utility::Guid& val) = 0;
+		virtual Value& operator=(const active::Guid& val) = 0;
 		/*!
 			Assignment operator
 			@param val A time value to assign
 			@return A reference to this
 		*/
-		virtual Value& operator=(const active::utility::Time& val) = 0;
+		virtual Value& operator=(const active::Time& val) = 0;
 		
 		// MARK: - Conversion operators
 
@@ -204,17 +204,17 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		virtual operator active::utility::String() const = 0;
+		virtual operator active::String() const = 0;
 		/*!
 			Get a guid value
 			@return A guid value
 		*/
-		virtual operator active::utility::Guid() const = 0;
+		virtual operator active::Guid() const = 0;
 		/*!
 			Get a time value
 			@return A time value
 		*/
-		virtual operator active::utility::Time() const = 0;
+		virtual operator active::Time() const = 0;
 		
 		// MARK: - Functions (const)
 		

@@ -54,7 +54,7 @@ namespace active::primitive {
 			Constructor
 			@param source A 3D point
 		*/
-		template<typename T> requires utility::IsCoord3D<T>
+		template<typename T> requires IsCoord3D<T>
 		Vertex(const T& source);
 		
 		// MARK: Public variables
@@ -97,7 +97,7 @@ namespace active::primitive {
 			@param source The point to assign
 			@return A reference to this
 		*/
-		template<typename T> requires utility::IsCoord3D<T>
+		template<typename T> requires IsCoord3D<T>
 		Vertex& operator= (const T& source);
 		/*!
 			Addition operator
@@ -187,7 +187,7 @@ namespace active::primitive {
 			Conversion operator
 			@return An equivalent 3D coord
 		*/
-		template<typename T> requires utility::IsCoord3D<T>
+		template<typename T> requires IsCoord3D<T>
 		operator T() const;
 		
 		// MARK: - Functions (const)
@@ -265,9 +265,9 @@ namespace active::primitive {
 	 
 		source: A 3D point
 	  --------------------------------------------------------------------*/
-	template<typename T> requires utility::IsCoord3D<T>
+	template<typename T> requires IsCoord3D<T>
 	Vertex::Vertex(const T& source) {
-		if constexpr(utility::IsCoordLower3D<T>) {
+		if constexpr(IsCoordLower3D<T>) {
 			x = source.x;
 			y = source.y;
 			z = source.z;
@@ -286,9 +286,9 @@ namespace active::primitive {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template<typename T> requires utility::IsCoord3D<T>
+	template<typename T> requires IsCoord3D<T>
 	inline Vertex& Vertex::operator= (const T& source) {
-		if constexpr(utility::IsCoordLower3D<T>) {
+		if constexpr(IsCoordLower3D<T>) {
 			x = source.x;
 			y = source.y;
 			z = source.z;
@@ -306,10 +306,10 @@ namespace active::primitive {
 	 
 		return: An equivalent 3D coord
 	  --------------------------------------------------------------------*/
-	template<typename T> requires utility::IsCoord3D<T>
+	template<typename T> requires IsCoord3D<T>
 	Vertex::operator T() const {
 		T dest;
-		if constexpr(utility::IsCoordLower3D<T>) {
+		if constexpr(IsCoordLower3D<T>) {
 			dest.x = x;
 			dest.y = y;
 			dest.z = z;

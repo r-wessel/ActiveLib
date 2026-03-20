@@ -15,7 +15,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #endif
 
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	

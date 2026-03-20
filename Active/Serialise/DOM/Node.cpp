@@ -17,7 +17,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::serialise;
 using namespace active::serialise::dom;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 
@@ -155,7 +155,7 @@ bool Node::empty() const {
  
 	return: The type index of the named item (nullopt if not found)
   --------------------------------------------------------------------*/
-std::optional<Node::Index> Node::index(const utility::String& name) const {
+std::optional<Node::Index> Node::index(const String& name) const {
 	if (!isObject())
 		return std::nullopt;
 	if (auto iter = object().find(name); iter != object().end())
@@ -171,7 +171,7 @@ std::optional<Node::Index> Node::index(const utility::String& name) const {
  
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
-bool Node::write(utility::String& dest) const {
+bool Node::write(String& dest) const {
 	using enum Value::Index;
 	switch (value().index()) {
 		case boolType:
@@ -181,7 +181,7 @@ bool Node::write(utility::String& dest) const {
 		case floatType:
 			return DoubleWrap(get<double>(value())).write(dest);
 		case stringType:
-			dest = get<utility::String>(value());
+			dest = get<String>(value());
 			break;
 		default:
 			dest.clear();
@@ -306,7 +306,7 @@ std::unique_ptr<active::serialise::Cargo> Node::getCargo(const active::serialise
  
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool Node::read(const utility::String& source) {
+bool Node::read(const String& source) {
 	base::operator=(Value{source});
 	return true;
 } //Node::read
@@ -331,7 +331,7 @@ bool Node::readSetting(const setting::Value& source) {
 			base::operator=(Value{source.operator double()});
 			break;
 		default:
-			base::operator=(Value{source.operator utility::String()});
+			base::operator=(Value{source.operator String()});
 	};
 	return true;
 } //Node::readSetting

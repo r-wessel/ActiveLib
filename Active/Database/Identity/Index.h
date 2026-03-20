@@ -17,7 +17,7 @@ namespace active::database {
 	 @tparam TableID The source table identifier type
 	 @tparam DocID The source document identifier type
 	 */
-	template<typename ObjID = active::utility::Guid, typename TableID = active::utility::Guid, typename DocID = active::utility::Guid>
+	template<typename ObjID = active::Guid, typename TableID = active::Guid, typename DocID = active::Guid>
 	class Index : public ObjID {
 	public:
 

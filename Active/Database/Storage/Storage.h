@@ -7,7 +7,7 @@
 #include "Active/Database/Storage/DBaseSchema.h"
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::database {
 	
@@ -21,8 +21,8 @@ namespace active::database {
 	 @tparam TableID The table identifier type, e.g. Guid (or String for named tables)
 	 @tparam TableType An identifier for a table type or group
 	 */
-	template<typename Obj, typename Transport, typename DocID = active::utility::Guid, typename ObjID = active::utility::Guid,
-			typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid, typename TableType = int32_t>
+	template<typename Obj, typename Transport, typename DocID = active::Guid, typename ObjID = active::Guid,
+			typename DBaseID = active::Guid, typename TableID = active::Guid, typename TableType = int32_t>
 	class Storage {
 	public:
 		

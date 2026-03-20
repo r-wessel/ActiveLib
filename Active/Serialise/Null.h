@@ -33,7 +33,7 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override { return true; }
+		bool write(String& dest) const override { return true; }
 
 		/*!
 			Fill an inventory with the cargo items
@@ -55,7 +55,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override { return true; }
+		bool read(const String& source) override { return true; }
 		/*!
 			Set to the default package content
 		*/

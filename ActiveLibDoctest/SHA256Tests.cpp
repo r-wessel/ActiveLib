@@ -3,7 +3,7 @@
 #include "Active/Utility/SHA256.h"
 #include "Active/Utility/BufferIn.h"
 
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	

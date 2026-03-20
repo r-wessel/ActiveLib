@@ -42,7 +42,7 @@ namespace active::setting {
 			Constructor (for all non-string types)
 			@param stringVal A string value to assign
 		*/
-		ValueBase(const utility::String& stringVal) requires (!std::is_same<T, utility::String>::value) : Value(bad) { *this = stringVal; }
+		ValueBase(const String& stringVal) requires (!std::is_same<T, String>::value) : Value(bad) { *this = stringVal; }
 		
 		ValueBase(const ValueBase& source) = default;
 		
@@ -121,7 +121,7 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::utility::String& val) override { status = bad; return *this; }
+		Value& operator=(const active::String& val) override { status = bad; return *this; }
 		/*!
 			Assignment operator
 			@param val A string value to assign
@@ -133,13 +133,13 @@ namespace active::setting {
 			@param val A guid value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::utility::Guid& val) override { status = bad; return *this; }
+		Value& operator=(const active::Guid& val) override { status = bad; return *this; }
 		/*!
 			Assignment operator
 			@param val A time value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::utility::Time& val) override { status = bad; return *this; }
+		Value& operator=(const active::Time& val) override { status = bad; return *this; }
 		
 		// MARK: - Conversion operators
 
@@ -172,17 +172,17 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator active::utility::String() const override { return active::utility::String{}; }
+		operator active::String() const override { return active::String{}; }
 		/*!
 			Get a guid value
 			@return A guid value
 		*/
-		operator active::utility::Guid() const override { return active::utility::Guid{}; }
+		operator active::Guid() const override { return active::Guid{}; }
 		/*!
 			Get a time value
 			@return A time value
 		*/
-		operator active::utility::Time() const override { return active::utility::Time{}; }
+		operator active::Time() const override { return active::Time{}; }
 		
 		// MARK: - Functions (const)
 		
@@ -204,8 +204,8 @@ namespace active::setting {
 	};
 
 	template<> inline
-	Value& ValueBase<utility::Guid>::operator=(const Value& val) {
-		data = val.operator utility::Guid();
+	Value& ValueBase<Guid>::operator=(const Value& val) {
+		data = val.operator Guid();
 		return *this;
 	}
 

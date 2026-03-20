@@ -13,7 +13,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::math;
 using namespace active::measure;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	

@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <system_error>
 
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
 const File::size_type File::defBufferSize = 0x4000UL;
 
@@ -84,7 +84,7 @@ File::File(const Path& path, Permission perm, bool isMissingCreated, bool canRep
 		//Attempt to create the file
 	std::fstream file;
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	file.open(utility::String{path}, std::ios_base::out);
+	file.open(String{path}, std::ios_base::out);
 	setPath(path);	//The path for a new node has to be refreshed or reports as non-existent
 	file.close();
 } //File::File
@@ -167,7 +167,7 @@ void File::open(std::optional<Permission> perm) const {
 	}
 	m_file = std::make_unique<std::fstream>();
 	m_file->exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	m_file->open(utility::String{getPath()}, getModeFor(permission));
+	m_file->open(String{getPath()}, getModeFor(permission));
 	m_permission = permission;
 	if (originalPosition)
 		setPosition(*originalPosition);
@@ -258,7 +258,7 @@ File::size_type File::remaining() const {
  
 	return: The number of bytes read (bytes populated into a valid string, i.e. stops if nil or invalid coding found)
   --------------------------------------------------------------------*/
-File::size_type File::read(String& text, sizeOption howMany, TextEncoding encoding) const {
+File::size_type File::read(String& text, sizeOption howMany, text_encoding encoding) const {
 	validate();
 		//Ensure we don't ask for more than the remaining bytes
 	auto available = remaining();
@@ -274,7 +274,7 @@ File::size_type File::read(String& text, sizeOption howMany, TextEncoding encodi
 	size_type bytesRead = 0;
 	m_file->read(buffer.data(), *howMany);
 	bytesRead = m_file->gcount();
-	auto charBytes = String::getValidByteCount(buffer.data(), bytesRead, std::nullopt, encoding);
+	auto charBytes = string_function::getValidByteCount(buffer.data(), bytesRead, std::nullopt, encoding);
 		///Move the read position if not all the bytes can be consumed by the string as valid chars
 	if (charBytes < static_cast<String::size_type>(bytesRead))
 		setPosition(charBytes - bytesRead, current);
@@ -327,7 +327,7 @@ void File::resize(size_type fileSize) {
  
 	return: True if the data was successfully written
 --------------------------------------------------------------------*/
-void File::write(const String& text, String::sizeOption howMany, TextEncoding encoding) {
+void File::write(const String& text, std::optional<String::size_type> howMany, text_encoding encoding) {
 	validate();
 	if (text.empty())
 		return;	//No data isn't an error

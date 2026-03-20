@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::setting {
 
 		///A list of settings
-	class SettingList : public container::Vector<Setting>, public utility::Cloner {
+	class SettingList : public container::Vector<Setting>, public Cloner {
 	public:
 		
 		// MARK: - Types
@@ -74,7 +74,7 @@ namespace active::setting {
 			@param nameID The ID to search for
 			@return True if the list contains a matching entry
 		*/
-		bool contains(const utility::NameID& nameID) const { return find(nameID) != end(); }
+		bool contains(const NameID& nameID) const { return find(nameID) != end(); }
 		/*
 			Find a match for a specified setting
 			@param setting The setting to match (same ID and content)
@@ -86,7 +86,7 @@ namespace active::setting {
 			@param nameID The ID to search for
 			@return An iterator pointing to the first matching entry (end on failure)
 		*/
-		const_iterator find(const utility::NameID& nameID) const;
+		const_iterator find(const NameID& nameID) const;
 		/*!
 			Find a setting with a specified ID and attempt to cast as a specific type
 			@param nameID The ID to search for
@@ -94,13 +94,13 @@ namespace active::setting {
 			@tparam T The expected setting type
 		*/
 		template<typename T>
-		T* find(const utility::NameID& nameID) const;
+		T* find(const NameID& nameID) const;
 		/*!
 			Find a value setting with a specified ID
 			@param nameID The ID to search for
 			@return A pointer to the requested value setting (nullptr on failure)
 		*/
-		ValueSetting* findValue(const utility::NameID& nameID) const { return find<ValueSetting>(nameID); }
+		ValueSetting* findValue(const NameID& nameID) const { return find<ValueSetting>(nameID); }
 
 		// MARK: Functions (mutating)
 		
@@ -109,7 +109,7 @@ namespace active::setting {
 			@param nameID The ID to search for
 			@return An iterator pointing to the first matching entry (end on failure)
 		*/
-		iterator find(const utility::NameID& nameID);
+		iterator find(const NameID& nameID);
 		/*
 			Find a match for a specified setting
 			@param setting The setting to match (same ID and content)
@@ -127,7 +127,7 @@ namespace active::setting {
 		return The requested setting (nullptr if not found)
   	  --------------------------------------------------------------------*/
 	template<typename T>
-	T* SettingList::find(const utility::NameID& nameID) const {
+	T* SettingList::find(const NameID& nameID) const {
 		if (auto iter = find(nameID); iter != end())
 			return dynamic_cast<T*>(iter->get());
 		return nullptr;

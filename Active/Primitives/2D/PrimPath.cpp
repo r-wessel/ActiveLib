@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 using namespace active::geometry;
 using namespace active::primitive;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Constructor

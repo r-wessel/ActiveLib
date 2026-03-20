@@ -23,7 +23,7 @@ namespace active::primitive {
 	/*!
 	 Base class for 2D geometric primitives
 	 */
-	class Primitive: public Layered, public virtual utility::Cloner {
+	class Primitive: public Layered, public virtual Cloner {
 	public:
 		// MARK: Constructors
 

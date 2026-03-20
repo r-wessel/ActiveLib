@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <filesystem>
 #include <optional>
 
-namespace active::utility {
+namespace active {
 	
 	/// A class to represent a date/time
 	class Time {
@@ -292,7 +292,7 @@ namespace active::utility {
 		uint32_t m_microsecond : 24 = 0;
 	};
 
-}  // namespace active::utility
+}  // namespace active
 
 #endif	//ACTIVE_UTILITY_TIME
 

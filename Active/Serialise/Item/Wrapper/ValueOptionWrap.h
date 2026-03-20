@@ -53,10 +53,10 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override {
+		bool write(String& dest) const override {
 			if (isNull())
 				return false;	//Should not be attempting to write a null value to a string (null != "")
-			dest = utility::String{*base::get()};
+			dest = String{*base::get()};
 			return true;
 		}
 		
@@ -67,7 +67,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override {
+		bool read(const String& source) override {
 			if (isNull())
 				base::get() = T{};	//If we're reading into an unassigned optional, we need to assign a value so it doesn't register as null
 			return base::read(source);
@@ -83,7 +83,7 @@ namespace active::serialise {
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
 		std::optional<Cargo::Type> type() const override {
-			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T> || std::is_enum_v<T>)
+			if constexpr (std::is_base_of_v<String, T> || std::is_base_of_v<Guid, T> || std::is_enum_v<T>)
 				return Cargo::Type::text;
 			else if constexpr (std::is_same_v<bool, T>)
 				return Cargo::Type::boolean;
@@ -99,7 +99,7 @@ namespace active::serialise {
 		@return True if the data was successfully written
 	*/
 	template<> inline
-	bool ValueOptionWrap<utility::Guid>::write(utility::String& dest) const {
+	bool ValueOptionWrap<Guid>::write(String& dest) const {
 		if (isNull())
 			return false;	//Should not be attempting to write a null value to a string (null != "")
 		dest = *base::get();
@@ -114,7 +114,7 @@ namespace active::serialise {
 		@return True if the data was successfully written
 	*/
 	template<> inline
-	bool ValueOptionWrap<bool>::write(utility::String& dest) const {
+	bool ValueOptionWrap<bool>::write(String& dest) const {
 		if (isNull())
 			return false;	//Should not be attempting to write a null value to a string (null != "")
 		dest = *get() ? "true" : "false";
@@ -127,7 +127,7 @@ namespace active::serialise {
 	using FloatOptWrap = ValueOptionWrap<float>;
 	using Int32OptWrap = ValueOptionWrap<int32_t>;
 	using Int64OptWrap = ValueOptionWrap<int64_t>;
-	using StringOptWrap = ValueOptionWrap<utility::String>;
+	using StringOptWrap = ValueOptionWrap<String>;
 	using UInt32OptWrap = ValueOptionWrap<uint32_t>;
 
 }  // namespace active::serialise

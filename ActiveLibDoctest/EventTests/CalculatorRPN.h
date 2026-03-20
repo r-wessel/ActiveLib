@@ -16,7 +16,7 @@ public:
 		///Subscriptions required - in this case user input of either digits or calculator operations
 	Subscription subscription() const override;
 		///The current calculator display
-	const active::utility::String& display() const { return m_display; }
+	const active::String& display() const { return m_display; }
 		///The (numeric) value of the calculator display
 	double displayValue() const { return m_valueStack.back(); }
 	
@@ -28,7 +28,7 @@ private:
 		///Perform an operation as specified by an event
 	void performOperation(const active::event::Event& event);
 	
-	active::utility::String m_display;
+	active::String m_display;
 	std::vector<double> m_valueStack;
 };
 

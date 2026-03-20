@@ -6,11 +6,11 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_UTILITY_UNIQUE_STRING
 #define ACTIVE_UTILITY_UNIQUE_STRING
 
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <set>
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 		A class representing a GUID type

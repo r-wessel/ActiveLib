@@ -12,10 +12,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <memory>
 #include <optional>
 
-namespace active::utility {
+namespace active {
+	struct text_format;
+}
+
+namespace active {
 	
 		///Class representing (and optionally allocating) memory with a specified location and size
-	class Memory: public utility::Cloner {
+	class Memory: public Cloner {
 	public:
 
 		inline static constexpr bool defaultEndian{std::endian::native == std::endian::big};
@@ -51,6 +55,11 @@ namespace active::utility {
 			@return The number of bytes copied
 		*/
 		static size_type copy(char* dest, const char* source, size_type destSize, size_type sourceSize);
+		/*!
+		 Get a BOM signature for a specified text format
+		 @return The BOM signature (nullopt if none defined, e.g. for ascii)
+		 */
+		static std::optional<Memory> BOM(const text_format& format);
 		/*!
 			Make an integer value big-endian (no action if the host processor is already big-endian)
 			@param val The target value
@@ -259,6 +268,6 @@ namespace active::utility {
 		std::unique_ptr<char[]> m_store;
 	};
 	
-}  // namespace active::utility
+}  // namespace active
 
 #endif	//ACTIVE_UTILITY_MEMORY

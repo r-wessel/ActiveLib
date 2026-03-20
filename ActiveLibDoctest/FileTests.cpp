@@ -5,7 +5,7 @@
 
 using namespace active;
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	String testDirectoryPath{"Testing"};

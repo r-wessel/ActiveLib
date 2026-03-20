@@ -11,7 +11,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/Value.h"
 #include "Active/Utility/Concepts.h"
 #include "Active/Utility/Guid.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <functional>
 
@@ -55,16 +55,16 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override {
-			if constexpr (requires (utility::String& v) { v = base::get(); }) {
+		bool write(String& dest) const override {
+			if constexpr (requires (String& v) { v = base::get(); }) {
 				dest = base::get();
 				return true;
 			}
-			if constexpr (requires (utility::String & v) { v = active::utility::String{base::get()}; }) {
-				dest = active::utility::String{base::get()};
+			if constexpr (requires (String & v) { v = active::String{base::get()}; }) {
+				dest = active::String{base::get()};
 				return true;
 			}
-			if constexpr (active::utility::Dereferenceable<T>) {
+			if constexpr (active::Dereferenceable<T>) {
 				return !isNull();	//Should not be attempting to write a null value to a string (null != "")
 			}
 			return false;
@@ -77,13 +77,13 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override {
+		bool read(const String& source) override {
 				//If Value supports conversion to this type, assign directly
-			if constexpr(requires (utility::String& v) { base::get() = T{v}; }) {
+			if constexpr(requires (String& v) { base::get() = T{v}; }) {
 				base::get() = T{source};
 				return true;
 			}
-			if constexpr (active::utility::Dereferenceable<T>) {
+			if constexpr (active::Dereferenceable<T>) {
 				if (!isNull()) {
 						//TODO: Investigate if an object could use a string in some context
 					return true;
@@ -102,7 +102,7 @@ namespace active::serialise {
 				base::get() = source;
 				return true;
 			}
-			utility::String text = source;
+			String text = source;
 			return read(text);	//Otherwise use a string as an intermediate value
 		}
 		/*!
@@ -114,7 +114,7 @@ namespace active::serialise {
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
 		*/
 		std::optional<Cargo::Type> type() const override {
-			if constexpr (std::is_base_of_v<utility::String, T> || std::is_base_of_v<utility::Guid, T> || std::is_enum_v<T>)
+			if constexpr (std::is_base_of_v<String, T> || std::is_base_of_v<Guid, T> || std::is_enum_v<T>)
 				return Cargo::Type::text;
 			else if constexpr (std::is_same_v<bool, T>)
 				return Cargo::Type::boolean;
@@ -130,7 +130,7 @@ namespace active::serialise {
 		@return True if the data was successfully written
 	*/
 	template<> inline
-	bool ValueWrap<utility::Guid>::write(utility::String& dest) const {
+	bool ValueWrap<Guid>::write(String& dest) const {
 		dest = base::get();
 		return true;
 	}
@@ -142,9 +142,9 @@ namespace active::serialise {
 		@param source The string to read
 		@return True if the data was successfully read
 	*/
-	inline std::pair<bool, bool> readBoolRefValue(const utility::String& source) {
+	inline std::pair<bool, bool> readBoolRefValue(const String& source) {
 		bool incoming = false;
-		utility::String value = source.lowercase();
+		String value = source.lowercase();
 		if ((value == "true") || (value == "1"))
 			incoming = true;
 		else if ((value == "false") || (value == "0"))
@@ -161,7 +161,7 @@ namespace active::serialise {
 		@return True if the data was successfully read
 	*/
 	template<> inline
-	bool ValueWrap<bool>::read(const utility::String& source) {
+	bool ValueWrap<bool>::read(const String& source) {
 		auto result = readBoolRefValue(source);
 		if (result.second)
 			base::get() = result.first;
@@ -175,7 +175,7 @@ namespace active::serialise {
 		@return True if the data was successfully read
 	*/
 	template<> inline
-	bool ValueWrap<std::optional<bool>>::read(const utility::String& source) {
+	bool ValueWrap<std::optional<bool>>::read(const String& source) {
 		auto result = readBoolRefValue(source);
 		if (result.second)
 			base::get() = result.first;
@@ -189,7 +189,7 @@ namespace active::serialise {
 		@return True if the data was successfully written
 	*/
 	template<> inline
-	bool ValueWrap<bool>::write(utility::String& dest) const {
+	bool ValueWrap<bool>::write(String& dest) const {
 		dest = get() ? "true" : "false";
 		return true;
 	} //ValueWrap<bool>::write
@@ -200,7 +200,7 @@ namespace active::serialise {
 	using FloatWrap = ValueWrap<float>;
 	using Int32Wrap = ValueWrap<int32_t>;
 	using Int64Wrap = ValueWrap<int64_t>;
-	using StringWrap = ValueWrap<utility::String>;
+	using StringWrap = ValueWrap<String>;
 	using UInt32Wrap = ValueWrap<uint32_t>;
 
 }  // namespace active::serialise

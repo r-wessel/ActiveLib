@@ -242,7 +242,7 @@ XMLTransport().send(node, Identity{"contact"}, xml);
 
 Object nodes can also be constructed directly from STL associative containers, e.g.:
 ```cpp
-Node mapNode = std::map<utility::String, int32_t>{
+Node mapNode = std::map<String, int32_t>{
 	{ "first", 1 },
 	{ "second", 2 },
 	{ "third", 3 },
@@ -638,9 +638,9 @@ Called during deserialisation only, after all the data relevant to the target ha
 	- `bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item)`   
 Required for deserialising arrays/dictionaries. When a new array instance is found, a `Cargo` instance is requested (using *getCargo*) to receive the deserialised data. Once the instance has been read and validated, this *insert* function is called. The *cargo* parameter is the new instance to be inserted, and *item* associates the *cargo* with an inventory entry (essential for objects that hold multiple arrays).
 3. A subclass of `Item` may also need to implement the following functions (if it isn't already using an existing `Wrapper`:
-	- `bool write(utility::String& dest) const`	
+	- `bool write(String& dest) const`	
 Convert the `Item` value into a string for serialisation. Returning `false` indicates a bad value (`Transport` will throw an exception).
-	- `bool read(const utility::String& source)`	
+	- `bool read(const String& source)`	
 Convert a serialised string back into a value. Returning `false` indicates a bad value (`Transport` will throw an exception)
 
 Any instance of a `Package` subclass, e.g. *someObject*,  can then be serialised into a `String` as JSON:

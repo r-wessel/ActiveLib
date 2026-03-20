@@ -10,11 +10,11 @@
 #include "Active/Utility/Guid.h"
 #include "Active/Utility/Hash.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <array>
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 	 A utility class providing SHA256 hashing

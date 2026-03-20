@@ -21,7 +21,7 @@ namespace active::file {
 	class File : public FSNode, public IOBase {
 	public:
 
-		using enum utility::TextEncoding;
+		using enum text_encoding;
 
 		// MARK: - Types
 		
@@ -81,7 +81,7 @@ namespace active::file {
 			@param canReplaceDirectory True if the file can be created and replace an existing directory with the same name
 			@throw std::ios_base::failure Thrown if isMissingCreated = true and the file cannot be created
 		*/
-		File(const Directory& parent, const utility::String& name, Permission perm = readWrite,
+		File(const Directory& parent, const String& name, Permission perm = readWrite,
 			 bool isMissingCreated = false, bool canReplaceDirectory = false);
 		/*!
 			Copy constructor
@@ -174,7 +174,7 @@ namespace active::file {
 			@throw std::ios_base::failure Thrown on error
 			@return The number of bytes read
 		*/
-		size_type read(utility::String& text, sizeOption howMany = std::nullopt, utility::TextEncoding encoding = UTF8) const;
+		size_type read(String& text, sizeOption howMany = std::nullopt, text_encoding encoding = UTF8) const;
 		/*!
 			Read from the file
 			@param memory The memory to read the data into
@@ -182,7 +182,7 @@ namespace active::file {
 			@throw std::ios_base::failure Thrown on error
 			@return The number of bytes read
 		*/
-		size_type read(utility::Memory& memory, sizeOption howMany = std::nullopt) const;
+		size_type read(Memory& memory, sizeOption howMany = std::nullopt) const;
 		/*!
 			Determine if the last operation was successful, i.e. eof, fail and bad bits are all 0)
 			@return True if the last operation was successful
@@ -218,14 +218,14 @@ namespace active::file {
 			@param encoding The text encoding to write
 			@throw std::ios_base::failure Thrown on error
 		*/
-		virtual void write(const utility::String& text, utility::String::sizeOption howMany = std::nullopt, utility::TextEncoding encoding = UTF8);
+		virtual void write(const String& text, std::optional<String::size_type> howMany = std::nullopt, text_encoding encoding = UTF8);
 		/*!
 			Write to the file from a block of memory
 			@param data The data to write
 			@param howMany The data length (nullopt = write allocated memory size)
 			@throw std::ios_base::failure Thrown on error
 		*/
-		virtual void write(const utility::Memory& data, sizeOption howMany = std::nullopt);
+		virtual void write(const Memory& data, sizeOption howMany = std::nullopt);
 		/*!
 			Write the contents of another file to this
 			@param file The file to write

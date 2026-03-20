@@ -9,7 +9,7 @@ using namespace active;
 using namespace active::event;
 using namespace active::math;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 	///Receive a subscribed event
 bool CalculatorRPN::receive(const Event& event) {

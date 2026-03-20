@@ -71,10 +71,10 @@ namespace active::database {
 			 @param sql The parent SQLite database
 			 @param statement The statement to be executed by the transaction
 			 */
-			Transaction(const SQLiteCore* sql, const active::utility::String& statement) : m_sqlite(sql), m_statement(statement) {}
+			Transaction(const SQLiteCore* sql, const active::String& statement) : m_sqlite(sql), m_statement(statement) {}
 
 				///The transaction statement to be executed
-			active::utility::String m_statement;
+			active::String m_statement;
 				///Handle to the prepared transaction statement
 			void* m_handle = nullptr;
 				///The parent SQLite database
@@ -97,12 +97,12 @@ namespace active::database {
 		 @param text The string to convert
 		 @return An SQLite string literal
 		 */
-		static utility::String toSQLiteString(const utility::String& text);
+		static String toSQLiteString(const String& text);
 		/*!
 		 Get the SQLite type identifier for a specified setting
 		 @return The type identifier, e.g. "TEXT", "INTEGER" etc
 		 */
-		static utility::String getTypeID(const setting::Setting& setting);
+		static String getTypeID(const setting::Setting& setting);
 
 		// MARK: - Constructors
 		
@@ -132,7 +132,7 @@ namespace active::database {
 		 @param statement The statement to be executed by the transaction
 		 @return The SQLite handle (nullptr = failure to open database connection)
 		 */
-		Transaction makeTransaction(const utility::String& statement) const { return Transaction{this, statement}; }
+		Transaction makeTransaction(const String& statement) const { return Transaction{this, statement}; }
 		
 	protected:
 		/*!

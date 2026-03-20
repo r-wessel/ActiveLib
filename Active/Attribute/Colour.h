@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/Hash.h"
 #include "Active/Utility/MathFunctions.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::attribute {
 	
@@ -31,7 +31,7 @@ namespace active::attribute {
 			Constructor
 			@param hex A colour in hex digits
 		*/
-		Colour(const utility::String& hex);
+		Colour(const String& hex);
 
 		// MARK: - Public variables
 
@@ -64,13 +64,13 @@ namespace active::attribute {
 			@param isAlpha True to include the alpha value
 			@return The colour as hex
 		*/
-		utility::String hex(bool isAlpha = false) const;
+		String hex(bool isAlpha = false) const;
 		/*!
 		 Get a hash value for the colour
 		 @param format The required has format
 		 @return The hash formatted as specified
 		 */
-		utility::String hash(utility::HashFormat format = {}) const;
+		String hash(HashFormat format = {}) const;
 
 		// MARK: - Functions (mutating)
 		

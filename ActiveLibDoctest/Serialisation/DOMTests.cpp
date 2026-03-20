@@ -18,7 +18,7 @@ using namespace active::serialise::dom;
 using namespace active::serialise::json;
 using namespace active::serialise::xml;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -62,7 +62,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		node["double"] = 1.23;
 		node["string"] = "Test";
 		(node["array"] = std::vector{ 1, 2, 3, 4, 5, 6 }).withItemTag("val");
-		node["map"] = std::map<utility::String, int32_t>{
+		node["map"] = std::map<String, int32_t>{
 			{ "first", 1},
 			{ "second", 2},
 			{ "third", 3},
@@ -77,7 +77,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 			bool boolValue = node["boolean"];
 			int64_t intValue = node["integer"];
 			double doubleValue = node["double"];
-			utility::String stringValue = node["string"];
+			String stringValue = node["string"];
 			auto doubleSetting = node.setting("double");
 			auto missingSetting = node.setting("nonexistent");
 			CHECK_MESSAGE(node.object().size() == childSize, TEST_MESSAGE(DOM node import has wrong number of items));

@@ -2,7 +2,8 @@
 
 #include "Active/Utility/Guid.h"
 
-using namespace active::utility;
+using namespace active;
+using namespace active;
 
 TEST_SUITE(TESTQ(GuidTests)) TEST_SUITE_OPEN
 

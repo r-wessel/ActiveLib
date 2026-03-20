@@ -72,7 +72,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& BoolValue::operator=(const utility::String& val) {
+	Value& BoolValue::operator=(const String& val) {
 		if ((val.lowercase() == "true") || (val.lowercase() == "1"))
 			data = true;
 		else if ((val.lowercase() == "false") || (val.lowercase() == "0"))
@@ -88,7 +88,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& BoolValue::operator=(const utility::Guid& val) {
+	Value& BoolValue::operator=(const Guid& val) {
 		data = val;
 		return *this;
 	}
@@ -130,7 +130,7 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	BoolValue::operator utility::String() const 	{ return data ? "true" : "false"; }
+	BoolValue::operator String() const 	{ return data ? "true" : "false"; }
 	
 	// MARK: - Functions (const)
 	

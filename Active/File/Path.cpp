@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/File/Path.h"
 
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
 #ifdef WINDOWS
 const String Path::delimiter = "\\";
@@ -170,7 +170,7 @@ bool Path::exists() const {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Path& Path::append(const utility::String& toAppend) {
+Path& Path::append(const String& toAppend) {
 	m_path /= toAppend.string();
 	return *this;
 } //Path::append
@@ -183,7 +183,7 @@ Path& Path::append(const utility::String& toAppend) {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Path& Path::concat(const utility::String& toConcat) {
+Path& Path::concat(const String& toConcat) {
 	m_path += toConcat.string();
 	return *this;
 } //Path::concat

@@ -43,7 +43,7 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override  { return true; }	//Most packages do not write a data value independent of a specific field
+		bool write(String& dest) const override  { return true; }	//Most packages do not write a data value independent of a specific field
 
 		// MARK: - Functions (mutating)
 		
@@ -63,7 +63,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the package was successfully read
 		*/
-		bool read(const utility::String& source) override { return true; }	//Most packages do not read a data value independent of a specific field
+		bool read(const String& source) override { return true; }	//Most packages do not read a data value independent of a specific field
 		/*!
 			Set whether the package is the outermost/root layer of a hierarchy
 			@param state True if the package is the outermost/root layer of a hierarchy
