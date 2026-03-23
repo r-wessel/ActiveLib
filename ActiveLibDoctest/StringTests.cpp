@@ -161,8 +161,12 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		result = test.find(u8"xy");
 		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
 		CHECK_MESSAGE(result == String::npos, TEST_MESSAGE(String find returned wrong position));
+		std::string::size_type resVal = test.find(u8"xy");
+		CHECK_MESSAGE(resVal == String::npos, TEST_MESSAGE(String find returned wrong position));
 		result = test.rfind(u8"bਖd");
 		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find returned wrong position));
+		resVal = test.rfind(u8"bਖd");
+		CHECK_MESSAGE(resVal == 17, TEST_MESSAGE(String find returned wrong position));
 		result = test.rfind(u8"xy");
 		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
 		result = test.findFirstNotOf(u8"ਖd");

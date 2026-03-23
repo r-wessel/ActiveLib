@@ -21,39 +21,100 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/string/text_format.h"
 
 namespace active {
-	
 		
-	///String position type - is an optional, but can automatically adapt to string::npos usage
-class string_position : public std::optional<std::string::size_type> {
-public:
-	using base = std::optional<std::string::size_type>;
-	std::string::size_type npos = std::string::npos;
+		///String position type - is an optional, but can automatically adapt to string::size_type usage, e.g. pos == npos
+	class string_position : public std::optional<std::string::size_type> {
+	public:
+			//MARK: - Types
+		
+		using base = std::optional<std::string::size_type>;
+			///Class size type
+		using size_type = std::string::size_type;
 
-	string_position() : base{} {}
-	string_position(const std::nullopt_t nullPos) : base{} {}
-	string_position(const string_position& pos) : base{} {
-		if (pos && (*pos != npos))
-			base::operator=(*pos);
-	}
-	template<typename T> requires std::is_arithmetic_v<T>
-	string_position(const T pos) { base::operator=(pos); }
-	
-	bool operator== (const string_position& pos) const {
-		auto state = operator bool();
-		if (state != pos.operator bool())
-			return false;
-		return !state || (**this == *pos);
-	}
-	explicit operator bool() const { return base::has_value() && (**this != npos); }
-	template<typename T> requires std::is_arithmetic_v<T>
-	bool operator== (const T pos) const { return operator bool() && (**this == pos); }
-	bool operator< (const string_position& pos) const { return operator bool() && (**this < pos); }
-	template<typename T> requires std::is_arithmetic_v<T>
-	bool operator< (const T pos) const { return operator bool() && (**this < pos); }
-	bool operator> (const string_position& pos) const { return operator bool() && (**this > pos); }
-	template<typename T> requires std::is_arithmetic_v<T>
-	bool operator> (const T pos) const { return operator bool() && (**this > pos); }
-};
+			//MARK: - Constants
+		
+			///Constant to indicate an undefined/missing position in a string
+		size_type npos = std::string::npos;
+
+			//MARK: - Constructors
+		
+		/*!
+		 Default constructor
+		 */
+		string_position() : base{} {}
+		/*!
+		 Constructor
+		 @param nullPos An undefined string position
+		 */
+		string_position(const std::nullopt_t nullPos) : base{} {}
+		/*!
+		 Constructor
+		 @param pos A literal string position
+		 */
+		template<typename T> requires std::is_arithmetic_v<T>
+		string_position(const T pos) { base::operator=(pos); }
+		/*!
+		 Copy constructor
+		 @param source The object to copy
+		 */
+		string_position(const string_position& source) : base{} {
+			if (source && (*source != npos))
+				base::operator=(*source);
+		}
+
+			//MARK: - Operators
+			
+		/*!
+		 Equality operator
+		 @param ref The object to compare
+		 @return True if this and ref are equal
+		 */
+		bool operator== (const string_position& ref) const {
+			auto state = operator bool();
+			if (state != ref.operator bool())
+				return false;
+			return !state || (**this == *ref);
+		}
+		template<typename T> requires std::is_arithmetic_v<T>
+		bool operator== (const T ref) const { return (operator bool()) ? (**this == ref) : (ref == npos); }
+		/*!
+		 Equality operator
+		 @param ref The object to compare
+		 @return True if this and ref are equal
+		 */
+		bool operator!= (const string_position& ref) const { return !(*this == ref); }
+		template<typename T> requires std::is_arithmetic_v<T>
+		bool operator!= (const T ref) const { return !(*this == ref); }
+		/*!
+		 Less-than operator
+		 @param ref The object to compare
+		 @return True if this is less than ref
+		 */
+		bool operator< (const string_position& ref) const { return operator bool() && (**this < ref); }
+		template<typename T> requires std::is_arithmetic_v<T>
+		bool operator< (const T ref) const { return operator bool() && (**this < ref); }
+		bool operator<= (const string_position& ref) const { return operator bool() && (**this <= ref); }
+		template<typename T> requires std::is_arithmetic_v<T>
+		bool operator<= (const T ref) const { return operator bool() && (**this <= ref); }
+		/*!
+		 Greater-than operator
+		 @param ref The object to compare
+		 @return True if this is greater than ref
+		 */
+		bool operator> (const string_position& ref) const { return operator bool() && (**this > ref); }
+		template<typename T> requires std::is_arithmetic_v<T>
+		bool operator> (const T ref) const { return operator bool() && (**this > ref); }
+		bool operator>= (const string_position& ref) const { return operator bool() && (**this >= ref); }
+		template<typename T> requires std::is_arithmetic_v<T>
+		bool operator>= (const T ref) const { return operator bool() && (**this >= ref); }
+
+			//MARK: - Conversion operators
+		
+			///Cponversion to `bool`
+		explicit operator bool() const { return base::has_value() && (**this != npos); }
+			///Cponversion to `size_type`
+		operator std::string::size_type() const { return base::has_value() ? **this : npos; }
+	};
 
 		
 	/// A Unicode-aware string class
@@ -90,7 +151,7 @@ public:
 		
 		using base = std::basic_string<char, std::char_traits<char>, Alloc>;
 			///Class size type
-		using size_type = base::size_type;
+		using size_type = string_position::size_type;
 			///Unary predicate for filtering strings
 		using Filter = std::function<bool(char32_t)>;
 			///Unary functions for processing string characters
@@ -2209,7 +2270,7 @@ namespace active {
 	
 }  // namespace active
 
-	///Hashing for basic_string, e.g. to use as a key in unordered_map
+	///Hashing for `basic_string`, e.g. to use as a key in `unordered_map`
 template <class Alloc>
 struct std::hash<active::basic_string<Alloc>> {
 	size_t operator()(const active::basic_string<Alloc>& k) const {
