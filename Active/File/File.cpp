@@ -274,7 +274,7 @@ File::size_type File::read(String& text, sizeOption howMany, text_encoding encod
 	size_type bytesRead = 0;
 	m_file->read(buffer.data(), *howMany);
 	bytesRead = m_file->gcount();
-	auto charBytes = string_function::getValidByteCount(buffer.data(), bytesRead, std::nullopt, encoding);
+	auto charBytes = string_function::getValidByteCount(buffer.data(), bytesRead, String::no_pos, encoding);
 		///Move the read position if not all the bytes can be consumed by the string as valid chars
 	if (charBytes < static_cast<String::size_type>(bytesRead))
 		setPosition(charBytes - bytesRead, current);

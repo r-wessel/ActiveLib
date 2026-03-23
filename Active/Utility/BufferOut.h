@@ -178,8 +178,8 @@ namespace active {
 		 @return A reference to this
 		 */
 		const BufferOut& write(const String& toWrite, text_format format, bool isNullAdded = false,
-							   std::optional<String::size_type> howMany = std::nullopt,
-							   std::optional<String::size_type> maxBytes = std::nullopt) const;
+							   string_position howMany = std::nullopt,
+							   string_position maxBytes = std::nullopt) const;
 		/*!
 			Write a specified memory block (NB: The data is not assumed to be text - simply a stream of bytes. Avoid when buffering to a string)
 			@param toWrite The block address

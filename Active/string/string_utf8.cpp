@@ -52,7 +52,8 @@ namespace {
  
 	return: The number of bytes in the text containing valid characters
   --------------------------------------------------------------------*/
-std::string::size_type string_function::getValidByteCount(const char* text, std::optional<std::string::size_type> howMany, std::optional<std::string::size_type> charCount, text_format format) {
+std::string::size_type string_function::getValidByteCount(const char* text, string_position howMany,
+														  string_position charCount, text_format format) {
 	bool isOpen = !charCount;
 		//Detect empty strings or null requests
 	if ((text == nullptr) || (howMany == 0) || (!isOpen && (*charCount < 1)))
@@ -84,7 +85,7 @@ std::string::size_type string_function::getValidByteCount(const char* text, std:
  
 	return: The character width in bytes (nullopt on failure, i.e. bad encoding)
   --------------------------------------------------------------------*/
-std::optional<unsigned char> string_function::getCharacterByteCount(const char* text, std::optional<std::string::size_type> howMany, text_format format) {
+std::optional<unsigned char> string_function::getCharacterByteCount(const char* text, string_position howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	switch (format.encoding) {
@@ -149,10 +150,10 @@ std::optional<unsigned char> string_function::getCharacterByteCount(const char* 
 	
 	return: The number of bytes in the char array (nullopt if isCountRequired and howMany not reached)
   --------------------------------------------------------------------*/
-std::optional<std::string::size_type> string_function::getByteCountCharLimited(const char* text, std::optional<std::string::size_type> howMany, bool isCountRequired, text_format format) {
+string_position string_function::getByteCountCharLimited(const char* text, string_position howMany, bool isCountRequired, text_format format) {
 		//A null pointer can be a valid input if there is no specific requirement for content, in which case we can say it has zero bytes
 	if ((howMany == 0) || (text == nullptr) || (*text == 0))
-		return (!howMany || !isCountRequired) ? std::optional(0) : std::nullopt;
+		return (!howMany || !isCountRequired) ? string_position{0} : string_position{};
 		//Start by pointing to the first char, then bump up for each successive char
 	const auto* endPos = text;
 	auto isCountChecked = howMany ? isCountRequired : false;
@@ -181,7 +182,7 @@ std::optional<std::string::size_type> string_function::getByteCountCharLimited(c
  
 	return: The nummber of characters found
   --------------------------------------------------------------------*/
-std::optional<std::string::size_type> string_function::getCharacterCount(const char* text, std::optional<std::string::size_type> howMany, text_format format) {
+string_position string_function::getCharacterCount(const char* text, string_position howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	std::string::size_type totalChars = 0;
@@ -211,9 +212,9 @@ std::optional<std::string::size_type> string_function::getCharacterCount(const c
  
 	return: The required number of characters
   --------------------------------------------------------------------*/
-std::optional<std::string::size_type> string_function::getCharCount(unsigned char wordSize, std::optional<std::string::size_type> howMany, std::optional<std::string::size_type> charCount) {
+string_position string_function::getCharCount(unsigned char wordSize, string_position howMany, string_position charCount) {
 	if (!howMany && !charCount)
-		return std::nullopt;
+		return {};
 	if (!howMany)
 		return *charCount;
 	auto result = *howMany / wordSize;
@@ -232,7 +233,7 @@ std::optional<std::string::size_type> string_function::getCharCount(unsigned cha
 	
 	@return The number of characters in the array
   --------------------------------------------------------------------*/
-std::string::size_type string_function::getStringLength(const char* text, std::optional<std::string::size_type> howMany, text_format format) {
+std::string::size_type string_function::getStringLength(const char* text, string_position howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	std::string::size_type charCount = 0;
@@ -324,7 +325,7 @@ std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF16(const 
  
 	return: The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/
-std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* text, std::optional<std::string::size_type> howMany, text_format format) {
+std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* text, string_position howMany, text_format format) {
 	if (text == nullptr)
 		return {};
 	switch (format.encoding) {
@@ -369,7 +370,7 @@ std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* t
  
 	return: The unicode code point for the specified chars (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<std::u32string> string_function::toUnicode(const char*& text, std::optional<std::string::size_type> howMany, bool isCountRequired) {
+std::optional<std::u32string> string_function::toUnicode(const char*& text, string_position howMany, bool isCountRequired) {
 	if (text == nullptr)
 		return std::nullopt;
 	std::u32string uniString;
@@ -398,7 +399,7 @@ std::optional<std::u32string> string_function::toUnicode(const char*& text, std:
  
 	return: The UTF-32 string read from the UTF-16 source (nullopt on error, including failure to meet isCountRequired condition)
   --------------------------------------------------------------------*/
-std::optional<std::u32string> string_function::fromUTF16(const char16_t*& text, bool is_big_endian, std::optional<std::string::size_type> howMany, bool isCountRequired) {
+std::optional<std::u32string> string_function::fromUTF16(const char16_t*& text, bool is_big_endian, string_position howMany, bool isCountRequired) {
 	std::u32string uniString;
 	if (howMany == 0)
 		return std::optional(uniString);	//An empty string is not an error, so we don't return std::nullopt
@@ -424,7 +425,7 @@ std::optional<std::u32string> string_function::fromUTF16(const char16_t*& text, 
  
 	return: The UTF-16 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
   --------------------------------------------------------------------*/
-std::optional<std::u16string> string_function::toUTF16(const char32_t*& text, std::optional<std::string::size_type> howMany, bool isCountRequired) {
+std::optional<std::u16string> string_function::toUTF16(const char32_t*& text, string_position howMany, bool isCountRequired) {
 	std::u16string uniString;
 	if (howMany == 0)
 		return std::optional(uniString);	//An empty string is not an error, so we don't return std::nullopt
@@ -457,7 +458,7 @@ std::optional<std::u16string> string_function::toUTF16(const char32_t*& text, st
 	
 	@return An array containing the byte size of each character found (nullopt if no valid chars found)
   --------------------------------------------------------------------*/
-std::vector<unsigned char> string_function::collectCharByteCount(const char* text, std::optional<std::string::size_type> howMany,
+std::vector<unsigned char> string_function::collectCharByteCount(const char* text, string_position howMany,
 												text_format format) {
 		//Array to collect character sizes
 	std::vector<unsigned char> charLength;
@@ -486,11 +487,11 @@ std::vector<unsigned char> string_function::collectCharByteCount(const char* tex
 	return: Byte offset to the start character paired with byte/char offset from the start to the end of the last character (nullopt on failure)
   --------------------------------------------------------------------*/
 std::optional<std::pair<std::string::size_type, std::string::size_type>> string_function::getByteOffsets(const char* text,
-		std::string::size_type startPos, std::optional<std::string::size_type> howMany, bool isHowManyChars) {
+		std::string::size_type startPos, string_position howMany, bool isHowManyChars) {
 	if (text == nullptr)
 		return std::nullopt;
 		//Find the byte offset to the start char
-	auto startByte = (startPos == 0) ? 0 : string_function::getByteCountCharLimited(text, startPos, true);
+	auto startByte = (startPos == 0) ? string_position{0} : string_function::getByteCountCharLimited(text, startPos, true);
 	if (!startByte)
 		return std::nullopt;
 		//Caller shouldn't use legacy string::npos, but this check enforces the 'optional' approach

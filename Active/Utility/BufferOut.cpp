@@ -33,8 +33,8 @@ namespace {
 	 @return A reference to the destination
 	 */
 	const BufferOut& writeUTF8(const String& string, const BufferOut& buffer, bool isNullAdded = true,
-							   std::optional<String::size_type> howMany = std::nullopt,
-							   std::optional<String::size_type> maxBytes = std::nullopt) {
+							   string_position howMany = std::nullopt,
+							   string_position maxBytes = std::nullopt) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		if (!string.empty()) {
@@ -65,8 +65,8 @@ namespace {
 	 */
 	const BufferOut& writeUTF16(const String& string, const BufferOut& buffer, bool isNullAdded = true,
 								bool is_big_endian = text_format::defaultEndian,
-								std::optional<String::size_type> howMany = std::nullopt,
-								std::optional<String::size_type> maxBytes = std::nullopt) {
+								string_position howMany = std::nullopt,
+								string_position maxBytes = std::nullopt) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		const auto* text = string.data();
@@ -104,8 +104,8 @@ namespace {
 	 */
 	const BufferOut& writeUTF32(const String& string, const BufferOut& buffer, bool isNullAdded = true,
 								bool is_big_endian = text_format::defaultEndian,
-								std::optional<String::size_type> howMany = std::nullopt,
-								std::optional<String::size_type> maxBytes = std::nullopt) {
+								string_position howMany = std::nullopt,
+								string_position maxBytes = std::nullopt) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		const auto* text = string.data();
@@ -331,8 +331,8 @@ const BufferOut& BufferOut::flushBuffer() const {
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::write(const String& toWrite, text_format format, bool isNullAdded,
-								  std::optional<String::size_type> howMany,
-								  std::optional<String::size_type> maxBytes) const {
+								  string_position howMany,
+								  string_position maxBytes) const {
 	if (m_str != nullptr)
 		format.encoding = UTF8;	//Data written to a string must be UTF8
 	if ((format.encoding == UTF8) || (format.encoding == ascii) || (format.encoding == ISO8859_1))

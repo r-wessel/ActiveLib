@@ -158,19 +158,28 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		String test{sampleText};
 		auto result = test.find(u8"bਖd");
 		CHECK_MESSAGE(result == 9, TEST_MESSAGE(String find returned wrong position));
+		result = test.find(u8"xy");
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(result == String::npos, TEST_MESSAGE(String find returned wrong position));
 		result = test.rfind(u8"bਖd");
 		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find returned wrong position));
+		result = test.rfind(u8"xy");
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
 		result = test.findFirstNotOf(u8"ਖd");
 		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String findFirstNotOf returned wrong position));
 		result = test.findFirstOf("ab");
 		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String findFirstOf returned wrong position));
 		result = test.findLastOf("ab");
 		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String findLastOf returned wrong position));
+		result = test.findLastOf("xy");
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String findLastOf returned wrong position));
 		result = test.findLastNotOf(u8"abਖefgh");
 		CHECK_MESSAGE(result == 19, TEST_MESSAGE(String findLastNotOf returned wrong position));
 		result = test.findLastNotOf(u8"aਖdefgh");
 		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String findLastNotOf returned wrong position));
 		result = test.findLastNotOf(u8"abਖdefgh");
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String findLastNotOf returned wrong position));
+		result = test.findLastNotOf(sampleText);
 		CHECK_MESSAGE(!result, TEST_MESSAGE(String findLastNotOf returned wrong position));
 	}
 
