@@ -60,26 +60,26 @@ bool XMLDateTime::write(String& dest) const {
 		//Write the date as required
 	if ((m_content != timeOnly) && (m_content != timeOnlyWithOffset)) {
 			//Year
-		dest += String{static_cast<int32_t>(m_time.year())}.padRight(4, "0");
+		dest += String{static_cast<int32_t>(m_time.year())}.pad_right(4, "0");
 			//Month
 		dest += "-";
-		dest += String{static_cast<int32_t>(m_time.month().operator unsigned())}.padRight(2, "0");
+		dest += String{static_cast<int32_t>(m_time.month().operator unsigned())}.pad_right(2, "0");
 			//Day
 		dest += "-";
-		dest += String{static_cast<int32_t>(m_time.day())}.padRight(2, "0");
+		dest += String{static_cast<int32_t>(m_time.day())}.pad_right(2, "0");
 	}
 		//Write the time as required
 	if (m_content != dateOnly) {
 		if (m_content == dateTime || m_content == dateTimeWithOffset)
 			dest += "T";
 			//Hour
-		dest += String{static_cast<int32_t>(m_time.hour())}.padRight(2, "0");
+		dest += String{static_cast<int32_t>(m_time.hour())}.pad_right(2, "0");
 			//Minute
 		dest += ":";
-		dest += String{static_cast<int32_t>(m_time.minute())}.padRight(2, "0");
+		dest += String{static_cast<int32_t>(m_time.minute())}.pad_right(2, "0");
 			//Second
 		dest += ":";
-		dest += String{static_cast<int32_t>(m_time.second())}.padRight(2, "0");
+		dest += String{static_cast<int32_t>(m_time.second())}.pad_right(2, "0");
 		if (isBetween(m_secsPrecision, 0.0, 1.0, 1e-7) && (m_time.microsecond() != 0)) {
 			auto secs = String{static_cast<double>(m_time.microsecond()) / 1e6, m_secsPrecision};
 			if (auto pointPos = secs.find("."); pointPos)
@@ -93,9 +93,9 @@ bool XMLDateTime::write(String& dest) const {
 			dest += "Z";
 		else {
 			dest += offset.second < 0 ? "-" : "+";
-			dest += String{abs(offset.first)}.padRight(2, "0");
+			dest += String{abs(offset.first)}.pad_right(2, "0");
 			dest += ":";
-			dest += String{offset.second}.padRight(2, "0");
+			dest += String{offset.second}.pad_right(2, "0");
 		}
 	}
 	return true;
@@ -130,7 +130,7 @@ bool XMLDateTime::read(const String& source) {
 	std::smatch match;
 	std::regex pattern{(((hasDate) ? ((hasTime) ? dateTimeRegex : dateRegex) : timeRegex) + zoneRegex).data()};
 	if (!std::regex_search(subject, match, pattern) || (match.size() < 2)) {
-		if (source.findFirstNotOf(String::allFloat))
+		if (source.find_first_not_of(String::allFloat))
 			return false;
 		if (auto seconds = source.toDouble(); seconds) {
 			m_time = Time{*seconds};

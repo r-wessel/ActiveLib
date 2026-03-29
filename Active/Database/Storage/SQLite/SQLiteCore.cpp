@@ -89,7 +89,7 @@ std::unique_ptr<SettingList> SQLiteCore::Transaction::operator++() {
 	if (m_handle == nullptr) {
 		auto dbaseHandle = m_sqlite->getHandle();
 		const char* dataTail = nullptr;
-		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), static_cast<int>(m_statement.dataSize() + 1u),
+		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), static_cast<int>(m_statement.data_size() + 1u),
 											 (sqlite3_stmt**) &m_handle, &dataTail); (status != SQLITE_OK) && (dataTail != nullptr))
 			throw std::system_error(makeError(static_cast<Status>(status)));
 		m_isDone = false;
@@ -164,7 +164,7 @@ std::error_code SQLiteCore::makeError(SQLiteCore::Status code) {
  --------------------------------------------------------------------*/
 String SQLiteCore::toSQLiteString(const String& text) {
 	String result{text};
-	result.replaceAll("'", "''");
+	result.replace_all("'", "''");
 	return result;
 } //SQLiteCore::toSQLiteString
 

@@ -111,7 +111,7 @@ std::optional<uint32_t> HexTransport::receive(const String& source) const {
 		//The incoming hex stream is padded out to 8 numerals (if required) to be interpreted as a 32-bit integer
 	if (source.size() < hexIntLength) {
 		cache = source;
-		cache.padRight(hexIntLength, "0");
+		cache.pad_right(hexIntLength, "0");
 		target = &cache;
 	}
 		//Read the hex stream directly into the memory for the int result

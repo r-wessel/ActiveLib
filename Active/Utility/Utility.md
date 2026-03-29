@@ -58,7 +58,7 @@ Data sent to BufferOut isn't written to the actual destination until either the 
 BufferIn contains numerous methods for finding/processing content, illustrated with some examples:
 1. Seek the first white-space character in the source, pooling all prior characters into a string (`firstWord`):
 ```Cpp
-BufferIn{String{"This is a test"}}.findFirstOf(String::allWhiteSpace, &firstWord);
+BufferIn{String{"This is a test"}}.find_first_of(String::allWhiteSpace, &firstWord);
 ```
 After executing, `firstWord` will contain `"This"`.
 
@@ -66,7 +66,7 @@ After executing, `firstWord` will contain `"This"`.
 ```Cpp
 String source{"This is some text\r\n\r\nNext line"};
 BufferIn bufferTest{source};
-bufferTest.findFirstOf(String::lineTerminator, nullptr, /*isContiguousMatch*/ true, /*isRepeatMatch*/ true, /*isFoundSkipped*/ true);
+bufferTest.find_first_of(String::lineTerminator, nullptr, /*isContiguousMatch*/ true, /*isRepeatMatch*/ true, /*isFoundSkipped*/ true);
 String firstWord;
 bufferTest >> firstWord;
 ```
@@ -76,7 +76,7 @@ After executing, `firstWord` will contain `"Next"`.
 
 ```Cpp
 String source{"This is some text\r\nNext line"}, firstLine;
-BufferIn{source}.findFirstOf(String::lineTerminator, &firstLine, /*isContiguousMatch*/ true, /*isRepeatMatch*/ true, /*isFoundSkipped*/ true, /*isFoundPooled*/ true);
+BufferIn{source}.find_first_of(String::lineTerminator, &firstLine, /*isContiguousMatch*/ true, /*isRepeatMatch*/ true, /*isFoundSkipped*/ true, /*isFoundPooled*/ true);
 ```
 After executing, `firstLine` will contain `"This is some text\r\n"`.
 
@@ -145,10 +145,10 @@ for easy interoperability.
 
 String content is internally encoded/validated as UTF-8 (so most `std::string` functions work correctly) but it can be encoded/decoded as UTF8, UTF16, UTF32, ASCII and ISO8859. Character positions are calculated to allow indexing, but the time to find a position averages O(n). It is recommended to use classes like `BufferIn` to analyse by-character content on large blocks of text efficiently.
 
-Unicode code-points are understood by `String`, so functions like `size()` returns the number of code points rather than the number of bytes consumed by the string (the number of bytes can be retrieved with `dataSize()`). Functions that rely on character positioning, e.g. `substr` or `findFirstOf`, also work correctly (based on code points), e.g.:
+Unicode code-points are understood by `String`, so functions like `size()` returns the number of code points rather than the number of bytes consumed by the string (the number of bytes can be retrieved with `dataSize()`). Functions that rely on character positioning, e.g. `substr` or `find_first_of`, also work correctly (based on code points), e.g.:
 ```Cpp
 String exampleStr{u8"½Pint Solutions® Inc Copyright © 2024"};
-auto pos = exampleStr.findFirstOf(u8"®©");	//pos becomes 15
+auto pos = exampleStr.find_first_of(u8"®©");	//pos becomes 15
 exampleStr.erase(*pos, 1); //exampleStr becomes "½Pint Solutions Inc Copyright © 2024"
 ```
 …but fail with `std::string`, e.g.:

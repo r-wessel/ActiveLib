@@ -190,7 +190,7 @@ namespace active {
 			@param escapeChar An optional escape char signifying the next character is escaped
 			@return True if a match is found
 		*/
-		bool findFirstOf(const String& toFind, String* pool = nullptr, bool isContiguousMatch = false, bool isRepeatMatch = false,
+		bool find_first_of(const String& toFind, String* pool = nullptr, bool isContiguousMatch = false, bool isRepeatMatch = false,
 						 bool isFoundSkipped = false, bool isFoundPooled = false, std::optional<char32_t> escapeChar = std::nullopt) const
 				{ return seek(toFind, pool, isContiguousMatch, false, false, isRepeatMatch, isFoundSkipped, isFoundPooled, escapeChar); }
 		/*!
@@ -200,7 +200,7 @@ namespace active {
 			@param escapeChar An optional escape char signifying the next character is escaped
 			@return True if a match is found
 		*/
-		bool findFirstNotOf(const String& toFind, String* pool = nullptr, std::optional<char32_t> escapeChar = std::nullopt) const
+		bool find_first_not_of(const String& toFind, String* pool = nullptr, std::optional<char32_t> escapeChar = std::nullopt) const
 				{ return seekNot(toFind, pool); }
 		/*!
 			Get a single char

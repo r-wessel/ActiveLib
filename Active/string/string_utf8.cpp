@@ -52,7 +52,7 @@ namespace {
  
 	return: The number of bytes in the text containing valid characters
   --------------------------------------------------------------------*/
-std::string::size_type string_function::getValidByteCount(const char* text, string_position howMany,
+std::string::size_type string_function::get_valid_byte_count(const char* text, string_position howMany,
 														  string_position charCount, text_format format) {
 	bool isOpen = !charCount;
 		//Detect empty strings or null requests
@@ -61,7 +61,7 @@ std::string::size_type string_function::getValidByteCount(const char* text, stri
 	const auto* endPos = text;
 	do {
 			//Get the size of the next char
-		if (auto nextLen = string_function::getCharacterByteCount(endPos, howMany, format); nextLen && (*nextLen > 0)) {
+		if (auto nextLen = string_function::get_character_byte_count(endPos, howMany, format); nextLen && (*nextLen > 0)) {
 			endPos += *nextLen;
 				//If the source is byte-limited, ensure the remaining count is updated
 			if (howMany) {
@@ -73,7 +73,7 @@ std::string::size_type string_function::getValidByteCount(const char* text, stri
 			break;
 	} while ((*endPos != 0) && (isOpen || --(*charCount)));
 	return static_cast<std::string::size_type>(endPos - text);
-} //string_function::getValidByteCount
+} //string_function::get_valid_byte_count
 
 
 /*--------------------------------------------------------------------
@@ -85,7 +85,7 @@ std::string::size_type string_function::getValidByteCount(const char* text, stri
  
 	return: The character width in bytes (nullopt on failure, i.e. bad encoding)
   --------------------------------------------------------------------*/
-std::optional<unsigned char> string_function::getCharacterByteCount(const char* text, string_position howMany, text_format format) {
+std::optional<unsigned char> string_function::get_character_byte_count(const char* text, string_position howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	switch (format.encoding) {
@@ -125,7 +125,7 @@ std::optional<unsigned char> string_function::getCharacterByteCount(const char* 
 			auto uniChar = *(reinterpret_cast<const char16_t*>(text));
 			if (uniChar == 0)
 				return 0;
-			unsigned char size = isWithinBMP(uniChar) ? 2 : 4;
+			unsigned char size = is_within_bmp(uniChar) ? 2 : 4;
 			return (howMany && (howMany < size)) ? std::nullopt : std::optional<unsigned char>(size);
 		}
 		case UTF32:
@@ -134,10 +134,10 @@ std::optional<unsigned char> string_function::getCharacterByteCount(const char* 
 			auto uniChar = *(reinterpret_cast<const char32_t*>(text));
 			if (uniChar == 0)
 				return 0;
-			return isValidUnicode(uniChar) ? std::optional<unsigned char>(4) : std::nullopt;
+			return is_valid_unicode(uniChar) ? std::optional<unsigned char>(4) : std::nullopt;
 	}
 	return 0;
-} //string_function::getCharacterByteCount
+} //string_function::get_character_byte_count
 
 
 /*--------------------------------------------------------------------
@@ -150,7 +150,7 @@ std::optional<unsigned char> string_function::getCharacterByteCount(const char* 
 	
 	return: The number of bytes in the char array (nullopt if isCountRequired and howMany not reached)
   --------------------------------------------------------------------*/
-string_position string_function::getByteCountCharLimited(const char* text, string_position howMany, bool isCountRequired, text_format format) {
+string_position string_function::get_byte_count_char_limited(const char* text, string_position howMany, bool isCountRequired, text_format format) {
 		//A null pointer can be a valid input if there is no specific requirement for content, in which case we can say it has zero bytes
 	if ((howMany == 0) || (text == nullptr) || (*text == 0))
 		return (!howMany || !isCountRequired) ? string_position{0} : string_position{};
@@ -160,7 +160,7 @@ string_position string_function::getByteCountCharLimited(const char* text, strin
 		//Ensure the loop is limited where a specific number of chars is specified
 	while (!howMany || (*howMany)--) {
 			//Check if the number of bytes in the next char can be established
-		if (auto nextLen = string_function::getCharacterByteCount(endPos, std::nullopt, format); nextLen && (nextLen > 0))
+		if (auto nextLen = string_function::get_character_byte_count(endPos, std::nullopt, format); nextLen && (nextLen > 0))
 			endPos += *nextLen;	//If so, bump the leading pointer to the next char position
 		else {
 			if (isCountChecked)
@@ -170,7 +170,7 @@ string_position string_function::getByteCountCharLimited(const char* text, strin
 	}
 		//The final number of bytes is simply the difference between the original text start and the end point reached
 	return static_cast<std::string::size_type>(endPos - text);
-} //string_function::getByteCountCharLimited
+} //string_function::get_byte_count_char_limited
 
 
 /*--------------------------------------------------------------------
@@ -182,13 +182,13 @@ string_position string_function::getByteCountCharLimited(const char* text, strin
  
 	return: The nummber of characters found
   --------------------------------------------------------------------*/
-string_position string_function::getCharacterCount(const char* text, string_position howMany, text_format format) {
+string_position string_function::get_character_count(const char* text, string_position howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	std::string::size_type totalChars = 0;
 		//Keep checking the next char until we hit the string end, run out of bytes or find bad encoding
 	for (;;) {
-		if (auto nextLen = getCharacterByteCount(text, howMany, format); nextLen && (nextLen > 0)) {
+		if (auto nextLen = get_character_byte_count(text, howMany, format); nextLen && (nextLen > 0)) {
 			text += *nextLen;
 			++totalChars;
 			if (howMany) {
@@ -200,7 +200,7 @@ string_position string_function::getCharacterCount(const char* text, string_posi
 			break;
 	}
 	return totalChars;
-} //string_function::getCharacterCount
+} //string_function::get_character_count
 
 
 /*--------------------------------------------------------------------
@@ -212,7 +212,7 @@ string_position string_function::getCharacterCount(const char* text, string_posi
  
 	return: The required number of characters
   --------------------------------------------------------------------*/
-string_position string_function::getCharCount(unsigned char wordSize, string_position howMany, string_position charCount) {
+string_position string_function::get_char_count(unsigned char wordSize, string_position howMany, string_position charCount) {
 	if (!howMany && !charCount)
 		return {};
 	if (!howMany)
@@ -221,7 +221,7 @@ string_position string_function::getCharCount(unsigned char wordSize, string_pos
 	if (charCount)
 		result = std::min(result, *charCount);
 	return result;
-} //getCharCount
+} //get_char_count
 
 	
 /*--------------------------------------------------------------------
@@ -233,14 +233,14 @@ string_position string_function::getCharCount(unsigned char wordSize, string_pos
 	
 	@return The number of characters in the array
   --------------------------------------------------------------------*/
-std::string::size_type string_function::getStringLength(const char* text, string_position howMany, text_format format) {
+std::string::size_type string_function::get_string_length(const char* text, string_position howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	std::string::size_type charCount = 0;
 		//Loop until we hit a null char (or run out of bytes - checked within loop)
 	while (*text != 0) {
 			//This will return nullopt when the string is exhausted of badly encoded, in which case the loop exits
-		if (auto nextLen = string_function::getCharacterByteCount(text, howMany, format); nextLen && (nextLen > 0)) {
+		if (auto nextLen = string_function::get_character_byte_count(text, howMany, format); nextLen && (nextLen > 0)) {
 			++charCount;
 				//If there are a finite number of bytes, we need to reduce the number remaining
 			if (howMany)
@@ -251,21 +251,21 @@ std::string::size_type string_function::getStringLength(const char* text, string
 			break;
 	}
 	return charCount;
-} //string_function::getStringLength
+} //string_function::get_string_length
 
 
 /*--------------------------------------------------------------------
 	Get a UTF-32 char from a UTF-8 source
  
 	text: The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
-	howMany: The number of available bytes in the source
+	howMany: The number of available bytes in the source (no_pos = null-terminated)
  
 	return: A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/
-std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF8(const char*& text, std::string::size_type howMany) {
+std::pair<char32_t, unsigned char> string_function::get_utf32_char_from_utf8(const char*& text, std::string::size_type howMany) {
 	std::pair<char32_t, unsigned char> result{0, 0};
 		//Determine text points to a valid character and get the size
-	auto size = string_function::getCharacterByteCount(text, howMany, UTF8);
+	auto size = string_function::get_character_byte_count(text, howMany, UTF8);
 	if (!size || (size == 0))
 		return result;
 		//Get the first byte to initialise the code point
@@ -280,7 +280,7 @@ std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF8(const c
 			result.first = (result.first << 6) | (static_cast<unsigned char>(*text) & 0x3F);
 	}
 	return result;
-} //string_function::getUTF32CharFromUTF8
+} //string_function::get_utf32_char_from_utf8
 
 
 /*--------------------------------------------------------------------
@@ -292,7 +292,7 @@ std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF8(const c
  
 	return: A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/
-std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF16(const char16_t*& text, bool is_big_endian, std::string::size_type howMany) {
+std::pair<char32_t, unsigned char> string_function::get_utf32_char_from_utf16(const char16_t*& text, bool is_big_endian, std::string::size_type howMany) {
 	std::pair<char32_t, unsigned char> result{0, 0};
 	if (howMany < sizeof(char16_t))
 		return result;	//No chars to read from source
@@ -301,7 +301,7 @@ std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF16(const 
 	byteSwap(reinterpret_cast<char16_t*>(&result.first), 2, is_big_endian);
 	++text;
 		//Deal with single 16-bit encoding first
-	if (string_function::isWithinBMP(static_cast<char16_t>(result.first))) {
+	if (string_function::is_within_bmp(static_cast<char16_t>(result.first))) {
 		result.second = sizeof(char16_t);
 		return result;
 	}
@@ -313,7 +313,7 @@ std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF16(const 
 	++text;
 	result.second = 2 * sizeof(char16_t);
 	return result;
-} //string_function::getUTF32CharFromUTF16
+} //string_function::get_utf32_char_from_utf16
 
 
 /*--------------------------------------------------------------------
@@ -325,15 +325,15 @@ std::pair<char32_t, unsigned char> string_function::getUTF32CharFromUTF16(const 
  
 	return: The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/
-std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* text, string_position howMany, text_format format) {
+std::pair<char32_t, unsigned char> string_function::get_unicode_char(const char* text, string_position howMany, text_format format) {
 	if (text == nullptr)
 		return {};
 	switch (format.encoding) {
 		case UTF8:
-			return getUTF32CharFromUTF8(text, howMany.value_or(possibleCharWidth));
+			return get_utf32_char_from_utf8(text, howMany.value_or(possibleCharWidth));
 		case UTF16: {
 			auto source = reinterpret_cast<const char16_t*>(text);
-			auto result = getUTF32CharFromUTF16(source, format.is_big_endian, howMany.value_or(possibleCharWidth));
+			auto result = get_utf32_char_from_utf16(source, format.is_big_endian, howMany.value_or(possibleCharWidth));
 			return result;
 		}
 		case UTF32: {
@@ -342,7 +342,7 @@ std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* t
 				return result;
 			auto source = reinterpret_cast<const char32_t*>(text);
 			result.first = source[0];
-			if (isValidUnicode(result.first)) {
+			if (is_valid_unicode(result.first)) {
 				byteSwap(&result.first, 1, format.is_big_endian);
 				result.second = sizeof(char32_t);
 			} else
@@ -358,7 +358,7 @@ std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* t
 			return result;
 	}
 	return {};
-} //string_function::getUnicodeChar
+} //string_function::get_unicode_char
 
 
 /*--------------------------------------------------------------------
@@ -370,7 +370,7 @@ std::pair<char32_t, unsigned char> string_function::getUnicodeChar(const char* t
  
 	return: The unicode code point for the specified chars (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<std::u32string> string_function::toUnicode(const char*& text, string_position howMany, bool isCountRequired) {
+std::optional<std::u32string> string_function::to_unicode(const char*& text, string_position howMany, bool isCountRequired) {
 	if (text == nullptr)
 		return std::nullopt;
 	std::u32string uniString;
@@ -378,7 +378,7 @@ std::optional<std::u32string> string_function::toUnicode(const char*& text, stri
 		return std::optional(uniString);	//An empty string is not an error, so we don't return std::nullopt
 	auto bytesRemaining = howMany.value_or(possibleCharWidth);
 	while (*text != 0) {
-		auto nextChar = getUTF32CharFromUTF8(text, bytesRemaining);
+		auto nextChar = get_utf32_char_from_utf8(text, bytesRemaining);
 		if (nextChar.second == 0)
 			break;	//Source is consumed or bad encoding
 		uniString += nextChar.first;
@@ -386,7 +386,7 @@ std::optional<std::u32string> string_function::toUnicode(const char*& text, stri
 			bytesRemaining -= nextChar.second;
 	}
 	return (isCountRequired && (bytesRemaining > 0)) ? std::nullopt : std::optional(uniString);
-} //string_function::toUnicode
+} //string_function::to_unicode
 
 
 /*--------------------------------------------------------------------
@@ -399,13 +399,13 @@ std::optional<std::u32string> string_function::toUnicode(const char*& text, stri
  
 	return: The UTF-32 string read from the UTF-16 source (nullopt on error, including failure to meet isCountRequired condition)
   --------------------------------------------------------------------*/
-std::optional<std::u32string> string_function::fromUTF16(const char16_t*& text, bool is_big_endian, string_position howMany, bool isCountRequired) {
+std::optional<std::u32string> string_function::from_utf16(const char16_t*& text, bool is_big_endian, string_position howMany, bool isCountRequired) {
 	std::u32string uniString;
 	if (howMany == 0)
 		return std::optional(uniString);	//An empty string is not an error, so we don't return std::nullopt
 	auto charsRemaining = sizeof(char16_t) * howMany.value_or(possibleCharWidth / sizeof(char16_t));
 	while (*text != 0) {
-		auto nextChar = getUTF32CharFromUTF16(text, is_big_endian, charsRemaining);
+		auto nextChar = get_utf32_char_from_utf16(text, is_big_endian, charsRemaining);
 		if (nextChar.second == 0)
 			break;	//Source is consumed or bad encoding
 		uniString += nextChar.first;
@@ -413,7 +413,7 @@ std::optional<std::u32string> string_function::fromUTF16(const char16_t*& text, 
 			charsRemaining -= nextChar.second;
 	}
 	return (isCountRequired && (howMany > 0)) ? std::nullopt : std::optional(uniString);
-} //string_function::fromUTF16
+} //string_function::from_utf16
 
 
 /*--------------------------------------------------------------------
@@ -425,7 +425,7 @@ std::optional<std::u32string> string_function::fromUTF16(const char16_t*& text, 
  
 	return: The UTF-16 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
   --------------------------------------------------------------------*/
-std::optional<std::u16string> string_function::toUTF16(const char32_t*& text, string_position howMany, bool isCountRequired) {
+std::optional<std::u16string> string_function::to_utf16(const char32_t*& text, string_position howMany, bool isCountRequired) {
 	std::u16string uniString;
 	if (howMany == 0)
 		return std::optional(uniString);	//An empty string is not an error, so we don't return std::nullopt
@@ -446,7 +446,7 @@ std::optional<std::u16string> string_function::toUTF16(const char32_t*& text, st
 		uniString += static_cast<char16_t>(code & 0x3FF) + 0xDC00;
 	}
 	return (isCountRequired && (howMany > 0)) ? std::nullopt : std::optional(uniString);
-} //string_function::toUTF16
+} //string_function::to_utf16
 
 
 /*--------------------------------------------------------------------
@@ -458,7 +458,7 @@ std::optional<std::u16string> string_function::toUTF16(const char32_t*& text, st
 	
 	@return An array containing the byte size of each character found (nullopt if no valid chars found)
   --------------------------------------------------------------------*/
-std::vector<unsigned char> string_function::collectCharByteCount(const char* text, string_position howMany,
+std::vector<unsigned char> string_function::collect_char_byte_count(const char* text, string_position howMany,
 												text_format format) {
 		//Array to collect character sizes
 	std::vector<unsigned char> charLength;
@@ -466,14 +466,14 @@ std::vector<unsigned char> string_function::collectCharByteCount(const char* tex
 		return charLength;
 		//Note: loop still works as expected even when howMany = nullopt
 	while (!howMany || (*howMany)--) {
-		if (auto nextLen = string_function::getCharacterByteCount(text, std::nullopt, format); nextLen && (nextLen > 0)) {
+		if (auto nextLen = string_function::get_character_byte_count(text, std::nullopt, format); nextLen && (nextLen > 0)) {
 			charLength.push_back(*nextLen);
 			text += *nextLen;
 		} else
 			break;
 	}
 	return charLength;
-} //string_function::collectCharByteCount
+} //string_function::collect_char_byte_count
 
 
 /*--------------------------------------------------------------------
@@ -486,12 +486,12 @@ std::vector<unsigned char> string_function::collectCharByteCount(const char* tex
  
 	return: Byte offset to the start character paired with byte/char offset from the start to the end of the last character (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<std::pair<std::string::size_type, std::string::size_type>> string_function::getByteOffsets(const char* text,
+std::optional<std::pair<std::string::size_type, std::string::size_type>> string_function::get_byte_offsets(const char* text,
 		std::string::size_type startPos, string_position howMany, bool isHowManyChars) {
 	if (text == nullptr)
 		return std::nullopt;
 		//Find the byte offset to the start char
-	auto startByte = (startPos == 0) ? string_position{0} : string_function::getByteCountCharLimited(text, startPos, true);
+	auto startByte = (startPos == 0) ? string_position{0} : string_function::get_byte_count_char_limited(text, startPos, true);
 	if (!startByte)
 		return std::nullopt;
 		//Caller shouldn't use legacy string::npos, but this check enforces the 'optional' approach
@@ -499,8 +499,8 @@ std::optional<std::pair<std::string::size_type, std::string::size_type>> string_
 		howMany = std::nullopt;
 		//Now get the number of bytes or chars to the last char - if successful, return the required offsets
 	if (auto textCount = isHowManyChars ?
-			string_function::getCharacterCount(text + *startByte, howMany) :
-			string_function::getByteCountCharLimited(text + *startByte, howMany); textCount)
+			string_function::get_character_count(text + *startByte, howMany) :
+			string_function::get_byte_count_char_limited(text + *startByte, howMany); textCount)
 		return std::optional(std::make_pair(*startByte, *textCount));
 	return std::nullopt;	//Fail condition
-} //string_function::getByteOffsets
+} //string_function::get_byte_offsets

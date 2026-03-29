@@ -29,8 +29,8 @@ namespace {
 		std::optional<String> result;
 		String shellPath{path};
 			//Shell paths can't contain unescaped spaces
-		shellPath.replaceAll("\\ ", " ");	//Can't be certain that some spaces aren't already escaped - reduce all to spaces
-		shellPath.replaceAll(" ", "\\ ");
+		shellPath.replace_all("\\ ", " ");	//Can't be certain that some spaces aren't already escaped - reduce all to spaces
+		shellPath.replace_all(" ", "\\ ");
 		wordexp_t exp_result;
 		if (wordexp(shellPath.data(), &exp_result, 0) == 0)
 			result = String{exp_result.we_wordv[0]};

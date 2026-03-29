@@ -51,7 +51,7 @@ Guid::Guid(bool autoGenerate) {
 Guid::Guid(const String& uuidString) {
 	auto incoming{uuidString};
 		//Remove all dashes to create a simple hex stream
-	incoming.replaceAll("-", String{});
+	incoming.replace_all("-", String{});
 		//We need 16 characters for a valid guid
 	if (incoming.size() != 32)
 		return;

@@ -308,7 +308,7 @@ std::pair<char32_t, Memory::size_type> BufferIn::getEncodedChar(bool isConsumed)
 		setState(std::ios_base::failbit);	//Attempting to read from eof is an error
 		return result;
 	}
-	auto uniChar = string_function::getUnicodeChar(m_buffer + m_readPos, bufferMin(possibleCharWidth), m_format);
+	auto uniChar = string_function::get_unicode_char(m_buffer + m_readPos, bufferMin(possibleCharWidth), m_format);
 	if (isConsumed) {
 		updatePosition(m_buffer[m_readPos], static_cast<uint8_t>(uniChar.second));
 		bumpReadPos(uniChar.second);
@@ -368,8 +368,8 @@ const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
   --------------------------------------------------------------------*/
 String BufferIn::readWord(const String& division) const {
 	String incoming;
-	if (findFirstNotOf(division))
-		findFirstOf(division, &incoming);
+	if (find_first_not_of(division))
+		find_first_of(division, &incoming);
 	return incoming;
 } //BufferIn::readWord
 
@@ -408,7 +408,7 @@ const BufferIn& BufferIn::getString(String& dest, std::optional<String::size_typ
 	auto toRead = howMany.value_or(0);
 	bool isOpen = !howMany;
 		//Minimise reallocations of string
-	dest.reserve(dest.dataSize() + (howMany ? *howMany : getSupplyCount()));
+	dest.reserve(dest.data_size() + (howMany ? *howMany : getSupplyCount()));
 	while ((isOpen || toRead--) && getEncodedChar(encodedChar))
 		dest.append(encodedChar);
 	return *this;
@@ -561,7 +561,7 @@ void BufferIn::setSource(const Memory& sourceMem, std::optional<text_format> for
 void BufferIn::setSource(const String& sourceString, std::optional<text_format> format) {
 	if (!sourceString.empty())
 			//NB: Source is never mutated by BufferIn so const discard is safe
-		initialise(const_cast<char*>(sourceString.data()), nullptr, sourceString.dataSize());
+		initialise(const_cast<char*>(sourceString.data()), nullptr, sourceString.data_size());
 	else
 		initialise(nullptr, nullptr, 0);
 	m_format = format ? *format : discoverFormat();
@@ -761,7 +761,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 					dataBuffer->push_back(uniChar.first);
 					uniChar.second = 0;
 					for (auto index = 1; index < dataBuffer->size(); ++index) {
-						if (toFind.startsWith(dataBuffer->substr(index))) {
+						if (toFind.starts_with(dataBuffer->substr(index))) {
 								//If we can resume, write any non-matching chars to the data pool (remember - buffers are still swapped at this point)
 							if (foundBuffer)
 								foundBuffer->append(dataBuffer->substr(0, index));

@@ -157,6 +157,158 @@ namespace active {
 			///Unary functions for processing string characters
 		using Function = std::function<std::optional<char32_t>(char32_t)>;
 		
+			///Character referencing type
+		struct char_t {
+				///Constructors
+			char_t() {}
+			char_t(const char_t& source) : m_string{source.m_string}, m_position{source.m_position} {}
+				///Conversion operator
+			operator char32_t() const {
+				if (m_string == nullptr)
+					throw std::out_of_range("");
+				return m_string->at(m_position);
+			}
+				///Assignment operators
+			char_t& operator=(char32_t source) {
+				if (m_string == nullptr)
+					throw std::out_of_range("");
+				m_string->replace(m_position, 1, basic_string{source});
+				return *this;
+			}
+			char_t& operator=(const char_t& source) {
+				if (this != &source) {
+					m_string = source.m_string;
+					m_position = source.m_position;
+				}
+				return *this;
+			}
+
+		private:
+			friend class basic_string;
+			char_t(basic_string* string, size_type pos = 0) : m_string{string}, m_position{pos} {}
+				///The target string
+			basic_string* m_string = nullptr;
+				///The char position in the string
+			size_type m_position = 0;
+		};
+		
+			///Iterator type
+		template<typename Str, typename Char, std::ptrdiff_t Offset = 1>
+		class iter_t {
+		public:
+				///Types
+			using difference_type = std::ptrdiff_t;
+			using value_type = Char;
+			
+				///Constructors
+			iter_t() {}
+			iter_t(const iter_t& source) : m_string{source.m_string}, m_pos(source.m_pos) {}
+			
+				///Assignment operator
+			iter_t& operator=(const iter_t& other) {
+				if (this != &other) {
+					m_string = other.m_string;
+					m_pos = other.m_pos;
+				}
+				return *this;
+			}
+				///Dereference operator
+			value_type& operator*() const { return get_char(); }
+				///Increment operator
+			iter_t& operator++() {
+				m_pos += Offset;
+				return *this;
+			}
+				///Post-increment operator
+			iter_t operator++(int) {
+				auto tmp = *this;
+				++*this;
+				return tmp;
+			}
+				///Decrement operator
+			iter_t& operator--() {
+				if (m_pos == 0)
+					throw std::out_of_range("");
+				m_pos -= Offset;
+				return *this;
+			}
+				///Post-decrement operator
+			iter_t operator--(int) {
+				auto tmp = *this;
+				--*this;
+				return tmp;
+			}
+				///Equality operator
+			bool operator==(const iter_t& ref) const { return (m_string == ref.m_string) && (m_pos == ref.m_pos); }
+				///Addition with assignment operator
+			iter_t& operator+=(difference_type n) {
+				m_pos += (n * Offset);
+				return *this;
+			}
+				///Addition operator
+			iter_t operator+(difference_type n) const {
+				auto result = *this;
+				result += n;
+				return result;
+			}
+				///Subtraction with assignment operator
+			iter_t& operator-=(difference_type n) {
+				if (n > m_pos)
+					throw std::out_of_range("");
+				m_pos -= (n * Offset);
+				return *this;
+			}
+				///Subtraction operator
+			iter_t operator-(difference_type n) const {
+				auto result = *this;
+				result -= n;
+				return result;
+			}
+				///Subtraction operator
+			difference_type operator-(const iter_t& other) const { return m_pos - other.m_pos; }
+				///Subscript operator
+			value_type& operator[](difference_type n) const {
+				auto offset = n * Offset;
+				m_pos += offset;
+				get_char();
+				m_pos -= offset;
+				return m_char;
+			}
+				///Less-than operator
+			bool operator<(const iter_t& other) const { return m_pos < other.m_pos; }
+				///Less-than-or-equal operator
+			bool operator<=(const iter_t& other) const { return m_pos <= other.m_pos; }
+				///Greater-than operator
+			bool operator>(const iter_t& other) const { return m_pos > other.m_pos; }
+				///Greater-than-or-equal operator
+			bool operator>=(const iter_t& other) const { return m_pos >= other.m_pos; }
+			
+		private:
+				///Constructor
+			iter_t(Str* source, difference_type pos = 0) : m_string{source}, m_pos(pos) {}
+				///Get the referenced character
+			Char& get_char() const {
+				m_char = char_t{const_cast<Str*>(m_string), m_pos};
+				return m_char;
+			}
+
+				///The target string
+			Str* m_string = nullptr;
+				///The iterator position in the string
+			size_type m_pos = 0;
+				///The character currently pointed to
+			mutable char_t m_char;
+		};
+		
+			///Iterator
+		using iterator = iter_t<basic_string, char_t>;
+			///Const iterator
+		using const_iterator = iter_t<const basic_string, const char_t>;
+			///Reverse iterator
+		using reverse_iterator = iter_t<basic_string, char_t, -1>;
+			///Reverse const iterator
+		using const_reverse_iterator = iter_t<const basic_string, const char_t, -1>;
+
 		//MARK: - Constants
 		
 			///Constant to indicate an unspecified or non-existant position in std::string
@@ -187,7 +339,7 @@ namespace active {
 		 Get a UTF-8 string from a UTF-32 source
 		 @param text The source text (when valid, points to the next byte beyond the found character on return)
 		 @param is_big_endian True if byte ordering is big-endian
-		 @param howMany The number of 32-bit code points in the text (nullopt = null-terminated)
+		 @param howMany The number of 32-bit code points in the text (no_pos = null-terminated)
 		 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
 		 @return The UTF-8 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
 		 */
@@ -197,7 +349,7 @@ namespace active {
 		 Make an STL string from a char array. NB: always returns a result, but result will only include valid chars
 		 @param target An STL string to be populated with valid characters found
 		 @param text The source text
-		 @param howMany The number of bytes in the text (nullopt = null-terminated)
+		 @param howMany The number of bytes in the text (no_pos = null-terminated)
 		 @param charCount The maximum number of (encoded) chars to read (npos = no limit)
 		 @param format The text data format
 		 @return The number of source bytes used in the populated string
@@ -375,10 +527,16 @@ namespace active {
 		
 		/*!
 		 Subscript operator
-		 @param index The required character position (unchecked - out of bounds behaviour undefined)
+		 @param index The required character position
 		 @return The character at the specified index
 		 */
-		char32_t operator[](size_type index) const;
+		const char_t& operator[](size_type index) const { return get_char(index); }
+		/*!
+		 Subscript operator
+		 @param index The required character position
+		 @return The character at the specified index
+		 */
+		char_t& operator[](size_type index) { return get_char(index); }
 		/*!
 		 Assignment operator
 		 @param source The object to copy
@@ -419,6 +577,36 @@ namespace active {
 			//MARK: - Functions (const)
 		
 		/*!
+		 Return a const iterator pointing to the first character
+		 @return A const iterator pointing to the first character
+		 */
+		const_iterator begin() const { return const_iterator{this, 0}; }
+		/*!
+		 Return an iterator pointing to the string end
+		 @return An iterator pointing to the string end
+		 */
+		const_iterator end() const { return const_iterator{}; }
+		/*!
+		 Return a const iterator pointing to the first character
+		 @return A const iterator pointing to the first character
+		 */
+		const_reverse_iterator rbegin() const { return const_reverse_iterator{this, size() - 1}; }
+		/*!
+		 Return an iterator pointing to the string end
+		 @return An iterator pointing to the string end
+		 */
+		const_reverse_iterator rend() const { return const_reverse_iterator{}; }
+		/*!
+		 Get the first character in the string
+		 @return A reference to the first character in the string
+		 */
+		const char_t& front() const { return operator[](0); }
+		/*!
+		 Get the last character in the string
+		 @return A reference to the last character in the string
+		 */
+		const char_t& back() const { return operator[](size() - 1); }
+		/*!
 		 Return the number of bytes this string can contain
 		 @return The number of bytes this string can contain
 		 */
@@ -439,7 +627,7 @@ namespace active {
 		 @return The number of
 		 bytes consumed by the string (NB: basic_string are null terminated, but this is not included in the data length)
 		 */
-		size_type dataSize(string_position howMany = no_pos) const;
+		size_type data_size(string_position howMany = no_pos) const;
 		/*!
 		 Determine if the string is empty
 		 @return True is the string is empty
@@ -465,12 +653,12 @@ namespace active {
 		 Apply a function to specified characters in the string
 		 @param func The character function (the returned value is ignored)
 		 */
-		void forEach(const Function& func) const;
+		void for_each(const Function& func) const;
 		/*!
 		 Apply a function to specified characters in the string in reverse order
 		 @param func The character function (the returned value is ignored)
 		 */
-		void rforEach(const Function& func) const;
+		void rfor_each(const Function& func) const;
 		/*!
 		 Get a specified substring of this string
 		 @param startPos The position of the first character
@@ -522,7 +710,7 @@ namespace active {
 		 @param howMany The number of characters to check (nullopt = to end)
 		 @return True is the string is numbers
 		 */
-		bool isNumeric(size_type startPos = 0, string_position howMany = no_pos) const;
+		bool is_numeric(size_type startPos = 0, string_position howMany = no_pos) const;
 		/*!
 		 Three-way comparison to a reference string
 		 @param ref The string to compare this to
@@ -541,7 +729,7 @@ namespace active {
 		 @param filter The string filter
 		 @return The index where a match is found (nullopt = not found)
 		 */
-		string_position findIf(const Filter& filter) const;
+		string_position find_if(const Filter& filter) const;
 		/*!
 		 Find the specified string within this searching in reverse and using a filter
 		 @param filter The string filter
@@ -549,7 +737,7 @@ namespace active {
 		 @param howMany The number of chars to filter
 		 @return The index where a match is found (nullopt = not found)
 		 */
-		string_position rfindIf(const Filter& filter, string_position lastPos = no_pos, string_position howMany = no_pos) const;
+		string_position rfind_if(const Filter& filter, string_position lastPos = no_pos, string_position howMany = no_pos) const;
 		/*!
 		 Determine if the string contains a substring
 		 @param toFind The substring to find
@@ -561,41 +749,41 @@ namespace active {
 		 @param toFind The substring to find
 		 @return True if this string starts with the substring
 		 */
-		bool startsWith(const basic_string& toFind) const { return m_string.starts_with(toFind.m_string); }
+		bool starts_with(const basic_string& toFind) const { return m_string.starts_with(toFind.m_string); }
 		/*!
 		 Determine if this string ends with a substring
 		 @param toFind The substring to find
 		 @return True if this string ends with the substring
 		 */
-		bool endsWith(const basic_string& toFind) const { return m_string.ends_with(toFind.m_string); }
+		bool ends_with(const basic_string& toFind) const { return m_string.ends_with(toFind.m_string); }
 		/*!
 		 Find the first character which is in a specified string
 		 @param toFind A string of characters to find
 		 @param startPos The character to begin searching from
 		 @return The index of the first matching character (nullopt = not found)
 		 */
-		string_position findFirstOf(const basic_string& toFind, size_type startPos = 0) const;
+		string_position find_first_of(const basic_string& toFind, size_type startPos = 0) const;
 		/*!
 		 Find the first character not in a specified string
 		 @param toFind A string of characters to not find
 		 @param startPos The character to begin searching from
 		 @return The index of the first non-matching character (nullopt = not found)
 		 */
-		string_position findFirstNotOf(const basic_string& toFind, size_type startPos = 0) const;
+		string_position find_first_not_of(const basic_string& toFind, size_type startPos = 0) const;
 		/*!
 		 Find the last character in this string which is in the specified string
 		 @param toFind A string of characters to find
 		 @param lastPos The position of the last character to be compared
 		 @return The index of the last matching character (nullopt = not found)
 		 */
-		string_position findLastOf(const basic_string& toFind, string_position lastPos = no_pos) const;
+		string_position find_last_of(const basic_string& toFind, string_position lastPos = no_pos) const;
 		/*!
 		 Find the last character in this string which is not in the specified string
 		 @param toFind A string of characters not to find
 		 @param lastPos The position of the last character to be compared
 		 @return The index of the last non-matching character (nullopt = not found)
 		 */
-		string_position findLastNotOf(const basic_string& toFind, string_position lastPos = no_pos) const;
+		string_position find_last_not_of(const basic_string& toFind, string_position lastPos = no_pos) const;
 		/*!
 		 Find the specified string searching backwards
 		 @param toFind The string to find
@@ -606,6 +794,36 @@ namespace active {
 		
 			//MARK: - Functions (mutating)
 		
+		/*!
+		 Return an iterator pointing to the first character
+		 @return An iterator pointing to the first character
+		 */
+		iterator begin() { return iterator{this, 0}; }
+		/*!
+		 Return an iterator pointing to the string end
+		 @return An iterator pointing to the string end
+		 */
+		iterator end() { return iterator{}; }
+		/*!
+		 Return a reverse iterator pointing to the last character
+		 @return A reverse iterator pointing to the last character
+		 */
+		reverse_iterator rbegin() { return reverse_iterator{this, size() - 1}; }
+		/*!
+		 Return a reverse iterator pointing to the string end
+		 @return A reverse iterator pointing to the string end
+		 */
+		reverse_iterator rend() { reverse_iterator iterator{}; }
+		/*!
+		 Get the first character in the string
+		 @return A reference to the first character in the string
+		 */
+		char_t& front() { return operator[](0); }
+		/*!
+		 Get the last character in the string
+		 @return A reference to the last character in the string
+		 */
+		char_t& back() { return operator[](size() - 1); }
 		/*!
 		 Reserve the specified number of bytes for the string to grow into
 		 @param newSize The number of bytes to reserve
@@ -625,12 +843,12 @@ namespace active {
 		 Apply a function to specified characters in the string
 		 @param func The character function (the returned value replaces the input character)
 		 */
-		void forEach(const Function& func);
+		void for_each(const Function& func);
 		/*!
 		 Apply a function to specified characters in the string in reverse order
 		 @param func The character function (the returned value replaces the input character)
 		 */
-		void rforEach(const Function& func);
+		void rfor_each(const Function& func);
 		/*!
 		 Assign a specified string to this
 		 @param source The string to assign
@@ -640,7 +858,7 @@ namespace active {
 		/*!
 		 Assign a specified string to this
 		 @param source The character array to be copied
-		 @param byteCount The maximum number of bytes in the array (nullopt = null-terminated)
+		 @param byteCount The maximum number of bytes in the array (no_pos = null-terminated)
 		 @param charCount The maximum number of (encoded) characters to read (nullopt = as byteCount limit)
 		 @param format The source text data format
 		 @return The number of bytes assigned from the source
@@ -703,21 +921,21 @@ namespace active {
 		 @param replacement The replacement expression
 		 @return A reference to this
 		 */
-		basic_string& replaceAll(const basic_string& toFind, const basic_string& replacement = basic_string());
+		basic_string& replace_all(const basic_string& toFind, const basic_string& replacement = basic_string());
 		/*!
 		 Replace all chars passing a specified filter
 		 @param filter The filter for chars to be replaced
 		 @param replacement The replacement expression
 		 @return A reference to this
 		 */
-		basic_string& replaceIf(const Filter& filter, const basic_string& replacement = basic_string());
+		basic_string& replace_if(const Filter& filter, const basic_string& replacement = basic_string());
 		/*!
 		 Replace any instances of specified characters
 		 @param charsToFind The characters to be replaced (NB: each character is treated independently - the order does not matter)
 		 @param replacement The replacement expression
 		 @return A reference to this
 		 */
-		basic_string& replaceAnyOf(const basic_string& charsToFind, const basic_string& replacement = basic_string());
+		basic_string& replace_any_of(const basic_string& charsToFind, const basic_string& replacement = basic_string());
 		/*!
 		 Erase a specified range of characters from a string
 		 @param pos The position to erasing from
@@ -728,23 +946,35 @@ namespace active {
 		/*!
 		 Remove the last character from the string
 		 */
-		void popBack();
+		void pop_back();
 		/*!
 		 Pad the string with a repeated character to reach a specified length (so the existing content is flush with the right)
 		 @param length The required string length
 		 @param repeat The character to repeatedly insert util the length is met
 		 @return A reference to this
 		 */
-		basic_string& padRight(size_type length, const basic_string& repeat = " ");
+		basic_string& pad_right(size_type length, const basic_string& repeat = " ");
 		/*!
 		 Pad the string with a repeated character to reach a specified length (so the existing content is flush with the left)
 		 @param length The required string length
 		 @param repeat The character to repeatedly append util the length is met
 		 @return A reference to this
 		 */
-		basic_string& padLeft(size_type length, const basic_string& repeat = " ");
+		basic_string& pad_left(size_type length, const basic_string& repeat = " ");
 		
-		private:
+	private:
+		/*!
+		 Get a reference to the character at a specified position
+		 @param pos The character position
+		 @return A reference to the requested character
+		 */
+		char_t& get_char(size_type pos) const {
+			m_char = char_t{const_cast<basic_string*>(this), pos};
+			return m_char;
+		}
+		
+			///A placeholder for referencing characters within the string
+		mutable char_t m_char;
 			///The string content - NB: The STL representation works for many UTF-8 functions, and this class manages the remainder
 		base m_string;
 	};
@@ -766,8 +996,8 @@ namespace active::string_function {
 	 @param format The text data format
 	 @return The number of bytes in the text containing valid UTF8 characters
 	 */
-	string::size_type getValidByteCount(const char* text, string_position howMany = string::no_pos,
-										string_position charCount = string::no_pos, text_format format = text_format{});
+	string::size_type get_valid_byte_count(const char* text, string_position howMany = string::no_pos,
+										   string_position charCount = string::no_pos, text_format format = text_format{});
 	/*!
 	 Get the width of a specified character in bytes
 	 @param text The source text
@@ -775,27 +1005,27 @@ namespace active::string_function {
 	 @param format The text data format
 	 @return The character width in bytes (nullopt for bad encoding)
 	 */
-	std::optional<unsigned char> getCharacterByteCount(const char* text, string_position howMany = string::no_pos,
-													   text_format format = text_format{});
+	std::optional<unsigned char> get_character_byte_count(const char* text, string_position howMany = string::no_pos,
+														  text_format format = text_format{});
 	/*!
 	 Return the length of a string in bytes, limited by a character count
 	 @param text The source text
-	 @param howMany The number of characters to count (nullopt = null-terminated)
+	 @param howMany The number of characters to count (no_pos = null-terminated)
 	 @param isCountRequired True if the number of characters must exist in the text (unless howMany = nullopt)
 	 @param format The text data format
 	 @return The number of bytes in the char array (nullopt if isCountRequired and howMany not reached)
 	 */
-	string_position getByteCountCharLimited(const char* text, string_position howMany = string::no_pos,
-												  bool isCountRequired = false, text_format format = text_format{});
+	string_position get_byte_count_char_limited(const char* text, string_position howMany = string::no_pos,
+												bool isCountRequired = false, text_format format = text_format{});
 	/*!
 	 Get the number of valid characters found at a specified address
 	 @param text The source text
 	 @param format The text data format
-	 @param howMany The number of bytes in the array (nullopt = null-terminated)
+	 @param howMany The number of bytes in the array (no_pos = null-terminated)
 	 @return The nummber of characters found (nullopt if bad encoding found)
 	 */
-	string_position getCharacterCount(const char* text, string_position howMany = string::no_pos,
-											text_format format = text_format{});
+	string_position get_character_count(const char* text, string_position howMany = string::no_pos,
+										text_format format = text_format{});
 	/*!
 	 Calculate a required number of characters base on a specified byte count, word size and (optional) character limit
 	 @param wordSize The character word size, e.g. UTF16 = 2, UTF32 = 4
@@ -803,36 +1033,36 @@ namespace active::string_function {
 	 @param charCount The maximum number of (encoded) chars to read (npos = no limit)
 	 @return The required number of characters
 	 */
-	string_position getCharCount(unsigned char wordSize, string_position howMany = string::no_pos,
-							   string_position charCount = string::no_pos);
+	string_position get_char_count(unsigned char wordSize, string_position howMany = string::no_pos,
+								   string_position charCount = string::no_pos);
 	/*!
 	 Determine the the number of characters in a char array
 	 @param text The source text
-	 @param howMany The number of bytes in the text (nullopt = null-terminated)
+	 @param howMany The number of bytes in the text (no_pos = null-terminated)
 	 @param format The text data format
 	 @return The number of characters in the array
 	 */
-	string::size_type getStringLength(const char* text, string_position howMany = string::no_pos,
-									  text_format format = text_format{});
+	string::size_type get_string_length(const char* text, string_position howMany = string::no_pos,
+										text_format format = text_format{});
 	/*!
 	 Determine if a 16-bit (UTF16) character code is within the BMP
 	 @param code The character code
 	 @return True if a 16-bit (UTF16) character code is within the BMP
 	 */
-	inline bool isWithinBMP(char16_t code) { return ((code < 0xD800) || (code >= 0xE000)); }
+	inline bool is_within_bmp(char16_t code) { return ((code < 0xD800) || (code >= 0xE000)); }
 	/*!
 	 Determine if a 32-bit (UTF32) character code is valid
 	 @param uniChar The character code
 	 @return True if a 32-bit (UTF32) character code is valid
 	 */
-	inline bool isValidUnicode(char32_t uniChar) { return ((uniChar <= 0x10FFFF) && ((uniChar > 0xDFFF) || (uniChar < 0xD800))); }
+	inline bool is_valid_unicode(char32_t uniChar) { return ((uniChar <= 0x10FFFF) && ((uniChar > 0xDFFF) || (uniChar < 0xD800))); }
 	/*!
 	 Get a UTF-32 char from a UTF-8 source
 	 @param text The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
-	 @param howMany The number of available bytes in the source
+	 @param howMany The number of available bytes in the source (no_pos = null-terminated)
 	 @return A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
 	 */
-	std::pair<char32_t, unsigned char> getUTF32CharFromUTF8(const char*& text, string::size_type howMany);
+	std::pair<char32_t, unsigned char> get_utf32_char_from_utf8(const char*& text, string::size_type howMany = string::no_pos);
 	/*!
 	 Get a UTF-32 char from a UTF-16 source
 	 @param text The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
@@ -840,7 +1070,7 @@ namespace active::string_function {
 	 @param howMany The number of available bytes in the source
 	 @return A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
 	 */
-	std::pair<char32_t, unsigned char> getUTF32CharFromUTF16(const char16_t*& text, bool is_big_endian, string::size_type howMany);
+	std::pair<char32_t, unsigned char> get_utf32_char_from_utf16(const char16_t*& text, bool is_big_endian, string::size_type howMany);
 	/*!
 	 Get a unicode (UTF-32) character from a specified source
 	 @param text The source text
@@ -848,54 +1078,54 @@ namespace active::string_function {
 	 @param format The source data format
 	 @return The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
 	 */
-	std::pair<char32_t, unsigned char> getUnicodeChar(const char* text, string_position howMany = string::no_pos,
-													  text_format format = text_format{});
+	std::pair<char32_t, unsigned char> get_unicode_char(const char* text, string_position howMany = string::no_pos,
+														text_format format = text_format{});
 	/*!
 	 Get a UTF-32 string from a UTF-8 source
 	 @param text The source UTF-8 text (advances to the byte beyond the last counted character)
-	 @param howMany The number of bytes in the text (nullopt = null-terminated)
+	 @param howMany The number of bytes in the text (no_pos = null-terminated)
 	 @param isCountRequired True if the specified number of bytes must be valid (ignored if howMany = nullopt)
 	 @return The unicode code point for the specified chars (nullopt on failure)
 	 */
-	std::optional<std::u32string> toUnicode(const char*& text, string_position howMany = string::no_pos, bool isCountRequired = false);
+	std::optional<std::u32string> to_unicode(const char*& text, string_position howMany = string::no_pos, bool isCountRequired = false);
 	/*!
 	 Get a UTF-32 string from a UTF-16 (16-bit) source
 	 @param text The source text (when valid, points to the next byte beyond the found character on return)
 	 @param is_big_endian True if byte ordering is big-endian
-	 @param howMany The number of words (16-bit values) in the text (nullopt = null-terminated)
+	 @param howMany The number of words (16-bit values) in the text (no_pos = null-terminated)
 	 @param isCountRequired True if the specified number of words must be valid (ignored if howMany = nullopt)
 	 @return The UTF-32 string read from the UTF-16 source (nullopt on error, including failure to meet isCountRequired condition)
 	 */
-	std::optional<std::u32string> fromUTF16(const char16_t*& text, bool is_big_endian,
+	std::optional<std::u32string> from_utf16(const char16_t*& text, bool is_big_endian,
 											string_position howMany = string::no_pos, bool isCountRequired = false);
 	/*!
 	 Get a UTF-16 string from a UTF-32 source
 	 @param text The source text (when valid, points to the next byte beyond the found character on return)
-	 @param howMany The number of code points in the text (nullopt = null-terminated)
+	 @param howMany The number of code points in the text (no_pos = null-terminated)
 	 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = nullopt)
 	 @return The UTF-16 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
 	 */
-	std::optional<std::u16string> toUTF16(const char32_t*& text, string_position howMany = string::no_pos, bool isCountRequired = false);
+	std::optional<std::u16string> to_utf16(const char32_t*& text, string_position howMany = string::no_pos, bool isCountRequired = false);
 	/*!
 	 Collect the byte size of each (valid) character from a string into an array
 	 @param text The source text
-	 @param howMany The number of characters to collect, taken as a maximum rather than a requirement (nullopt = null-terminated)
+	 @param howMany The number of characters to collect, taken as a maximum rather than a requirement (no_pos = null-terminated)
 	 @param format The text data format (collection will stop if a character not matching the encoding is found)
 	 @return An array containing the byte size of each character found (nullopt if no valid chars found)
 	 */
-	std::vector<unsigned char> collectCharByteCount(const char* text, string_position howMany = string::no_pos,
-													text_format format = text_format{});
+	std::vector<unsigned char> collect_char_byte_count(const char* text, string_position howMany = string::no_pos,
+													   text_format format = text_format{});
 	/*!
 	 Calculate the byte offsets for a start and number of chars within a string
 	 @param text The source text
 	 @param startPos The start character
-	 @param howMany The number of characters to measure (nullopt = null-terminated)
+	 @param howMany The number of characters to measure (no_pos = null-terminated)
 	 @param isHowManyChars True if the returned second value should be the char count rather than the byte count
 	 @return Byte offset to the start character paired with byte/char offset from the start to the end of the last character (nullopt on failure)
 	 */
-	std::optional<std::pair<string::size_type, string::size_type>> getByteOffsets(const char* text, string::size_type startPos = 0,
-																				  string_position howMany = string::no_pos,
-																				  bool isHowManyChars = false);
+	std::optional<std::pair<string::size_type, string::size_type>> get_byte_offsets(const char* text, string::size_type startPos = 0,
+																					string_position howMany = string::no_pos,
+																					bool isHowManyChars = false);
 	
 }
 
@@ -907,7 +1137,7 @@ namespace active {
 	 @param str2 The second string
 	 @return True if the strings are identical
 	 */
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const basic_string<Alloc>& str2) {
 		switch (str1.empty() + (2 * str2.empty())) {
 			case 0: [[likely]]
@@ -920,27 +1150,27 @@ namespace active {
 		return false;
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const std::u8string& str2) {
 		return str1 == basic_string{str2};
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const std::u16string& str2) {
 		return str1 == basic_string{str2};
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const std::u32string& str2) {
 		return str1 == basic_string{str2};
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const char* str2) {
 		return str1 == basic_string{str2};
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const char8_t* str2) {
 		return str1 == basic_string{str2};
 	}
@@ -952,32 +1182,32 @@ namespace active {
 	 @param str2 The second string
 	 @return True if the strings differ
 	 */
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const basic_string<Alloc>& str2) {
 		return !(str1 == str2);
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const std::u8string& str2) {
 		return !(str1 == basic_string{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const std::u16string& str2) {
 		return !(str1 == basic_string{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const std::u32string& str2) {
 		return !(str1 == basic_string{str2});
 	}
 	
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const char* str2) {
 		return !(str1 == basic_string{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const char8_t* str2) {
 		return !(str1 == basic_string{str2});
 	}
@@ -989,57 +1219,57 @@ namespace active {
 		@param str2 The second string
 		@return The concatonated string
 	*/
-	template <class Alloc>
+	template <typename Alloc>
 	inline basic_string<Alloc> operator+(const basic_string<Alloc>& str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(str2);
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator+ (const basic_string<Alloc>& str1, const std::u8string& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator+ (const basic_string<Alloc>& str1, const std::u16string& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator+ (const basic_string<Alloc>& str1, const std::u32string& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator+ (const std::u8string& str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator+ (const std::u16string& str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline bool operator+ (const std::u32string& str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline basic_string<Alloc> operator+(const basic_string<Alloc>& str1, const char* str2) {
 		return basic_string<Alloc>{str1}.append(str2);
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline basic_string<Alloc> operator+(const basic_string<Alloc>& str1, const char8_t* str2) {
 		return basic_string<Alloc>{str1}.append(str2);
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline basic_string<Alloc> operator+(const char* str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(str2);
 	}
 
-	template <class Alloc>
+	template <typename Alloc>
 	inline basic_string<Alloc> operator+(const char8_t* str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(str2);
 	}
@@ -1050,7 +1280,7 @@ namespace active {
 		@param uniChar The char to test
 		@return True if a specified char is white-space
 	*/
-	inline bool isWhiteSpace(char32_t uniChar) {
+	inline bool is_white_space(char32_t uniChar) {
 		switch (uniChar) {
 		case U' ': case U'\t': case U'\r': case U'\n':
 			return true;
@@ -1065,7 +1295,7 @@ namespace active {
 		@param uniChar The char to test
 		@return True if a specified char is a line ending
 	*/
-	inline bool isLineEnding(char32_t uniChar) {
+	inline bool is_line_ending(char32_t uniChar) {
 		return ((uniChar == U'\r') || (uniChar == U'\n'));
 	}
 	
@@ -1075,7 +1305,7 @@ namespace active {
 		@param uniChar The char to test
 		@return True if a specified char is numeric
 	*/
-	inline bool isDigit(char32_t uniChar) {
+	inline bool is_digit(char32_t uniChar) {
 		return ((uniChar <= U'9') && (uniChar >= U'0'));
 	}
 	
@@ -1085,8 +1315,8 @@ namespace active {
 		@param uniChar The char to test
 		@return True if a specified char is numeric
 	*/
-	inline bool isNumeric(char32_t uniChar) {
-		return (isDigit(uniChar) || (uniChar == U'-'));
+	inline bool is_numeric(char32_t uniChar) {
+		return (is_digit(uniChar) || (uniChar == U'-'));
 	}
 	
 	
@@ -1095,10 +1325,9 @@ namespace active {
 		@param uniChar The char to test
 		@return True if a specified char is numeric
 	*/
-	inline bool isFloat(char32_t uniChar) {
-		return (isNumeric(uniChar) || (uniChar == U'.'));
+	inline bool is_float(char32_t uniChar) {
+		return (is_numeric(uniChar) || (uniChar == U'.'));
 	}
-
 
 	// MARK: - Constructors
 
@@ -1109,7 +1338,7 @@ namespace active {
 		howMany: The number of bytes to copy (nullopt for full length)
 		encoding: The character encoding type
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::basic_string(const char* source, string_position howMany, text_format format) {
 		 make_string(m_string, source, howMany, no_pos, format);
 	} //basic_string<Alloc>::basic_string
@@ -1121,11 +1350,11 @@ namespace active {
 		source: The UTF-16 string to be copied
 		howMany: The number of chars to copy (nullopt for full length)
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::basic_string(const std::u16string& source, string_position howMany) {
 		const char16_t* text = source.data();
 			//First convert to UTF-32
-		if (auto string32 = string_function::fromUTF16(text, text_format::defaultEndian, howMany); string32) {
+		if (auto string32 = string_function::from_utf16(text, text_format::defaultEndian, howMany); string32) {
 				//Then convert UTF-32 to UTF-8
 			const char32_t* text32 = string32->data();
 				//NB: We are assuming that the incoming u16string byte ordering is the platform default
@@ -1141,7 +1370,7 @@ namespace active {
 		source: The UTF-32 string to be copied
 		howMany: The number of chars to copy (nullopt for full length)
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::basic_string(const std::u32string& source, string_position howMany) {
 		const char32_t* text = source.data();
 			//NB: We are assuming that the incoming u32string byte ordering is the platform default
@@ -1156,7 +1385,7 @@ namespace active {
 		newSize: The required number of expression repeats
 		fillText: The expression to fill the resized string
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::basic_string(size_type newSize, const basic_string& fillText) {
 		m_string = std::string{};
 		basic_string<Alloc>::resize(newSize, fillText);
@@ -1170,7 +1399,7 @@ namespace active {
 		prec: The required precision
 		padZero: True to pad the number to the specified precision with zeros
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::basic_string(double val, double prec, bool padZero) {
 			//std::format is faster than stringstream - use where available
 #if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
@@ -1199,12 +1428,12 @@ namespace active {
 	 
 		text: The source text
 		is_big_endian: True if byte ordering is big-endian
-		howMany: The number of 32-bit code points in the text (nullopt = null-terminated)
+		howMany: The number of 32-bit code points in the text (no_pos = null-terminated)
 		isCountRequired: True if the specified number of  code points must be valid (ignored if howMany = nullopt)
 	 
 		return: The UTF-8 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	std::optional<basic_string<Alloc>> basic_string<Alloc>::from_unicode(const char32_t*& text, bool is_big_endian,
 																		 string_position howMany, bool isCountRequired) {
 		if (howMany == 0)
@@ -1247,36 +1476,36 @@ namespace active {
 		
 		target: An STL string to be populated with valid characters found
 		text: The source text
-		howMany: The number of bytes in the text (nullopt = null-terminated)
+		howMany: The number of bytes in the text (no_pos = null-terminated)
 		charCount: The maximum number of (encoded) chars to read (npos = no limit)
 		format: The text data format
 		
 		return: The number of source bytes used in the populated string
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::size_type basic_string<Alloc>::make_string(base& target, const char* text, string_position howMany,
 																	string_position charCount, text_format format) {
 		target.clear();
 		if (text == nullptr)
 			return 0;
-		size_type dataSize = 0;
+		size_type data_size = 0;
 		switch (format.encoding) {
 			case UTF8: case ascii: {
-				dataSize = string_function::getValidByteCount(text, howMany, charCount, format.encoding);
-				if (dataSize < 1)
+				data_size = string_function::get_valid_byte_count(text, howMany, charCount, format.encoding);
+				if (data_size < 1)
 					break;
 					//Any valid bytes can be consumed directly by std::string constructor
-				target.assign(text, dataSize);
+				target.assign(text, data_size);
 				break;
 			}
 			case UTF16: {
 				const auto* source = reinterpret_cast<const char16_t*>(text);
-				if (auto string32 = string_function::fromUTF16(source, format.is_big_endian,
-															   string_function::getCharCount(sizeof(char16_t), howMany, charCount)); string32) {
+				if (auto string32 = string_function::from_utf16(source, format.is_big_endian,
+															   string_function::get_char_count(sizeof(char16_t), howMany, charCount)); string32) {
 					const char32_t* source32 = string32->data();
 					if (auto uniString = from_unicode(source32, format.is_big_endian); uniString) {
 						target = *uniString;
-						dataSize = target.size() * sizeof(char16_t);
+						data_size = target.size() * sizeof(char16_t);
 					}
 				}
 				break;
@@ -1284,18 +1513,18 @@ namespace active {
 			case UTF32: {
 				const auto* source = reinterpret_cast<const char32_t*>(text);
 				if (auto uniString = from_unicode(source, format.is_big_endian,
-												  string_function::getCharCount(sizeof(char32_t),howMany, charCount)); uniString) {
+												  string_function::get_char_count(sizeof(char32_t),howMany, charCount)); uniString) {
 					target = *uniString;
-					dataSize = target.size() * sizeof(char32_t);
+					data_size = target.size() * sizeof(char32_t);
 				}
 				break;
 			}
 			case ISO8859_1:
-				dataSize = string_function::getValidByteCount(text, howMany, charCount, format);
-				if (dataSize < 1)
+				data_size = string_function::get_valid_byte_count(text, howMany, charCount, format);
+				if (data_size < 1)
 					break;
 				const auto* source = reinterpret_cast<const unsigned char*>(text);
-				for ( ; dataSize--; ++source) {
+				for ( ; data_size--; ++source) {
 					if (*source < 0x80)
 						target += *source;
 					else if (*source < 0xC0) {
@@ -1308,7 +1537,7 @@ namespace active {
 				}
 				break;
 		}
-		return dataSize;
+		return data_size;
 	} //basic_string<Alloc>::make_string
 	
 	
@@ -1319,10 +1548,10 @@ namespace active {
 	 
 		return: An array of single and multi-byte chars from the source string (nullopt on failure)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	std::vector<basic_string<Alloc>> basic_string<Alloc>::split_single_chars(const basic_string& source) {
 		std::vector<basic_string> result;
-		auto charBytes = string_function::collectCharByteCount(source.data());
+		auto charBytes = string_function::collect_char_byte_count(source.data());
 		if (charBytes.empty())
 			return result;
 			//The first string in the result is reserved for single-byte chars
@@ -1356,7 +1585,7 @@ namespace active {
 	 
 		return: The equivalent std::u16string (UTF-16)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::operator std::u8string() const {
 		return std::u8string{reinterpret_cast<const char8_t*>(data())};
 	} //basic_string<Alloc>::operator std::u8string
@@ -1368,12 +1597,12 @@ namespace active {
 	 
 		return: The equivalent std::u16string (UTF-16)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::operator std::u16string() const {
 		const auto* text = data();
-		if (auto uniString = string_function::toUnicode(text); uniString) {
+		if (auto uniString = string_function::to_unicode(text); uniString) {
 			const char32_t* text32 = uniString->data();
-			if (auto uniString16 = string_function::toUTF16(text32); uniString16)
+			if (auto uniString16 = string_function::to_utf16(text32); uniString16)
 				return *uniString16;
 		}
 		return std::u16string{};
@@ -1385,29 +1614,14 @@ namespace active {
 	 
 		return: The equivalent std::u32string (UTF-32)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::operator std::u32string() const {
 		const auto* text = data();
-		auto uniString = string_function::toUnicode(text);
+		auto uniString = string_function::to_unicode(text);
 		return uniString ? *uniString : std::u32string{};
 	} //basic_string<Alloc>::operator std::u32string
 
 	// MARK: - Operators
-
-	/*--------------------------------------------------------------------
-		Subscript operator
-		
-		index: The required character position (unchecked - out of bounds behaviour undefined)
-		
-		return: The character at the specified index
-	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	char32_t basic_string<Alloc>::operator[](size_type index) const {
-		auto offsets = string_function::getByteOffsets(data(), index, 1);
-		auto source = data() + offsets->first;
-		return string_function::getUTF32CharFromUTF8(source, offsets->second).first;
-	} //basic_string<Alloc>::operator[]
-
 
 	/*--------------------------------------------------------------------
 		Assignment operator
@@ -1416,7 +1630,7 @@ namespace active {
 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::operator= (const basic_string& source) {
 		if (&source == this)
 			return *this;
@@ -1431,7 +1645,7 @@ namespace active {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::operator= (basic_string&& source) noexcept {
 		m_string = std::move(source.m_string);
 		return *this;
@@ -1445,7 +1659,7 @@ namespace active {
 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::operator= (const char* source) {
 		m_string.clear();
 		make_string(m_string, source);
@@ -1459,7 +1673,7 @@ namespace active {
 
 		return: The number of bytes this string can contain
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::size_type basic_string<Alloc>::capacity() const {
 		return static_cast<basic_string<Alloc>::size_type>(m_string.capacity());
 	} //basic_string<Alloc>::capacity
@@ -1470,9 +1684,9 @@ namespace active {
 	 
 		return: The number of characters in the string
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::size_type basic_string<Alloc>::size() const {
-		return string_function::getStringLength(m_string.data());
+		return string_function::get_string_length(m_string.data());
 	} //basic_string<Alloc>::size
 
 
@@ -1483,14 +1697,14 @@ namespace active {
 	 
 		return: The number of bytes consumed by the string (NB: Strings are null terminated, but this is not included in the data length)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	basic_string<Alloc>::size_type basic_string<Alloc>::dataSize(string_position howMany) const {
+	template <typename Alloc>
+	basic_string<Alloc>::size_type basic_string<Alloc>::data_size(string_position howMany) const {
 		if (!howMany)
 			return static_cast<basic_string<Alloc>::size_type>(m_string.size());
-		if (auto byteCount = string_function::getByteCountCharLimited(m_string.data(), howMany); byteCount)
+		if (auto byteCount = string_function::get_byte_count_char_limited(m_string.data(), howMany); byteCount)
 			return *byteCount;
 		return 0;
-	} //basic_string<Alloc>::dataSize
+	} //basic_string<Alloc>::data_size
 
 
 	/*--------------------------------------------------------------------
@@ -1500,13 +1714,13 @@ namespace active {
 		
 		return: The character at the specified index
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	char32_t basic_string<Alloc>::at(size_type index) const {
-		auto offsets = getByteOffsets(data(), index, 1);
+		auto offsets = string_function::get_byte_offsets(data(), index, 1);
 		if (!offsets)
 			throw std::out_of_range("");
 		auto source = data() + offsets->first;
-		return getUTF32CharFromUTF8(source, offsets->second).first;
+		return string_function::get_utf32_char_from_utf8(source, offsets->second).first;
 	} //basic_string<Alloc>::at
 
 
@@ -1515,18 +1729,18 @@ namespace active {
 	 
 		func: The character function (the returned value is ignored)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	void basic_string<Alloc>::forEach(const Function& func) const {
-		auto remaining = dataSize();
+	template <typename Alloc>
+	void basic_string<Alloc>::for_each(const Function& func) const {
+		auto remaining = data_size();
 		auto text = data();
 		for (;;) {
-			if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (auto [incoming, consumed] = get_utf32_char_from_utf8(text, remaining); consumed != 0) {
 				remaining -= consumed;
 				func(incoming);
 			} else
 				break;
 		}
-	} //basic_string<Alloc>::forEach
+	} //basic_string<Alloc>::for_each
 
 	
 	/*--------------------------------------------------------------------
@@ -1534,10 +1748,10 @@ namespace active {
 	 
 		func: The character function (the returned value is ignored)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	void basic_string<Alloc>::rforEach(const Function& func) const {
+	template <typename Alloc>
+	void basic_string<Alloc>::rfor_each(const Function& func) const {
 		
-	}
+	} //basic_string<Alloc>::rfor_each
 	
 
 	/*--------------------------------------------------------------------
@@ -1548,9 +1762,9 @@ namespace active {
 
 		return: The requested string segment
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc> basic_string<Alloc>::substr(size_type startPos, string_position howMany) const {
-		auto offsets = string_function::getByteOffsets(data(), startPos, howMany);
+		auto offsets = string_function::get_byte_offsets(data(), startPos, howMany);
 		if (!offsets)
 			return {};
 		return m_string.substr(offsets->first, offsets->second);
@@ -1562,7 +1776,7 @@ namespace active {
 	 
 		return: An uppercase version of the string
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc> basic_string<Alloc>::uppercase() const {
 #ifdef WINDOWS
 		std::u16string uniString{*this};
@@ -1574,7 +1788,7 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!isWithinBMP(*i)) {
+			if (!is_within_bmp(*i)) {
 				++i;
 				continue;
 			}
@@ -1590,7 +1804,7 @@ namespace active {
 	 
 		return: A lowercase version of the string
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc> basic_string<Alloc>::lowercase() const {
 #ifdef WINDOWS
 		std::u16string uniString{*this};
@@ -1602,7 +1816,7 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!isWithinBMP(*i)) {
+			if (!is_within_bmp(*i)) {
 				++i;
 				continue;
 			}
@@ -1621,7 +1835,7 @@ namespace active {
 
 		return: True if the string is alphanumeric
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	bool basic_string<Alloc>::isAlphaNumeric(size_type startPos, string_position howMany) const {
 #ifdef WINDOWS
 		std::u16string uniString{*this};
@@ -1633,7 +1847,7 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!isWithinBMP(*i))
+			if (!is_within_bmp(*i))
 				return false;
 #endif
 			if (!std::isalnum(static_cast<wchar_t>(*i), std::locale("en_US.UTF-8")))	//NB: Need to consider if locale is appropriate
@@ -1651,7 +1865,7 @@ namespace active {
 
 		return: True if the string is letters
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	bool basic_string<Alloc>::isAlpha(size_type startPos, string_position howMany) const {
 #ifdef WINDOWS
 		std::u16string uniString{*this};
@@ -1663,7 +1877,7 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!isWithinBMP(*i))
+			if (!is_within_bmp(*i))
 				return false;
 #endif
 			if (!std::isalpha(static_cast<wchar_t>(*i), std::locale("en_US.UTF-8")))	//NB: Need to consider if locale is appropriate
@@ -1681,8 +1895,8 @@ namespace active {
 	 
 		return: True if the string is numbers
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	bool basic_string<Alloc>::isNumeric(size_type startPos, string_position howMany) const {
+	template <typename Alloc>
+	bool basic_string<Alloc>::is_numeric(size_type startPos, string_position howMany) const {
 #ifdef WINDOWS
 		std::u16string uniString{*this};
 #else
@@ -1693,14 +1907,14 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!isWithinBMP(*i))
+			if (!is_within_bmp(*i))
 				return false;
 #endif
 			if (!std::iswdigit(static_cast<wchar_t>(*i)))
 				return false;
 		}
 		return true;
-	} //basic_string<Alloc>::isNumeric
+	} //basic_string<Alloc>::is_numeric
 
 
 	/*--------------------------------------------------------------------
@@ -1710,7 +1924,7 @@ namespace active {
 	 
 		return: The relationship between this and ref (less, equal, greater)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	std::strong_ordering basic_string<Alloc>::compare(const basic_string& ref) const {
 		std::u32string myString{*this}, refString{ref};
 		return myString <=> refString;
@@ -1725,15 +1939,15 @@ namespace active {
 
 		return: The index where a match is found (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	string_position basic_string<Alloc>::find(const basic_string& toFind, size_type startPos) const {
-		auto startByte = (startPos == 0) ? string_position{0} : string_function::getByteCountCharLimited(m_string.data(), startPos, true);
+		auto startByte = (startPos == 0) ? string_position{0} : string_function::get_byte_count_char_limited(m_string.data(), startPos, true);
 		if (!startByte)
 			return no_pos;
 		auto foundPos = m_string.find(toFind.m_string, *startByte);
 		if (foundPos == npos)
 			return no_pos;
-		return string_function::getCharacterCount(m_string.data(), foundPos);
+		return string_function::get_character_count(m_string.data(), foundPos);
 	} //basic_string<Alloc>::find
 
 
@@ -1744,12 +1958,12 @@ namespace active {
 	 
 		return: The index where a match is found (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	string_position basic_string<Alloc>::findIf(const Filter& filter) const {
-		auto remaining = dataSize();
+	template <typename Alloc>
+	string_position basic_string<Alloc>::find_if(const Filter& filter) const {
+		auto remaining = data_size();
 		auto text = data();
 		for (size_type index = 0; ; ++index) {
-			if (auto [incoming, consumed] = string_function::getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (auto [incoming, consumed] = string_function::get_utf32_char_from_utf8(text, remaining); consumed != 0) {
 				if (filter(incoming))
 					return index;
 				remaining -= consumed;
@@ -1757,7 +1971,7 @@ namespace active {
 				break;
 		}
 		return no_pos;
-	} // basic_string<Alloc>::findIf
+	} // basic_string<Alloc>::find_if
 
 	
 	/*--------------------------------------------------------------------
@@ -1769,9 +1983,9 @@ namespace active {
 	 
 		return: The index where a match is found (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	string_position basic_string<Alloc>::rfindIf(const Filter& filter, string_position lastPos, string_position howMany) const {
-		auto charBytes = string_function::collectCharByteCount(data(), lastPos);
+	template <typename Alloc>
+	string_position basic_string<Alloc>::rfind_if(const Filter& filter, string_position lastPos, string_position howMany) const {
+		auto charBytes = string_function::collect_char_byte_count(data(), lastPos);
 		if (charBytes.empty())
 			return no_pos;
 			//Add up all the bytes in the string (total number of bytes used by the string)
@@ -1781,14 +1995,14 @@ namespace active {
 		const char* text = data() + lastByte;
 		for (auto iter = charBytes.rbegin(); (iter != charBytes.rend()) && (index-- != minIndex); text -= *iter, ++iter) {
 			text -= *iter;
-			if (auto [incoming, consumed] = string_function::getUTF32CharFromUTF8(text, *iter); consumed != 0) {
+			if (auto [incoming, consumed] = string_function::get_utf32_char_from_utf8(text, *iter); consumed != 0) {
 				if (filter(incoming))
 					return index;
 			} else
 				break;
 		}
 		return no_pos;
-	} //basic_string<Alloc>::rfindIf
+	} //basic_string<Alloc>::rfind_if
 	
 
 	/*--------------------------------------------------------------------
@@ -1799,13 +2013,13 @@ namespace active {
 
 		return: The index of the first matching character (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	string_position basic_string<Alloc>::findFirstOf(const basic_string& toFind, size_type startPos) const {
+	template <typename Alloc>
+	string_position basic_string<Alloc>::find_first_of(const basic_string& toFind, size_type startPos) const {
 		auto splitString = split_single_chars(toFind);
 		if (splitString.empty())
 			return no_pos;
 		auto firstPos = npos;
-		auto startByte = (startPos == 0) ? string_position{0} : string_function::getByteCountCharLimited(m_string.data(), startPos, true);
+		auto startByte = (startPos == 0) ? string_position{0} : string_function::get_byte_count_char_limited(m_string.data(), startPos, true);
 		if (!startByte)
 			return no_pos;
 		bool isFirst = true;
@@ -1818,8 +2032,8 @@ namespace active {
 					return 0;
 			}
 		}
-		return (firstPos == npos) ? no_pos : string_function::getCharacterCount(data(), firstPos);
-	} //basic_string<Alloc>::findFirstOf
+		return (firstPos == npos) ? no_pos : string_function::get_character_count(data(), firstPos);
+	} //basic_string<Alloc>::find_first_of
 
 
 	/*--------------------------------------------------------------------
@@ -1830,12 +2044,12 @@ namespace active {
 
 		return: The index of the first non-matching character (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	string_position basic_string<Alloc>::findFirstNotOf(const basic_string& toFind, size_type startPos) const {
+	template <typename Alloc>
+	string_position basic_string<Alloc>::find_first_not_of(const basic_string& toFind, size_type startPos) const {
 		auto splitString = split_single_chars(toFind);
 		if (splitString.empty())
 			return no_pos;
-		auto charBytes = string_function::collectCharByteCount(data());
+		auto charBytes = string_function::collect_char_byte_count(data());
 		if (charBytes.empty())
 			return no_pos;
 		std::vector<size_type> minPos(splitString.size());
@@ -1862,7 +2076,7 @@ namespace active {
 			++startPos;
 		}
 		return startPos < length() ? string_position{startPos} : no_pos;
-	} //basic_string<Alloc>::findFirstNotOf
+	} //basic_string<Alloc>::find_first_not_of
 
 
 	/*--------------------------------------------------------------------
@@ -1873,13 +2087,13 @@ namespace active {
 
 		return: The index of the last matching character (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	string_position basic_string<Alloc>::findLastOf(const basic_string& toFind, string_position lastPos) const {
+	template <typename Alloc>
+	string_position basic_string<Alloc>::find_last_of(const basic_string& toFind, string_position lastPos) const {
 		std::u32string searchPattern{toFind};
-		return rfindIf([&searchPattern](char32_t testChar) -> bool {
+		return rfind_if([&searchPattern](char32_t testChar) -> bool {
 			return searchPattern.find(testChar) != std::u32string::npos;
 		});
-	} //basic_string<Alloc>::findLastOf
+	} //basic_string<Alloc>::find_last_of
 
 
 	/*--------------------------------------------------------------------
@@ -1890,13 +2104,13 @@ namespace active {
 
 		return: The index of the last non-matching character (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	string_position basic_string<Alloc>::findLastNotOf(const basic_string& toFind, string_position lastPos) const {
+	template <typename Alloc>
+	string_position basic_string<Alloc>::find_last_not_of(const basic_string& toFind, string_position lastPos) const {
 		std::u32string searchPattern{toFind};
-		return rfindIf([&searchPattern](char32_t testChar) -> bool {
+		return rfind_if([&searchPattern](char32_t testChar) -> bool {
 			return searchPattern.find(testChar) == std::u32string::npos;
 		});
-	} //basic_string<Alloc>::findLastNotOf
+	} //basic_string<Alloc>::find_last_not_of
 
 
 	/*--------------------------------------------------------------------
@@ -1907,13 +2121,13 @@ namespace active {
 
 		return: The index of a matching string (nullopt = not found)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	string_position basic_string<Alloc>::rfind(const basic_string& toFind, string_position lastPos) const {
-		auto endChar = string_function::getByteCountCharLimited(data(), lastPos, true);
+		auto endChar = string_function::get_byte_count_char_limited(data(), lastPos, true);
 		if (!endChar)
 			return no_pos;
 		auto foundPos = m_string.rfind(toFind.m_string, *endChar);
-		return (foundPos == npos) ? no_pos : string_function::getCharacterCount(data(), foundPos);
+		return (foundPos == npos) ? no_pos : string_function::get_character_count(data(), foundPos);
 	} //basic_string<Alloc>::rfind
 
 	//MARK: - Functions (mutating)
@@ -1923,7 +2137,7 @@ namespace active {
 
 		newSize: The number of bytes to reserve
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	void basic_string<Alloc>::reserve(size_type newSize) {
 		m_string.reserve(newSize);
 	} //basic_string<Alloc>::reserve
@@ -1935,7 +2149,7 @@ namespace active {
 		newSize: The required number of characters
 		padding: A padding character (when the sring grows - only the first character is used)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	void basic_string<Alloc>::resize(size_type newSize, const basic_string& padding) {
 		if (newSize == 0) {
 			clear();
@@ -1957,13 +2171,13 @@ namespace active {
 	 
 		func: The character function (the returned value replaces the input character)
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
-	void basic_string<Alloc>::forEach(const Function& func) {
+	template <typename Alloc>
+	void basic_string<Alloc>::for_each(const Function& func) {
 		std::u32string result;
-		auto remaining = dataSize();
+		auto remaining = data_size();
 		auto text = data();
 		for (;;) {
-			if (auto [incoming, consumed] = getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (auto [incoming, consumed] = get_utf32_char_from_utf8(text, remaining); consumed != 0) {
 				remaining -= consumed;
 				if (auto nextChar = func(incoming); nextChar)
 					result += *nextChar;
@@ -1971,7 +2185,7 @@ namespace active {
 				break;
 		}
 		*this = result;
-	} //basic_string<Alloc>::forEach
+	} //basic_string<Alloc>::for_each
 
 
 	/*--------------------------------------------------------------------
@@ -1981,7 +2195,7 @@ namespace active {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::assign(const basic_string& source) {
 		m_string = source.m_string;
 		return *this;
@@ -1992,13 +2206,13 @@ namespace active {
 		Assign a specified string to this
 	 
 		source: The character array to be copied
-		byteCount: The maximum number of bytes in the array (nullopt = null-terminated)
+		byteCount: The maximum number of bytes in the array (no_pos = null-terminated)
 		charCount: The maximum number of (encoded) characters to read (nullopt = as byteCount limit)
 		format: The source text data format
 
 		return: The number of bytes assigned from the source
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>::size_type basic_string<Alloc>::assign(const char* source, string_position byteCount, string_position charCount, text_format format) {
 		m_string.clear();
 		return make_string(m_string, source, byteCount, charCount, format);
@@ -2013,7 +2227,7 @@ namespace active {
 	 
 		return: True if the assignment was successful
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	bool basic_string<Alloc>::assign(double value, uint8_t decPlaces) {
 #if (defined(__GNUC__) && !defined(__clang__) && (__GNUC__ < 13)) || (defined(__clang__) && (__clang_major__ < 15))
 		m_string = std::move(basic_string{value, pow(10.0, decPlaces)}.m_string);
@@ -2037,7 +2251,7 @@ namespace active {
 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::append(const basic_string& source) {
 		m_string.append(source.m_string);
 		return *this;
@@ -2051,9 +2265,9 @@ namespace active {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::append(char source) {
-		if (auto uniChar = string_function::getUnicodeChar(&source, 1, ISO8859_1); uniChar.second > 0)
+		if (auto uniChar = string_function::get_unicode_char(&source, 1, ISO8859_1); uniChar.second > 0)
 			append(uniChar.first);
 		return *this;
 	} //basic_string<Alloc>::append
@@ -2069,7 +2283,7 @@ namespace active {
 		
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::insert(size_type pos, const basic_string& source, size_type start, string_position howMany) {
 		return replace(pos, 0, source, start, howMany);
 	} //basic_string<Alloc>::insert
@@ -2086,7 +2300,7 @@ namespace active {
 		
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::replace(string_position pos, string_position num, const basic_string& source,
 													  size_type start, string_position howMany) {
 		basic_string toAppend(source.substr(start, howMany));
@@ -2108,16 +2322,16 @@ namespace active {
 	 
 		return: A reference to this
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
-	basic_string<Alloc>& basic_string<Alloc>::replaceAll(const basic_string& toFind, const basic_string& replacement) {
+	template <typename Alloc>
+	basic_string<Alloc>& basic_string<Alloc>::replace_all(const basic_string& toFind, const basic_string& replacement) {
 		std::u32string searchPattern{toFind}, substitute{replacement}, result;
 		bool found = false;
 		std::u32string::size_type matched = 0;
 		const auto searchSize = searchPattern.size();
-		auto remaining = dataSize();
+		auto remaining = data_size();
 		auto text = data();
 		for (;;) {
-			if (auto [incoming, consumed] = string_function::getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (auto [incoming, consumed] = string_function::get_utf32_char_from_utf8(text, remaining); consumed != 0) {
 				remaining -= consumed;
 				result += incoming;
 				if (searchPattern[matched] == incoming) {
@@ -2135,7 +2349,7 @@ namespace active {
 		if (found)
 			*this = result;
 		return *this;
-	} //basic_string<Alloc>::replaceAll
+	} //basic_string<Alloc>::replace_all
 
 
 	/*--------------------------------------------------------------------
@@ -2146,14 +2360,14 @@ namespace active {
 	 
 		return: A reference to this
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
-	basic_string<Alloc>& basic_string<Alloc>::replaceIf(const Filter& filter, const basic_string& replacement) {
+	template <typename Alloc>
+	basic_string<Alloc>& basic_string<Alloc>::replace_if(const Filter& filter, const basic_string& replacement) {
 		std::u32string substitute{replacement}, result;
 		bool found = false;
-		auto remaining = dataSize();
+		auto remaining = data_size();
 		auto text = data();
 		for (;;) {
-			if (auto [incoming, consumed] = string_function::getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (auto [incoming, consumed] = string_function::get_utf32_char_from_utf8(text, remaining); consumed != 0) {
 				remaining -= consumed;
 				if (filter(incoming)) {
 					found = true;
@@ -2166,7 +2380,7 @@ namespace active {
 		if (found)
 			*this = result;
 		return *this;
-	} //basic_string<Alloc>::replaceAll
+	} //basic_string<Alloc>::replace_all
 
 
 	/*--------------------------------------------------------------------
@@ -2177,17 +2391,17 @@ namespace active {
 	 
 		return: A reference to this
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
-	basic_string<Alloc>& basic_string<Alloc>::replaceAnyOf(const basic_string& charsToFind, const basic_string& replacement) {
+	template <typename Alloc>
+	basic_string<Alloc>& basic_string<Alloc>::replace_any_of(const basic_string& charsToFind, const basic_string& replacement) {
 		std::u32string searchPattern{charsToFind}, substitute{replacement}, result;
 		auto filter = [&searchPattern](char32_t testChar) -> bool {
 			return searchPattern.find(testChar) != npos;
 		};
 		bool found = false;
-		auto remaining = dataSize();
+		auto remaining = data_size();
 		auto text = data();
 		for (;;) {
-			if (auto [incoming, consumed] = string_function::getUTF32CharFromUTF8(text, remaining); consumed != 0) {
+			if (auto [incoming, consumed] = string_function::get_utf32_char_from_utf8(text, remaining); consumed != 0) {
 				remaining -= consumed;
 				if (filter(incoming)) {
 					found = true;
@@ -2200,7 +2414,7 @@ namespace active {
 		if (found)
 			*this = result;
 		return *this;
-	} //basic_string<Alloc>::replaceAnyOf
+	} //basic_string<Alloc>::replace_any_of
 
 
 	/*--------------------------------------------------------------------
@@ -2211,7 +2425,7 @@ namespace active {
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
-	template <class Alloc>
+	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::erase(size_type pos, string_position howMany) {
 		return replace(pos, howMany, basic_string{});
 	} //basic_string<Alloc>::erase
@@ -2220,8 +2434,8 @@ namespace active {
 	/*--------------------------------------------------------------------
 		Remove the last character from the string
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
-	void basic_string<Alloc>::popBack() {
+	template <typename Alloc>
+	void basic_string<Alloc>::pop_back() {
 		if (!empty())
 			erase(length() - 1);
 	} //basic_string<Alloc>::pop_back
@@ -2235,8 +2449,8 @@ namespace active {
 	 
 		return: A reference to this
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
-	basic_string<Alloc>& basic_string<Alloc>::padRight(size_type length, const basic_string& repeat) {
+	template <typename Alloc>
+	basic_string<Alloc>& basic_string<Alloc>::pad_right(size_type length, const basic_string& repeat) {
 		if ((length <= size()) || repeat.empty())
 			return *this;
 		auto required = length - size(),
@@ -2245,7 +2459,7 @@ namespace active {
 		if (toInsert > 0)
 			insert(0, basic_string(toInsert, repeat.m_string));
 		return *this;
-	} //basic_string<Alloc>::padRight
+	} //basic_string<Alloc>::pad_right
 
 
 	/*--------------------------------------------------------------------
@@ -2256,8 +2470,8 @@ namespace active {
 	 
 		return: A reference to this
 	 --------------------------------------------------------------------*/
-	template <class Alloc>
-	basic_string<Alloc>& basic_string<Alloc>::padLeft(size_type length, const basic_string& repeat) {
+	template <typename Alloc>
+	basic_string<Alloc>& basic_string<Alloc>::pad_left(size_type length, const basic_string& repeat) {
 		if ((length <= size()) || repeat.empty())
 			return *this;
 		auto required = size() - length,
@@ -2266,12 +2480,12 @@ namespace active {
 		if (toAppend > 0)
 			append(basic_string(toAppend, repeat.m_string));
 		return *this;
-	} //basic_string<Alloc>::padLeft
+	} //basic_string<Alloc>::pad_left
 	
 }  // namespace active
 
 	///Hashing for `basic_string`, e.g. to use as a key in `unordered_map`
-template <class Alloc>
+template <typename Alloc>
 struct std::hash<active::basic_string<Alloc>> {
 	size_t operator()(const active::basic_string<Alloc>& k) const {
 		return hash<std::string>()(k);	//Just use the hashing provided by std::string

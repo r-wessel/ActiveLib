@@ -255,7 +255,7 @@ namespace active::setting {
 					continue;
 				for (auto& word : words) {
 						//Strip out the thousands separator
-					word.replaceAll(thousandsSep, String{});
+					word.replace_all(thousandsSep, String{});
 						//Values can be expressed as a fraction - allow for dividend/divisor
 					auto dividend = 0.0, divisor = 1.0;
 					DoubleValue number;

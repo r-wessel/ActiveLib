@@ -182,10 +182,10 @@ namespace {
 	  --------------------------------------------------------------------*/
 	String& toJSONString(String& source, JSONGlossary& glossary) {
 			//We need to replace the JSON escape char first (and separately) to ensure subsequent escaped chars aren't affected
-		source.replaceAll(escapeStr, escapeCharSymbol);
+		source.replace_all(escapeStr, escapeCharSymbol);
 		for (auto& i : glossary)
 			if (i.second != escapeStr)
-				source.replaceAll(i.second, i.first);
+				source.replace_all(i.second, i.first);
 		return source;
 	} //toJSONString
 	
@@ -203,7 +203,7 @@ namespace {
 			return source;
 		BufferIn sourceBuffer{source};
 		String output;
-		output.reserve(source.dataSize());
+		output.reserve(source.data_size());
 		while (sourceBuffer.find(escapeChar, &output, true)) {
 			String entity;
 			sourceBuffer.getString(entity, 1);
@@ -586,7 +586,7 @@ namespace {
 		return: The element identity
 	  --------------------------------------------------------------------*/
 	JSONIdentity JSONImporter::getIdentity(JSONIdentity::Stage stage) {
-		if (!m_buffer.findIf([](char32_t uniChar){ return !isWhiteSpace(uniChar); }))
+		if (!m_buffer.findIf([](char32_t uniChar){ return !is_white_space(uniChar); }))
 			return undefined;
 		auto leader = m_buffer.getEncodedChar();
 		if (leader.second == 0)
@@ -633,8 +633,8 @@ namespace {
 				if (leader.first != textLeader)
 					throw std::system_error(makeJSONError(nameMissing));
 				JSONIdentity identity;
-				if (!m_buffer.findFirstOf("\"", &identity.name, false, false, true, false, escapeChar) || identity.name.empty() ||
-						!m_buffer.findFirstOf(":", nullptr, false, false, true))
+				if (!m_buffer.find_first_of("\"", &identity.name, false, false, true, false, escapeChar) || identity.name.empty() ||
+						!m_buffer.find_first_of(":", nullptr, false, false, true))
 					throw std::system_error(makeJSONError(nameMissing));
 				fromJSONString(identity.name, m_glossary);
 					//Check if the tag includes a namespace
@@ -665,7 +665,7 @@ namespace {
 		cargo: The cargo to receive the content
 	  --------------------------------------------------------------------*/
 	void JSONImporter::getContent(Cargo& cargo) {
-		m_buffer.findIf([](char32_t uniChar){ return !isWhiteSpace(uniChar); });
+		m_buffer.findIf([](char32_t uniChar){ return !is_white_space(uniChar); });
 			//First attempt to find a valid JSON value, determining the type according to JSON conventions
 		auto content = m_buffer.getEncodedChar();	//Get the first character from the buffer
 		if (content.second == 0)
@@ -675,7 +675,7 @@ namespace {
 			//If we have an opening quote, this must be a text value
 		if (content.first == textLeader) {
 				//Search for the closing quotes and extract string content
-			if (!m_buffer.findFirstOf(textLeaderStr, &text, false, false, true, false, escapeChar))
+			if (!m_buffer.find_first_of(textLeaderStr, &text, false, false, true, false, escapeChar))
 				throw std::system_error(makeJSONError(closingQuoteMissing));
 			value = std::make_unique<StringValue>(fromJSONString(text, m_glossary));
 		} else {
@@ -692,7 +692,7 @@ namespace {
 			std::optional<String::size_type> lastChar;
 			if (allWhiteSpace32.find(endChar) != std::u32string::npos) {
 					//Trim trailing white-space chars
-				lastChar = text.findLastNotOf(String::allWhiteSpace);
+				lastChar = text.find_last_not_of(String::allWhiteSpace);
 				if (!lastChar)
 					throw std::system_error(makeJSONError(valueMissing));
 			} else
@@ -708,7 +708,7 @@ namespace {
 				value = std::make_unique<NullValue>();
 			else {
 					//Finally check for an incoming numeric value - test for chars not complying with an integer
-				if (text.findIf([](char32_t uniChar){ return !isNumeric(uniChar); })) {
+				if (text.find_if([](char32_t uniChar){ return !is_numeric(uniChar); })) {
 					value = std::make_unique<DoubleValue>();	//Assume a double
 					*value = text;
 				} else {

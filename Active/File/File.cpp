@@ -274,7 +274,7 @@ File::size_type File::read(String& text, sizeOption howMany, text_encoding encod
 	size_type bytesRead = 0;
 	m_file->read(buffer.data(), *howMany);
 	bytesRead = m_file->gcount();
-	auto charBytes = string_function::getValidByteCount(buffer.data(), bytesRead, String::no_pos, encoding);
+	auto charBytes = string_function::get_valid_byte_count(buffer.data(), bytesRead, String::no_pos, encoding);
 		///Move the read position if not all the bytes can be consumed by the string as valid chars
 	if (charBytes < static_cast<String::size_type>(bytesRead))
 		setPosition(charBytes - bytesRead, current);
@@ -339,7 +339,7 @@ void File::write(const String& text, std::optional<String::size_type> howMany, t
 	}
 	switch (encoding) {
 		case UTF8: case ascii: case ISO8859_1:
-			m_file->write(target->data(), target->dataSize());	//NB: No checks for multi-byte chars when written as ASCII - might update in future
+			m_file->write(target->data(), target->data_size());	//NB: No checks for multi-byte chars when written as ASCII - might update in future
 			break;
 		case UTF16: {
 			std::u16string string16 = *target;

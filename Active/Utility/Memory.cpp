@@ -91,7 +91,7 @@ std::optional<Memory> Memory::BOM(const text_format& format) {
   --------------------------------------------------------------------*/
 Memory::Memory(const void* location, size_type size, bool makeCopy, bool takeOwnership) {
 	m_location = reinterpret_cast<char*>(const_cast<void*>(location));
-	m_allocSize = (size == 0) ? string_function::getValidByteCount(m_location) : size;
+	m_allocSize = (size == 0) ? string_function::get_valid_byte_count(m_location) : size;
 	if (makeCopy)
 		reallocate(m_allocSize);
 	else if (takeOwnership)

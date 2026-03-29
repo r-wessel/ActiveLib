@@ -39,13 +39,13 @@ namespace {
 			return buffer;
 		if (!string.empty()) {
 			if (howMany) {
-				if (auto charBytes = string_function::getByteCountCharLimited(string.data(), howMany); charBytes && (!maxBytes || (maxBytes > *charBytes)))
+				if (auto charBytes = string_function::get_byte_count_char_limited(string.data(), howMany); charBytes && (!maxBytes || (maxBytes > *charBytes)))
 					maxBytes = *charBytes;
 			}
 				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
 			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
 				maxBytes = *bufferMax;
-			String::size_type byteCount = maxBytes ? string_function::getValidByteCount(string.data(), *maxBytes - (isNullAdded ? 1 : 0)) : string.dataSize();
+			String::size_type byteCount = maxBytes ? string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? 1 : 0)) : string.data_size();
 			buffer.write(string.data(), byteCount);
 		}
 		if (isNullAdded)
@@ -70,15 +70,15 @@ namespace {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		const auto* text = string.data();
-		if (auto uniString = string_function::toUnicode(text, howMany); uniString) {
+		if (auto uniString = string_function::to_unicode(text, howMany); uniString) {
 			const char32_t* text32 = uniString->data();
-			if (auto uniString16 = string_function::toUTF16(text32); uniString16) {
+			if (auto uniString16 = string_function::to_utf16(text32); uniString16) {
 					//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
 				if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
 					maxBytes = *bufferMax;
 					//NB: When a terminating null is required, deduct this when a max size for the destination is specified
 				String::size_type byteCount = maxBytes ?
-				string_function::getValidByteCount(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0),
+				string_function::get_valid_byte_count(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0),
 										  std::nullopt, UTF16) :
 				(uniString->size() * sizeof(char16_t));
 					//Byte-swap the data as required (no action if platform endianess matches requirement)
@@ -109,14 +109,14 @@ namespace {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		const auto* text = string.data();
-		auto uniString = string_function::toUnicode(text);
+		auto uniString = string_function::to_unicode(text);
 		if (uniString) {
 				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
 			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
 				maxBytes = *bufferMax;
 				//NB: When a terminating null is required, deduct this when a max size for the destination is specified
 			String::size_type byteCount = maxBytes ?
-			string_function::getValidByteCount(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), std::nullopt, UTF32) :
+			string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), std::nullopt, UTF32) :
 			(uniString->size() * sizeof(char32_t));
 				//Byte-swap the data as required (no action if platform endianess matches requirement)
 			Memory::byteSwap(uniString->data(), byteCount / sizeof(char32_t), is_big_endian);
@@ -264,7 +264,7 @@ Memory::sizeOption BufferOut::getPosition() const {
 	else if (m_memory != nullptr)
 		return m_memory->size() + m_bufferPos;
 	else if (m_str != nullptr)
-		return m_str->dataSize() + m_bufferPos;
+		return m_str->data_size() + m_bufferPos;
 	return std::nullopt;
 } //BufferOut::getPosition
 
@@ -302,7 +302,7 @@ const BufferOut& BufferOut::flushBuffer() const {
 		}
 	} else if (m_str != nullptr) {
 			//Ensure only whole chars are appended
-		String::size_type charBytes = string_function::getValidByteCount(m_buffer.data(), m_bufferPos);
+		String::size_type charBytes = string_function::get_valid_byte_count(m_buffer.data(), m_bufferPos);
 		if (charBytes == 0)
 			setState(std::ios_base::failbit);	//The buffer content can't be written to a string
 		else {
@@ -336,7 +336,7 @@ const BufferOut& BufferOut::write(const String& toWrite, text_format format, boo
 	if (m_str != nullptr)
 		format.encoding = UTF8;	//Data written to a string must be UTF8
 	if ((format.encoding == UTF8) || (format.encoding == ascii) || (format.encoding == ISO8859_1))
-		return write(toWrite.data(), toWrite.dataSize());	//NB: This isn't necessarily correct for ascii or ISO8859.1 - update when required
+		return write(toWrite.data(), toWrite.data_size());	//NB: This isn't necessarily correct for ascii or ISO8859.1 - update when required
 	switch (format.encoding) {
 		case UTF8: case ascii: case ISO8859_1:
 			return writeUTF8(toWrite, *this, isNullAdded, howMany, maxBytes);
@@ -412,7 +412,7 @@ Memory BufferOut::getOutput() const {
 		if (m_memory != nullptr)
 			return Memory(const_cast<char*>(m_memory->data()), m_memory->size());
 		else if (m_str != nullptr)
-			return Memory(const_cast<char*>(m_str->data()), m_str->dataSize());
+			return Memory(const_cast<char*>(m_str->data()), m_str->data_size());
 	}
 	return Memory{};
 } //BufferOut::getOutput

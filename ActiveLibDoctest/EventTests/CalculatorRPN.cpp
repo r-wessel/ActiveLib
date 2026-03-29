@@ -37,7 +37,7 @@ void CalculatorRPN::enterDigit(const Event& event) {
 		String newDisplay{m_display};
 		if (action->stringVal() == "\b") {
 			if (!newDisplay.empty())
-				newDisplay.popBack();
+				newDisplay.pop_back();
 		} else if (action->stringVal() == "\n") {
 			m_valueStack.push_back(0.0);
 			newDisplay = "0";

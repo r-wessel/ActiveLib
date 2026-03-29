@@ -90,7 +90,7 @@ Value& AngleValue::assign(const String& val, const AngleUnit& unit) {
 	for (const auto& abbrev : compassAbbreviation) {
 		if (angleText.contains(abbrev)) {
 			ordinals.insert(static_cast<CompassDirection>(index));
-			angleText.replaceAll(abbrev, String{});
+			angleText.replace_all(abbrev, String{});
 		}
 		++index;
 	}

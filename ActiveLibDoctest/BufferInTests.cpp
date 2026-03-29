@@ -48,7 +48,7 @@ TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
 			FAIL_CHECK(TEST_MESSAGE(File flush failed));
 		}
 		try {
-			CHECK_MESSAGE(testFile.size() == sampleBufferData.dataSize(), TEST_MESSAGE(File write contents size incorrect));
+			CHECK_MESSAGE(testFile.size() == sampleBufferData.data_size(), TEST_MESSAGE(File write contents size incorrect));
 		} catch(std::system_error& error) {
 			FAIL_CHECK(TEST_MESSAGE(File size failed));
 		}

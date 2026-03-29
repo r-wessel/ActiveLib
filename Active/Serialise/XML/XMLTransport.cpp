@@ -249,7 +249,7 @@ namespace {
 			}
 			String terminator;
 			for (auto& i : *this) {
-				if (expression.startsWith(i.first)) {
+				if (expression.starts_with(i.first)) {
 					expression.erase(0, i.first.length());
 					return i.second;
 				}
@@ -497,7 +497,7 @@ namespace {
 			return source;
 		BufferIn sourceBuffer{source};
 		String output;
-		output.reserve(source.dataSize());
+		output.reserve(source.data_size());
 		while (sourceBuffer.find(escapeChar, &output, true)) {
 			String entity;
 			if (!sourceBuffer.find(terminatorChar, &entity, true))
@@ -546,12 +546,12 @@ namespace {
 		return: The element identity
 	  --------------------------------------------------------------------*/
 	XMLIdentity XMLImporter::getIdentity() {
-		if (!m_buffer.findFirstOf("<", nullptr, false, true, true))
+		if (!m_buffer.find_first_of("<", nullptr, false, true, true))
 			return undefined;
 		if (!m_buffer)
 			throw std::system_error(makeXMLError(badSource));	//The input stream has failed
 		XMLIdentity identity;
-		if (!m_buffer.findFirstOf(">", &identity.name, false, true, true))
+		if (!m_buffer.find_first_of(">", &identity.name, false, true, true))
 			throw std::system_error(makeXMLError(unboundedTag));		//Failure to find a closing char is a fatal error
 		if (auto section = m_section.search(identity.name); section) {
 			if (!section->second.empty()) {
@@ -562,7 +562,7 @@ namespace {
 			}
 			identity.type = section->first;
 		} else {
-			if (auto tagEnd = identity.name.findLastNotOf(String::allWhiteSpace); tagEnd && (*tagEnd < (identity.name.length() - 1)))
+			if (auto tagEnd = identity.name.find_last_not_of(String::allWhiteSpace); tagEnd && (*tagEnd < (identity.name.length() - 1)))
 				identity.name.erase(*tagEnd + 1);
 			if (identity.name.empty())
 				throw std::system_error(makeXMLError(missingTagName));	//A tag with no content is a fatal error
@@ -585,7 +585,7 @@ namespace {
 			} else
 				identity.type = startTag;
 				//Check if the tag includes a namespace
-			if (auto spacePosition = identity.name.findFirstOf(String::allWhiteSpace), dividerPos = identity.name.rfind(":");
+			if (auto spacePosition = identity.name.find_first_of(String::allWhiteSpace), dividerPos = identity.name.rfind(":");
 					dividerPos && spacePosition && (dividerPos < spacePosition)) {
 				identity.group = identity.name.substr(0, *dividerPos);
 				identity.name.erase(0, *dividerPos + 1);
@@ -617,7 +617,7 @@ namespace {
 	  --------------------------------------------------------------------*/
 	String& XMLExporter::toXMLString(String& source) const {
 		for (auto& i : m_glossary)
-			source.replaceAll(i.second, "&" + i.first + ";");
+			source.replace_all(i.second, "&" + i.first + ";");
 		return source;
 	} //XMLExporter::toXMLString
 
@@ -706,15 +706,15 @@ namespace {
 		String attributes;
 		BufferIn processor(startTag);
 		String tagOut;
-		processor.findFirstOf(String::allWhiteSpace, &tagOut, true, true, true);
+		processor.find_first_of(String::allWhiteSpace, &tagOut, true, true, true);
 			//Skip to the start of the first attribute (where available)
-		while (processor.findFirstNotOf(String::allWhiteSpace)) {
+		while (processor.find_first_not_of(String::allWhiteSpace)) {
 				//Find the attribute tag
 			String tag;
-			if (!processor.findFirstOf("=", &tag, false, false, true) || tag.empty())
+			if (!processor.find_first_of("=", &tag, false, false, true) || tag.empty())
 				throw std::system_error(makeXMLError(attributeEqualMissing));	//An attribute must split the tag and value with "="
 			String quoteChar, value;
-			if (!processor.get(quoteChar) || ((quoteChar != "\"") && (quoteChar != "'")) || !processor.findFirstOf(quoteChar, &value, false, false, true))
+			if (!processor.get(quoteChar) || ((quoteChar != "\"") && (quoteChar != "'")) || !processor.find_first_of(quoteChar, &value, false, false, true))
 				throw std::system_error(makeXMLError(attributeEqualMissing));	//Value not enclosed with quotes
 			attributes += "<" + tag + ">" + value + "</" + tag + ">";
 		}

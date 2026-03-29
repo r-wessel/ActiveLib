@@ -131,7 +131,7 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(String erase out of bounds changed string length));
 			//Test find and erase in multibyte chars
 		String exampleStr{u8"½Pint Solutions® Inc Copyright © 2024"};
-		auto pos = exampleStr.findFirstOf(u8"®©");
+		auto pos = exampleStr.find_first_of(u8"®©");
 		exampleStr.erase(*pos, 1);
 			//Test interoperability with std::string types
 		String example1{u8"ようこそ 日本 へ"};
@@ -169,22 +169,22 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(resVal == 17, TEST_MESSAGE(String find returned wrong position));
 		result = test.rfind(u8"xy");
 		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
-		result = test.findFirstNotOf(u8"ਖd");
-		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String findFirstNotOf returned wrong position));
-		result = test.findFirstOf("ab");
-		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String findFirstOf returned wrong position));
-		result = test.findLastOf("ab");
-		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String findLastOf returned wrong position));
-		result = test.findLastOf("xy");
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String findLastOf returned wrong position));
-		result = test.findLastNotOf(u8"abਖefgh");
-		CHECK_MESSAGE(result == 19, TEST_MESSAGE(String findLastNotOf returned wrong position));
-		result = test.findLastNotOf(u8"aਖdefgh");
-		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String findLastNotOf returned wrong position));
-		result = test.findLastNotOf(u8"abਖdefgh");
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String findLastNotOf returned wrong position));
-		result = test.findLastNotOf(sampleText);
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String findLastNotOf returned wrong position));
+		result = test.find_first_not_of(u8"ਖd");
+		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String find_first_not_of returned wrong position));
+		result = test.find_first_of("ab");
+		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String find_first_of returned wrong position));
+		result = test.find_last_of("ab");
+		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find_last_of returned wrong position));
+		result = test.find_last_of("xy");
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String find_last_of returned wrong position));
+		result = test.find_last_not_of(u8"abਖefgh");
+		CHECK_MESSAGE(result == 19, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		result = test.find_last_not_of(u8"aਖdefgh");
+		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		result = test.find_last_not_of(u8"abਖdefgh");
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		result = test.find_last_not_of(sampleText);
+		CHECK_MESSAGE(!result, TEST_MESSAGE(String find_last_not_of returned wrong position));
 	}
 
 		///Tests for string conversions
@@ -237,29 +237,29 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 	TEST_CASE(TESTQ(testStringEditing)) {
 			//Test for replacement of expression in a string containing partial and full matches
 		String sentence{"Once upon a time, it was the best of times"};
-		sentence.replaceAll("times", "algorithms");
-		CHECK_MESSAGE(sentence == "Once upon a time, it was the best of algorithms", TEST_MESSAGE(String replaceAll failed));
+		sentence.replace_all("times", "algorithms");
+		CHECK_MESSAGE(sentence == "Once upon a time, it was the best of algorithms", TEST_MESSAGE(String replace_all failed));
 			//Strip out specified characters
 		sentence = "Some 😀 text 😅 with 🥸 annoying🤔 emojis🤕";
 			///Search for char in specified array
-		auto firstEmoji = sentence.findFirstOf("👹🥸😀🤔🤢🤕😅🦷");
-		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(String::findFirstOf failed to find char));
+		auto firstEmoji = sentence.find_first_of("👹🥸😀🤔🤢🤕😅🦷");
+		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(String::find_first_of failed to find char));
 		CHECK_MESSAGE(sentence[*firstEmoji] == U'😀', TEST_MESSAGE(String subscript failed to get correct char));
 			///Search for char by filter
-		firstEmoji = sentence.findIf([&sentence](auto uniChar){ return isEmoji(uniChar); });
+		firstEmoji = sentence.find_if([&sentence](auto uniChar){ return isEmoji(uniChar); });
 		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(String::findIf failed to find char));
 		auto backup = sentence;
 			//Strip out all emoji
-		sentence.replaceIf([&sentence](auto uniChar){ return isEmoji(uniChar); }, "");
+		sentence.replace_if([&sentence](auto uniChar){ return isEmoji(uniChar); }, "");
 			//Eliminate double spacing
 		for (;;)
-			if (auto len = sentence.size(); len == sentence.replaceAll("  ", " ").size())
+			if (auto len = sentence.size(); len == sentence.replace_all("  ", " ").size())
 				break;
-		sentence.replaceAll("with", "without");
-		CHECK_MESSAGE(sentence == "Some text without annoying emojis", TEST_MESSAGE(String.replaceAll failed));
-		backup.replaceAnyOf("😀😅🥸🤔🤕");
-		firstEmoji = backup.findIf([&sentence](auto uniChar){ return isEmoji(uniChar); });
-		CHECK_MESSAGE(!firstEmoji, TEST_MESSAGE(String::replaceAnyOf failed to replace chars));
+		sentence.replace_all("with", "without");
+		CHECK_MESSAGE(sentence == "Some text without annoying emojis", TEST_MESSAGE(String.replace_all failed));
+		backup.replace_any_of("😀😅🥸🤔🤕");
+		firstEmoji = backup.find_if([&sentence](auto uniChar){ return isEmoji(uniChar); });
+		CHECK_MESSAGE(!firstEmoji, TEST_MESSAGE(String::replace_any_of failed to replace chars));
 	}
 
 		///Throw random data at String to try to provoke a crash

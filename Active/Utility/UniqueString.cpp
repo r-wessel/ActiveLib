@@ -20,7 +20,7 @@ String UniqueString::generate(const String& seedString, bool addToExisting) {
 		if (m_existingSet.contains(uniqueString)) {
 			String textOnly{seedString};
 			uint32_t suffixLen = 0;
-			if (auto lastLetter = textOnly.findLastNotOf(String::allDigit); lastLetter) {
+			if (auto lastLetter = textOnly.find_last_not_of(String::allDigit); lastLetter) {
 				textOnly = textOnly.substr(0, *lastLetter + 1);
 				suffixLen = static_cast<uint32_t>(uniqueString.length() - *lastLetter - 1);
 			}
@@ -29,12 +29,12 @@ String UniqueString::generate(const String& seedString, bool addToExisting) {
 				String text(item);
 				if (textOnly.empty() || (text.find(textOnly) == 0)) {
 					text = text.substr(textOnly.length());
-					if (!text.empty() && !text.findFirstNotOf(String::allDigit))
+					if (!text.empty() && !text.find_first_not_of(String::allDigit))
 						topSuffix = std::max(topSuffix, text.operator uint32_t());
 				}
 			}
 			String suffix(String{++topSuffix});
-			suffix.padRight(suffixLen, "0");
+			suffix.pad_right(suffixLen, "0");
 			uniqueString = textOnly + suffix;
 		}
 		m_existingSet.insert(uniqueString);
