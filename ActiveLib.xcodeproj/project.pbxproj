@@ -260,7 +260,7 @@
 		212A837C2AE47AD9001EAFE7 /* Pair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pair.h; sourceTree = "<group>"; };
 		212A837D2AE47AD9001EAFE7 /* Pair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pair.cpp; sourceTree = "<group>"; };
 		212A837F2AE47AD9001EAFE7 /* Map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Map.h; sourceTree = "<group>"; };
-		212A83802AE47AD9001EAFE7 /* Multimap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Multimap.h; sourceTree = "<group>"; };
+		212A83802AE47AD9001EAFE7 /* MultiMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiMap.h; sourceTree = "<group>"; };
 		212A83812AE47AD9001EAFE7 /* List.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = List.h; sourceTree = "<group>"; };
 		212A83822AE47AD9001EAFE7 /* Vector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Vector.h; sourceTree = "<group>"; };
 		212A83842AE47AD9001EAFE7 /* Line.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Line.cpp; sourceTree = "<group>"; };
@@ -783,7 +783,7 @@
 				215106B82AE96EFF0022CD24 /* HashMap.h */,
 				212A83812AE47AD9001EAFE7 /* List.h */,
 				212A837F2AE47AD9001EAFE7 /* Map.h */,
-				212A83802AE47AD9001EAFE7 /* Multimap.h */,
+				212A83802AE47AD9001EAFE7 /* MultiMap.h */,
 				212A83822AE47AD9001EAFE7 /* Vector.h */,
 			);
 			path = Container;
