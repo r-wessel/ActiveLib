@@ -21,7 +21,7 @@ namespace active {
 		// MARK: - Types
 		
 			///Optional
-		using Set = std::set<String>;
+		using Set = std::set<string>;
 		
 		// MARK: - Constructors
 		
@@ -42,7 +42,7 @@ namespace active {
 			@param addToExisting True to add the new string to the set of existing strings
 			@return A new unique string based on the specified string
 		*/
-		String generate(const String& seedString, bool addToExisting = true);
+		string generate(const string& seedString, bool addToExisting = true);
 		
 	private:
 			//Existing strings

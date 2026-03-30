@@ -137,7 +137,7 @@ namespace active {
 		for easy interoperability with any code working with that type.
 		
 		String content is internally encoded/validated as UTF-8, but it can encode/decode to/from UTF16, UTF32, ASCII and ISO8859.
-		All content must be valid UTF-8, i.e. you cannot embed arbitrary binary data or null characters in a `String` (use `Memory` instead).
+		All content must be valid UTF-8, i.e. you cannot embed arbitrary binary data or null characters in a `string` (use `Memory` instead).
 		Character positions are calculated to allow indexing, but the time to find a position averages O(n)
 		It is recommended to use classes like `BufferIn` to analyse by-character content on large blocks of text efficiently
 	 
@@ -1008,8 +1008,7 @@ namespace active {
 		base m_string;
 	};
 
-	using string = active::basic_string<>;
-	using String = active::basic_string<>;
+	using string = basic_string<>;
 
 }
 

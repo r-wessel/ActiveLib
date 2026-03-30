@@ -48,13 +48,13 @@ namespace active::serialise::json {
 			@param source The string to convert
 			@return The converted string
 		*/
-		static String convertToJSONString(const String& source);
+		static string convertToJSONString(const string& source);
 		/*!
 			Convert an JSON string to a regular string, i.e. translating special chars etc
 			@param source The string to convert
 			@return The converted string
 		*/
-		static String convertFromJSONString(const String& source);
+		static string convertFromJSONString(const string& source);
 		
 		// MARK: - Constructors
 		

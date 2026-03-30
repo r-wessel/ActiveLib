@@ -36,7 +36,7 @@ namespace active::serialise {
 	value: The pair value
 	name: Optional name for the key/value pair
   --------------------------------------------------------------------*/
-Pair::Pair(std::unique_ptr<Cargo> key, std::unique_ptr<Cargo> value, std::optional<String> name) : Package(), m_key(std::move(key)), m_value(std::move(value)), m_name(name) {
+Pair::Pair(std::unique_ptr<Cargo> key, std::unique_ptr<Cargo> value, std::optional<string> name) : Package(), m_key(std::move(key)), m_value(std::move(value)), m_name(name) {
 } //Pair::Pair
 
 

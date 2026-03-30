@@ -26,9 +26,9 @@ namespace active::setting {
 			@param name An optional identifying name for the setting
 			@param guid An optional identifying guid for the setting
 		*/
-		Setting(std::optional<String> name, Guid::Option guid = std::nullopt) {
+		Setting(std::optional<string> name, Guid::Option guid = std::nullopt) {
 			if (name || guid)
-				identity = std::make_optional(NameID{name.value_or(String{}), guid.value_or(Guid{})});
+				identity = std::make_optional(NameID{name.value_or(string{}), guid.value_or(Guid{})});
 		}
 		/*!
 			Copy constructor
@@ -82,7 +82,7 @@ namespace active::setting {
 		virtual bool empty() const = 0;
 
 			///True if the setting is empty
-		virtual String name() const { return identity.has_value() ? identity->name : String{}; }
+		virtual string name() const { return identity.has_value() ? identity->name : string{}; }
 
 		// MARK: Functions (mutating)
 		

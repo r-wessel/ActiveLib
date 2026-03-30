@@ -80,7 +80,7 @@ namespace {
 
 	private:
 			///NB: The members of `BarA` are private, so we can't wrap references to them. Instead, we create proxies and then call setters later
-		String m_text;
+		string m_text;
 			///Pointer to the target object - for serialisation, this is passed to the constructor. For deserialisation, points to the `m_newA`
 		BarA* m_targetA = nullptr;
 			///Populated for deserialisation of a new `BarA` instance (with the guid deserialised by `FooWrapper`)
@@ -138,7 +138,7 @@ namespace {
 		///Binds a typename to the function that create a new instance of the type
 	struct Binding {
 			///The type name (used in the serialised data)
-		String typeName;
+		string typeName;
 		const std::type_info& typeInfo;
 		Factory factory;
 	};
@@ -152,7 +152,7 @@ namespace {
 
 	
 		///Finds the binding for a specified type name
-	const Binding* findBindingByName(const String& name) {
+	const Binding* findBindingByName(const string& name) {
 		for (const auto& binding : bindings) {
 			if (binding.typeName == name)
 				return &binding;
@@ -252,7 +252,7 @@ namespace {
 		}
 		
 	private:
-		String m_type;
+		string m_type;
 		Guid m_id;
 		mutable std::unique_ptr<BaseWrapper> m_wrapper;
 			//Unused for serialisation - true when deserialising the type and guid attributes

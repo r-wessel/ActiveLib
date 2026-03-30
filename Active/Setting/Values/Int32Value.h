@@ -71,7 +71,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& Int32Value::operator=(const String& val) {
+	Value& Int32Value::operator=(const string& val) {
 		if (auto intValue = val.to_int32_t(); intValue)
 			data = *intValue;
 		else
@@ -126,7 +126,7 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	Int32Value::operator String() const 	{ return String{data}; }
+	Int32Value::operator string() const 	{ return string{data}; }
 	/*!
 		Get a time value
 		@return A time value

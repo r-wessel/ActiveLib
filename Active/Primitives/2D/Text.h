@@ -31,7 +31,7 @@ namespace active::primitive {
 		 @param styl The text style
 		 @param offset An offset from the origin (in render units, added after anchor and offset have been applied)
 		*/
-		Text(const String& txt, const geometry::Point& origin = geometry::Point{}, double angl = 0.0,
+		Text(const string& txt, const geometry::Point& origin = geometry::Point{}, double angl = 0.0,
 					  const attribute::TextStyle styl = attribute::TextStyle(), const geometry::Point& offset = geometry::Point{});
 		/*!
 		 Copy constructor
@@ -57,7 +57,7 @@ namespace active::primitive {
 		// MARK: Public variables
 
 			///The primitive text
-		String text;
+		string text;
 			///Text angle
 		double angle = 0.0;
 			///Text style

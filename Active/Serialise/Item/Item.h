@@ -18,7 +18,7 @@ namespace active::setting {
 namespace active::serialise {
 	
 	/*!
-		Interface for unary data items (representing a single value like String, double etc) enabling serialise for transport
+		Interface for unary data items (representing a single value like string, double etc) enabling serialise for transport
 	*/
 	class Item : public virtual Cargo {
 	public:

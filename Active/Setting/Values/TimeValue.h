@@ -63,7 +63,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& TimeValue::operator=(const String& val) {
+	Value& TimeValue::operator=(const string& val) {
 		Time time;
 		serialise::xml::XMLDateTime xmlParser{time};
 		if (xmlParser.read(val))
@@ -120,8 +120,8 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	TimeValue::operator String() const 	{
-		String string;
+	TimeValue::operator string() const 	{
+		string string;
 		Time temp{data};
 		serialise::xml::XMLDateTime{temp}.write(string);
 		return string;

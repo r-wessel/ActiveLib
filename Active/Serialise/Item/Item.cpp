@@ -19,7 +19,7 @@ using namespace active::setting;
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
 bool Item::writeSetting(setting::Value& dest) const {
-	String text;
+	string text;
 	return write(text) && (dest = text);	//The default behaviour is to treat the outgoing data as a string - subclasses can override for exceptions
 } //Item::writeSetting
 
@@ -32,6 +32,6 @@ bool Item::writeSetting(setting::Value& dest) const {
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
 bool Item::readSetting(const Value& source) {
-	String text = source;
+	string text = source;
 	return read(text);	//The default behaviour is to treat the incoming data as a string - subclasses can override for exceptions
 } //Item::readSetting

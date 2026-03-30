@@ -31,7 +31,7 @@ namespace active::attribute {
 			Constructor
 			@param hex A colour in hex digits
 		*/
-		Colour(const String& hex);
+		Colour(const string& hex);
 
 		// MARK: - Public variables
 
@@ -64,13 +64,13 @@ namespace active::attribute {
 			@param is_alpha True to include the alpha value
 			@return The colour as hex
 		*/
-		String hex(bool is_alpha = false) const;
+		string hex(bool is_alpha = false) const;
 		/*!
 		 Get a hash value for the colour
 		 @param format The required has format
 		 @return The hash formatted as specified
 		 */
-		String hash(HashFormat format = {}) const;
+		string hash(HashFormat format = {}) const;
 
 		// MARK: - Functions (mutating)
 		

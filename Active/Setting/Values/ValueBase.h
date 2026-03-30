@@ -42,7 +42,7 @@ namespace active::setting {
 			Constructor (for all non-string types)
 			@param stringVal A string value to assign
 		*/
-		ValueBase(const String& stringVal) requires (!std::is_same<T, String>::value) : Value(bad) { *this = stringVal; }
+		ValueBase(const string& stringVal) requires (!std::is_same<T, string>::value) : Value(bad) { *this = stringVal; }
 		
 		ValueBase(const ValueBase& source) = default;
 		
@@ -121,7 +121,7 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::String& val) override { status = bad; return *this; }
+		Value& operator=(const active::string& val) override { status = bad; return *this; }
 		/*!
 			Assignment operator
 			@param val A string value to assign
@@ -172,7 +172,7 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator active::String() const override { return active::String{}; }
+		operator active::string() const override { return active::string{}; }
 		/*!
 			Get a guid value
 			@return A guid value

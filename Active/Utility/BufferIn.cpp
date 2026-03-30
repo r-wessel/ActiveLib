@@ -74,7 +74,7 @@ BufferIn::BufferIn(const Memory& sourceMem, std::optional<text_format> format) {
 	sourceString: The source data string
 	format: The source data format (nullopt = attempt to discover format from source)
   --------------------------------------------------------------------*/
-BufferIn::BufferIn(const String& sourceString, std::optional<text_format> format) {
+BufferIn::BufferIn(const string& sourceString, std::optional<text_format> format) {
 	setSource(sourceString, format);
 } //BufferIn::BufferIn
 
@@ -181,7 +181,7 @@ Memory::size_type BufferIn::getPosition() const {
  
 	func: The character function
   --------------------------------------------------------------------*/
-void BufferIn::forEach(const String::Function& func, String* pool) const {
+void BufferIn::forEach(const string::Function& func, string* pool) const {
 		//Allocate a buffer for pooling data as required
 	std::optional<std::u32string> dataBuffer;
 	if (pool != nullptr)
@@ -208,7 +208,7 @@ void BufferIn::forEach(const String::Function& func, String* pool) const {
  
 	return: True if a match is found
   --------------------------------------------------------------------*/
-bool BufferIn::findIf(const String::Filter& filter, String* pool, bool isFoundSkipped) const {
+bool BufferIn::findIf(const string::Filter& filter, string* pool, bool isFoundSkipped) const {
 		//Allocate a buffer for pooling data as required
 	std::optional<std::u32string> dataBuffer;
 	if (pool != nullptr)
@@ -243,8 +243,8 @@ bool BufferIn::findIf(const String::Filter& filter, String* pool, bool isFoundSk
  
 	return: True if a match is found
   --------------------------------------------------------------------*/
-bool BufferIn::find(char32_t toFind, String* pool, bool isFoundSkipped) const {
-	String stopString{&toFind, 1};
+bool BufferIn::find(char32_t toFind, string* pool, bool isFoundSkipped) const {
+	string stopString{&toFind, 1};
 	return stopString.empty() ? false : seek(stopString, pool, false, false, false, false, isFoundSkipped, false);
 } //BufferIn::find
 
@@ -273,7 +273,7 @@ const BufferIn& BufferIn::get(unsigned char& dest) const {
  
 	return: The number of bytes consumed by the next character
   --------------------------------------------------------------------*/
-Memory::size_type BufferIn::getEncodedChar(String& encodedChar, bool isConsumed) const {
+Memory::size_type BufferIn::getEncodedChar(string& encodedChar, bool isConsumed) const {
 	encodedChar.clear();
 	if (fail())
 		return 0;
@@ -324,8 +324,8 @@ std::pair<char32_t, Memory::size_type> BufferIn::getEncodedChar(bool isConsumed)
 	
 	return: A reference to this
   --------------------------------------------------------------------*/
-const BufferIn& BufferIn::get(String& dest) const {
-	String incoming;
+const BufferIn& BufferIn::get(string& dest) const {
+	string incoming;
 	if (getEncodedChar(incoming) > 0)
 		dest.append(incoming);
 	return *this;
@@ -366,8 +366,8 @@ const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
  
 	return: The word read (empty if not found)
   --------------------------------------------------------------------*/
-String BufferIn::readWord(const String& division) const {
-	String incoming;
+string BufferIn::readWord(const string& division) const {
+	string incoming;
 	if (find_first_not_of(division))
 		find_first_of(division, &incoming);
 	return incoming;
@@ -382,8 +382,8 @@ String BufferIn::readWord(const String& division) const {
  
 	return: The found words
   --------------------------------------------------------------------*/
-std::vector<String> BufferIn::readWords(Memory::sizeOption howMany, const String& division) const {
-	std::vector<String> result;
+std::vector<string> BufferIn::readWords(Memory::sizeOption howMany, const string& division) const {
+	std::vector<string> result;
 	bool isOpen = !howMany;
 	while (good() && (isOpen || (result.size() < *howMany))) {
 		if (auto nextWord = readWord(division); !nextWord.empty())
@@ -403,8 +403,8 @@ std::vector<String> BufferIn::readWords(Memory::sizeOption howMany, const String
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getString(String& dest, std::optional<String::size_type> howMany) const {
-	String encodedChar;
+const BufferIn& BufferIn::getString(string& dest, std::optional<string::size_type> howMany) const {
+	string encodedChar;
 	auto toRead = howMany.value_or(0);
 	bool isOpen = !howMany;
 		//Minimise reallocations of string
@@ -423,8 +423,8 @@ const BufferIn& BufferIn::getString(String& dest, std::optional<String::size_typ
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getLine(String& line, bool keepStop) const {
-	seek(String::allLineEnding, &line, true, false, false, false, true, keepStop);
+const BufferIn& BufferIn::getLine(string& line, bool keepStop) const {
+	seek(string::allLineEnding, &line, true, false, false, false, true, keepStop);
 	return *this;
 } //BufferIn::getLine
 
@@ -558,7 +558,7 @@ void BufferIn::setSource(const Memory& sourceMem, std::optional<text_format> for
 	sourceString: The source data string
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const String& sourceString, std::optional<text_format> format) {
+void BufferIn::setSource(const string& sourceString, std::optional<text_format> format) {
 	if (!sourceString.empty())
 			//NB: Source is never mutated by BufferIn so const discard is safe
 		initialise(const_cast<char*>(sourceString.data()), nullptr, sourceString.data_size());
@@ -673,7 +673,7 @@ bool BufferIn::refillBuffer() const {
  
 	return: True if a match was found
   --------------------------------------------------------------------*/
-bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, bool isAllMatched, bool isOrderedMatch,
+bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, bool isAllMatched, bool isOrderedMatch,
 					bool isRepeatMatch, bool isFoundSkipped, bool isFoundPooled, std::optional<char32_t> escapeChar) const {
 	if (toFind.empty())
 		return false;
@@ -797,7 +797,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
  
 	return: True if a match was found
   --------------------------------------------------------------------*/
-bool BufferIn::seekNot(const String& toFind, String* pool, std::optional<char32_t> escapeChar) const {
+bool BufferIn::seekNot(const string& toFind, string* pool, std::optional<char32_t> escapeChar) const {
 	if (toFind.empty())
 		return false;
 	std::u32string matches{toFind};

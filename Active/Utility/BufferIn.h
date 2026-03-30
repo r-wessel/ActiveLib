@@ -48,7 +48,7 @@ namespace active {
 			@param sourceString The source data string. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = attempt to discover format from source)
 		*/
-		BufferIn(const String& sourceString, std::optional<text_format> format = text_format{});
+		BufferIn(const string& sourceString, std::optional<text_format> format = text_format{});
 		/*!
 			Move constructor
 			@param source The object to move
@@ -78,7 +78,7 @@ namespace active {
 			@param str A string to read
 			@return A reference to this
 		*/
-		const BufferIn& operator>>(String& str) const { str = readWord(); return *this; }
+		const BufferIn& operator>>(string& str) const { str = readWord(); return *this; }
 		/*!
 			Read operator
 			@param val A 16-bit integer to read
@@ -153,7 +153,7 @@ namespace active {
 			@param func The character function
 			@param pool Optional string to collect the values returned from the function (nullptr = discard)
 		*/
-		void forEach(const String::Function& func, String* pool = nullptr) const;
+		void forEach(const string::Function& func, string* pool = nullptr) const;
 		/*!
 			Find the specified string within this using a filter
 			@param filter The string filter
@@ -161,7 +161,7 @@ namespace active {
 			@param isFoundSkipped True if the buffer read position should skip over the found byte
 			@return True if a match is found
 		*/
-		bool findIf(const String::Filter& filter, String* pool = nullptr, bool isFoundSkipped = false) const;
+		bool findIf(const string::Filter& filter, string* pool = nullptr, bool isFoundSkipped = false) const;
 		/*!
 			Find a specified character in the buffered content (skipping over all all non-matching data)
 			@param toFind The character to find (UTF-32)
@@ -169,7 +169,7 @@ namespace active {
 			@param isFoundSkipped True if the buffer read position should skip over the found byte
 			@return True if a match is found
 		*/
-		bool find(char32_t toFind, String* pool = nullptr, bool isFoundSkipped = false) const;
+		bool find(char32_t toFind, string* pool = nullptr, bool isFoundSkipped = false) const;
 		/*!
 			Find a specified string in the buffered content (skipping over all all non-matching data)
 			@param toFind The string to find (UTF-32)
@@ -177,7 +177,7 @@ namespace active {
 			@param isFoundSkipped True if the buffer read position should skip over the found string
 			@return True if a match is found
 		*/
-		bool find(const String& toFind, String* pool = nullptr, bool isFoundSkipped = false) const
+		bool find(const string& toFind, string* pool = nullptr, bool isFoundSkipped = false) const
 				{ return seek(toFind, pool, true, true, true, false, isFoundSkipped, false); }
 		/*!
 			Find the first character from a specified string in the buffered content (skipping over all all non-matching data)
@@ -190,7 +190,7 @@ namespace active {
 			@param escapeChar An optional escape char signifying the next character is escaped
 			@return True if a match is found
 		*/
-		bool find_first_of(const String& toFind, String* pool = nullptr, bool isContiguousMatch = false, bool isRepeatMatch = false,
+		bool find_first_of(const string& toFind, string* pool = nullptr, bool isContiguousMatch = false, bool isRepeatMatch = false,
 						 bool isFoundSkipped = false, bool isFoundPooled = false, std::optional<char32_t> escapeChar = std::nullopt) const
 				{ return seek(toFind, pool, isContiguousMatch, false, false, isRepeatMatch, isFoundSkipped, isFoundPooled, escapeChar); }
 		/*!
@@ -200,7 +200,7 @@ namespace active {
 			@param escapeChar An optional escape char signifying the next character is escaped
 			@return True if a match is found
 		*/
-		bool find_first_not_of(const String& toFind, String* pool = nullptr, std::optional<char32_t> escapeChar = std::nullopt) const
+		bool find_first_not_of(const string& toFind, string* pool = nullptr, std::optional<char32_t> escapeChar = std::nullopt) const
 				{ return seekNot(toFind, pool); }
 		/*!
 			Get a single char
@@ -214,19 +214,19 @@ namespace active {
 			@param isConsumed True to consume the character bytes from the buffer
 			@return The number of bytes consumed by the next character (0 bytes = no char read)
 		*/
-		Memory::size_type getEncodedChar(String& encodedChar, bool isConsumed = true) const;
+		Memory::size_type getEncodedChar(string& encodedChar, bool isConsumed = true) const;
 		/*!
 			Get the next character from the buffer as a UTF32 char
 			@param isConsumed True to consume the character bytes from the buffer
 			@return The character coupled with the number of bytes consumed by the next character (0 bytes = no char read)
 		*/
-		std::pair<char32_t, String::size_type> getEncodedChar(bool isConsumed = true) const;
+		std::pair<char32_t, string::size_type> getEncodedChar(bool isConsumed = true) const;
 		/*!
 			Get a single char in a string (supporting multi-byte chars)
 			@param dest The incoming char (supporting unicode)
 			@return A reference to this
 		*/
-		const BufferIn& get(String& dest) const;
+		const BufferIn& get(string& dest) const;
 		/*!
 			Read a stream of bytes
 			@param dest The data destination
@@ -239,14 +239,14 @@ namespace active {
 			@param division The dividing character(s)
 			@return The word read (empty if not found)
 		*/
-		String readWord(const String& division = String::allWhiteSpace) const;
+		string readWord(const string& division = string::allWhiteSpace) const;
 		/*!
 			Read multiple words from the buffer
 			@param howMany Optional limit on the number of words to read (nullopt = to end of buffer)
 			@param division The dividing character(s)
 			@return The found words
 		*/
-		std::vector<String> readWords(Memory::sizeOption howMany = std::nullopt, const String& division = String::allWhiteSpace) const;
+		std::vector<string> readWords(Memory::sizeOption howMany = std::nullopt, const string& division = string::allWhiteSpace) const;
 		/*!
 			Get a value of a specified type from a buffer
 			@param val The value to read
@@ -268,14 +268,14 @@ namespace active {
 		 	@param howMany The number of whole characters to get (nullopt to read all)
 			@return A reference to this
 		*/
-		const BufferIn& getString(String& dest, std::optional<String::size_type> howMany = std::nullopt) const;
+		const BufferIn& getString(string& dest, std::optional<string::size_type> howMany = std::nullopt) const;
 		/*!
 			Get a single line (terminating at any known line ending)
 			@param line The incoming line
 		 	@param keepStop True to keep the line terminator(s)
 			@return A reference to this
 		*/
-		const BufferIn& getLine(String& line, bool keepStop = true) const;
+		const BufferIn& getLine(string& line, bool keepStop = true) const;
 		/*!
 			Skip a specified number of bytes forward in the input source
 			@param howMany The number of bytes to skip forward
@@ -344,7 +344,7 @@ namespace active {
 			@param sourceString The source data string. NB: The buffer does not take ownership of this object - must be maintained for the buffer
 		 	@param format The source data format (nullopt = discover format from source)
 		*/
-		void setSource(const String& sourceString, std::optional<text_format> format = text_format{});
+		void setSource(const string& sourceString, std::optional<text_format> format = text_format{});
 		
 	private:
 		/*!
@@ -375,7 +375,7 @@ namespace active {
 			@param escapeChar An optional escape char signifying the next character is escaped
 			@return True if a match was found
 		*/
-		bool seek(const String& toFind, String* pool, bool isAllMatched, bool isContiguousMatch, bool isOrderedMatch,
+		bool seek(const string& toFind, string* pool, bool isAllMatched, bool isContiguousMatch, bool isOrderedMatch,
 				  bool isRepeatMatch, bool isFoundSkipped, bool isFoundPooled, std::optional<char32_t> escapeChar = std::nullopt) const;
 		/*!
 			Seek the first character not matching a specified set
@@ -383,7 +383,7 @@ namespace active {
 			@param pool Optional string to collect the skipped characters (nullptr = discard)
 			@return True if a match was found
 		*/
-		bool seekNot(const String& toFind, String* pool, std::optional<char32_t> escapeChar = std::nullopt) const;
+		bool seekNot(const string& toFind, string* pool, std::optional<char32_t> escapeChar = std::nullopt) const;
 		/*!
 			Update row/col position
 		 	@param incoming The incoming character (test for line endings)

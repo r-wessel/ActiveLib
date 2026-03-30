@@ -43,7 +43,7 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	GuidValue::operator String() const 	{ return data; }
+	GuidValue::operator string() const 	{ return data; }
 	/*!
 		Get a guid value
 		@return A guid value

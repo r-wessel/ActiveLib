@@ -30,7 +30,7 @@ namespace {
  
 	hex: A colour in hex digits
   --------------------------------------------------------------------*/
-Colour::Colour(const String& hex) {
+Colour::Colour(const string& hex) {
 	if (hex.length() < 2)
 		return;
 	if (auto colourCode = HexTransport().receive(hex); colourCode) {
@@ -52,7 +52,7 @@ Colour::Colour(const String& hex) {
  
 	return: The colour as hex
   --------------------------------------------------------------------*/
-String Colour::hex(bool is_alpha) const {
+string Colour::hex(bool is_alpha) const {
 	Memory colourOut;
 	{
 		BufferOut buffer{colourOut};
@@ -60,7 +60,7 @@ String Colour::hex(bool is_alpha) const {
 		if (is_alpha)
 			buffer << static_cast<char>(a * 255);
 	}
-	String result;
+	string result;
 	HexTransport().send(BufferIn{colourOut}, BufferOut{result});
 	return result;
 } //Colour::hex
@@ -73,7 +73,7 @@ String Colour::hex(bool is_alpha) const {
  
 	return: The hash formatted as specified
   --------------------------------------------------------------------*/
-String Colour::hash(HashFormat format) const {
+string Colour::hash(HashFormat format) const {
 	SHA256 hasher;
 	hasher << r << g << b << a;
 	return hasher.product(format);

@@ -49,7 +49,7 @@ namespace active::serialise {
 			@param source The hex stream source
 			@return The received integer (nullopt on failure)
 		*/
-		std::optional<uint32_t> receive(const String& source) const;
+		std::optional<uint32_t> receive(const string& source) const;
 		
 	private:
 		Case m_case;

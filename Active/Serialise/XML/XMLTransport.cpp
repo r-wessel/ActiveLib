@@ -30,9 +30,9 @@ using enum XMLTransport::Status;
 namespace {
 	
 		///The XML escape character
-	const String escapeChar{"&"};
+	const string escapeChar{"&"};
 		///The XML excape sequence terminator
-	const String terminatorChar{";"};
+	const string terminatorChar{";"};
 	
 		///Category for XML processing errors
 	class XMLCategory : public std::error_category {
@@ -154,7 +154,7 @@ namespace {
 		Validate an XML name (throw exception on failure)
 		@param name The name to check
 	*/
-	void validateXMLName(const String& name) {
+	void validateXMLName(const string& name) {
 		if (name.empty())
 			throw std::system_error(makeXMLError(badName));
 		std::u32string temp{name};
@@ -231,23 +231,23 @@ namespace {
 	/*!
 		A function class to discover XML sections within a document
 	*/
-	class XMLSection : protected std::map<String, std::pair<XMLIdentity::Type, String> > {
+	class XMLSection : protected std::map<string, std::pair<XMLIdentity::Type, string> > {
 	public:
-		typedef std::map<String, std::pair<XMLIdentity::Type, String> > base;
+		typedef std::map<string, std::pair<XMLIdentity::Type, string> > base;
 		
 		/*!
 			Search for an XML section in a specified expression
 			@param expression The expression to search for (if a type is found, the section prefix is removed)
 			@return The section type paired with the expected suffix (nullopt if not found)
 		*/
-		std::optional<std::pair<XMLIdentity::Type, String>> search(String& expression) {
+		std::optional<std::pair<XMLIdentity::Type, string>> search(string& expression) {
 			if (empty()) {
 					//Known XML sections
 				(*this)["?"] = std::make_pair(instruction, "?");
 				(*this)["!--"] = std::make_pair(comment, "--");
 				(*this)["![CDATA["] = std::make_pair(dataTag, "]]");
 			}
-			String terminator;
+			string terminator;
 			for (auto& i : *this) {
 				if (expression.starts_with(i.first)) {
 					expression.erase(0, i.first.length());
@@ -262,9 +262,9 @@ namespace {
 	/*!
 		A glossary of reserved XML symbols and the equivalent long-form representation in plain text, e.g. '&' = '&amp'
 	*/
-	class XMLGlossary : public std::map<String, String> {
+	class XMLGlossary : public std::map<string, string> {
 	public:
-		typedef std::map<String, String> base;
+		typedef std::map<string, string> base;
 		
 		/*!
 			Constructor
@@ -322,7 +322,7 @@ namespace {
 			@param source The string to convert
 			@return A reference to the converted string
 		*/
-		String& toXMLString(String& source) const;
+		string& toXMLString(string& source) const;
 		
 		// MARK: Functions (mutating)
 		
@@ -330,7 +330,7 @@ namespace {
 			Write the specified string
 			@param toWrite The string to write
 		*/
-		void write(const String& toWrite);
+		void write(const string& toWrite);
 		/*!
 			Write a tag to the data destination
 			@param tag The tag to write
@@ -338,12 +338,12 @@ namespace {
 			@param type The tag type
 			@param depth The tag depth in the XML hierarchy
 		*/
-		void writeTag(const String& tag, const std::optional<String>& nameSpace, XMLIdentity::Type type, int32_t depth);
+		void writeTag(const string& tag, const std::optional<string>& nameSpace, XMLIdentity::Type type, int32_t depth);
 		/*!
 			Write a phrase to the data destination
 			@param phrase The phrase to write
 		*/
-		void writePhrase(const String& phrase);
+		void writePhrase(const string& phrase);
 		/*!
 			Flush the buffer to the destination
 		*/
@@ -356,7 +356,7 @@ namespace {
 			@param entity The entity to add
 			@param text The replacement text for the entity
 		*/
-		void addEntity(const String& entity, const String text);
+		void addEntity(const string& entity, const string text);
 		
 	private:
 			///A buffer for the exported data (wraps the export destination)
@@ -393,13 +393,13 @@ namespace {
 			@param source The string to convert
 			@return True if the string was converted without errors
 		*/
-		String& fromXMLString(String& source) const;
+		string& fromXMLString(string& source) const;
 		/*!
 			Get a replacement expression from the glossary
 			@param entity The entity to replace
 			@return The replacement expression (nullopt = bad entity)
 		*/
-		String getReplacement(const String& entity) const;
+		string getReplacement(const string& entity) const;
 		/*!
 			Get the last received character row position of the data source
 			@return The last row position received from the data source
@@ -442,13 +442,13 @@ namespace {
 			Get content from the data source, e.g. the data between the opening and closing tags
 			@return The XML content
 		*/
-		std::optional<String> getContent();
+		std::optional<string> getContent();
 		/*!
 			Add an entity to the glossary
 			@param entity The entity to add
 			@param text The replacement text for the entity
 		*/
-		void addEntity(const String& entity, const String text) { m_glossary[entity] = text; }
+		void addEntity(const string& entity, const string text) { m_glossary[entity] = text; }
 		/*!
 			Set the encoding of the XML inout stream
 		 	@param encoding The source text encoding
@@ -491,15 +491,15 @@ namespace {
 
 		return: True if the string was converted without errors
 	  --------------------------------------------------------------------*/
-	String& XMLImporter::fromXMLString(String& source) const {
-		std::optional<String::size_type> index = 0;
+	string& XMLImporter::fromXMLString(string& source) const {
+		std::optional<string::size_type> index = 0;
 		if (!source.find(escapeChar, *index))
 			return source;
 		BufferIn sourceBuffer{source};
-		String output;
+		string output;
 		output.reserve(source.data_size());
 		while (sourceBuffer.find(escapeChar, &output, true)) {
-			String entity;
+			string entity;
 			if (!sourceBuffer.find(terminatorChar, &entity, true))
 				throw std::system_error(makeXMLError(badEncoding));
 			output += getReplacement(entity);
@@ -516,7 +516,7 @@ namespace {
 	 
 		return: The replacement expression (nullopt = bad entity)
 	  --------------------------------------------------------------------*/
-	String XMLImporter::getReplacement(const String& entity) const {
+	string XMLImporter::getReplacement(const string& entity) const {
 		auto i = m_glossary.find(entity);
 		if (i != m_glossary.end())
 			return i->second;
@@ -533,7 +533,7 @@ namespace {
 			charCode = code.data;
 		} else
 			throw std::system_error(makeXMLError(unknownEscapeChar));
-		String result{reinterpret_cast<char32_t*>(&charCode), 1};
+		string result{reinterpret_cast<char32_t*>(&charCode), 1};
 		if (result.empty())
 			throw std::system_error(makeXMLError(badEncoding));
 		return result;
@@ -562,7 +562,7 @@ namespace {
 			}
 			identity.type = section->first;
 		} else {
-			if (auto tagEnd = identity.name.find_last_not_of(String::allWhiteSpace); tagEnd && (*tagEnd < (identity.name.length() - 1)))
+			if (auto tagEnd = identity.name.find_last_not_of(string::allWhiteSpace); tagEnd && (*tagEnd < (identity.name.length() - 1)))
 				identity.name.erase(*tagEnd + 1);
 			if (identity.name.empty())
 				throw std::system_error(makeXMLError(missingTagName));	//A tag with no content is a fatal error
@@ -585,7 +585,7 @@ namespace {
 			} else
 				identity.type = startTag;
 				//Check if the tag includes a namespace
-			if (auto spacePosition = identity.name.find_first_of(String::allWhiteSpace), dividerPos = identity.name.rfind(":");
+			if (auto spacePosition = identity.name.find_first_of(string::allWhiteSpace), dividerPos = identity.name.rfind(":");
 					dividerPos && spacePosition && (dividerPos < spacePosition)) {
 				identity.group = identity.name.substr(0, *dividerPos);
 				identity.name.erase(0, *dividerPos + 1);
@@ -600,8 +600,8 @@ namespace {
 	 
 		return: The XML content (nullopt on failure)
 	  --------------------------------------------------------------------*/
-	std::optional<String> XMLImporter::getContent() {
-		String content;
+	std::optional<string> XMLImporter::getContent() {
+		string content;
 		if (!m_buffer.findIf([](char32_t uniChar){ return uniChar == U'<'; }, &content))
 			return std::nullopt;	//Not finding a tag is not necessarily an error - the caller will determine
 		return fromXMLString(content);
@@ -615,7 +615,7 @@ namespace {
 
 		return: A reference to the converted string
 	  --------------------------------------------------------------------*/
-	String& XMLExporter::toXMLString(String& source) const {
+	string& XMLExporter::toXMLString(string& source) const {
 		for (auto& i : m_glossary)
 			source.replace_all(i.second, "&" + i.first + ";");
 		return source;
@@ -627,8 +627,8 @@ namespace {
 	 
 		toWrite: The string to write
 	  --------------------------------------------------------------------*/
-	void XMLExporter::write(const String& toWrite) {
-		String::size_type exportLength = toWrite.size();
+	void XMLExporter::write(const string& toWrite) {
+		string::size_type exportLength = toWrite.size();
 		if (exportLength == 0)
 			return;
 		if (!m_buffer.write(toWrite))
@@ -644,12 +644,12 @@ namespace {
 		type: The tag type
 		depth: The tag depth in the XML hierarchy
 	  --------------------------------------------------------------------*/
-	void XMLExporter::writeTag(const String& tag, const std::optional<String>& nameSpace, XMLIdentity::Type type, int32_t depth) {
-		String xmlStr(tag), prefix;
+	void XMLExporter::writeTag(const string& tag, const std::optional<string>& nameSpace, XMLIdentity::Type type, int32_t depth) {
+		string xmlStr(tag), prefix;
 		if (m_isTagged && isLineFeeds && (type != endTag))
 			prefix.append("\n");
 		if (isTabbed && ((type != endTag) || ((type == endTag) && !m_isTagged)))
-			prefix.append(String(depth, "\t"));
+			prefix.append(string(depth, "\t"));
 		prefix.append("<");
 		if (type == endTag)
 			prefix.append("/");
@@ -681,8 +681,8 @@ namespace {
 		
 		phrase: The phrase to write
 	  --------------------------------------------------------------------*/
-	void XMLExporter::writePhrase(const String& phrase) {
-		String xmlStr(phrase);
+	void XMLExporter::writePhrase(const string& phrase) {
+		string xmlStr(phrase);
 		write(toXMLString(xmlStr));
 	} //XMLExporter::writePhrase
 
@@ -702,18 +702,18 @@ namespace {
 
 		startTag: The start tag (which may contain an attributes section - removed on return)
 	  --------------------------------------------------------------------*/
-	String readAttributes(String& startTag) {
-		String attributes;
+	string readAttributes(string& startTag) {
+		string attributes;
 		BufferIn processor(startTag);
-		String tagOut;
-		processor.find_first_of(String::allWhiteSpace, &tagOut, true, true, true);
+		string tagOut;
+		processor.find_first_of(string::allWhiteSpace, &tagOut, true, true, true);
 			//Skip to the start of the first attribute (where available)
-		while (processor.find_first_not_of(String::allWhiteSpace)) {
+		while (processor.find_first_not_of(string::allWhiteSpace)) {
 				//Find the attribute tag
-			String tag;
+			string tag;
 			if (!processor.find_first_of("=", &tag, false, false, true) || tag.empty())
 				throw std::system_error(makeXMLError(attributeEqualMissing));	//An attribute must split the tag and value with "="
-			String quoteChar, value;
+			string quoteChar, value;
 			if (!processor.get(quoteChar) || ((quoteChar != "\"") && (quoteChar != "'")) || !processor.find_first_of(quoteChar, &value, false, false, true))
 				throw std::system_error(makeXMLError(attributeEqualMissing));	//Value not enclosed with quotes
 			attributes += "<" + tag + ">" + value + "</" + tag + ">";
@@ -730,7 +730,7 @@ namespace {
 		cargo: A cargo item to import the phrase
 		phrase: The XML phrase to be imported
 	  --------------------------------------------------------------------*/
-	void doXMLItemImport(Cargo& cargo, String& phrase) {
+	void doXMLItemImport(Cargo& cargo, string& phrase) {
 		if (!cargo.readSetting(StringValue{phrase}))
 			throw std::system_error(makeXMLError(badValue));
 	} //doXMLItemImport
@@ -744,7 +744,7 @@ namespace {
 		instruction: The incoming instruction
 	 	attributes: The instruction attributes
 	  --------------------------------------------------------------------*/
-	void processInstruction(XMLImporter& importer, Cargo& dataIn, const XMLIdentity& instruction, const String& attributes) {
+	void processInstruction(XMLImporter& importer, Cargo& dataIn, const XMLIdentity& instruction, const string& attributes) {
 			//Note - this method currently looks for the xml instruction only
 			//It should be expanded in future to pass instructions to the XML reader
 		if (instruction.name.to_lower() != "xml") {
@@ -795,7 +795,7 @@ namespace {
 			throw std::system_error(makeXMLError(missingInventory));
 		inventory.resetAvailable();	//Reset the availability of each entry to zero so we can count incoming items
 		for (;;) {	//We break out of this loop when an error occurs or we run out of data
-			String phrase;
+			string phrase;
 			if (auto newContent = importer.getContent(); newContent)
 				phrase = std::move(*newContent);	//If there is an inline text, check if the container wants to import it
 			else if (!importer.eof())	//If we can't read a valid character but haven't reached the end of the source, something's broken
@@ -906,7 +906,7 @@ namespace {
 
 		return: True if the cargo contains only attributes
 	  --------------------------------------------------------------------*/
-	bool getContainerAttributes(XMLExporter& exporter, const Cargo& cargo, const Inventory::Sequence& sequence, String& startTag) {
+	bool getContainerAttributes(XMLExporter& exporter, const Cargo& cargo, const Inventory::Sequence& sequence, string& startTag) {
 		bool isAttributes = true;
 		for (const auto& entry : sequence) {
 			const auto& item{*entry.second};
@@ -919,10 +919,10 @@ namespace {
 			auto content = cargo.getCargo(item);
 			if (!content || !content->isItem())
 				continue;
-			String value;
+			string value;
 			if (!content->write(value))
 				continue;
-			String attribute{" "};
+			string attribute{" "};
 			if (exporter.isNameSpaces && item.identity().group && !item.identity().group->empty())
 				attribute.append(*item.identity().group).append(":");
 			attribute.append(item.identity().name).append("=\"").append(exporter.toXMLString(value)).append("\"");
@@ -948,10 +948,10 @@ namespace {
 		if (!cargo.fillInventory(inventory) || (inventory.empty())) {
 			if (!cargo.isItem())
 				throw std::system_error(makeXMLError(badValue));
-			String outgoing;
+			string outgoing;
 			if (!cargo.write(outgoing))
 				throw std::system_error(makeXMLError(badValue));
-			exporter.writeTag(identity.name, exporter.isNameSpaces ? identity.group.value_or(String()) : String(), startTag, depth);
+			exporter.writeTag(identity.name, exporter.isNameSpaces ? identity.group.value_or(string()) : string(), startTag, depth);
 			exporter.writePhrase(outgoing);
 			exporter.writeTag(identity.name, identity.group, endTag, depth);
 			return;
@@ -968,7 +968,7 @@ namespace {
 		auto sequence = inventory.sequence();
 		auto itemDepth = depth;
 		if (isWrapperTag) {
-			String openingTag(identity.name);
+			string openingTag(identity.name);
 			auto isAttributes = getContainerAttributes(exporter, cargo, sequence, openingTag) || (identity.type == instruction);
 			auto tagType = (isAttributes) ? ((identity.type == instruction) ? instruction : emptyTag) : startTag;
 			exporter.writeTag(openingTag, identity.group, tagType, depth);
@@ -980,7 +980,7 @@ namespace {
 			auto item = *entry.second;
 			if ((!item.required) || (item.isAttribute()))
 				continue;
-			auto entryNameSpace{item.identity().group.value_or(String())};
+			auto entryNameSpace{item.identity().group.value_or(string())};
 				//Each cargo container may contain multiple export items
 			auto limit = item.available;
 			for (item.available = 0; item.available < limit; ++item.available) {

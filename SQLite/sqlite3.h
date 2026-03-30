@@ -462,7 +462,7 @@ SQLITE_API int sqlite3_exec(
 #define SQLITE_PROTOCOL    15   /* Database lock protocol error */
 #define SQLITE_EMPTY       16   /* Internal use only */
 #define SQLITE_SCHEMA      17   /* The database schema changed */
-#define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
+#define SQLITE_TOOBIG      18   /* string or BLOB exceeds size limit */
 #define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */
 #define SQLITE_MISMATCH    20   /* Data type mismatch */
 #define SQLITE_MISUSE      21   /* Library used incorrectly */
@@ -3077,7 +3077,7 @@ SQLITE_API int sqlite3_get_table(
 SQLITE_API void sqlite3_free_table(char **result);
 
 /*
-** CAPI3REF: Formatted String Printing Functions
+** CAPI3REF: Formatted string Printing Functions
 **
 ** These routines are work-alikes of the "printf()" family of functions
 ** from the standard C library.
@@ -7614,7 +7614,7 @@ struct sqlite3_index_info {
     unsigned char omit;      /* Do not code a test for this constraint */
   } *aConstraintUsage;
   int idxNum;                /* Number used to identify the index */
-  char *idxStr;              /* String, possibly obtained from sqlite3_malloc */
+  char *idxStr;              /* string, possibly obtained from sqlite3_malloc */
   int needToFreeIdxStr;      /* Free idxStr using sqlite3_free() if true */
   int orderByConsumed;       /* True if output is already ordered */
   double estimatedCost;           /* Estimated cost of using this index */
@@ -8547,7 +8547,7 @@ SQLITE_API int sqlite3_keyword_name(int,const char**,int*);
 SQLITE_API int sqlite3_keyword_check(const char*,int);
 
 /*
-** CAPI3REF: Dynamic String Object
+** CAPI3REF: Dynamic string Object
 ** KEYWORDS: {dynamic string}
 **
 ** An instance of the sqlite3_str object contains a dynamically-sized
@@ -8565,7 +8565,7 @@ SQLITE_API int sqlite3_keyword_check(const char*,int);
 typedef struct sqlite3_str sqlite3_str;
 
 /*
-** CAPI3REF: Create A New Dynamic String Object
+** CAPI3REF: Create A New Dynamic string Object
 ** CONSTRUCTOR: sqlite3_str
 **
 ** ^The [sqlite3_str_new(D)] interface allocates and initializes
@@ -8592,7 +8592,7 @@ typedef struct sqlite3_str sqlite3_str;
 SQLITE_API sqlite3_str *sqlite3_str_new(sqlite3*);
 
 /*
-** CAPI3REF: Finalize A Dynamic String
+** CAPI3REF: Finalize A Dynamic string
 ** DESTRUCTOR: sqlite3_str
 **
 ** ^The [sqlite3_str_finish(X)] interface destroys the sqlite3_str object X
@@ -8607,7 +8607,7 @@ SQLITE_API sqlite3_str *sqlite3_str_new(sqlite3*);
 SQLITE_API char *sqlite3_str_finish(sqlite3_str*);
 
 /*
-** CAPI3REF: Add Content To A Dynamic String
+** CAPI3REF: Add Content To A Dynamic string
 ** METHOD: sqlite3_str
 **
 ** These interfaces add content to an sqlite3_str object previously obtained
@@ -8646,7 +8646,7 @@ SQLITE_API void sqlite3_str_appendchar(sqlite3_str*, int N, char C);
 SQLITE_API void sqlite3_str_reset(sqlite3_str*);
 
 /*
-** CAPI3REF: Status Of A Dynamic String
+** CAPI3REF: Status Of A Dynamic string
 ** METHOD: sqlite3_str
 **
 ** These interfaces return the current status of an [sqlite3_str] object.
@@ -9613,7 +9613,7 @@ SQLITE_API int sqlite3_unlock_notify(
 
 
 /*
-** CAPI3REF: String Comparison
+** CAPI3REF: string Comparison
 **
 ** ^The [sqlite3_stricmp()] and [sqlite3_strnicmp()] APIs allow applications
 ** and extensions to compare the contents of two buffers containing UTF-8
@@ -9624,7 +9624,7 @@ SQLITE_API int sqlite3_stricmp(const char *, const char *);
 SQLITE_API int sqlite3_strnicmp(const char *, const char *, int);
 
 /*
-** CAPI3REF: String Globbing
+** CAPI3REF: string Globbing
 *
 ** ^The [sqlite3_strglob(P,X)] interface returns zero if and only if
 ** string X matches the [GLOB] pattern P.
@@ -9641,7 +9641,7 @@ SQLITE_API int sqlite3_strnicmp(const char *, const char *, int);
 SQLITE_API int sqlite3_strglob(const char *zGlob, const char *zStr);
 
 /*
-** CAPI3REF: String LIKE Matching
+** CAPI3REF: string LIKE Matching
 *
 ** ^The [sqlite3_strlike(P,X,E)] interface returns zero if and only if
 ** string X matches the [LIKE] pattern P with escape character E.

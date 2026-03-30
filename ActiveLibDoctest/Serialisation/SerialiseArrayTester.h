@@ -110,7 +110,7 @@ private:
 	///This class has only a single member variable, but this concept can be easily extended (including child objects)
 class BarA : public Foo {
 public:
-	BarA(const active::Guid& guid, const active::String& str = active::String{}) : Foo{guid}, m_text{str} {}
+	BarA(const active::Guid& guid, const active::string& str = active::string{}) : Foo{guid}, m_text{str} {}
 	BarA* clonePtr() const override	{ return new BarA(*this); }
 
 	bool operator==(const Foo& ref) const override {
@@ -118,11 +118,11 @@ public:
 			return Foo::operator==(ref) && (m_text == refA->m_text);
 		return false;
 	}
-	const active::String& getText() const { return m_text; }
-	void setText(const active::String& text) { m_text = text; }
+	const active::string& getText() const { return m_text; }
+	void setText(const active::string& text) { m_text = text; }
 
 private:
-	active::String m_text;
+	active::string m_text;
 };
 
 
@@ -164,7 +164,7 @@ public:
 class SerialiseArrayWrapper : public active::serialise::Package {
 public:
 		///NB: This name is not exported in JSON if the object is at the outermost (root) level
-	inline static active::String tag = "arrayTester";
+	inline static active::string tag = "arrayTester";
 
 		///Wrapper is constructed with a reference to the object to be imported/exported (the target array in this case)
 	SerialiseArrayWrapper(const SerialiseArrayTester& test) : m_test{const_cast<SerialiseArrayTester&>(test)}	{}

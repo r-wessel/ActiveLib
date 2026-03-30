@@ -15,7 +15,7 @@ using namespace active;
 namespace {
 	
 		//All recognised encoding types
-	std::map<text_encoding, String> encodingNames = {
+	std::map<text_encoding, string> encodingNames = {
 		{ text_encoding::UTF8, "utf-8" },
 		{ text_encoding::UTF16, "utf-16" },
 		{ text_encoding::UTF32, "utf-32" },
@@ -31,7 +31,7 @@ namespace {
  
 	return: The encoding type (nullopt if no match found)
  --------------------------------------------------------------------*/
-std::optional<text_encoding> active::serialise::encodingFromName(const String& name) {
+std::optional<text_encoding> active::serialise::encodingFromName(const string& name) {
 	if (auto match = std::find_if(encodingNames.begin(), encodingNames.end(), [&](const auto& i){ return (i.second == name); });
 			match != encodingNames.end()) {
 		return match->first;
@@ -47,7 +47,7 @@ std::optional<text_encoding> active::serialise::encodingFromName(const String& n
  
 	return: The name of the encoding type (nullopt if no match found)
   --------------------------------------------------------------------*/
-std::optional<String> active::serialise::nameFromEncoding(text_encoding encoding) {
+std::optional<string> active::serialise::nameFromEncoding(text_encoding encoding) {
 	if (auto match = encodingNames.find(encoding); match != encodingNames.end()) {
 		return match->second;
 	}

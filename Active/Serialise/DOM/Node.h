@@ -24,9 +24,9 @@ namespace active::serialise::dom {
 	/*!
 	 A value in a generic document object model (DOM) for serialised data transport
 	 */
-	struct Value : std::variant<std::monostate, bool, int64_t, double, String> {
+	struct Value : std::variant<std::monostate, bool, int64_t, double, string> {
 
-		using base = std::variant<std::monostate, bool, int64_t, double, String>;
+		using base = std::variant<std::monostate, bool, int64_t, double, string>;
 			///Indices of a value type
 		enum class Index {
 			undefined = 0,
@@ -74,7 +74,7 @@ namespace active::serialise::dom {
 		 Conversion operator
 		 @return An equivalent boolean value
 		 */
-		explicit operator String() const { return setting().operator String(); }
+		explicit operator string() const { return setting().operator string(); }
 
 		/*!
 		 Get the index of the value type
@@ -115,7 +115,7 @@ namespace active::serialise::dom {
 	 
 	 Object members are expected to be paired with a name, i.e. as a dictionary
 	 */
-	using Object = std::unordered_map<String, Node>;
+	using Object = std::unordered_map<string, Node>;
 	
 	/*!
 	 An array in a generic document object model (DOM) for serialised data transport
@@ -124,13 +124,13 @@ namespace active::serialise::dom {
 	 */
 	struct Array : std::vector<Node> {
 			///Optional tag for the array items (NB: Unused for JSON. Optional for XML - otherwise the array is flattened and items use the parent tag
-		String itemTag;
+		string itemTag;
 
 		/*!
 		 Define an array item tag
 		 @param tag The item tag
 		 */
-		Array& withItemTag(const String& tag) {
+		Array& withItemTag(const string& tag) {
 			itemTag = tag;
 			return *this;
 		}
@@ -146,7 +146,7 @@ namespace active::serialise::dom {
 	
 	template<typename T>
 	concept IsAssociativeContainer = requires(T t) {
-		requires !IsSequenceContainer<T> && IsValue<typename T::value_type::second_type> && std::is_convertible_v<typename T::key_type, String>;
+		requires !IsSequenceContainer<T> && IsValue<typename T::value_type::second_type> && std::is_convertible_v<typename T::key_type, string>;
 		{ t.begin() };
 		{ t.end() };
 	};
@@ -261,7 +261,7 @@ namespace active::serialise::dom {
 		Node& operator=(Container container) {
 			Object object;
 			for (const auto& item : container)
-				object.insert({String{item.first}, item.second});
+				object.insert({string{item.first}, item.second});
 			base::operator=(object);
 			return *this;
 		}
@@ -270,14 +270,14 @@ namespace active::serialise::dom {
 		 @param memberName The object member name
 		 @return The member node (creates if missing)
 		 */
-		Node& operator[](const String& memberName) { return object()[memberName]; }
+		Node& operator[](const string& memberName) { return object()[memberName]; }
 		/*!
 		 Subscript operator (NB: assumes node is an object - throws otherwise)
 		 @param memberName The object member name
 		 @return The member node (creates if missing)
 		 */
 		template<typename T> requires std::is_same_v<T, const char*>	//NB: This prevents some compilers from transforming a 0 index into nullptr
-		Node& operator[](T memberName) { return object()[String{memberName}]; }
+		Node& operator[](T memberName) { return object()[string{memberName}]; }
 		/*!
 		 Subscript operator (NB: assumes node is an array - throws otherwise)
 		 @param index Index into the required array value
@@ -303,7 +303,7 @@ namespace active::serialise::dom {
 		 @param memberName The object member name
 		 @return The member node (throws if not found)
 		 */
-		const Node& operator[](const String& memberName) const {
+		const Node& operator[](const string& memberName) const {
 			if (auto iter = object().find(memberName); iter != object().end())
 				return iter->second;
 			throw std::out_of_range("Node name not found");
@@ -315,7 +315,7 @@ namespace active::serialise::dom {
 		 */
 		template<typename T> requires std::is_same_v<T, const char*>	//NB: This prevents some compilers from transforming a 0 index into nullptr
 		const Node& operator[](T memberName) const {
-			if (auto iter = object().find(String{memberName}); iter != object().end())
+			if (auto iter = object().find(string{memberName}); iter != object().end())
 				return iter->second;
 			throw std::out_of_range("Node name not found");
 		}
@@ -365,13 +365,13 @@ namespace active::serialise::dom {
 		 @param name The name to search for
 		 @return True if the node contains the specified name
 		 */
-		bool contains(const String name) const { return index(name).operator bool(); }
+		bool contains(const string name) const { return index(name).operator bool(); }
 		/*!
 		 Write item data to a string
 		 @param dest The string to write the data to
 		 @return True if the data was successfully written
 		 */
-		bool write(String& dest) const override;
+		bool write(string& dest) const override;
 		/*!
 		 Get the serialisation type for the cargo value
 		 @return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
@@ -387,7 +387,7 @@ namespace active::serialise::dom {
 		 @param name The name to search for
 		 @return The type index of the named item (nullopt if not found)
 		 */
-		std::optional<Index> index(const String& name) const;
+		std::optional<Index> index(const string& name) const;
 		/*!
 		 Get the node value
 		 @return The node value (throws if the node does not hold a value)
@@ -398,7 +398,7 @@ namespace active::serialise::dom {
 		 @param name The value name
 		 @return The requested value setting (nullopt on failure)
 		 */
-		std::optional<setting::ValueSetting> setting(const String& name) const;
+		std::optional<setting::ValueSetting> setting(const string& name) const;
 		/*!
 		 Get the node object
 		 @return The node object (throws if the node does not hold an object)
@@ -452,7 +452,7 @@ namespace active::serialise::dom {
 		 Define an array item tag (NB: this otherwise defaults to the parent array tag where required, e.g. for XML)
 		 @param tag The item tag (has no effect if the node is not an array)
 		 */
-		Node& withItemTag(const String& tag) {
+		Node& withItemTag(const string& tag) {
 			if (index() == Index::array)
 				array().withItemTag(tag);
 			return *this;
@@ -462,7 +462,7 @@ namespace active::serialise::dom {
 		 @param source The string to read
 		 @return True if the data was successfully read
 		 */
-		bool read(const String& source) override;
+		bool read(const string& source) override;
 		/*!
 		 Read the cargo data from the specified setting
 		 @param source The setting to read
@@ -516,7 +516,7 @@ struct std::hash<active::serialise::dom::Node> {
 					case floatType:
 						return hash<double>()(node.value());
 					case stringType:
-						return hash<std::string>()(node.value().operator active::String());
+						return hash<std::string>()(node.value().operator active::string());
 					default:
 						break;
 				}

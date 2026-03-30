@@ -35,7 +35,7 @@ namespace active::database {
 		 Constructor
 		 @param name The transaction name (for displaying undo etc)
 		 */
-		Transaction(const String& name) : m_name(name)	{}
+		Transaction(const string& name) : m_name(name)	{}
 		/*!
 		 Destructor
 		 */
@@ -47,7 +47,7 @@ namespace active::database {
 		 Get the transaction name
 		 @return The transaction name
 		 */
-		const String& getName() const	{ return m_name; }
+		const string& getName() const	{ return m_name; }
 		/*!
 		 Get the transaction ID
 		 @return The transaction ID
@@ -78,7 +78,7 @@ namespace active::database {
 		
 	private:
 			///The transaction name (for logging and user feedback, i.e. should be easily readable)
-		String m_name;
+		string m_name;
 			///The transaction guid
 		Guid m_ID = Guid{true};
 	};

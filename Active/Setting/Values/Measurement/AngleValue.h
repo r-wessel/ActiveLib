@@ -39,7 +39,7 @@ namespace active::setting {
 			@param unit The output unit
 			@return The measurement as a string
 		*/
-		String operator()(const measure::AngleUnit& unit) const override;
+		string operator()(const measure::AngleUnit& unit) const override;
 		
 		/*!
 			Assign a measurement value from a string
@@ -47,7 +47,7 @@ namespace active::setting {
 			@param unit The input unit
 			@return A reference to this
 		*/
-		Value& assign(const String& val, const measure::AngleUnit& unit) override;
+		Value& assign(const string& val, const measure::AngleUnit& unit) override;
 	};
 	
 }

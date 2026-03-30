@@ -15,25 +15,25 @@ using namespace active;
  
 	return: A new unique string based on the specified string
   --------------------------------------------------------------------*/
-String UniqueString::generate(const String& seedString, bool addToExisting) {
-		String uniqueString{seedString};
+string UniqueString::generate(const string& seedString, bool addToExisting) {
+		string uniqueString{seedString};
 		if (m_existingSet.contains(uniqueString)) {
-			String textOnly{seedString};
+			string textOnly{seedString};
 			uint32_t suffixLen = 0;
-			if (auto lastLetter = textOnly.find_last_not_of(String::allDigit); lastLetter) {
+			if (auto lastLetter = textOnly.find_last_not_of(string::allDigit); lastLetter) {
 				textOnly = textOnly.substr(0, *lastLetter + 1);
 				suffixLen = static_cast<uint32_t>(uniqueString.length() - *lastLetter - 1);
 			}
 			uint32_t topSuffix = 0;
 			for (const auto& item : m_existingSet) {
-				String text(item);
+				string text(item);
 				if (textOnly.empty() || (text.find(textOnly) == 0)) {
 					text = text.substr(textOnly.length());
-					if (!text.empty() && !text.find_first_not_of(String::allDigit))
+					if (!text.empty() && !text.find_first_not_of(string::allDigit))
 						topSuffix = std::max(topSuffix, text.operator uint32_t());
 				}
 			}
-			String suffix(String{++topSuffix});
+			string suffix(string{++topSuffix});
 			suffix.pad_right(suffixLen, "0");
 			uniqueString = textOnly + suffix;
 		}

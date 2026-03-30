@@ -17,8 +17,8 @@ namespace active::database {
 	 @tparam Transport The serialisation transport mechanism for objects
 	 @tparam DocID The document identifier type, e.g. Guid. The type is arbitrary if a document structure is not employed
 	 @tparam ObjID The object identifier type, e.g. Guid
-	 @tparam DBaseID The database identifier type, e.g. Guid (or String for named dbases)
-	 @tparam TableID The table identifier type, e.g. Guid (or String for named tables)
+	 @tparam DBaseID The database identifier type, e.g. Guid (or string for named dbases)
+	 @tparam TableID The table identifier type, e.g. Guid (or string for named tables)
 	 @tparam TableType An identifier for a table type or group
 	 */
 	template<typename Obj, typename Transport, typename DocID = active::Guid, typename ObjID = active::Guid,

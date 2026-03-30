@@ -37,7 +37,7 @@ namespace active::serialise::doc {
 		///Concept for classes that specify a document type name to reconstruct objects from serialised data
 	template <typename T>
 	concept Typed = requires(T t) {
-		{ t.docType } -> std::same_as<active::String&>;
+		{ t.docType } -> std::same_as<active::string&>;
 	};
 	
 }

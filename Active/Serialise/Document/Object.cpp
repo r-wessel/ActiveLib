@@ -42,7 +42,7 @@ namespace {
 	type: The document object type - used to reconstruct the original object. NB: Can use type_info.name, but isn't consistent
 	objTag: An optional serialisation tag (differentiating the object role when there are many of the same type for different purposes)
   --------------------------------------------------------------------*/
-Object::Object(const String& type, std::optional<String> objTag) {
+Object::Object(const string& type, std::optional<string> objTag) {
 	docType = type;
 	if (objTag)
 		tag = *objTag;
@@ -56,7 +56,7 @@ Object::Object(const String& type, std::optional<String> objTag) {
  
 	return: The requested object (nullptr if not found)
   --------------------------------------------------------------------*/
-const Object* Object::object(const String& tag) const {
+const Object* Object::object(const string& tag) const {
 	if (const auto& match = std::find_if(objects.begin(), objects.end(), [&](auto& object) { return object.tag == tag; }); match != objects.end())
 		return &(*match);
 	return nullptr;
@@ -70,7 +70,7 @@ const Object* Object::object(const String& tag) const {
  
 	return: The requested value (nullopt on failure)
   --------------------------------------------------------------------*/
-const std::optional<ValueSetting> Object::value(const String& name) const {
+const std::optional<ValueSetting> Object::value(const string& name) const {
 	if (const auto& match = std::find_if(values.begin(), values.end(), [&](auto& value) { return value.name() == name; }); match != values.end())
 		return *match;
 	return std::nullopt;
@@ -121,7 +121,7 @@ std::unique_ptr<active::serialise::Cargo> Object::getCargo(const active::seriali
 		case obj:
 			if (item.available < objects.size())
 				return std::make_unique<PackageWrap>(objects[item.available]);
-			return std::make_unique<Object>(String());
+			return std::make_unique<Object>(string());
 		default:
 			return nullptr;	//Requested an unknown index
 	}

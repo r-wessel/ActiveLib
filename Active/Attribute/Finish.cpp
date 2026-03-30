@@ -18,7 +18,7 @@ using namespace active;
  
 	return: The hash formatted as specified
   --------------------------------------------------------------------*/
-String Finish::hash(HashFormat format) const {
+string Finish::hash(HashFormat format) const {
 	if (!id.empty())
 		return id;
 	SHA256 hasher;

@@ -33,7 +33,7 @@ namespace {
  
 	return: The equivalent anchor
   --------------------------------------------------------------------*/
-std::optional<Anchor2D> active::geometry::toAnchor2D(const String& text) {
+std::optional<Anchor2D> active::geometry::toAnchor2D(const string& text) {
 	for (auto i = 0; i < anchorName.size(); ++i)
 		if (text == anchorName[i])
 			return static_cast<Anchor2D>(i);
@@ -48,6 +48,6 @@ std::optional<Anchor2D> active::geometry::toAnchor2D(const String& text) {
  
 	return: The anchor name as text
   --------------------------------------------------------------------*/
-String active::geometry::fromAnchor2D(Anchor2D anchor) {
+string active::geometry::fromAnchor2D(Anchor2D anchor) {
 	return anchorName.at(static_cast<size_t>(anchor));
 } //active::geometry::fromAnchor2D

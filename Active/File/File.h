@@ -81,7 +81,7 @@ namespace active::file {
 			@param canReplaceDirectory True if the file can be created and replace an existing directory with the same name
 			@throw std::ios_base::failure Thrown if isMissingCreated = true and the file cannot be created
 		*/
-		File(const Directory& parent, const String& name, Permission perm = readWrite,
+		File(const Directory& parent, const string& name, Permission perm = readWrite,
 			 bool isMissingCreated = false, bool canReplaceDirectory = false);
 		/*!
 			Copy constructor
@@ -174,7 +174,7 @@ namespace active::file {
 			@throw std::ios_base::failure Thrown on error
 			@return The number of bytes read
 		*/
-		size_type read(String& text, sizeOption howMany = std::nullopt, text_encoding encoding = UTF8) const;
+		size_type read(string& text, sizeOption howMany = std::nullopt, text_encoding encoding = UTF8) const;
 		/*!
 			Read from the file
 			@param memory The memory to read the data into
@@ -218,7 +218,7 @@ namespace active::file {
 			@param encoding The text encoding to write
 			@throw std::ios_base::failure Thrown on error
 		*/
-		virtual void write(const String& text, std::optional<String::size_type> howMany = std::nullopt, text_encoding encoding = UTF8);
+		virtual void write(const string& text, std::optional<string::size_type> howMany = std::nullopt, text_encoding encoding = UTF8);
 		/*!
 			Write to the file from a block of memory
 			@param data The data to write

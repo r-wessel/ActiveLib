@@ -41,7 +41,7 @@ namespace active::serialise {
 		 	@param value The pair value
 			@param name Optional name for the key/value pair
 		*/
-		Pair(std::unique_ptr<Cargo> key, std::unique_ptr<Cargo> value, std::optional<String> name = std::nullopt);
+		Pair(std::unique_ptr<Cargo> key, std::unique_ptr<Cargo> value, std::optional<string> name = std::nullopt);
 			///No copy constructor
 		Pair(const Pair& source) = delete;
 			///Destructor
@@ -110,7 +110,7 @@ namespace active::serialise {
 			///The pair value
 		std::unique_ptr<Cargo> m_value;
 			///Optional pair name
-		std::optional<String> m_name;
+		std::optional<string> m_name;
 	};
 	
 }

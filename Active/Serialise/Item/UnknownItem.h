@@ -20,7 +20,7 @@ namespace active::serialise {
 			@param dest The string to write the const data to
 			@return True if the data was successfully written
 		*/
-		bool write(String& dest) const override { return false; }	//This is read-only
+		bool write(string& dest) const override { return false; }	//This is read-only
 		
 		// MARK: - Functions (mutating)
 		
@@ -33,7 +33,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const String& source) override { return true; }
+		bool read(const string& source) override { return true; }
 	};
 	
 }

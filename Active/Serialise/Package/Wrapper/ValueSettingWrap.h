@@ -24,7 +24,7 @@ namespace active::serialise {
 		// MARK: - Static variables
 		
 			///The default element tag
-		static inline String tag = "setting";
+		static inline string tag = "setting";
 			
 		// MARK: - Constructor
 
@@ -77,7 +77,7 @@ namespace active::serialise {
 		
 	private:
 			///Temporary mutable storage for incoming values
-		mutable String m_value;
+		mutable string m_value;
 	};
 
 }

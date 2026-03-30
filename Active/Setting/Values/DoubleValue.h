@@ -77,7 +77,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& DoubleValue::operator=(const String& val) {
+	Value& DoubleValue::operator=(const string& val) {
 		if (auto doubleValue = val.to_double(); doubleValue) {
 			data = *doubleValue;
 			status = good;
@@ -92,7 +92,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& DoubleValue::operator=(const char* val) {
-		return operator=(String{val});
+		return operator=(string{val});
 	}
 	/*!
 		Assignment operator
@@ -143,7 +143,7 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	DoubleValue::operator String() const 	{ return String{data}; }
+	DoubleValue::operator string() const 	{ return string{data}; }
 	/*!
 		Get a time value
 		@return A time value

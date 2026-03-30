@@ -73,13 +73,13 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 			//Positive tests - these are well-formed statements that have a valid impact on the test string
 		
 			//Initialisation
-		String test{sampleText};
-		CHECK_MESSAGE(test == sampleText, TEST_MESSAGE(String constructed with incorrect content));
-		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(String constructed with incorrect size));
+		string test{sampleText};
+		CHECK_MESSAGE(test == sampleText, TEST_MESSAGE(string constructed with incorrect content));
+		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(string constructed with incorrect size));
 			//Substring
 		auto sub = test.substr(3, 10);
-		CHECK_MESSAGE(sub == u8"dਖdਖdabਖde", TEST_MESSAGE(String substring content wrong));
-		CHECK_MESSAGE(sub.length() == 10, TEST_MESSAGE(String substring size wrong));
+		CHECK_MESSAGE(sub == u8"dਖdਖdabਖde", TEST_MESSAGE(string substring content wrong));
+		CHECK_MESSAGE(sub.length() == 10, TEST_MESSAGE(string substring size wrong));
 		sub.replace(5, 2, "cd");
 		CHECK_MESSAGE(sub.length() == 10, TEST_MESSAGE(Replace text size incorrect));
 		CHECK_MESSAGE(sub == u8"dਖdਖdcdਖde", TEST_MESSAGE(Replace text content incorrect));
@@ -95,59 +95,59 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(uniString.size() == 27, TEST_MESSAGE(Unicode string constructed with incorrect size));
 		CHECK_MESSAGE(uniString[3] == U'\U0001E888', TEST_MESSAGE(Unicode string constructed with incorrect content));
 		std::u16string uniString16 = test;
-		String test16{uniString16};
+		string test16{uniString16};
 		CHECK_MESSAGE(test16.size() == 27, TEST_MESSAGE(Unicode string constructed with incorrect size));
 		CHECK_MESSAGE(test16[3] == U'𞢈', TEST_MESSAGE(Unicode string constructed with incorrect content));
 			//Copy to buffer
 		Memory charBuffer;
 		BufferOut{charBuffer}.write(test);
-		CHECK_MESSAGE(test == String{charBuffer.data()}, TEST_MESSAGE(String.copyTo(char) incorrect content));
+		CHECK_MESSAGE(test == string{charBuffer.data()}, TEST_MESSAGE(string.copyTo(char) incorrect content));
 		charBuffer.clear();
-		BufferOut{charBuffer}.write(test, String::UTF32);
-		CHECK_MESSAGE(test == String(charBuffer.data(), std::nullopt, String::UTF32), TEST_MESSAGE(String.copyTo(char32_t) incorrect content));
+		BufferOut{charBuffer}.write(test, string::UTF32);
+		CHECK_MESSAGE(test == string(charBuffer.data(), std::nullopt, string::UTF32), TEST_MESSAGE(string.copyTo(char32_t) incorrect content));
 		auto upper = test.to_upper();
 		auto lower = upper.to_lower();
-		CHECK_MESSAGE(test == lower, TEST_MESSAGE(String case transformations incorrect content));
+		CHECK_MESSAGE(test == lower, TEST_MESSAGE(string case transformations incorrect content));
 		
 			//Negative tests - these are invalid operations on the target string, attempting to provoke errors
 		
 			//Bad length bounds
-		test = String{sampleText, 100};
-		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(String length wrong constructed from bad bounds));
+		test = string{sampleText, 100};
+		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(string length wrong constructed from bad bounds));
 			//Bad start/length request
 		sub = test.substr(100, 10);
-		CHECK_MESSAGE(sub.empty(), TEST_MESSAGE(String contents not empty after substr out of bounds));
+		CHECK_MESSAGE(sub.empty(), TEST_MESSAGE(string contents not empty after substr out of bounds));
 			//Bad replace position
 		test = sampleText;
-		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(String length wrong assigned from bad bounds));
+		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(string length wrong assigned from bad bounds));
 		test.replace(100, 10, "hi");	//Appends to the end of the string when start position is after the end
-		CHECK_MESSAGE(test.length() == 26, TEST_MESSAGE(String replace failed with bad bounds));
+		CHECK_MESSAGE(test.length() == 26, TEST_MESSAGE(string replace failed with bad bounds));
 			//Void replacement input (effectively an erase)
 		test.replace(0, 100, "");
-		CHECK_MESSAGE(test.empty(), TEST_MESSAGE(String replace of all contents failed to erase string));
+		CHECK_MESSAGE(test.empty(), TEST_MESSAGE(string replace of all contents failed to erase string));
 			//Erase position out of bounds
-		test = String(sampleText);
+		test = string(sampleText);
 		test.erase(100, 10);
-		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(String erase out of bounds changed string length));
+		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(string erase out of bounds changed string length));
 			//Test find and erase in multibyte chars
-		String exampleStr{u8"½Pint Solutions® Inc Copyright © 2024"};
+		string exampleStr{u8"½Pint Solutions® Inc Copyright © 2024"};
 		auto pos = exampleStr.find_first_of(u8"®©");
 		exampleStr.erase(*pos, 1);
 			//Test interoperability with std::string types
-		String example1{u8"ようこそ 日本 へ"};
-		String example2{u"ようこそ 日本 へ"};
-		String example3{U"ようこそ 日本 へ"};
+		string example1{u8"ようこそ 日本 へ"};
+		string example2{u"ようこそ 日本 へ"};
+		string example3{U"ようこそ 日本 へ"};
 		std::u8string examplestd1{u8"ようこそ 日本 へ"};
 		std::u16string examplestd2{u"ようこそ 日本 へ"};
 		std::u32string examplestd3{U"ようこそ 日本 へ"};
-		CHECK_MESSAGE(((example1 == examplestd1) && (example2 == examplestd2) && (example3 == examplestd3)), TEST_MESSAGE(String init failed));
-		String copy1 = examplestd1;
-		String copy2 = examplestd2;
-		String copy3 = examplestd3;
+		CHECK_MESSAGE(((example1 == examplestd1) && (example2 == examplestd2) && (example3 == examplestd3)), TEST_MESSAGE(string init failed));
+		string copy1 = examplestd1;
+		string copy2 = examplestd2;
+		string copy3 = examplestd3;
 		std::u8string copystd1 = copy1;
 		std::u16string copystd2 = copy2;
 		std::u32string copystd3 = copy3;
-		CHECK_MESSAGE(((example1 == copystd1) && (example2 == copystd2) && (example3 == copystd3)), TEST_MESSAGE(String copy failed));
+		CHECK_MESSAGE(((example1 == copystd1) && (example2 == copystd2) && (example3 == copystd3)), TEST_MESSAGE(string copy failed));
 
 	} // namespace StringTest
 
@@ -155,99 +155,99 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		
 			//Positive tests - these are well-formed statements that have a valid impact on the test string
 		
-		String test{sampleText};
+		string test{sampleText};
 		auto result = test.find(u8"bਖd");
-		CHECK_MESSAGE(result == 9, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(result == 9, TEST_MESSAGE(string find returned wrong position));
 		result = test.find(u8"xy");
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
-		CHECK_MESSAGE(result == String::npos, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(!result, TEST_MESSAGE(string find returned wrong position));
+		CHECK_MESSAGE(result == string::npos, TEST_MESSAGE(string find returned wrong position));
 		std::string::size_type resVal = test.find(u8"xy");
-		CHECK_MESSAGE(resVal == String::npos, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(resVal == string::npos, TEST_MESSAGE(string find returned wrong position));
 		result = test.rfind(u8"bਖd");
-		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(result == 17, TEST_MESSAGE(string find returned wrong position));
 		resVal = test.rfind(u8"bਖd");
-		CHECK_MESSAGE(resVal == 17, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(resVal == 17, TEST_MESSAGE(string find returned wrong position));
 		result = test.rfind(u8"xy");
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String find returned wrong position));
+		CHECK_MESSAGE(!result, TEST_MESSAGE(string find returned wrong position));
 		result = test.find_first_not_of(u8"ਖd");
-		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String find_first_not_of returned wrong position));
+		CHECK_MESSAGE(result == 8, TEST_MESSAGE(string find_first_not_of returned wrong position));
 		result = test.find_first_of("ab");
-		CHECK_MESSAGE(result == 8, TEST_MESSAGE(String find_first_of returned wrong position));
+		CHECK_MESSAGE(result == 8, TEST_MESSAGE(string find_first_of returned wrong position));
 		result = test.find_last_of("ab");
-		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find_last_of returned wrong position));
+		CHECK_MESSAGE(result == 17, TEST_MESSAGE(string find_last_of returned wrong position));
 		result = test.find_last_of("xy");
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String find_last_of returned wrong position));
+		CHECK_MESSAGE(!result, TEST_MESSAGE(string find_last_of returned wrong position));
 		result = test.find_last_not_of(u8"abਖefgh");
-		CHECK_MESSAGE(result == 19, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		CHECK_MESSAGE(result == 19, TEST_MESSAGE(string find_last_not_of returned wrong position));
 		result = test.find_last_not_of(u8"aਖdefgh");
-		CHECK_MESSAGE(result == 17, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		CHECK_MESSAGE(result == 17, TEST_MESSAGE(string find_last_not_of returned wrong position));
 		result = test.find_last_not_of(u8"abਖdefgh");
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		CHECK_MESSAGE(!result, TEST_MESSAGE(string find_last_not_of returned wrong position));
 		result = test.find_last_not_of(sampleText);
-		CHECK_MESSAGE(!result, TEST_MESSAGE(String find_last_not_of returned wrong position));
+		CHECK_MESSAGE(!result, TEST_MESSAGE(string find_last_not_of returned wrong position));
 	}
 
 		///Tests for string conversions
 	TEST_CASE(TESTQ(testStringConversion)) {
 			//Double precision floating point tests
-		String testDoubleStr{ "654321.12345678" };
+		string testDoubleStr{ "654321.12345678" };
 		double testDouble{testDoubleStr};
-		CHECK_MESSAGE(isEqual(testDouble, 654321.12345678, 1e-7), TEST_MESSAGE(String conversion to double failed));
-		String output5{testDouble, 1e-5};
+		CHECK_MESSAGE(isEqual(testDouble, 654321.12345678, 1e-7), TEST_MESSAGE(string conversion to double failed));
+		string output5{testDouble, 1e-5};
 		CHECK_MESSAGE(output5 == "654321.12346", TEST_MESSAGE(Double conversion to string with 5 dp failed));
-		String output3{testDouble, 1e-3};
+		string output3{testDouble, 1e-3};
 		CHECK_MESSAGE(output3 == "654321.123", TEST_MESSAGE(Double conversion to string with 3 dp failed));
-		String output6{1.234, 1e-6};
+		string output6{1.234, 1e-6};
 		CHECK_MESSAGE(output6 == "1.234", TEST_MESSAGE(Double conversion to string with 6 dp & no padding failed));
-		String output6b{1.234, 1e-6, true};
+		string output6b{1.234, 1e-6, true};
 		CHECK_MESSAGE(output6b == "1.234000", TEST_MESSAGE(Double conversion to string with 6 dp and padding failed));
 			//Signed 16-bit integer tests
-		String test16{"-7654"};
+		string test16{"-7654"};
 		int16_t val16{test16};
-		CHECK_MESSAGE(val16 == -7654, TEST_MESSAGE(String conversion to int16_t failed));
-		String output16{val16};
-		CHECK_MESSAGE(output16 == test16, TEST_MESSAGE(int16_t conversion to String failed));
+		CHECK_MESSAGE(val16 == -7654, TEST_MESSAGE(string conversion to int16_t failed));
+		string output16{val16};
+		CHECK_MESSAGE(output16 == test16, TEST_MESSAGE(int16_t conversion to string failed));
 			//Signed 32-bit integer tests
-		String test32{"-1073741824"};
+		string test32{"-1073741824"};
 		int32_t val32{test32};
-		CHECK_MESSAGE(val32 == -1073741824, TEST_MESSAGE(String conversion to int32_t failed));
-		String output32{val32};
-		CHECK_MESSAGE(output32 == test32, TEST_MESSAGE(int32_t conversion to String failed));
+		CHECK_MESSAGE(val32 == -1073741824, TEST_MESSAGE(string conversion to int32_t failed));
+		string output32{val32};
+		CHECK_MESSAGE(output32 == test32, TEST_MESSAGE(int32_t conversion to string failed));
 			//Unsigned 32-bit integer tests
-		String testu32{"2147483648"};
+		string testu32{"2147483648"};
 		uint32_t valu32{testu32};
-		CHECK_MESSAGE(valu32 == 2147483648, TEST_MESSAGE(String conversion to uint32_t failed));
-		String outputu32{valu32};
-		CHECK_MESSAGE(outputu32 == testu32, TEST_MESSAGE(Uint32_t conversion to String failed));
+		CHECK_MESSAGE(valu32 == 2147483648, TEST_MESSAGE(string conversion to uint32_t failed));
+		string outputu32{valu32};
+		CHECK_MESSAGE(outputu32 == testu32, TEST_MESSAGE(Uint32_t conversion to string failed));
 			//Signed 64-bit integer tests
-		String test64{"-9007199254740992"};
+		string test64{"-9007199254740992"};
 		int64_t val64{test64};
-		CHECK_MESSAGE(val64 == -9007199254740992, TEST_MESSAGE(String conversion to int64_t failed));
-		String output64{val64};
-		CHECK_MESSAGE(output64 == test64, TEST_MESSAGE(int64_t conversion to String failed));
+		CHECK_MESSAGE(val64 == -9007199254740992, TEST_MESSAGE(string conversion to int64_t failed));
+		string output64{val64};
+		CHECK_MESSAGE(output64 == test64, TEST_MESSAGE(int64_t conversion to string failed));
 			//Unsigned 64-bit integer tests
-		String testu64{"9223372036854775808"};
+		string testu64{"9223372036854775808"};
 		uint64_t valu64{testu64};
-		CHECK_MESSAGE(valu64 == 9223372036854775808u, TEST_MESSAGE(String conversion to uint64_t failed));
-		String outputu64{valu64};
-		CHECK_MESSAGE(outputu64 == testu64, TEST_MESSAGE(Uint64_t conversion to String failed));
+		CHECK_MESSAGE(valu64 == 9223372036854775808u, TEST_MESSAGE(string conversion to uint64_t failed));
+		string outputu64{valu64};
+		CHECK_MESSAGE(outputu64 == testu64, TEST_MESSAGE(Uint64_t conversion to string failed));
 	}
 	
 		///Tests for string editing
 	TEST_CASE(TESTQ(testStringEditing)) {
 			//Test for replacement of expression in a string containing partial and full matches
-		String sentence{"Once upon a time, it was the best of times"};
+		string sentence{"Once upon a time, it was the best of times"};
 		sentence.replace_all("times", "algorithms");
-		CHECK_MESSAGE(sentence == "Once upon a time, it was the best of algorithms", TEST_MESSAGE(String replace_all failed));
+		CHECK_MESSAGE(sentence == "Once upon a time, it was the best of algorithms", TEST_MESSAGE(string replace_all failed));
 			//Strip out specified characters
 		sentence = "Some 😀 text 😅 with 🥸 annoying🤔 emojis🤕";
 			///Search for char in specified array
 		auto firstEmoji = sentence.find_first_of("👹🥸😀🤔🤢🤕😅🦷");
-		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(String::find_first_of failed to find char));
-		CHECK_MESSAGE(sentence[*firstEmoji] == U'😀', TEST_MESSAGE(String subscript failed to get correct char));
+		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(string::find_first_of failed to find char));
+		CHECK_MESSAGE(sentence[firstEmoji] == U'😀', TEST_MESSAGE(string subscript failed to get correct char));
 			///Search for char by filter
 		firstEmoji = sentence.find_if([&sentence](auto uniChar){ return isEmoji(uniChar); });
-		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(String::findIf failed to find char));
+		CHECK_MESSAGE(firstEmoji == 5, TEST_MESSAGE(string::findIf failed to find char));
 		auto backup = sentence;
 			//Strip out all emoji
 		sentence.replace_if([&sentence](auto uniChar){ return isEmoji(uniChar); }, "");
@@ -256,13 +256,13 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 			if (auto len = sentence.size(); len == sentence.replace_all("  ", " ").size())
 				break;
 		sentence.replace_all("with", "without");
-		CHECK_MESSAGE(sentence == "Some text without annoying emojis", TEST_MESSAGE(String.replace_all failed));
+		CHECK_MESSAGE(sentence == "Some text without annoying emojis", TEST_MESSAGE(string.replace_all failed));
 		backup.replace_any_of("😀😅🥸🤔🤕");
 		firstEmoji = backup.find_if([&sentence](auto uniChar){ return isEmoji(uniChar); });
-		CHECK_MESSAGE(!firstEmoji, TEST_MESSAGE(String::replace_any_of failed to replace chars));
+		CHECK_MESSAGE(firstEmoji == string::npos, TEST_MESSAGE(string::replace_any_of failed to replace chars));
 	}
 
-		///Throw random data at String to try to provoke a crash
+		///Throw random data at string to try to provoke a crash
 	TEST_CASE(TESTQ(testStringFuzzing)) {
 		constexpr Memory::size_type testLen = 0x0100;
 		constexpr Memory::size_type testCount = 10;
@@ -275,16 +275,16 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 				for (auto i = 0; i < testLen; ++i, ++total)
 					temp.write(rand() % 256);
 			}
-			String test{BufferIn{random}};	//We can't confirm correctness - this is to test the String class doesn't crash when fed random (bad) data
+			string test{BufferIn{random}};	//We can't confirm correctness - this is to test the string class doesn't crash when fed random (bad) data
 		}
 	}
 
 		///Tests for string comparisons
 	TEST_CASE(TESTQ(testStringCompare)) {
-		CHECK_MESSAGE(String{"A"} == String{"A"}, TEST_MESSAGE(String equality check failed));
-		CHECK_MESSAGE(String{"A"} != String{"B"}, TEST_MESSAGE(String inequality check failed));
-		CHECK_MESSAGE(String{"A"} < String{"B"}, TEST_MESSAGE(String less-than check failed));
-		CHECK_MESSAGE(String{"B"} > String{"A"}, TEST_MESSAGE(String greater-than check failed));
+		CHECK_MESSAGE(string{"A"} == string{"A"}, TEST_MESSAGE(string equality check failed));
+		CHECK_MESSAGE(string{"A"} != string{"B"}, TEST_MESSAGE(string inequality check failed));
+		CHECK_MESSAGE(string{"A"} < string{"B"}, TEST_MESSAGE(string less-than check failed));
+		CHECK_MESSAGE(string{"B"} > string{"A"}, TEST_MESSAGE(string greater-than check failed));
 	}
 
 TEST_SUITE_CLOSE

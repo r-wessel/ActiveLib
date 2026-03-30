@@ -25,15 +25,15 @@ namespace {
 	 @param path The target path
 	 @return The expanded path (nullopt on failure)
 	 */
-	std::optional<String> expandPath(const String& path) {
-		std::optional<String> result;
-		String shellPath{path};
+	std::optional<string> expandPath(const string& path) {
+		std::optional<string> result;
+		string shellPath{path};
 			//Shell paths can't contain unescaped spaces
 		shellPath.replace_all("\\ ", " ");	//Can't be certain that some spaces aren't already escaped - reduce all to spaces
 		shellPath.replace_all(" ", "\\ ");
 		wordexp_t exp_result;
 		if (wordexp(shellPath.data(), &exp_result, 0) == 0)
-			result = String{exp_result.we_wordv[0]};
+			result = string{exp_result.we_wordv[0]};
 		wordfree(&exp_result);
 		return result;
 	} //expandPath
@@ -71,7 +71,7 @@ Directory::Directory(const Path& path, bool isMissingCreated, bool canReplaceFil
 	isMissingCreated: True if the folder should be created when missing
 	canReplaceFile: True if the directory can be created and replace an existing file with the same name
   --------------------------------------------------------------------*/
-Directory::Directory(const Directory& parent, const String& name, bool isMissingCreated, bool canReplaceFile) :
+Directory::Directory(const Directory& parent, const string& name, bool isMissingCreated, bool canReplaceFile) :
 		Directory(parent.getPath() + name, isMissingCreated, canReplaceFile) {
 } //Directory::Directory
 
@@ -115,7 +115,7 @@ std::optional<Directory> Directory::appData() {
 #ifdef WINDOWS
 	wchar_t* directorypath = nullptr;
 	if (SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &directorypath) == S_OK)
-		result = Directory{String{reinterpret_cast<char16_t*>(directorypath)}};
+		result = Directory{string{reinterpret_cast<char16_t*>(directorypath)}};
 	CoTaskMemFree(static_cast<void*>(directorypath));
 #endif
 #ifdef __APPLE__

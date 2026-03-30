@@ -65,7 +65,7 @@ namespace active::rpc {
 		 @param name The function name (as called remotely)
 		 @param function The C++ function bound to the name
 		 */
-		NamedFunction(const active::String& name, Function function) : active::NameID{name}, m_function{function} {}
+		NamedFunction(const active::string& name, Function function) : active::NameID{name}, m_function{function} {}
 		/*!
 		 Copy constructor
 		 @param source The object to copy
@@ -82,7 +82,7 @@ namespace active::rpc {
 		 Get the function name
 		 @return The function name
 		 */
-		active::String getName() const override { return name; }
+		active::string getName() const override { return name; }
 		/*!
 		 Execute the function
 		 @param arg The transported function argument

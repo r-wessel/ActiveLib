@@ -16,7 +16,7 @@ using namespace active::setting;
  
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
-bool AnyValueWrap::write(String& dest) const {
+bool AnyValueWrap::write(string& dest) const {
 	dest = getTargetValue();
 	return true;
 } //AnyValueWrap::read
@@ -29,7 +29,7 @@ bool AnyValueWrap::write(String& dest) const {
  
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool AnyValueWrap::read(const String& source) {
+bool AnyValueWrap::read(const string& source) {
 		//NB: Value is only mutated within import processes, in which case the object must be mutable (i.e. const discard is safe)
 	const_cast<Value&>(getTargetValue()) = source;
 	return true;

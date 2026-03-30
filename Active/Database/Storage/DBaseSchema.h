@@ -10,7 +10,7 @@ namespace active::database {
 	/*!
 	 Class describing the schema of a database table including fields and primary indices
 	 */
-	template<typename DBaseID = active::String, typename TableID = active::String>
+	template<typename DBaseID = active::string, typename TableID = active::string>
 	class DBaseSchema : public std::vector<TableSchema<TableID>> {
 	public:
 		

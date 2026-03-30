@@ -120,7 +120,7 @@ namespace active::setting {
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(const String& val, const NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(const string& val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
@@ -214,7 +214,7 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator active::String() const { return getValue<String>(); }
+		operator active::string() const { return getValue<string>(); }
 		/*!
 			Get a guid value
 			@return A guid value
@@ -296,7 +296,7 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		active::String stringVal(size_t row = 0, size_t col = 0) const { return getValue<String>(row, col); }
+		active::string stringVal(size_t row = 0, size_t col = 0) const { return getValue<string>(row, col); }
 		/*!
 			Get a guid value
 			@return A guid value

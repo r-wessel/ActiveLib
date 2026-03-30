@@ -72,7 +72,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& BoolValue::operator=(const String& val) {
+	Value& BoolValue::operator=(const string& val) {
 		if ((val.to_lower() == "true") || (val.to_lower() == "1"))
 			data = true;
 		else if ((val.to_lower() == "false") || (val.to_lower() == "0"))
@@ -130,7 +130,7 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	BoolValue::operator String() const 	{ return data ? "true" : "false"; }
+	BoolValue::operator string() const 	{ return data ? "true" : "false"; }
 	
 	// MARK: - Functions (const)
 	

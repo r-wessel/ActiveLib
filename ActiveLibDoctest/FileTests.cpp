@@ -8,9 +8,9 @@ using namespace active::file;
 using namespace active;
 
 namespace {
-	String testDirectoryPath{"Testing"};
-	String testFileName{"Example.txt"};
-	String sampleData{u8"\u0A16d\u0A16d\u0A16d\u0A16dab\u0A16defghab\u0A16defgh"};
+	string testDirectoryPath{"Testing"};
+	string testFileName{"Example.txt"};
+	string sampleData{u8"\u0A16d\u0A16d\u0A16d\u0A16dab\u0A16defghab\u0A16defgh"};
 } // namespace
 
 TEST_SUITE(TESTQ(FileTests)) TEST_SUITE_OPEN
@@ -63,7 +63,7 @@ TEST_SUITE(TESTQ(FileTests)) TEST_SUITE_OPEN
 		} catch(std::system_error& error) {
 			FAIL_CHECK(TEST_MESSAGE(Set file position failed));
 		}
-		String textIn;
+		string textIn;
 		try {
 			auto readSize = testFile.size();
 			CHECK_MESSAGE(readSize == sampleData.data_size(), TEST_MESSAGE(File size reported incorrectly));

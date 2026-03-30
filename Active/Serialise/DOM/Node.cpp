@@ -40,7 +40,7 @@ namespace {
 				case floatType:
 						return active::serialise::dom::Value{0.0};
 				default:
-					return active::serialise::dom::Value{String{}};
+					return active::serialise::dom::Value{string{}};
 			}
 		}
 	} //makeNode
@@ -86,7 +86,7 @@ dom::Value::Value(const setting::Value& source) {
 			base::operator=(source.operator double());
 			break;
 		default:
-			base::operator=(source.operator String());
+			base::operator=(source.operator string());
 			break;
 	}
 } //Value::Value
@@ -107,7 +107,7 @@ ValueSetting dom::Value::setting() const {
 		case floatType:
 			return ValueSetting(get<double>(*this));
 		case stringType:
-			return ValueSetting(get<String>(*this));
+			return ValueSetting(get<string>(*this));
 		default:
 			break;
 	}
@@ -132,7 +132,7 @@ bool Node::empty() const {
 				case floatType:
 					return math::isZero(get<double>(value()));
 				case stringType:
-					return get<String>(value()).empty();
+					return get<string>(value()).empty();
 				default:
 					break;
 			}
@@ -155,7 +155,7 @@ bool Node::empty() const {
  
 	return: The type index of the named item (nullopt if not found)
   --------------------------------------------------------------------*/
-std::optional<Node::Index> Node::index(const String& name) const {
+std::optional<Node::Index> Node::index(const string& name) const {
 	if (!isObject())
 		return std::nullopt;
 	if (auto iter = object().find(name); iter != object().end())
@@ -171,7 +171,7 @@ std::optional<Node::Index> Node::index(const String& name) const {
  
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
-bool Node::write(String& dest) const {
+bool Node::write(string& dest) const {
 	using enum Value::Index;
 	switch (value().index()) {
 		case boolType:
@@ -181,7 +181,7 @@ bool Node::write(String& dest) const {
 		case floatType:
 			return DoubleWrap(get<double>(value())).write(dest);
 		case stringType:
-			dest = get<String>(value());
+			dest = get<string>(value());
 			break;
 		default:
 			dest.clear();
@@ -222,7 +222,7 @@ std::optional<Cargo::Type> Node::type() const {
  
 	return: The requested value setting (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<ValueSetting> Node::setting(const String& name) const {
+std::optional<ValueSetting> Node::setting(const string& name) const {
 	if (!isObject())
 		return std::nullopt;
 	if (auto iter = object().find(name); (iter != object().end()) && (iter->second.index() == Index::value)) {
@@ -235,7 +235,7 @@ std::optional<ValueSetting> Node::setting(const String& name) const {
 			case floatType:
 				return ValueSetting(get<double>(iter->second.value()), name);
 			case stringType:
-				return ValueSetting(get<String>(iter->second.value()), name);
+				return ValueSetting(get<string>(iter->second.value()), name);
 			default:
 				break;
 		}
@@ -306,7 +306,7 @@ std::unique_ptr<active::serialise::Cargo> Node::getCargo(const active::serialise
  
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool Node::read(const String& source) {
+bool Node::read(const string& source) {
 	base::operator=(Value{source});
 	return true;
 } //Node::read
@@ -331,7 +331,7 @@ bool Node::readSetting(const setting::Value& source) {
 			base::operator=(Value{source.operator double()});
 			break;
 		default:
-			base::operator=(Value{source.operator String()});
+			base::operator=(Value{source.operator string()});
 	};
 	return true;
 } //Node::readSetting

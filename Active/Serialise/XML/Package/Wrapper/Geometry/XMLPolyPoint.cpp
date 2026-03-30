@@ -58,7 +58,7 @@ XMLPolyPoint::XMLPolyPoint(geometry::PolyPoint& point) : XMLPoint(point) {}
 	point: The poly-point to wrap for (de)serialisation
 	customTag: A custom tag (overrides the default tag)
   --------------------------------------------------------------------*/
-XMLPolyPoint::XMLPolyPoint(geometry::PolyPoint& point, const String& customTag) : XMLPoint(point, customTag) {}
+XMLPolyPoint::XMLPolyPoint(geometry::PolyPoint& point, const string& customTag) : XMLPoint(point, customTag) {}
 
 // MARK: - Functions (const)
 

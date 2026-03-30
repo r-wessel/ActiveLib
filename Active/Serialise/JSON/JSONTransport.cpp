@@ -42,7 +42,7 @@ namespace {
 		//Leading characters for a text value
 	constexpr char32_t textLeader{U'\"'};
 		//Leading string for a text value
-	const String textLeaderStr{std::u32string{textLeader}};
+	const string textLeaderStr{std::u32string{textLeader}};
 		//Possible leading characters for a numeric value
 	const std::u32string numberLeader{U"-0123456789"};
 		//Possible content characters for a numeric value
@@ -54,7 +54,7 @@ namespace {
 		//Leading characters for a null value
 	constexpr char32_t nullLeader{U'n'};
 		//A JSON null value
-	String nullValue{"null"};
+	string nullValue{"null"};
 		//All possible value leaders
 	const std::u32string valueLeaders{std::u32string{textLeader} + std::u32string{numberLeader} +
 			std::u32string{boolLeader} + std::u32string{nullLeader}};
@@ -65,13 +65,13 @@ namespace {
 		//Array terminator
 	constexpr char32_t arrayTerminator{U']'};
 		//All possible JSON value terminators
-	String valueTerminators{std::u32string{valueDelimiter} + std::u32string{objectTerminator} + std::u32string{arrayTerminator}};
+	string valueTerminators{std::u32string{valueDelimiter} + std::u32string{objectTerminator} + std::u32string{arrayTerminator}};
 		//The JSON escape character
 	constexpr char32_t escapeChar{U'\\'};
 		//The JSON escape string
-	const String escapeStr{std::u32string{escapeChar}};
+	const string escapeStr{std::u32string{escapeChar}};
 		//The JSON replacement for an escape character
-	String escapeCharSymbol{"\\\\"};
+	string escapeCharSymbol{"\\\\"};
 		//Proxy package for unknown objects during import
 	Unknown m_unknown;
 
@@ -145,9 +145,9 @@ namespace {
 	/*!
 		A glossary of reserved JSON symbols and the equivalent long-form representation in plain text, e.g. '&' = '&amp'
 	*/
-	class JSONGlossary : public std::unordered_map<String, String> {
+	class JSONGlossary : public std::unordered_map<string, string> {
 	public:
-		typedef std::unordered_map<String, String> base;
+		typedef std::unordered_map<string, string> base;
 		
 		/*!
 			Default constructor
@@ -159,7 +159,7 @@ namespace {
 			@param entity The entity to replace
 			@return The replacement
 		*/
-		String getReplacement(const String& entity) const;
+		string getReplacement(const string& entity) const;
 	};
 	
 	
@@ -180,7 +180,7 @@ namespace {
 	 
 		return: A reference to the converted string
 	  --------------------------------------------------------------------*/
-	String& toJSONString(String& source, JSONGlossary& glossary) {
+	string& toJSONString(string& source, JSONGlossary& glossary) {
 			//We need to replace the JSON escape char first (and separately) to ensure subsequent escaped chars aren't affected
 		source.replace_all(escapeStr, escapeCharSymbol);
 		for (auto& i : glossary)
@@ -197,15 +197,15 @@ namespace {
 	 
 		return: A reference to the converted string
 	  --------------------------------------------------------------------*/
-	String& fromJSONString(String& source, JSONGlossary& glossary) {
-		std::optional<String::size_type> index = 0;
+	string& fromJSONString(string& source, JSONGlossary& glossary) {
+		std::optional<string::size_type> index = 0;
 		if (!source.find(escapeStr, *index))
 			return source;
 		BufferIn sourceBuffer{source};
-		String output;
+		string output;
 		output.reserve(source.data_size());
 		while (sourceBuffer.find(escapeChar, &output, true)) {
-			String entity;
+			string entity;
 			sourceBuffer.getString(entity, 1);
 			if ((entity == "u") && !sourceBuffer.getString(entity, 4))	//Hex char code
 				throw std::system_error(makeJSONError(badEncoding));
@@ -267,7 +267,7 @@ namespace {
 			@param tagType The tag type
 			@param valType The value type
 		*/
-		JSONIdentity(Type tagType, std::optional<active::setting::Value::Type> valType) : Identity{String{}, valType} { type = tagType; }
+		JSONIdentity(Type tagType, std::optional<active::setting::Value::Type> valType) : Identity{string{}, valType} { type = tagType; }
 		/*!
 			Copy constructor
 			@param source The object to copy
@@ -360,7 +360,7 @@ namespace {
 			Write the specified string
 			@param toWrite The string to write
 		*/
-		void write(const String& toWrite);
+		void write(const string& toWrite);
 		/*!
 			Write a tag to the data destination
 			@param tag The tag to write
@@ -368,12 +368,12 @@ namespace {
 			@param type The tag type
 			@param depth The tag depth in the JSON hierarchy
 		*/
-		void writeTag(const String& tag, const std::optional<String>& nameSpace, JSONIdentity::Type type, int32_t depth);
+		void writeTag(const string& tag, const std::optional<string>& nameSpace, JSONIdentity::Type type, int32_t depth);
 		/*!
 			Write a phrase to the data destination
 			@param phrase The phrase to write
 		*/
-		void writePhrase(const String& phrase);
+		void writePhrase(const string& phrase);
 		/*!
 			Flush the buffer to the destination
 		*/
@@ -386,7 +386,7 @@ namespace {
 			@param entity The entity to add
 			@param text The replacement text for the entity
 		*/
-		void addEntity(const String& entity, const String text);
+		void addEntity(const string& entity, const string text);
 		
 	private:
 			///A buffer for the exported data (wraps the export destination)
@@ -492,7 +492,7 @@ namespace {
 			Get a value from the data source, e.g. the data between quotes
 			@return The JSON value
 		*/
-		String getValue();
+		string getValue();
 		/*!
 			Get item content from the data source
 			@param cargo The cargo to receive the content
@@ -508,7 +508,7 @@ namespace {
 			@param entity The entity to add
 			@param text The replacement text for the entity
 		*/
-		void addEntity(const String& entity, const String text) { m_glossary[entity] = text; }
+		void addEntity(const string& entity, const string text) { m_glossary[entity] = text; }
 		/*!
 			Set the encoding of the JSON inout stream
 		 	@param format The source data format
@@ -561,7 +561,7 @@ namespace {
 	 
 		return: The replacement
 	  --------------------------------------------------------------------*/
-	String JSONGlossary::getReplacement(const String& entity) const {
+	string JSONGlossary::getReplacement(const string& entity) const {
 		if (auto i = find(escapeStr + entity); i != end())
 			return i->second;
 		uint32_t charCode = 0;
@@ -571,7 +571,7 @@ namespace {
 			else
 				throw std::system_error(makeJSONError(unknownEscapeChar));
 		}
-		String result{reinterpret_cast<char16_t*>(&charCode), 1};
+		string result{reinterpret_cast<char16_t*>(&charCode), 1};
 		if (result.empty())
 			throw std::system_error(makeJSONError(badEncoding));
 		return result;
@@ -611,7 +611,7 @@ namespace {
 				if (leader.first == textLeader) {
 					result = {valueStart, active::setting::Value::Type::stringType};
 				} else if (leader.first == nullLeader) {
-					String text{"n"};
+					string text{"n"};
 					m_buffer.findIf([](char32_t uniChar){ return isValueTerminator(uniChar); }, &text);
 					if (text != nullValue)
 						throw std::system_error(makeJSONError(badValue));
@@ -671,7 +671,7 @@ namespace {
 		if (content.second == 0)
 			throw std::system_error(makeJSONError(valueMissing));
 		std::unique_ptr<Value> value;
-		String text;
+		string text;
 			//If we have an opening quote, this must be a text value
 		if (content.first == textLeader) {
 				//Search for the closing quotes and extract string content
@@ -689,10 +689,10 @@ namespace {
 			}, &text);
 			if (text.empty())
 				throw std::system_error(makeJSONError(valueMissing));
-			std::optional<String::size_type> lastChar;
+			std::optional<string::size_type> lastChar;
 			if (allWhiteSpace32.find(endChar) != std::u32string::npos) {
 					//Trim trailing white-space chars
-				lastChar = text.find_last_not_of(String::allWhiteSpace);
+				lastChar = text.find_last_not_of(string::allWhiteSpace);
 				if (!lastChar)
 					throw std::system_error(makeJSONError(valueMissing));
 			} else
@@ -749,14 +749,14 @@ namespace {
 		type: The tag type
 		depth: The tag depth in the JSON hierarchy
 	  --------------------------------------------------------------------*/
-	void JSONExporter::writeTag(const String& tag, const std::optional<String>& nameSpace, JSONIdentity::Type type, int32_t depth) {
-		String jsonStr;
+	void JSONExporter::writeTag(const string& tag, const std::optional<string>& nameSpace, JSONIdentity::Type type, int32_t depth) {
+		string jsonStr;
 		bool isClosing = (type == objectEnd) || (type == arrayEnd);
 		if ((depth > 0) || isClosing) {
 			if (isLineFeeds)
 				jsonStr.append("\n");
 			if (isTabbed)
-				jsonStr.append(String(depth, "\t"));
+				jsonStr.append(string(depth, "\t"));
 		}
 		if (!isClosing) {
 				//Write a name when specified
@@ -799,7 +799,7 @@ namespace {
 	 
 		toWrite: The string to write
 	  --------------------------------------------------------------------*/
-	void JSONExporter::write(const String& toWrite) {
+	void JSONExporter::write(const string& toWrite) {
 		if (toWrite.empty())
 			return;	//No data is not an error
 		if (!m_buffer.write(toWrite))
@@ -812,8 +812,8 @@ namespace {
 		
 		phrase: The phrase to write
 	  --------------------------------------------------------------------*/
-	void JSONExporter::writePhrase(const String& phrase) {
-		String jsonStr(phrase);
+	void JSONExporter::writePhrase(const string& phrase) {
+		string jsonStr(phrase);
 		write(toJSONString(jsonStr, m_glossary));
 	} //JSONExporter::writePhrase
 
@@ -1049,7 +1049,7 @@ namespace {
 	  --------------------------------------------------------------------*/
 	void doJSONExport(const Cargo& cargo, const JSONIdentity& identity, JSONExporter& exporter, int32_t depth = 0) {
 		using enum JSONIdentity::Type;
-		String tag, nameSpace;
+		string tag, nameSpace;
 		if (identity.stage != root) {
 			if (identity.name.empty())	//Non-root values, i.e. values embedded in an object, must have an identifying name
 				throw std::system_error(makeJSONError(nameMissing));
@@ -1068,7 +1068,7 @@ namespace {
 				exporter.write(nullValue);
 				return;
 			}
-			String outgoing;
+			string outgoing;
 			cargo.useTimeFormat(*exporter.timeFormat);
 			if (!cargo.write(outgoing))
 				throw std::system_error(makeJSONError(badValue));
@@ -1100,7 +1100,7 @@ namespace {
 			auto entryItem = *entry.second;
 			if (!exporter.isEveryEntryRequired && (!entryItem.required || (entryItem.available == 0)))
 				continue;
-			auto entryNameSpace{entryItem.identity().group.value_or(String())};
+			auto entryNameSpace{entryItem.identity().group.value_or(string())};
 				//Each package item may have multiple available cargo items to export
 			auto limit = entryItem.available;
 			bool isItemArray = entryItem.isRepeating() && !isArray,
@@ -1132,12 +1132,12 @@ namespace {
 							 exporter, ((cargo.type() == Cargo::Type::package)) ? depth : depth + ((identity.stage == root) ? 0 : 1));
 			}
 			if (isItemArray)
-				exporter.writeTag(String{}, String{}, arrayEnd, depth);
+				exporter.writeTag(string{}, string{}, arrayEnd, depth);
 		}
 		if (isArray)
-			exporter.writeTag(String{}, String{}, arrayEnd, depth);
+			exporter.writeTag(string{}, string{}, arrayEnd, depth);
 		else if (isWrapper)
-			exporter.writeTag(String{}, String{}, objectEnd, --depth);
+			exporter.writeTag(string{}, string{}, objectEnd, --depth);
 	} //doJSONExport
 
 }  // namespace
@@ -1149,9 +1149,9 @@ namespace {
  
 	return: The converted string
   --------------------------------------------------------------------*/
-String JSONTransport::convertToJSONString(const String& source) {
+string JSONTransport::convertToJSONString(const string& source) {
 	JSONGlossary glossary;	
-	String result{source};
+	string result{source};
 	return toJSONString(result, glossary);
 } //JSONTransport::convertToJSONString
 
@@ -1163,9 +1163,9 @@ String JSONTransport::convertToJSONString(const String& source) {
  
 	return: The converted string
   --------------------------------------------------------------------*/
-String JSONTransport::convertFromJSONString(const String& source) {
+string JSONTransport::convertFromJSONString(const string& source) {
 	JSONGlossary glossary;
-	String result{source};
+	string result{source};
 	return fromJSONString(result, glossary);
 } //JSONTransport::convertFromJSONString
 

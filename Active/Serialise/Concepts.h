@@ -29,9 +29,9 @@ namespace active::serialise {
 	template<typename Obj>
 	concept IsItemCargo = std::is_base_of_v<Item, Obj>;
 	
-		///Concept for wrappable values, e.g. double, int32_t, String
+		///Concept for wrappable values, e.g. double, int32_t, string
 	template<typename Obj>
-	concept IsWrappableValue = requires(Obj obj, active::String& str) {
+	concept IsWrappableValue = requires(Obj obj, active::string& str) {
 		{ !Dereferenceable<Obj> };
 		{ ValueWrap<Obj>(obj).read(str) };
 	};

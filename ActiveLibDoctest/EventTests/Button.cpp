@@ -10,7 +10,7 @@ using namespace active::event;
 using namespace active::setting;
 using namespace active;
 
-Button::Button(NameID type, String action) : m_type{type}, m_action{action} {}
+Button::Button(NameID type, string action) : m_type{type}, m_action{action} {}
 
 void Button::operator()() const {
 	calcApp->publish(Event{m_type, {{StringValue{m_action}, actionID}}});

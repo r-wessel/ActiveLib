@@ -101,14 +101,14 @@ public:
 		@param type The event type emitted when pressed
 		@param action The action setting attached to an event when pressed
 	*/
-	Button(NameID type, String action) : m_type{type}, m_action{action} {}
+	Button(NameID type, string action) : m_type{type}, m_action{action} {}
 	
 		///Trigger a button press
 	void operator()() const { calcApp->publish(Event{m_type, {{StringValue{m_action}, actionID}}}); }
 
 private:
 	NameID m_type;
-	String m_action;
+	string m_action;
 };
 ```
 Clicking the button simply publishes the assigned `Event` through the `CalcApp`, i.e.:

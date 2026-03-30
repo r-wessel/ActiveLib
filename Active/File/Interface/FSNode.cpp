@@ -94,7 +94,7 @@ void FSNode::moveTo(const Path& path) {
  
 	name: The new name
   --------------------------------------------------------------------*/
-void FSNode::rename(const String& name) {
+void FSNode::rename(const string& name) {
 	auto path{getPath()};
 	path.replaceFileName(name);
 	moveTo(path);

@@ -41,7 +41,7 @@ namespace active::file {
 			@param canReplaceFile True if the directory can be created and replace an existing file with the same name
 			@throw std::ios_base::failure Thrown if isMissingCreated = true and the directory cannot be created
 		*/
-		Directory(const Directory& parent, const String& name, bool isMissingCreated = false, bool canReplaceFile = false);
+		Directory(const Directory& parent, const string& name, bool isMissingCreated = false, bool canReplaceFile = false);
 		/*!
 			Copy constructor
 			@param source The object to copy

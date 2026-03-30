@@ -44,7 +44,7 @@ namespace active::serialise::xml {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		virtual bool write(String& dest) const { dest = String{get(), getPrecision()}; return true; }
+		virtual bool write(string& dest) const { dest = string{get(), getPrecision()}; return true; }
 	};
 	
 }

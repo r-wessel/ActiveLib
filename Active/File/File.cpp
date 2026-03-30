@@ -84,7 +84,7 @@ File::File(const Path& path, Permission perm, bool isMissingCreated, bool canRep
 		//Attempt to create the file
 	std::fstream file;
 	file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	file.open(String{path}, std::ios_base::out);
+	file.open(string{path}, std::ios_base::out);
 	setPath(path);	//The path for a new node has to be refreshed or reports as non-existent
 	file.close();
 } //File::File
@@ -99,7 +99,7 @@ File::File(const Path& path, Permission perm, bool isMissingCreated, bool canRep
 	isMissingCreated: True if the file should be created when missing
 	canReplaceDirectory: True if the file can be created and replace an existing directory with the same name
   --------------------------------------------------------------------*/
-File::File(const Directory& parent, const String& name, Permission perm, bool isMissingCreated, bool canReplaceDirectory) :
+File::File(const Directory& parent, const string& name, Permission perm, bool isMissingCreated, bool canReplaceDirectory) :
 		File(parent.getPath() + name, perm, isMissingCreated, canReplaceDirectory) {
 } //File::File
 
@@ -167,7 +167,7 @@ void File::open(std::optional<Permission> perm) const {
 	}
 	m_file = std::make_unique<std::fstream>();
 	m_file->exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	m_file->open(String{getPath()}, getModeFor(permission));
+	m_file->open(string{getPath()}, getModeFor(permission));
 	m_permission = permission;
 	if (originalPosition)
 		setPosition(*originalPosition);
@@ -258,7 +258,7 @@ File::size_type File::remaining() const {
  
 	return: The number of bytes read (bytes populated into a valid string, i.e. stops if nil or invalid coding found)
   --------------------------------------------------------------------*/
-File::size_type File::read(String& text, sizeOption howMany, text_encoding encoding) const {
+File::size_type File::read(string& text, sizeOption howMany, text_encoding encoding) const {
 	validate();
 		//Ensure we don't ask for more than the remaining bytes
 	auto available = remaining();
@@ -274,11 +274,11 @@ File::size_type File::read(String& text, sizeOption howMany, text_encoding encod
 	size_type bytesRead = 0;
 	m_file->read(buffer.data(), *howMany);
 	bytesRead = m_file->gcount();
-	auto charBytes = string_function::get_valid_byte_count(buffer.data(), bytesRead, String::no_pos, encoding);
+	auto charBytes = string_function::get_valid_byte_count(buffer.data(), bytesRead, string::no_pos, encoding);
 		///Move the read position if not all the bytes can be consumed by the string as valid chars
-	if (charBytes < static_cast<String::size_type>(bytesRead))
+	if (charBytes < static_cast<string::size_type>(bytesRead))
 		setPosition(charBytes - bytesRead, current);
-	text = String{buffer.data(), charBytes, encoding};
+	text = string{buffer.data(), charBytes, encoding};
 	return charBytes;
 } //File::read
 
@@ -327,14 +327,14 @@ void File::resize(size_type fileSize) {
  
 	return: True if the data was successfully written
 --------------------------------------------------------------------*/
-void File::write(const String& text, std::optional<String::size_type> howMany, text_encoding encoding) {
+void File::write(const string& text, std::optional<string::size_type> howMany, text_encoding encoding) {
 	validate();
 	if (text.empty())
 		return;	//No data isn't an error
-	std::unique_ptr<String> temp;
-	const String* target = &text;
+	std::unique_ptr<string> temp;
+	const string* target = &text;
 	if (howMany) {
-		temp = std::make_unique<String>(text.substr(0, *howMany));
+		temp = std::make_unique<string>(text.substr(0, *howMany));
 		target = temp.get();
 	}
 	switch (encoding) {

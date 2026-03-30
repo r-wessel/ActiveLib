@@ -4,10 +4,10 @@
 #include "Active/string/string_utf8.h"
 
 	///Calculator operator labels
-const active::String addID{"+"}, subtractID{"-"}, multiplyID{"x"}, divideID{"/"};
+const active::string addID{"+"}, subtractID{"-"}, multiplyID{"x"}, divideID{"/"};
 
 	///Setting identifiers (for messages and events)
-const active::String parameterID{"parameter"}, usedID{"used"}, actionID{"action"},
+const active::string parameterID{"parameter"}, usedID{"used"}, actionID{"action"},
 		resultID{"result"}, digitID{"digit"}, operationID{"operation"};
 
 

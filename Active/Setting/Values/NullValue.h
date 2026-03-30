@@ -85,7 +85,7 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const active::String& val) override { return *this; }
+		Value& operator=(const active::string& val) override { return *this; }
 		/*!
 			Assignment operator
 			@param val A guid value to assign
@@ -130,7 +130,7 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator active::String() const override { return String(); }
+		operator active::string() const override { return string(); }
 		/*!
 			Get a guid value
 			@return A guid value

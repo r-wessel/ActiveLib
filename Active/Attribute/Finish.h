@@ -36,7 +36,7 @@ namespace active::attribute {
 			@param nm The finish name
 			@param ident The finish identifier
 		*/
-		Finish(const Colour& col, const String& nm, const String& ident = String{}) :
+		Finish(const Colour& col, const string& nm, const string& ident = string{}) :
 				colour{col}, name{nm}, id{ident} {}
 
 		// MARK: Public variables
@@ -58,9 +58,9 @@ namespace active::attribute {
 			///Roughness (0.0 -> 1.0)
 		double roughness = 1.0;
 			///Finish name (optional - application-specific)
-		String name;
+		string name;
 			///Finish identifier (optional - application-specific)
-		mutable String id;
+		mutable string id;
 
 		// MARK: Functions (const)
 
@@ -71,7 +71,7 @@ namespace active::attribute {
 		 @param format The required has format
 		 @return The hash formatted as specified
 		 */
-		String hash(HashFormat format = {}) const;
+		string hash(HashFormat format = {}) const;
 	};
 	
 }

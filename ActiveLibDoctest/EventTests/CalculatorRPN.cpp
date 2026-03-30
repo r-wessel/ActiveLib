@@ -27,14 +27,14 @@ Subscriber::Subscription CalculatorRPN::subscription() const { return { digitID,
 
 	///Refresh the display based on the most recent value
 void CalculatorRPN::refreshDisplay() {
-	m_display = String(m_valueStack.back());
+	m_display = string(m_valueStack.back());
 }
 
 
 	///Enter a digit as specified by an event
 void CalculatorRPN::enterDigit(const Event& event) {
 	if (auto action = event.findValue(actionID); (action != nullptr) && !action->empty()) {
-		String newDisplay{m_display};
+		string newDisplay{m_display};
 		if (action->stringVal() == "\b") {
 			if (!newDisplay.empty())
 				newDisplay.pop_back();

@@ -36,7 +36,7 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The default element tag
-		static inline String tag = "setting";
+		static inline string tag = "setting";
 			
 		// MARK: - Constructor
 
@@ -46,14 +46,14 @@ namespace active::serialise::xml {
 			@param isTyped True if the value is serialised as a specific type
 			@param className Optional class name for the value container
 		*/
-		XMLValueSetting(setting::ValueSetting& setting, bool isTyped = false, std::optional<String> className = std::nullopt);
+		XMLValueSetting(setting::ValueSetting& setting, bool isTyped = false, std::optional<string> className = std::nullopt);
 		/*!
 			Constructor
 			@param setting The setting to wrap for (de)serialisation
 			@param isTyped True if the value is serialised as a specific type
 			@param className Optional class name for the value container
 		*/
-		XMLValueSetting(const setting::ValueSetting& setting, bool isTyped = false, std::optional<String> className = std::nullopt) :
+		XMLValueSetting(const setting::ValueSetting& setting, bool isTyped = false, std::optional<string> className = std::nullopt) :
 					//NB: const_cast only used for export, which never mutates the data
 				XMLValueSetting(const_cast<setting::ValueSetting&>(setting), isTyped, className) {}
 		/*!
@@ -63,8 +63,8 @@ namespace active::serialise::xml {
 			@param isTyped True if the value is serialised as a specific type
 			@param className Optional class name for the value container
 		*/
-		XMLValueSetting(setting::ValueSetting& setting, const String& customTag,
-						bool isTyped = false, std::optional<String> className = std::nullopt);
+		XMLValueSetting(setting::ValueSetting& setting, const string& customTag,
+						bool isTyped = false, std::optional<string> className = std::nullopt);
 		/*!
 			Constructor
 			@param setting The setting to wrap for (de)serialisation
@@ -72,8 +72,8 @@ namespace active::serialise::xml {
 			@param isTyped True if the value is serialised as a specific type
 			@param className Optional class name for the value container
 		*/
-		XMLValueSetting(const setting::ValueSetting& setting, const String& customTag,
-						bool isTyped = false, std::optional<String> className = std::nullopt) :
+		XMLValueSetting(const setting::ValueSetting& setting, const string& customTag,
+						bool isTyped = false, std::optional<string> className = std::nullopt) :
 					//NB: const_cast only used for export, which never mutates the data
 				XMLValueSetting(const_cast<setting::ValueSetting&>(setting), customTag, isTyped, className) {}
 		
@@ -113,19 +113,19 @@ namespace active::serialise::xml {
 		
 	private:
 			///Optional explicit tag (overrides default)
-		std::optional<String> m_tag;
+		std::optional<string> m_tag;
 			///Temporary mutable storage of the setting name
-		mutable String m_name;
+		mutable string m_name;
 			///Temporary mutable storage of the setting guid
-		mutable String m_id;
+		mutable string m_id;
 			///Storage for the value column count
 		mutable int32_t m_columns = 1;
 			///Temporary mutable storage for incoming values
-		mutable String m_value;
+		mutable string m_value;
 			///Optional value type name
-		mutable String m_typeName;
+		mutable string m_typeName;
 			///Optional value class name
-		mutable String m_className;
+		mutable string m_className;
 			///True if the value is serialised as a specific type
 		bool m_isTyped = false;
 	};

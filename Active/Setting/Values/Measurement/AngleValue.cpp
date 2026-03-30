@@ -42,12 +42,12 @@ using enum CompassDirection;
  
 	return: The measurement as a string
   --------------------------------------------------------------------*/
-String AngleValue::operator()(const AngleUnit& unit) const {
+string AngleValue::operator()(const AngleUnit& unit) const {
 	if (!unit.isConventionalAngle()) {
 		if (unit.isSurveyBearing) {
 			auto angle = data;
 				//Establish East/West suffix
-			String suffix{(compassAbbreviation.at(static_cast<int>(isGreaterOrEqual(angle, 1.5 * pi) || isLess(angle, pi / 2.0) ? east : west)))},
+			string suffix{(compassAbbreviation.at(static_cast<int>(isGreaterOrEqual(angle, 1.5 * pi) || isLess(angle, pi / 2.0) ? east : west)))},
 					prefix;
 				//Establish North/South prefix
 			if (isGreaterOrEqualZero(angle) && isLess(angle, pi)) {
@@ -76,21 +76,21 @@ String AngleValue::operator()(const AngleUnit& unit) const {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Value& AngleValue::assign(const String& val, const AngleUnit& unit) {
+Value& AngleValue::assign(const string& val, const AngleUnit& unit) {
 	data = 0.0;
 	status = bad;
 		//Start with the unit conventions (can be modified by user input)
 	auto sweepDirection = unit.isClockwisePositive ? -1.0 : 1.0,
 			zeroDelta = unit.zeroOffset;
-	String angleText{val.to_upper()};
+	string angleText{val.to_upper()};
 		//Angles may contain surveyor bearings - if so, we need to process and remove these first
 	auto index = 0;
-	String directions;
+	string directions;
 	std::set<CompassDirection> ordinals;
 	for (const auto& abbrev : compassAbbreviation) {
 		if (angleText.contains(abbrev)) {
 			ordinals.insert(static_cast<CompassDirection>(index));
-			angleText.replace_all(abbrev, String{});
+			angleText.replace_all(abbrev, string{});
 		}
 		++index;
 	}

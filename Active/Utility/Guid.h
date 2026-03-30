@@ -49,7 +49,7 @@ namespace active {
 			Constructor
 			@param uuidString The guid in string form
 		*/
-		explicit Guid(const String& uuidString);
+		explicit Guid(const string& uuidString);
 		/*!
 			constexpr constructor
 			@param rawVal The guid raw value
@@ -66,12 +66,12 @@ namespace active {
 			Conversion operator
 			@return The guid as a string
 		*/
-		operator String() const { return string(); }
+		operator string() const { return to_string(); }
 		/*!
 			Conversion operator
 			@return The guid as a std::string
 		*/
-		operator std::string() const { return string(); }
+		operator std::string() const { return to_string(); }
 		/*!
 			Conversion operator
 			@return True if the guid has a value (non-nil)
@@ -90,7 +90,7 @@ namespace active {
 			@param inCase The digit case
 			@return A string representation
 		*/
-		String string(Case inCase = uppercase) const;
+		string to_string(Case inCase = uppercase) const;
 		/*!
 			Determine if the guid is an empty (nil) value
 			@return True if the guid is empty

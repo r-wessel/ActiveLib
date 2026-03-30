@@ -781,7 +781,7 @@ SQLITE_API int sqlite3_exec(
 #define SQLITE_PROTOCOL    15   /* Database lock protocol error */
 #define SQLITE_EMPTY       16   /* Internal use only */
 #define SQLITE_SCHEMA      17   /* The database schema changed */
-#define SQLITE_TOOBIG      18   /* String or BLOB exceeds size limit */
+#define SQLITE_TOOBIG      18   /* string or BLOB exceeds size limit */
 #define SQLITE_CONSTRAINT  19   /* Abort due to constraint violation */
 #define SQLITE_MISMATCH    20   /* Data type mismatch */
 #define SQLITE_MISUSE      21   /* Library used incorrectly */
@@ -3396,7 +3396,7 @@ SQLITE_API int sqlite3_get_table(
 SQLITE_API void sqlite3_free_table(char **result);
 
 /*
-** CAPI3REF: Formatted String Printing Functions
+** CAPI3REF: Formatted string Printing Functions
 **
 ** These routines are work-alikes of the "printf()" family of functions
 ** from the standard C library.
@@ -7933,7 +7933,7 @@ struct sqlite3_index_info {
     unsigned char omit;      /* Do not code a test for this constraint */
   } *aConstraintUsage;
   int idxNum;                /* Number used to identify the index */
-  char *idxStr;              /* String, possibly obtained from sqlite3_malloc */
+  char *idxStr;              /* string, possibly obtained from sqlite3_malloc */
   int needToFreeIdxStr;      /* Free idxStr using sqlite3_free() if true */
   int orderByConsumed;       /* True if output is already ordered */
   double estimatedCost;           /* Estimated cost of using this index */
@@ -8866,7 +8866,7 @@ SQLITE_API int sqlite3_keyword_name(int,const char**,int*);
 SQLITE_API int sqlite3_keyword_check(const char*,int);
 
 /*
-** CAPI3REF: Dynamic String Object
+** CAPI3REF: Dynamic string Object
 ** KEYWORDS: {dynamic string}
 **
 ** An instance of the sqlite3_str object contains a dynamically-sized
@@ -8884,7 +8884,7 @@ SQLITE_API int sqlite3_keyword_check(const char*,int);
 typedef struct sqlite3_str sqlite3_str;
 
 /*
-** CAPI3REF: Create A New Dynamic String Object
+** CAPI3REF: Create A New Dynamic string Object
 ** CONSTRUCTOR: sqlite3_str
 **
 ** ^The [sqlite3_str_new(D)] interface allocates and initializes
@@ -8911,7 +8911,7 @@ typedef struct sqlite3_str sqlite3_str;
 SQLITE_API sqlite3_str *sqlite3_str_new(sqlite3*);
 
 /*
-** CAPI3REF: Finalize A Dynamic String
+** CAPI3REF: Finalize A Dynamic string
 ** DESTRUCTOR: sqlite3_str
 **
 ** ^The [sqlite3_str_finish(X)] interface destroys the sqlite3_str object X
@@ -8926,7 +8926,7 @@ SQLITE_API sqlite3_str *sqlite3_str_new(sqlite3*);
 SQLITE_API char *sqlite3_str_finish(sqlite3_str*);
 
 /*
-** CAPI3REF: Add Content To A Dynamic String
+** CAPI3REF: Add Content To A Dynamic string
 ** METHOD: sqlite3_str
 **
 ** These interfaces add content to an sqlite3_str object previously obtained
@@ -8965,7 +8965,7 @@ SQLITE_API void sqlite3_str_appendchar(sqlite3_str*, int N, char C);
 SQLITE_API void sqlite3_str_reset(sqlite3_str*);
 
 /*
-** CAPI3REF: Status Of A Dynamic String
+** CAPI3REF: Status Of A Dynamic string
 ** METHOD: sqlite3_str
 **
 ** These interfaces return the current status of an [sqlite3_str] object.
@@ -9932,7 +9932,7 @@ SQLITE_API int sqlite3_unlock_notify(
 
 
 /*
-** CAPI3REF: String Comparison
+** CAPI3REF: string Comparison
 **
 ** ^The [sqlite3_stricmp()] and [sqlite3_strnicmp()] APIs allow applications
 ** and extensions to compare the contents of two buffers containing UTF-8
@@ -9943,7 +9943,7 @@ SQLITE_API int sqlite3_stricmp(const char *, const char *);
 SQLITE_API int sqlite3_strnicmp(const char *, const char *, int);
 
 /*
-** CAPI3REF: String Globbing
+** CAPI3REF: string Globbing
 *
 ** ^The [sqlite3_strglob(P,X)] interface returns zero if and only if
 ** string X matches the [GLOB] pattern P.
@@ -9960,7 +9960,7 @@ SQLITE_API int sqlite3_strnicmp(const char *, const char *, int);
 SQLITE_API int sqlite3_strglob(const char *zGlob, const char *zStr);
 
 /*
-** CAPI3REF: String LIKE Matching
+** CAPI3REF: string LIKE Matching
 *
 ** ^The [sqlite3_strlike(P,X,E)] interface returns zero if and only if
 ** string X matches the [LIKE] pattern P with escape character E.
@@ -18699,7 +18699,7 @@ struct Table {
   char *zName;         /* Name of the table or view */
   Column *aCol;        /* Information about each column */
   Index *pIndex;       /* List of SQL indexes on this table. */
-  char *zColAff;       /* String defining the affinity of each column */
+  char *zColAff;       /* string defining the affinity of each column */
   ExprList *pCheck;    /* All CHECK constraints */
                        /*   ... also used as column name list in a VIEW */
   Pgno tnum;           /* Root BTree page for this table */
@@ -19042,7 +19042,7 @@ struct Index {
   i16 *aiColumn;           /* Which columns are used by this index.  1st is 0 */
   LogEst *aiRowLogEst;     /* From ANALYZE: Est. rows selected by each column */
   Table *pTable;           /* The SQL table being indexed */
-  char *zColAff;           /* String defining the affinity of each column */
+  char *zColAff;           /* string defining the affinity of each column */
   Index *pNext;            /* The next index associated with the same table */
   Schema *pSchema;         /* Schema containing this index */
   u8 *aSortOrder;          /* for each column: True==DESC, False==ASC */
@@ -20469,7 +20469,7 @@ struct sqlite3_str {
 **   3.  Make a (read-only) copy of a read-only RCStr string using
 **       sqlite3RCStrRef().
 **
-** "String" is in the name, but an RCStr object can also be used to hold
+** "string" is in the name, but an RCStr object can also be used to hold
 ** binary data.
 */
 struct RCStr {
@@ -23665,7 +23665,7 @@ struct sqlite3_value {
     const char *zPType; /* Pointer type when MEM_Term|MEM_Subtype|MEM_Null */
     FuncDef *pDef;      /* Used only when flags==MEM_Agg */
   } u;
-  char *z;            /* String or BLOB value */
+  char *z;            /* string or BLOB value */
   int n;              /* Number of characters in string value, excluding '\0' */
   u16 flags;          /* Some combination of MEM_Null, MEM_Str, MEM_Dyn, etc. */
   u8  enc;            /* SQLITE_UTF8, SQLITE_UTF16BE, SQLITE_UTF16LE */
@@ -23748,7 +23748,7 @@ struct sqlite3_value {
 #define MEM_FromBind  0x0040   /* Value originates from sqlite3_bind() */
  /*                   0x0080   // Available */
 #define MEM_Cleared   0x0100   /* NULL set by OP_Null, not from data */
-#define MEM_Term      0x0200   /* String in Mem.z is zero terminated */
+#define MEM_Term      0x0200   /* string in Mem.z is zero terminated */
 #define MEM_Zero      0x0400   /* Mem.i contains count of 0s appended to blob */
 #define MEM_Subtype   0x0800   /* Mem.eSubtype is valid */
 #define MEM_TypeMask  0x0dbf   /* Mask of type bits */
@@ -32808,7 +32808,7 @@ SQLITE_API char *sqlite3_snprintf(int n, char *zBuf, const char *zFormat, ...){
 ** memory mutex is held do not use these mechanisms.
 */
 static void renderLogMsg(int iErrCode, const char *zFormat, va_list ap){
-  StrAccum acc;                          /* String accumulator */
+  StrAccum acc;                          /* string accumulator */
   char zMsg[SQLITE_PRINT_BUF_SIZE*3];    /* Complete log message */
 
   sqlite3StrAccumInit(&acc, 0, zMsg, sizeof(zMsg), 0);
@@ -37488,7 +37488,7 @@ SQLITE_PRIVATE const char *sqlite3OpcodeName(int i){
     /*  70 */ "Halt"             OpHelp(""),
     /*  71 */ "Integer"          OpHelp("r[P2]=P1"),
     /*  72 */ "Int64"            OpHelp("r[P2]=P4"),
-    /*  73 */ "String"           OpHelp("r[P2]='P4' (len=P1)"),
+    /*  73 */ "string"           OpHelp("r[P2]='P4' (len=P1)"),
     /*  74 */ "BeginSubrtn"      OpHelp("r[P2]=NULL"),
     /*  75 */ "Null"             OpHelp("r[P2..P3]=NULL"),
     /*  76 */ "SoftNull"         OpHelp("r[P1]=NULL"),
@@ -84205,7 +84205,7 @@ SQLITE_PRIVATE void sqlite3VdbeMemMove(Mem *pTo, Mem *pFrom){
 */
 SQLITE_PRIVATE int sqlite3VdbeMemSetStr(
   Mem *pMem,          /* Memory cell to set to string value */
-  const char *z,      /* String pointer */
+  const char *z,      /* string pointer */
   i64 n,              /* Bytes in string, or negative */
   u8 enc,             /* Encoding of z.  0 for BLOBs */
   void (*xDel)(void*) /* Destructor function */
@@ -91045,7 +91045,7 @@ SQLITE_API void sqlite3_value_free(sqlite3_value *pOld){
 */
 static void setResultStrOrError(
   sqlite3_context *pCtx,  /* Function context */
-  const char *z,          /* String pointer */
+  const char *z,          /* string pointer */
   int n,                  /* Bytes in string, or negative */
   u8 enc,                 /* Encoding of z.  0 for BLOBs */
   void (*xDel)(void*)     /* Destructor function */
@@ -94912,7 +94912,7 @@ case OP_Real: {            /* same as TK_FLOAT, out2 */
 ** Synopsis: r[P2]='P4'
 **
 ** P4 points to a nul terminated UTF-8 string. This opcode is transformed
-** into a String opcode before it is executed for the first time.  During
+** into a string opcode before it is executed for the first time.  During
 ** this transformation, the length of string P4 is computed and stored
 ** as the P1 parameter.
 */
@@ -94948,7 +94948,7 @@ case OP_String8: {         /* same as TK_STRING, out2 */
   /* no break */ deliberate_fall_through
 }
 
-/* Opcode: String P1 P2 P3 P4 P5
+/* Opcode: string P1 P2 P3 P4 P5
 ** Synopsis: r[P2]='P4' (len=P1)
 **
 ** The string value P4 of length P1 (bytes) is stored in register P2.
@@ -120757,7 +120757,7 @@ struct analysisInfo {
 ** the array aOut[].
 */
 static void decodeIntArray(
-  char *zIntArray,       /* String containing int array to decode */
+  char *zIntArray,       /* string containing int array to decode */
   int nOut,              /* Number of slots in aOut[] */
   tRowcnt *aOut,         /* Store integers here */
   LogEst *aLog,          /* Or, if aOut==0, here */
@@ -161681,7 +161681,7 @@ static int isLikeOrGlob(
   int *pisComplete, /* True if the only wildcard is % in the last character */
   int *pnoCase      /* True if uppercase is equivalent to lowercase */
 ){
-  const u8 *z = 0;           /* String on RHS of LIKE operator */
+  const u8 *z = 0;           /* string on RHS of LIKE operator */
   Expr *pRight, *pLeft;      /* Right and left size of LIKE operator */
   ExprList *pList;           /* List of operands to the LIKE operator */
   u8 c;                      /* One character in z[] */
@@ -179802,7 +179802,7 @@ SQLITE_PRIVATE int sqlite3ParserFallback(int iToken){
 #define CC_VARALPHA   5    /* '@', '#', ':'.  Alphabetic SQL variables */
 #define CC_VARNUM     6    /* '?'.  Numeric SQL variables */
 #define CC_SPACE      7    /* Space characters */
-#define CC_QUOTE      8    /* '"', '\'', or '`'.  String literals, quoted ids */
+#define CC_QUOTE      8    /* '"', '\'', or '`'.  string literals, quoted ids */
 #define CC_QUOTE2     9    /* '['.   [...] style quoted ids */
 #define CC_PIPE      10    /* '|'.   Bitwise OR or concatenate */
 #define CC_MINUS     11    /* '-'.  Minus or SQL-style comment */
@@ -196448,7 +196448,7 @@ static int porterDestroy(sqlite3_tokenizer *pTokenizer){
 */
 static int porterOpen(
   sqlite3_tokenizer *pTokenizer,         /* The tokenizer */
-  const char *zInput, int nInput,        /* String to be tokenized */
+  const char *zInput, int nInput,        /* string to be tokenized */
   sqlite3_tokenizer_cursor **ppCursor    /* OUT: Tokenization cursor */
 ){
   porter_tokenizer_cursor *c;
@@ -197656,7 +197656,7 @@ static int simpleDestroy(sqlite3_tokenizer *pTokenizer){
 */
 static int simpleOpen(
   sqlite3_tokenizer *pTokenizer,         /* The tokenizer */
-  const char *pInput, int nBytes,        /* String to be tokenized */
+  const char *pInput, int nBytes,        /* string to be tokenized */
   sqlite3_tokenizer_cursor **ppCursor    /* OUT: Tokenization cursor */
 ){
   simple_tokenizer_cursor *c;
@@ -204804,9 +204804,9 @@ static int fts3SnippetText(
   int iFragment,                  /* Fragment number */
   int isLast,                     /* True for final fragment in snippet */
   int nSnippet,                   /* Number of tokens in extracted snippet */
-  const char *zOpen,              /* String inserted before highlighted term */
-  const char *zClose,             /* String inserted after highlighted term */
-  const char *zEllipsis,          /* String inserted between snippets */
+  const char *zOpen,              /* string inserted before highlighted term */
+  const char *zClose,             /* string inserted after highlighted term */
+  const char *zEllipsis,          /* string inserted between snippets */
   StrBuffer *pOut                 /* Write output here */
 ){
   Fts3Table *pTab = (Fts3Table *)pCsr->base.pVtab;
@@ -207436,7 +207436,7 @@ static void jsonAppendSqlValue(
 ** pParse is added to the cache.
 */
 static void jsonReturnString(
-  JsonString *p,            /* String to return */
+  JsonString *p,            /* string to return */
   JsonParse *pParse,        /* JSONB source or NULL */
   sqlite3_context *ctx      /* Where to cache */
 ){
@@ -210479,7 +210479,7 @@ static void jsonExtractFunc(
   JsonParse *p = 0;      /* The parse */
   int flags;             /* Flags associated with the function */
   int i;                 /* Loop counter */
-  JsonString jx;         /* String for array result */
+  JsonString jx;         /* string for array result */
 
   if( argc<2 ) return;
   p = jsonParseFuncArg(ctx, argv[0], 0);
@@ -221635,10 +221635,10 @@ static char *rbuObjIterGetIndexCols(
 ){
   int rc = p->rc;                 /* Error code */
   int rc2;                        /* sqlite3_finalize() return code */
-  char *zRet = 0;                 /* String to return */
-  char *zImpCols = 0;             /* String to return via *pzImposterCols */
-  char *zImpPK = 0;               /* String to return via *pzImposterPK */
-  char *zWhere = 0;               /* String to return via *pzWhere */
+  char *zRet = 0;                 /* string to return */
+  char *zImpCols = 0;             /* string to return via *pzImposterCols */
+  char *zImpPK = 0;               /* string to return via *pzImposterPK */
+  char *zWhere = 0;               /* string to return via *pzWhere */
   int nBind = 0;                  /* Value to return via *pnBind */
   const char *zCom = "";          /* Set to ", " later on */
   const char *zAnd = "";          /* Set to " AND " later on */
@@ -226111,7 +226111,7 @@ static int statFilter(
   StatCursor *pCsr = (StatCursor *)pCursor;
   StatTable *pTab = (StatTable*)(pCursor->pVtab);
   sqlite3_str *pSql;      /* Query of btrees to analyze */
-  char *zSql;             /* String value of pSql */
+  char *zSql;             /* string value of pSql */
   int iArg = 0;           /* Count of argv[] parameters used so far */
   int rc = SQLITE_OK;     /* Result of this operation */
   const char *zName = 0;  /* Only provide analysis of this table */
@@ -229331,7 +229331,7 @@ static void sessionAppendInteger(
 */
 static void sessionAppendIdent(
   SessionBuffer *p,               /* Buffer to a append to */
-  const char *zStr,               /* String to quote, escape and append */
+  const char *zStr,               /* string to quote, escape and append */
   int *pRc                        /* IN/OUT: Error code */
 ){
   int nStr = sqlite3Strlen30(zStr)*2 + 2 + 2;
@@ -230226,7 +230226,7 @@ static int sessionValueSetStr(
   sqlite3_value *pVal,            /* Set the value of this object */
   u8 *aData,                      /* Buffer containing string or blob data */
   int nData,                      /* Size of buffer aData[] in bytes */
-  u8 enc                          /* String encoding (0 for blobs) */
+  u8 enc                          /* string encoding (0 for blobs) */
 ){
   /* In theory this code could just pass SQLITE_TRANSIENT as the final
   ** argument to sqlite3ValueSetStr() and have the copy created
@@ -240810,7 +240810,7 @@ static int parseGrowPhraseArray(Fts5Parse *pParse){
 static Fts5ExprPhrase *sqlite3Fts5ParseTerm(
   Fts5Parse *pParse,              /* Parse context */
   Fts5ExprPhrase *pAppend,        /* Phrase to append to */
-  Fts5Token *pToken,              /* String to tokenize */
+  Fts5Token *pToken,              /* string to tokenize */
   int bPrefix                     /* True if there is a trailing "*" */
 ){
   Fts5Config *pConfig = pParse->pConfig;

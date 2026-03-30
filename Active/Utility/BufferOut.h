@@ -55,7 +55,7 @@ namespace active {
 			@param bufferSize Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
 			@param format The destination data format
 		*/
-		BufferOut(String& destString, Memory::sizeOption bufferSize = std::nullopt, text_format format = text_format{});
+		BufferOut(string& destString, Memory::sizeOption bufferSize = std::nullopt, text_format format = text_format{});
 		/*!
 			Move constructor
 			@param source The object to move
@@ -94,51 +94,51 @@ namespace active {
 			@param str A string to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(const String& str) const { return write(str); }
+		const BufferOut& operator<<(const string& str) const { return write(str); }
 		/*!
 			Write operator
 			@param val A 16-bit integer to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(int16_t val) const { return write(String{val}); }
+		const BufferOut& operator<<(int16_t val) const { return write(string{val}); }
 		/*!
 			Write operator
 			@param val A 32-bit integer to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(int32_t val) const { return write(String{val}); }
+		const BufferOut& operator<<(int32_t val) const { return write(string{val}); }
 		/*!
 			Write operator
 			@param val An unsigned 32-bit integer to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(uint32_t val) const { return write(String{val}); }
+		const BufferOut& operator<<(uint32_t val) const { return write(string{val}); }
 		/*!
 			Write operator
 			@param val A 64-bit integer to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(int64_t val) const { return write(String{val}); }
+		const BufferOut& operator<<(int64_t val) const { return write(string{val}); }
 #ifndef WINDOWS
 		/*!
 			Write operator
 			@param val An unsigned 64-bit integer to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(uint64_t val) const { return write(String{val}); }
+		const BufferOut& operator<<(uint64_t val) const { return write(string{val}); }
 #endif
 		/*!
 			Write operator
 			@param val A double value to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(float val) const { return write(String{val}); }
+		const BufferOut& operator<<(float val) const { return write(string{val}); }
 		/*!
 			Write operator
 			@param val A double value to write
 			@return A reference to this
 		*/
-		const BufferOut& operator<<(double val) const { return write(String{val}); }
+		const BufferOut& operator<<(double val) const { return write(string{val}); }
 		
 		// MARK: - Functions (const)
 
@@ -167,7 +167,7 @@ namespace active {
 			@param toWrite The string to write
 			@return A reference to this
 		*/
-		const BufferOut& write(const String& toWrite) const { return write(toWrite, m_format); }
+		const BufferOut& write(const string& toWrite) const { return write(toWrite, m_format); }
 		/*!
 		 Write the specified string (using the specified text encoding)
 		 @param toWrite The string to write
@@ -177,7 +177,7 @@ namespace active {
 		 @param maxBytes The maximum number of bytes to write
 		 @return A reference to this
 		 */
-		const BufferOut& write(const String& toWrite, text_format format, bool isNullAdded = false,
+		const BufferOut& write(const string& toWrite, text_format format, bool isNullAdded = false,
 							   string_position howMany = std::nullopt,
 							   string_position maxBytes = std::nullopt) const;
 		/*!
@@ -229,7 +229,7 @@ namespace active {
 			Set the buffer output destination
 			@param destString The destination string
 		*/
-		void setDestination(String* destString);
+		void setDestination(string* destString);
 		/*!
 			Set The source text encoding
 			@param encoding The text encoding type
@@ -293,7 +293,7 @@ namespace active {
 			@param fileDest A file to write the data to
 			@param stringDest A string to write the data to
 		*/
-		void initialise(Memory* memory = nullptr, file::File* fileDest = nullptr, String* stringDest = nullptr);
+		void initialise(Memory* memory = nullptr, file::File* fileDest = nullptr, string* stringDest = nullptr);
 		
 			///A cache to accumulate small writes
 		mutable std::vector<char> m_smallCache;
@@ -302,7 +302,7 @@ namespace active {
 			///A memory destination for buffered data
 		Memory* m_memory;
 			///A string destination for buffered data
-		String* m_str;
+		string* m_str;
 			///Cached memory when passed an rvalue
 		std::unique_ptr<Memory> m_cache;
 			///The buffer for outgoing data

@@ -19,6 +19,6 @@ using namespace active;
 	styl: The text style
 	offset: An offset from the origin (in render units, added after anchor and offset have been applied)
   --------------------------------------------------------------------*/
-Text::Text(const String& txt, const geometry::Point& origin, double angl,
+Text::Text(const string& txt, const geometry::Point& origin, double angl,
 							 const attribute::TextStyle styl, const geometry::Point& offset) :
 		Point{origin}, text{txt}, angle{angl}, style{styl}, renderOffset{offset} {}

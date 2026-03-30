@@ -32,7 +32,7 @@ namespace active::serialise {
 			Default constructor
 			@param nameIn An identifying name
 		*/
-		Identity(const String& nameIn = String{}) {
+		Identity(const string& nameIn = string{}) {
 			name = nameIn;
 		}
 		/*!
@@ -40,7 +40,7 @@ namespace active::serialise {
 			@param nameIn An identifying name
 			@param groupIn An optional identifying group
 		*/
-		Identity(const String& nameIn, const std::optional<String> groupIn) {
+		Identity(const string& nameIn, const std::optional<string> groupIn) {
 			name = nameIn;
 			group = groupIn;
 		}
@@ -49,7 +49,7 @@ namespace active::serialise {
 			@param nameIn An identifying name
 			@param valType An optional value type
 		*/
-		Identity(const String& nameIn, std::optional<setting::Value::Type> valType) {
+		Identity(const string& nameIn, std::optional<setting::Value::Type> valType) {
 			name = nameIn;
 			valueType = valType;
 		}
@@ -57,9 +57,9 @@ namespace active::serialise {
 		// MARK: - Variables
 		
 			///An identifying name
-		String name;
+		string name;
 			///Optional named group (in which the name is unique, i.e. to avoid name clashes)
-		std::optional<String> group = std::nullopt;
+		std::optional<string> group = std::nullopt;
 			///The expected inventory role (applicable when a new identity has been parsed)
 		std::optional<Role> entryRole;
 			///The value type (applicable when a new value has been parsed)
@@ -89,10 +89,10 @@ namespace active::serialise {
 template<>
 struct std::hash<active::serialise::Identity> {
 	std::size_t operator()(const active::serialise::Identity& identity) const noexcept {
-		std::size_t h1 = std::hash<active::String>{}(identity.name);
+		std::size_t h1 = std::hash<active::string>{}(identity.name);
 		if (!identity.group)
 			return h1;
-		std::size_t h2 = std::hash<active::String>{}(*identity.group);
+		std::size_t h2 = std::hash<active::string>{}(*identity.group);
 		return h1 ^ (h2 << 1);
 	}
 };

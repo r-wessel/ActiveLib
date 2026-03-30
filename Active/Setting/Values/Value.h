@@ -61,13 +61,13 @@ namespace active::setting {
 			@param text The incoming text
 			@return The equivalent type (nullopt on failure)
 		*/
-		static std::optional<Type> typeFromName(const String& text);
+		static std::optional<Type> typeFromName(const string& text);
 		/*!
 			Get the text for a Value::Type
 			@param type The incoming type
 			@return The type name as text
 		*/
-		static String nameForType(Type type);
+		static string nameForType(Type type);
 		
 		// MARK: - Constructors
 		
@@ -153,13 +153,13 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		virtual Value& operator=(const active::String& val) = 0;
+		virtual Value& operator=(const active::string& val) = 0;
 		/*!
 			Assignment operator
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		virtual Value& operator=(const char* val) { return operator=(String{val}); }
+		virtual Value& operator=(const char* val) { return operator=(string{val}); }
 		/*!
 			Assignment operator
 			@param val A guid value to assign
@@ -204,7 +204,7 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		virtual operator active::String() const = 0;
+		virtual operator active::string() const = 0;
 		/*!
 			Get a guid value
 			@return A guid value

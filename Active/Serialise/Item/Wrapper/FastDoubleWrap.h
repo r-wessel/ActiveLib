@@ -52,7 +52,7 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(String& dest) const override {
+		bool write(string& dest) const override {
 			return dest.assign(get(), 5);
 		}
 		
@@ -63,7 +63,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const String& source) override {
+		bool read(const string& source) override {
 			base::get() = double{source};
 			return true;
 		}
@@ -73,7 +73,7 @@ namespace active::serialise {
 			@return True if the data was successfully read
 		*/
 		bool readSetting(const setting::Value& source) override {
-			String text = source;
+			string text = source;
 			return read(text);	//Otherwise use a string as an intermediate value
 		}
 		/*!

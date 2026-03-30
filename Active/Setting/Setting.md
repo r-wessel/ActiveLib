@@ -53,11 +53,11 @@ bool receive(const Event& event) {
 ```
 …where the setting identity might be defined like this:
 ```Cpp
-const String tapCountID{"tapCount"};
+const string tapCountID{"tapCount"};
 ```
 …or in  situations where there is a risk of name clashes, it could be defined with a GUID:
 ```Cpp
-const NameID tapCountID{"tapCount", String{"ad870214-1e56-450c-b74c-f8a6711d276b"}};
+const NameID tapCountID{"tapCount", string{"ad870214-1e56-450c-b74c-f8a6711d276b"}};
 ```
 `Event` is derived from `SettingList`, so inherits functionality for attaching and finding settings. The author of an `Event` will insert whatever settings it supports before publishing, but with no knowledge of which subscribers might receive it or how/when the attached settings might be used. This leaves an open path for additional functionality to be built in response to events with no changes or reference to the code at the point of origin.
 
@@ -105,11 +105,11 @@ The functions are mocked up for illustrative purposes, but reflect common functi
 
 If the identity of an event signalling a length change is `changeLengthID`, e.g.:
 ```Cpp
-const NameID changeLengthID{"changeLength", String{"67d60a81-52e6-47ad-8d10-1ac447bcb0f5"}};;
+const NameID changeLengthID{"changeLength", string{"67d60a81-52e6-47ad-8d10-1ac447bcb0f5"}};;
 ```
 …and the identity of a length value is `lengthID`, e.g.:
 ```Cpp
-const NameID lengthID{"newLength", String{"ac580a1a-a904-4768-bc08-569d9ef1af8c"}};;
+const NameID lengthID{"newLength", string{"ac580a1a-a904-4768-bc08-569d9ef1af8c"}};;
 ```
 …then the TextField could be created like this:
 ```Cpp

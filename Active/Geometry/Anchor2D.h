@@ -49,13 +49,13 @@ namespace active::geometry {
 		@param text The incoming text
 		@return The equivalent anchor
 	*/
-	std::optional<Anchor2D> toAnchor2D(const String& text);
+	std::optional<Anchor2D> toAnchor2D(const string& text);
 	/*!
 		Get the text for a Anchor2D value
 		@param anchor The incoming anchor
 		@return The anchor name as text
 	*/
-	String fromAnchor2D(Anchor2D anchor);
+	string fromAnchor2D(Anchor2D anchor);
 
 }
 

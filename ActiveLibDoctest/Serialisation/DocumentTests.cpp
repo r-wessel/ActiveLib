@@ -45,7 +45,7 @@ namespace {
 		//Base test class
 	class Foo {
 	public:
-		inline static const String type = "Foo";
+		inline static const string type = "Foo";
 		
 		Foo(bool filled = false) {
 			if (filled) {
@@ -81,7 +81,7 @@ namespace {
 		//Test subclass
 	class Bar : public Foo {
 	public:
-		inline static const String type = "Bar";
+		inline static const string type = "Bar";
 
 		Bar(bool filled = false) : Foo(filled) {
 			if (filled) {
@@ -96,7 +96,7 @@ namespace {
 				m_foo = *fooIn;
 			m_d = incoming.value(field.at(d)).value_or(ValueSetting{0.0});
 			m_e = incoming.value(field.at(e)).value_or(ValueSetting{Guid{}});
-			m_f = incoming.value(field.at(f)).value_or(ValueSetting{String{}});
+			m_f = incoming.value(field.at(f)).value_or(ValueSetting{string{}});
 		}
 
 		bool operator==(const Bar& ref) const {
@@ -116,7 +116,7 @@ namespace {
 		Foo m_foo;
 		double m_d = 0.0;
 		Guid m_e;
-		String m_f;
+		string m_f;
 	};
 	
 		///Handler class capable of reconstructing serialised test classes
@@ -139,7 +139,7 @@ TEST_SUITE(TESTQ(documentTest)) TEST_SUITE_OPEN
 		auto handler = std::make_shared<TestHandler>();
 		Bar bar(true);
 		auto docOut = bar.send();
-		String json, xml;
+		string json, xml;
 			//JSON test
 		JSONTransport transportJSON;
 			//Send the test object as JSON (into the collection string)

@@ -13,13 +13,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 using namespace active;
 using namespace active::serialise;
-using namespace active;
 
 namespace {
 	
 	constexpr unsigned long long maxInt64 = std::numeric_limits<unsigned long long>::max();
 	
-	static const String nullHex{"0000000000000000"};
+	static const string nullHex{"0000000000000000"};
 
 	
 	uint64_t randomInt64() {
@@ -30,7 +29,6 @@ namespace {
 	}
 	
 }  // namespace
-
 
 /*--------------------------------------------------------------------
 	Default constructor
@@ -48,10 +46,10 @@ Guid::Guid(bool autoGenerate) {
  
 	uuidString: The guid in string form
   --------------------------------------------------------------------*/
-Guid::Guid(const String& uuidString) {
+Guid::Guid(const string& uuidString) {
 	auto incoming{uuidString};
 		//Remove all dashes to create a simple hex stream
-	incoming.replace_all("-", String{});
+	incoming.replace_all("-", string{});
 		//We need 16 characters for a valid guid
 	if (incoming.size() != 32)
 		return;
@@ -73,8 +71,8 @@ Guid::Guid(const String& uuidString) {
  
 	return: A string representation
   --------------------------------------------------------------------*/
-String Guid::string(Case inCase) const {
-	String first, second;
+string Guid::to_string(Case inCase) const {
+	string first, second;
 		//Convert the first half to hex and format
 	auto val = Memory::toBigEndian(m_value.first);
 	if (!HexTransport(inCase).send(Memory{val}, first) || (first.length() != 16))
@@ -88,7 +86,7 @@ String Guid::string(Case inCase) const {
 	second.insert(4, "-");
 		//Join the halves for the result
 	return first + "-" + second;
-} //Guid::string
+} //Guid::to_string
 
 
 /*--------------------------------------------------------------------

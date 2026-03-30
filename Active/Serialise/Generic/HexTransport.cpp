@@ -18,7 +18,7 @@ namespace {
 	const char* upperHexNumerals = "0123456789ABCDEF";
 	const char* lowerHexNumerals = "0123456789abcdef";
 		///The number of hex numerals required for a 32-bit integer
-	const String::size_type hexIntLength = 8;
+	const string::size_type hexIntLength = 8;
 
 	/*!
 		Get the next value from a hex numeral stream
@@ -105,9 +105,9 @@ bool HexTransport::receive(const BufferOut&& destination, const BufferIn& source
  
 	return: The received integer (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<uint32_t> HexTransport::receive(const String& source) const {
+std::optional<uint32_t> HexTransport::receive(const string& source) const {
 	const auto* target = &source;
-	String cache;
+	string cache;
 		//The incoming hex stream is padded out to 8 numerals (if required) to be interpreted as a 32-bit integer
 	if (source.size() < hexIntLength) {
 		cache = source;

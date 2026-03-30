@@ -33,7 +33,7 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The element tag
-		static inline String tag = "point";
+		static inline string tag = "point";
 			
 		// MARK: - Constructor
 
@@ -47,7 +47,7 @@ namespace active::serialise::xml {
 			@param point The point to wrap for (de)serialisation
 			@param customTag A custom tag (overrides the default tag)
 		*/
-		XMLPoint(geometry::Point& point, const String& customTag);
+		XMLPoint(geometry::Point& point, const string& customTag);
 		
 		// MARK: - Functions (const)
 		
@@ -73,7 +73,7 @@ namespace active::serialise::xml {
 		
 	private:
 			//Optional explicit tag (overrides default)
-		std::optional<String> m_tag;
+		std::optional<string> m_tag;
 	};
 	
 }

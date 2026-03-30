@@ -36,7 +36,7 @@ namespace {
 	isTyped: True if the value is serialised as a specific type
 	className: Optional class name for the value container
   --------------------------------------------------------------------*/
-XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, bool isTyped, std::optional<String> className) : base(setting) {
+XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, bool isTyped, std::optional<string> className) : base(setting) {
 	if (setting.identity) {
 		m_name = (*setting.identity).name;
 		if ((*setting.identity).id)
@@ -59,8 +59,8 @@ XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, bool isTyped, s
 	isTyped: True if the value is serialised as a specific type
 	className: Optional class name for the value container
   --------------------------------------------------------------------*/
-XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, const String& customTag,
-								 bool isTyped, std::optional<String> className) : XMLValueSetting{setting} {
+XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, const string& customTag,
+								 bool isTyped, std::optional<string> className) : XMLValueSetting{setting} {
 	m_tag = customTag;
 	m_columns = static_cast<int32_t>(setting.getColumnSize());
 	m_isTyped = isTyped;

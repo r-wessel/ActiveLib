@@ -22,12 +22,12 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The prolog tag
-		inline static String tag = "xml";
+		inline static string tag = "xml";
 			
 		// MARK: - Public variables
 		
 			///XML version
-		String version = "1.0";
+		string version = "1.0";
 			///Text encoding type
 		text_encoding encoding = text_encoding::UTF8;
 		

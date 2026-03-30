@@ -25,12 +25,12 @@ namespace active::serialise {
 	
 	/*!
 	 A wrapper class to (de)serialising a container of objects
-	 @tparam Container The container type, e.g. std::vector<String>, Vector<Point> etc
+	 @tparam Container The container type, e.g. std::vector<string>, Vector<Point> etc
 	 @tparam ObjWrapper The object wrapper to use - only relevant for Package-based contents, notably for using serialise::Mover
 	 
 	 This can be used in a wide variety of cases including:
 	 - STL containers, e.g. std::vector or std::list. Contents can include:
-		- Primitive types, e.g. double, int32_t, String etc
+		- Primitive types, e.g. double, int32_t, string etc
 	 	- Item cargo, i.e. subclassed from serialise::Item
 	 	- Package cargo, i.e. subclassed from serialise::Package
 	 - Specialised containers of unique_ptrs, e.g. container::Vector, container::List. Contents can include:
@@ -43,7 +43,7 @@ namespace active::serialise {
 	public:
 		
 			//Default container element tag
-		static inline String defaultTag = "Item";
+		static inline string defaultTag = "Item";
 			///Serialisation fields
 		enum FieldIndex {
 			itemID,
@@ -64,7 +64,7 @@ namespace active::serialise {
 		 @param isEmptySent True if the container is still required to be sent even when empty
 		 @param tg The default item tag
 		 */
-		ContainerWrap(Container& container, bool isEmptySent = false, const String& tg = defaultTag) :
+		ContainerWrap(Container& container, bool isEmptySent = false, const string& tg = defaultTag) :
 				base{container}, isEmptyRequired(isEmptySent), tag{tg} {}
 		/*!
 		 Constructor
@@ -72,7 +72,7 @@ namespace active::serialise {
 		 @param isEmptySent True if the container is still required to be sent even when empty
 		 @param tg The default item tag
 		 */
-		ContainerWrap(const Container& container, bool isEmptySent = false, const String& tg = defaultTag) :
+		ContainerWrap(const Container& container, bool isEmptySent = false, const string& tg = defaultTag) :
 				ContainerWrap{const_cast<Container&>(container), isEmptySent, tg} {}
 		/*!
 		 Constructor
@@ -87,7 +87,7 @@ namespace active::serialise {
 		// MARK: - Public variables
 		
 			//The container item tag
-		String tag;
+		string tag;
 			//True if empty containers should still be serialised
 		bool isEmptyRequired;
 			

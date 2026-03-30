@@ -29,7 +29,7 @@ namespace active::serialise::xml {
 		using base = XMLPoint;
 		
 			///The element tag
-		static String tag;
+		static string tag;
 			
 		// MARK: - Constructor
 
@@ -43,7 +43,7 @@ namespace active::serialise::xml {
 			@param point The poly-point to wrap for (de)serialisation
 			@param customTag A custom tag (overrides the default tag)
 		*/
-		XMLPolyPoint(geometry::PolyPoint& point, const String& customTag);
+		XMLPolyPoint(geometry::PolyPoint& point, const string& customTag);
 		
 		// MARK: - Functions (const)
 		

@@ -35,7 +35,7 @@ namespace active::rpc {
 		 Get the bound function name
 		 @return The bound function name
 		 */
-		virtual String getName() const = 0;
+		virtual string getName() const = 0;
 		/*!
 		 Determine if the function returns void (no return)
 		 @return True if the function returns void

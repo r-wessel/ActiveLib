@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::setting {
 	
 		///A single string value
-	using StringValue = ValueBase<String>;
+	using StringValue = ValueBase<string>;
 
 	// MARK: - Operators
 	
@@ -33,7 +33,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(int32_t val) {
-		data = String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -43,7 +43,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(uint32_t val) {
-		data = String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -53,7 +53,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(int64_t val) {
-		data = String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -63,7 +63,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(double val) {
-		data = String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -72,7 +72,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& StringValue::operator=(const String& val) {
+	Value& StringValue::operator=(const string& val) {
 		data = val;
 		return *this;
 	}
@@ -136,7 +136,7 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	StringValue::operator String() const 	{ return data; }
+	StringValue::operator string() const 	{ return data; }
 	/*!
 		Get a guid value
 		@return A guid value

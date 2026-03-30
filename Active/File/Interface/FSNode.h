@@ -21,7 +21,7 @@ namespace active::file {
 		// MARK: - Constants
 		
 		/// The path delimiter expression for the current platform
-		static const String pathDelimiter;
+		static const string pathDelimiter;
 		
 		// MARK: - Constructors
 		
@@ -105,7 +105,7 @@ namespace active::file {
 			@param name The new name
 			@throw std::bad_alloc Thrown if memory allocation fails
 		*/
-		virtual void rename(const String& name);
+		virtual void rename(const string& name);
 		/*!
 			Remove the node path
 			@param isRecursive True if any subnodes should also be recursively removed

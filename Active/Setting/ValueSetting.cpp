@@ -122,7 +122,7 @@ ValueSetting::ValueSetting(const Guid& val, NameID::Option nameID) : setting::Se
 	val: The value
 	nameID: The setting identifier
   --------------------------------------------------------------------*/
-ValueSetting::ValueSetting(const String& val, NameID::Option nameID) : setting::Setting{nameID}	{
+ValueSetting::ValueSetting(const string& val, NameID::Option nameID) : setting::Setting{nameID}	{
 	emplace_back(StringValue{val});
 } //ValueSetting::ValueSetting
 

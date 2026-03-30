@@ -56,12 +56,12 @@ namespace {
 		operator bool() { return first != second; }
 	};
 
-	using ColourTable = std::unordered_map<String, std::pair<Index, Colour>>;
+	using ColourTable = std::unordered_map<string, std::pair<Index, Colour>>;
 	using VertexTable = std::map<VertexMatch, Index>;
 	using NormalTable = std::map<NormalMatch, Index>;
 	using EdgeTable = std::map<EdgeMatch, std::pair<Index, Edge>>;
-	using FinishTable = std::unordered_map<String, std::pair<Index, Finish>>;
-	using FaceTable = std::unordered_map<String, std::pair<Index, Face>>;
+	using FinishTable = std::unordered_map<string, std::pair<Index, Finish>>;
+	using FaceTable = std::unordered_map<string, std::pair<Index, Face>>;
 
 }
 

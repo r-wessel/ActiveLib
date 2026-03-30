@@ -25,10 +25,10 @@ namespace active {
 		*t;
 	};
 
-		///String can be constructed from type
+		///string can be constructed from type
 	template<typename T>
-	concept StringConstructable = requires(T t, String test) {
-		test = String{t};
+	concept StringConstructable = requires(T t, string test) {
+		test = string{t};
 	};
 
 		///Object contains 3D coordinates (lower-case)

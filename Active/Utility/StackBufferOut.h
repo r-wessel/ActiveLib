@@ -38,7 +38,7 @@ namespace active {
 			Constructor
 			@param destString The destination string
 		*/
-		StackBufferOut(String& destString) : BufferOut(destString) {}
+		StackBufferOut(string& destString) : BufferOut(destString) {}
 		 //No move constructor
 		StackBufferOut(BufferOut&& source) noexcept = delete;
 			//No copy constructor

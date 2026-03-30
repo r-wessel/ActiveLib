@@ -32,7 +32,7 @@ namespace active::serialise {
 	using FloatHold = ValueHold<float>;
 	using Int32Hold = ValueHold<int32_t>;
 	using Int64Hold = ValueHold<int64_t>;
-	using StringHold = ValueHold<String>;
+	using StringHold = ValueHold<string>;
 	using UInt32Hold = ValueHold<uint32_t>;
 
 }  // namespace active::serialise

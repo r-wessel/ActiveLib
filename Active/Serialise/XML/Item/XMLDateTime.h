@@ -77,7 +77,7 @@ namespace active::serialise::xml {
 			@param dest The string to write the const data to
 			@return True if the data was successfully written
 		*/
-		bool write(String& dest) const override;
+		bool write(string& dest) const override;
 		/*!
 			Get the serialisation type for the item value
 			@return The item value serialisation type (nullopt = unspecified, i.e. a default is acceptable)
@@ -115,7 +115,7 @@ namespace active::serialise::xml {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const String& source) override;
+		bool read(const string& source) override;
 		
 	private:
 		Time& m_time;
