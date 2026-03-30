@@ -144,7 +144,7 @@ namespace active::serialise {
 	*/
 	inline std::pair<bool, bool> readBoolRefValue(const String& source) {
 		bool incoming = false;
-		String value = source.lowercase();
+		String value = source.to_lower();
 		if ((value == "true") || (value == "1"))
 			incoming = true;
 		else if ((value == "false") || (value == "0"))

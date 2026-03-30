@@ -155,7 +155,7 @@ namespace active::setting {
 		if (xmlParser.read(data))
 			return time;
 			//Otherwise attempt to convert as seconds from 1970
-		if (auto seconds = data.toInt64(); seconds)
+		if (auto seconds = data.to_int64_t(); seconds)
 			return Time{*seconds};
 		return Time{};
 	}

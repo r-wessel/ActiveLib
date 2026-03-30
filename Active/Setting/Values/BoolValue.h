@@ -73,9 +73,9 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& BoolValue::operator=(const String& val) {
-		if ((val.lowercase() == "true") || (val.lowercase() == "1"))
+		if ((val.to_lower() == "true") || (val.to_lower() == "1"))
 			data = true;
-		else if ((val.lowercase() == "false") || (val.lowercase() == "0"))
+		else if ((val.to_lower() == "false") || (val.to_lower() == "0"))
 			data = false;
 		else {
 			status = bad;

@@ -28,7 +28,7 @@ namespace {
 		@param toBigEndian True if the end result should be big-endian
 	*/
 	template<typename T> requires (std::is_arithmetic_v<T>)
-	static void byteSwap(T* val, std::string::size_type howMany, bool toBigEndian) {
+	static void byte_swap(T* val, std::string::size_type howMany, bool toBigEndian) {
 		if ((howMany < 1) || (toBigEndian == text_format::defaultEndian))
 			return;
 		for (; howMany--; ++val) {
@@ -37,7 +37,7 @@ namespace {
 			for (auto i = bytes-- / 2; i--; )
 				std::swap(data[i], data[bytes - i]);
 		}
-	} //byteSwap
+	} //byte_swap
 
 }  // namespace
 
@@ -298,7 +298,7 @@ std::pair<char32_t, unsigned char> string_function::get_utf32_char_from_utf16(co
 		return result;	//No chars to read from source
 	result.first = static_cast<char32_t>(*text);
 		//Byte-swap incoming data if neccessary (no action if incoming data matches platform byte order)
-	byteSwap(reinterpret_cast<char16_t*>(&result.first), 2, is_big_endian);
+	byte_swap(reinterpret_cast<char16_t*>(&result.first), 2, is_big_endian);
 	++text;
 		//Deal with single 16-bit encoding first
 	if (string_function::is_within_bmp(static_cast<char16_t>(result.first))) {
@@ -343,7 +343,7 @@ std::pair<char32_t, unsigned char> string_function::get_unicode_char(const char*
 			auto source = reinterpret_cast<const char32_t*>(text);
 			result.first = source[0];
 			if (is_valid_unicode(result.first)) {
-				byteSwap(&result.first, 1, format.is_big_endian);
+				byte_swap(&result.first, 1, format.is_big_endian);
 				result.second = sizeof(char32_t);
 			} else
 				result.second = 0;	//Invalid UTF32 code point

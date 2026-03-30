@@ -82,7 +82,7 @@ namespace {
 										  std::nullopt, UTF16) :
 				(uniString->size() * sizeof(char16_t));
 					//Byte-swap the data as required (no action if platform endianess matches requirement)
-				Memory::byteSwap(uniString16->data(), byteCount / sizeof(char16_t), is_big_endian);
+				Memory::byte_swap(uniString16->data(), byteCount / sizeof(char16_t), is_big_endian);
 				buffer.write(reinterpret_cast<const char*>(uniString16->data()), byteCount);
 			}
 		}
@@ -119,7 +119,7 @@ namespace {
 			string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), std::nullopt, UTF32) :
 			(uniString->size() * sizeof(char32_t));
 				//Byte-swap the data as required (no action if platform endianess matches requirement)
-			Memory::byteSwap(uniString->data(), byteCount / sizeof(char32_t), is_big_endian);
+			Memory::byte_swap(uniString->data(), byteCount / sizeof(char32_t), is_big_endian);
 			buffer.write(reinterpret_cast<const char*>(uniString->data()), byteCount);
 		}
 		if (isNullAdded)

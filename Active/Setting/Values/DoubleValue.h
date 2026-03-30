@@ -78,7 +78,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& DoubleValue::operator=(const String& val) {
-		if (auto doubleValue = val.toDouble(); doubleValue) {
+		if (auto doubleValue = val.to_double(); doubleValue) {
 			data = *doubleValue;
 			status = good;
 		} else

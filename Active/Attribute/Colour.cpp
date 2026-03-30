@@ -48,16 +48,16 @@ Colour::Colour(const String& hex) {
 /*--------------------------------------------------------------------
 	Get the colour in hex digits
  
-	isAlpha: True to include the alpha value
+	is_alpha: True to include the alpha value
  
 	return: The colour as hex
   --------------------------------------------------------------------*/
-String Colour::hex(bool isAlpha) const {
+String Colour::hex(bool is_alpha) const {
 	Memory colourOut;
 	{
 		BufferOut buffer{colourOut};
 		buffer << static_cast<char>(r) << static_cast<char>(g) << static_cast<char>(b);
-		if (isAlpha)
+		if (is_alpha)
 			buffer << static_cast<char>(a * 255);
 	}
 	String result;

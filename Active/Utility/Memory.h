@@ -70,7 +70,7 @@ namespace active {
 				//Return the given value unchanged if the processor is big-endian
 			if (defaultEndian)
 				return val;
-			byteSwap(val);
+			byte_swap(val);
 			return val;
 		}
 		/*!
@@ -83,7 +83,7 @@ namespace active {
 				//Return the given value unchanged if the processor is big-endian
 			if (defaultEndian)
 				return val;
-			byteSwap(val);
+			byte_swap(val);
 			return val;
 		}
 		/*!
@@ -91,7 +91,7 @@ namespace active {
 			@param val The target value
 		*/
 		template<typename T> requires (std::is_arithmetic_v<T>)
-		static void byteSwap(T& val) {
+		static void byte_swap(T& val) {
 			auto* data = reinterpret_cast<unsigned char*>(&val);
 			auto bytes = sizeof(T);
 			for (auto i = bytes-- / 2; i--; )
@@ -104,7 +104,7 @@ namespace active {
 			@param toBigEndian True if the end result should be big-endian
 		*/
 		template<typename T> requires (std::is_arithmetic_v<T>)
-		static void byteSwap(T* val, size_type howMany, bool toBigEndian) {
+		static void byte_swap(T* val, size_type howMany, bool toBigEndian) {
 			if ((howMany < 1) || (toBigEndian == defaultEndian))
 				return;
 			for (; howMany--; ++val) {

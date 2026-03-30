@@ -61,10 +61,10 @@ namespace active::attribute {
 		bool isOpaque() const { return math::isEqual(a, 1.0); }
 		/*!
 			Get the colour in hex digits
-			@param isAlpha True to include the alpha value
+			@param is_alpha True to include the alpha value
 			@return The colour as hex
 		*/
-		String hex(bool isAlpha = false) const;
+		String hex(bool is_alpha = false) const;
 		/*!
 		 Get a hash value for the colour
 		 @param format The required has format

@@ -106,7 +106,7 @@ BufferIn::BufferIn(BufferIn&& source) noexcept :
 	return: A reference to this
   --------------------------------------------------------------------*/
 const BufferIn& BufferIn::operator>>(double& val) const {
-	if (auto temp = readWord().toDouble(); temp)
+	if (auto temp = readWord().to_double(); temp)
 		val = *temp;
 	else {
 		setState(std::ios_base::failbit);

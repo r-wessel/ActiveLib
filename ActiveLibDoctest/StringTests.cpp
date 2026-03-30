@@ -105,8 +105,8 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		charBuffer.clear();
 		BufferOut{charBuffer}.write(test, String::UTF32);
 		CHECK_MESSAGE(test == String(charBuffer.data(), std::nullopt, String::UTF32), TEST_MESSAGE(String.copyTo(char32_t) incorrect content));
-		auto upper = test.uppercase();
-		auto lower = upper.lowercase();
+		auto upper = test.to_upper();
+		auto lower = upper.to_lower();
 		CHECK_MESSAGE(test == lower, TEST_MESSAGE(String case transformations incorrect content));
 		
 			//Negative tests - these are invalid operations on the target string, attempting to provoke errors

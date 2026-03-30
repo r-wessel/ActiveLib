@@ -747,7 +747,7 @@ namespace {
 	void processInstruction(XMLImporter& importer, Cargo& dataIn, const XMLIdentity& instruction, const String& attributes) {
 			//Note - this method currently looks for the xml instruction only
 			//It should be expanded in future to pass instructions to the XML reader
-		if (instruction.name.lowercase() != "xml") {
+		if (instruction.name.to_lower() != "xml") {
 			if (!importer.isUnknownInstructionSkipped())
 				throw std::system_error(makeXMLError(unknownInstruction));
 			return;

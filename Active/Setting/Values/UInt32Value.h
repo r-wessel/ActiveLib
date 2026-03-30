@@ -73,7 +73,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& UInt32Value::operator=(const String& val) {
-		if (auto intValue = val.toInt32(); intValue)
+		if (auto intValue = val.to_int32_t(); intValue)
 			data = *intValue;
 		else
 			status = bad;

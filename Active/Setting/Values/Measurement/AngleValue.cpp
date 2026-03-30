@@ -82,7 +82,7 @@ Value& AngleValue::assign(const String& val, const AngleUnit& unit) {
 		//Start with the unit conventions (can be modified by user input)
 	auto sweepDirection = unit.isClockwisePositive ? -1.0 : 1.0,
 			zeroDelta = unit.zeroOffset;
-	String angleText{val.uppercase()};
+	String angleText{val.to_upper()};
 		//Angles may contain surveyor bearings - if so, we need to process and remove these first
 	auto index = 0;
 	String directions;

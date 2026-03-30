@@ -17,10 +17,10 @@ TEST_SUITE(TESTQ(GuidTests)) TEST_SUITE_OPEN
 	  CHECK_MESSAGE(test == "00000000-0000-0000-0000-000000000000", TEST_MESSAGE(Null guid to string failed));
 	  Guid goodGuid{guidString};
 	  CHECK_MESSAGE(goodGuid, TEST_MESSAGE(Guid from string failed));
-	  CHECK_MESSAGE(goodGuid.operator String().lowercase() == guidString.lowercase(), TEST_MESSAGE(Guid to string failed));
+	  CHECK_MESSAGE(goodGuid.operator String().to_lower() == guidString.to_lower(), TEST_MESSAGE(Guid to string failed));
 	  Guid another = goodGuid;
 	  CHECK_MESSAGE(another == goodGuid, TEST_MESSAGE(Guid assignment/comparison failed));
-	  CHECK_MESSAGE(another.operator String().lowercase() == guidString.lowercase(), TEST_MESSAGE(Guid to string failed));
+	  CHECK_MESSAGE(another.operator String().to_lower() == guidString.to_lower(), TEST_MESSAGE(Guid to string failed));
 	  int64_t val = -2317212765;
 	  auto valGuid{Guid::fromInt(val)};
 	  CHECK_MESSAGE(valGuid, TEST_MESSAGE(Guid from int64_t failed));

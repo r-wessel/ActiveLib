@@ -132,7 +132,7 @@ bool XMLDateTime::read(const String& source) {
 	if (!std::regex_search(subject, match, pattern) || (match.size() < 2)) {
 		if (source.find_first_not_of(String::allFloat))
 			return false;
-		if (auto seconds = source.toDouble(); seconds) {
+		if (auto seconds = source.to_double(); seconds) {
 			m_time = Time{*seconds};
 			return true;
 		}
@@ -144,34 +144,34 @@ bool XMLDateTime::read(const String& source) {
 	auto incoming = ++match.begin();
 	if (hasDate) {
 			//Year
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val != 0))
+		if (auto val = String{*(incoming++)}.to_int16_t(); val && (val != 0))
 			year = *val;
 		else
 			return false;
 			//Month
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val > 0) && (val < 13))
+		if (auto val = String{*(incoming++)}.to_int16_t(); val && (val > 0) && (val < 13))
 			month = static_cast<uint8_t>(*val);
 		else
 			return false;
 			//Day
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val > 0) && (val < 32))
+		if (auto val = String{*(incoming++)}.to_int16_t(); val && (val > 0) && (val < 32))
 			day = static_cast<uint8_t>(*val);
 		else
 			return false;
 	}
 	if (hasTime) {
 			//Hours
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val >= 0) && (val < 24))
+		if (auto val = String{*(incoming++)}.to_int16_t(); val && (val >= 0) && (val < 24))
 			hour = static_cast<uint8_t>(*val);
 		else
 			return false;
 			//Minutes
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val >= 0) && (val < 60))
+		if (auto val = String{*(incoming++)}.to_int16_t(); val && (val >= 0) && (val < 60))
 			minute = static_cast<uint8_t>(*val);
 		else
 			return false;
 			//Seconds (NB: Double to allow for microseconds)
-		if (auto val = String{*(incoming++)}.toDouble(); val && (val >= 0.0) && (val < 60.0))
+		if (auto val = String{*(incoming++)}.to_double(); val && (val >= 0.0) && (val < 60.0))
 			second = *val;
 		else
 			return false;
@@ -181,11 +181,11 @@ bool XMLDateTime::read(const String& source) {
 	if (incoming != match.end() && incoming->matched) {
 		if (String zone{*incoming}; !zone.empty() && (zone != "Z")) {
 			int32_t sign = (zone[0] == U'-') ? -1 : 1;
-			if (auto val = zone.substr(1, 2).toInt16(); val && ((*val * sign) > -13) && ((*val * sign) < 15))
+			if (auto val = zone.substr(1, 2).to_int16_t(); val && ((*val * sign) > -13) && ((*val * sign) < 15))
 				utcOffset += (*val * sign * 60);
 			else
 				return false;
-			if (auto val = zone.substr(4, 2).toInt16(); val && (val >= 0) && (val < 60))
+			if (auto val = zone.substr(4, 2).to_int16_t(); val && (val >= 0) && (val < 60))
 				utcOffset += *val;
 			else
 				return false;

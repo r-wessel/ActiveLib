@@ -72,7 +72,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& Int64Value::operator=(const String& val) {
-		if (auto intValue = val.toInt64(); intValue)
+		if (auto intValue = val.to_int64_t(); intValue)
 			data = *intValue;
 		else
 			status = bad;
