@@ -36,60 +36,70 @@ namespace active {
 	 
 	 Note that either syntax can be used, allowing this to be used as a drop-in replacement for `std::string`.
 	 */
-	class string_position : public std::optional<std::string::size_type> {
+	struct string_position {
 	public:
 			//MARK: - Types
-		
-		using base = std::optional<std::string::size_type>;
 			///Class size type
 		using size_type = std::string::size_type;
 
 			//MARK: - Constants
 		
 			///Constant to indicate an undefined/missing position in a string
-		size_type npos = std::string::npos;
+		static inline size_type npos = std::string::npos;
 
 			//MARK: - Constructors
 		
 		/*!
 		 Default constructor
 		 */
-		string_position() : base{} {}
+		string_position() {}
 		/*!
 		 Constructor
 		 @param nullPos An undefined string position
 		 */
-		string_position(const std::nullopt_t nullPos) : base{} {}
+		string_position(const std::nullopt_t nullPos) { m_position = npos; }
 		/*!
 		 Constructor
 		 @param pos A literal string position
 		 */
 		template<typename T> requires std::is_arithmetic_v<T>
-		string_position(const T pos) { base::operator=(pos); }
-		/*!
-		 Copy constructor
-		 @param source The object to copy
-		 */
-		string_position(const string_position& source) : base{} {
-			if (source && (*source != npos))
-				base::operator=(*source);
-		}
+		string_position(const T pos) { m_position = pos; }
 
 			//MARK: - Operators
-			
+		
+		/*!
+		 Assignment operator
+		 @param source The object to copy
+		 @return A reference to this
+		 */
+		string_position operator= (const size_type& source) {
+			m_position = source;
+			return *this;
+		}
+		/*!
+		 Dereference operator
+		 @return The position value
+		 */
+		size_type operator* () const { return m_position; }
+		/*!
+		 Dereference operator
+		 @return The position value
+		 */
+		size_type& operator* () { return m_position; }
+		
 		/*!
 		 Equality operator
 		 @param ref The object to compare
 		 @return True if this and ref are equal
 		 */
 		bool operator== (const string_position& ref) const {
-			auto state = operator bool();
-			if (state != ref.operator bool())
+			auto state = has_value();
+			if (state != ref.has_value())
 				return false;
-			return !state || (**this == *ref);
+			return !state || (m_position == ref.m_position);
 		}
 		template<typename T> requires std::is_arithmetic_v<T>
-		bool operator== (const T ref) const { return (operator bool()) ? (**this == ref) : (ref == npos); }
+		bool operator== (const T ref) const { return (has_value()) ? (m_position == ref) : (ref >= npos); }
 		/*!
 		 Equality operator
 		 @param ref The object to compare
@@ -103,30 +113,47 @@ namespace active {
 		 @param ref The object to compare
 		 @return True if this is less than ref
 		 */
-		bool operator< (const string_position& ref) const { return operator bool() && (**this < ref); }
+		bool operator< (const string_position& ref) const { return has_value() && !(ref >= m_position); }
 		template<typename T> requires std::is_arithmetic_v<T>
-		bool operator< (const T ref) const { return operator bool() && (**this < ref); }
-		bool operator<= (const string_position& ref) const { return operator bool() && (**this <= ref); }
+		bool operator< (const T ref) const { return has_value() && (m_position < ref); }
+		bool operator<= (const string_position& ref) const { return has_value() && !(ref > m_position); }
 		template<typename T> requires std::is_arithmetic_v<T>
-		bool operator<= (const T ref) const { return operator bool() && (**this <= ref); }
+		bool operator<= (const T ref) const { return has_value() && (m_position <= ref); }
 		/*!
 		 Greater-than operator
 		 @param ref The object to compare
 		 @return True if this is greater than ref
 		 */
-		bool operator> (const string_position& ref) const { return operator bool() && (**this > ref); }
+		bool operator> (const string_position& ref) const { return has_value() && !(ref <= m_position); }
 		template<typename T> requires std::is_arithmetic_v<T>
-		bool operator> (const T ref) const { return operator bool() && (**this > ref); }
-		bool operator>= (const string_position& ref) const { return operator bool() && (**this >= ref); }
+		bool operator> (const T ref) const { return has_value() && (m_position > ref); }
+		bool operator>= (const string_position& ref) const { return has_value() && !(ref < m_position); }
 		template<typename T> requires std::is_arithmetic_v<T>
-		bool operator>= (const T ref) const { return operator bool() && (**this >= ref); }
+		bool operator>= (const T ref) const { return has_value() && (m_position >= ref); }
 
 			//MARK: - Conversion operators
 		
-			///Cponversion to `bool`
-		explicit operator bool() const { return base::has_value() && (**this != npos); }
-			///Cponversion to `size_type`
-		operator std::string::size_type() const { return base::has_value() ? **this : npos; }
+			///Conversion to `bool`
+		explicit operator bool() const { return has_value(); }
+			///Conversion to `size_type`
+		operator std::string::size_type() const { return has_value() ? m_position : std::string::npos; }
+
+			//MARK: - Functions (const)
+		
+		/*!
+		 Determine if the position is defined
+		 @return True if the position value is defined
+		 */
+		bool has_value() const { return m_position != npos; }
+		/*!
+		 Return this value when defined, otherwise an alternative value
+		 @param alt The alternative value
+		 @return Either this (defined) value or the alternative
+		 */
+		size_type value_or(size_type alt) const { return has_value() ? m_position : alt; }
+		
+	private:
+		size_type m_position = npos;
 	};
 
 		
@@ -317,7 +344,7 @@ namespace active {
 			///Constant to indicate an unspecified or non-existant position in std::string
 		static constexpr size_type npos = base::npos;
 		
-		static inline string_position no_pos{std::nullopt};
+		static inline string_position no_pos{};
 		
 			///Default length precision (0.01mm)
 		static constexpr double eps = 1e-5;
@@ -1024,8 +1051,8 @@ namespace active::string_function {
 	 @param format The text data format
 	 @return The number of bytes in the text containing valid UTF8 characters
 	 */
-	string::size_type get_valid_byte_count(const char* text, string_position howMany = string::no_pos,
-										   string_position charCount = string::no_pos, text_format format = text_format{});
+	string::size_type get_valid_byte_count(const char* text, std::string::size_type howMany = string::no_pos,
+										   std::string::size_type charCount = string::no_pos, text_format format = text_format{});
 	/*!
 	 Get the width of a specified character in bytes
 	 @param text The source text
@@ -1033,7 +1060,7 @@ namespace active::string_function {
 	 @param format The text data format
 	 @return The character width in bytes (nullopt for bad encoding)
 	 */
-	std::optional<unsigned char> get_character_byte_count(const char* text, string_position howMany = string::no_pos,
+	std::optional<unsigned char> get_character_byte_count(const char* text, std::string::size_type howMany = string::no_pos,
 														  text_format format = text_format{});
 	/*!
 	 Return the length of a string in bytes, limited by a character count

@@ -52,26 +52,27 @@ namespace {
  
 	return: The number of bytes in the text containing valid characters
   --------------------------------------------------------------------*/
-std::string::size_type string_function::get_valid_byte_count(const char* text, string_position howMany,
-														  string_position charCount, text_format format) {
+std::string::size_type string_function::get_valid_byte_count(const char* text, std::string::size_type howMany,
+															 std::string::size_type charCount, text_format format) {
 	bool isOpen = !charCount;
 		//Detect empty strings or null requests
-	if ((text == nullptr) || (howMany == 0) || (!isOpen && (*charCount < 1)))
+	if ((text == nullptr) || (howMany == 0) || (!isOpen && (charCount < 1)))
 		return 0;
 	const auto* endPos = text;
+	bool isLimited = howMany != string_position::npos;
 	do {
 			//Get the size of the next char
-		if (auto nextLen = string_function::get_character_byte_count(endPos, howMany, format); nextLen && (*nextLen > 0)) {
+		if (auto nextLen = string_function::get_character_byte_count(endPos, howMany, format); nextLen > 0) {
 			endPos += *nextLen;
 				//If the source is byte-limited, ensure the remaining count is updated
-			if (howMany) {
-				*howMany -= *nextLen;
-				if (*howMany == 0)
+			if (isLimited) {
+				howMany -= *nextLen;
+				if (howMany == 0)
 					break;
 			}
 		} else
 			break;
-	} while ((*endPos != 0) && (isOpen || --(*charCount)));
+	} while ((*endPos != 0) && (isOpen || --charCount));
 	return static_cast<std::string::size_type>(endPos - text);
 } //string_function::get_valid_byte_count
 
@@ -85,7 +86,7 @@ std::string::size_type string_function::get_valid_byte_count(const char* text, s
  
 	return: The character width in bytes (nullopt on failure, i.e. bad encoding)
   --------------------------------------------------------------------*/
-std::optional<unsigned char> string_function::get_character_byte_count(const char* text, string_position howMany, text_format format) {
+std::optional<unsigned char> string_function::get_character_byte_count(const char* text, std::string::size_type howMany, text_format format) {
 	if ((howMany == 0) || (text == nullptr))
 		return 0;
 	switch (format.encoding) {
@@ -160,7 +161,7 @@ string_position string_function::get_byte_count_char_limited(const char* text, s
 		//Ensure the loop is limited where a specific number of chars is specified
 	while (!howMany || (*howMany)--) {
 			//Check if the number of bytes in the next char can be established
-		if (auto nextLen = string_function::get_character_byte_count(endPos, std::nullopt, format); nextLen && (nextLen > 0))
+		if (auto nextLen = string_function::get_character_byte_count(endPos, string_position::npos, format); nextLen && (nextLen > 0))
 			endPos += *nextLen;	//If so, bump the leading pointer to the next char position
 		else {
 			if (isCountChecked)
@@ -466,7 +467,7 @@ std::vector<unsigned char> string_function::collect_char_byte_count(const char* 
 		return charLength;
 		//Note: loop still works as expected even when howMany = nullopt
 	while (!howMany || (*howMany)--) {
-		if (auto nextLen = string_function::get_character_byte_count(text, std::nullopt, format); nextLen && (nextLen > 0)) {
+		if (auto nextLen = string_function::get_character_byte_count(text, string_position::npos, format); nextLen && (nextLen > 0)) {
 			charLength.push_back(*nextLen);
 			text += *nextLen;
 		} else

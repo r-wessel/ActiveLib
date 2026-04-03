@@ -24,6 +24,8 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/Defer.h"
 #include "Active/string/text_encoding.h"
 
+#include <iostream>
+
 #include <unordered_map>
 
 using namespace active::serialise;
@@ -637,6 +639,9 @@ namespace {
 						!m_buffer.find_first_of(":", nullptr, false, false, true))
 					throw std::system_error(makeJSONError(nameMissing));
 				fromJSONString(identity.name, m_glossary);
+				
+				std::cout << identity.name.data() << "\n";
+				
 					//Check if the tag includes a namespace
 				if (auto dividerPos = identity.name.rfind(":"); dividerPos) {
 					identity.group = identity.name.substr(0, *dividerPos);

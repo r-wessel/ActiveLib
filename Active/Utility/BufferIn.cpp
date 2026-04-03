@@ -766,7 +766,7 @@ bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, 
 							if (foundBuffer)
 								foundBuffer->append(dataBuffer->substr(0, index));
 							dataBuffer->erase(0, index);
-							continue;
+							continue; 
 						}
 					}
 						//If none of the chars found so far can be used for a continuous sequence, we need to resume the search from scratch

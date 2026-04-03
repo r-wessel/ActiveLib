@@ -33,8 +33,8 @@ namespace {
 	 @return A reference to the destination
 	 */
 	const BufferOut& writeUTF8(const string& string, const BufferOut& buffer, bool isNullAdded = true,
-							   string_position howMany = std::nullopt,
-							   string_position maxBytes = std::nullopt) {
+							   string_position howMany = {},
+							   string_position maxBytes = {}) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		if (!string.empty()) {
@@ -79,7 +79,7 @@ namespace {
 					//NB: When a terminating null is required, deduct this when a max size for the destination is specified
 				string::size_type byteCount = maxBytes ?
 				string_function::get_valid_byte_count(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0),
-										  std::nullopt, UTF16) :
+										  string_position::npos, UTF16) :
 				(uniString->size() * sizeof(char16_t));
 					//Byte-swap the data as required (no action if platform endianess matches requirement)
 				Memory::byte_swap(uniString16->data(), byteCount / sizeof(char16_t), is_big_endian);
@@ -116,7 +116,7 @@ namespace {
 				maxBytes = *bufferMax;
 				//NB: When a terminating null is required, deduct this when a max size for the destination is specified
 			string::size_type byteCount = maxBytes ?
-			string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), std::nullopt, UTF32) :
+			string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), string_position::npos, UTF32) :
 			(uniString->size() * sizeof(char32_t));
 				//Byte-swap the data as required (no action if platform endianess matches requirement)
 			Memory::byte_swap(uniString->data(), byteCount / sizeof(char32_t), is_big_endian);
