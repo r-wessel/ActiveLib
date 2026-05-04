@@ -209,10 +209,6 @@ void BufferIn::forEach(const string::Function& func, string* pool) const {
 	return: True if a match is found
   --------------------------------------------------------------------*/
 bool BufferIn::findIf(const string::Filter& filter, string* pool, bool isFoundSkipped) const {
-		//Allocate a buffer for pooling data as required
-	std::optional<std::u32string> dataBuffer;
-	if (pool != nullptr)
-		dataBuffer = std::u32string{};
 	bool isFound = false;
 	while (good()) {
 		auto uniChar = getEncodedChar(true);
@@ -224,12 +220,9 @@ bool BufferIn::findIf(const string::Filter& filter, string* pool, bool isFoundSk
 			isFound = true;
 			break;
 		}
-		if (dataBuffer)
-			dataBuffer->push_back(uniChar.first);
+		if (pool != nullptr)
+			pool->append(uniChar.first);
 	}
-		//Write the pooled data as required
-	if (dataBuffer)
-		pool->append(*dataBuffer);
 	return isFound;
 } //BufferIn::findIf
 
@@ -675,7 +668,7 @@ bool BufferIn::refillBuffer() const {
   --------------------------------------------------------------------*/
 bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, bool isAllMatched, bool isOrderedMatch,
 					bool isRepeatMatch, bool isFoundSkipped, bool isFoundPooled, std::optional<char32_t> escapeChar) const {
-	if (toFind.empty())
+	if (toFind.empty()) [[unlikely]]
 		return false;
 		//Ensure passed parameters are mutually coherent
 	if (!isContiguousMatch)
@@ -688,7 +681,7 @@ bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, 
 	auto base = matches.begin(),
 				top = isOrderedMatch ? ++matches.begin() : matches.end();
 		//Allocate a buffer for data pooling as required
-	std::optional<std::u32string> dataBuffer, foundBuffer;
+	std::optional<string> dataBuffer, foundBuffer;
 	if (pool != nullptr)
 		dataBuffer = std::u32string{};
 	if (!isFoundSkipped || isFoundPooled || isOrderedMatch)
@@ -704,10 +697,10 @@ bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, 
 			setPosition(*foundStart);
 			//Ensure pooled data is collected when requested
 		if (dataBuffer) {
+			pool->append(*dataBuffer);
 				//If the found expression is pooled, write it
 			if (isFoundPooled)
-				dataBuffer->append(*foundBuffer);
-			pool->append(*dataBuffer);
+				pool->append(*foundBuffer);
 		}
 	});
 	for (;;) {
@@ -719,7 +712,7 @@ bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, 
 			//Once a char is read, the following code must be executed for any exit from this scope
 		auto loopScope = defer([&dataBuffer, &uniChar]{
 			if (dataBuffer && (uniChar.second > 0))
-				dataBuffer->push_back(uniChar.first);
+				dataBuffer->append(uniChar.first);
 		});
 		if (isEscaped) {
 			isEscaped = false;
@@ -758,7 +751,7 @@ bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, 
 					if (!isOrderedMatch)
 						continue;
 						//See if the expression to be matched can resume from any of the chars found so far
-					dataBuffer->push_back(uniChar.first);
+					dataBuffer->append(uniChar.first);
 					uniChar.second = 0;
 					for (auto index = 1; index < dataBuffer->size(); ++index) {
 						if (toFind.starts_with(dataBuffer->substr(index))) {

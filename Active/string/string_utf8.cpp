@@ -56,13 +56,13 @@ std::string::size_type string_function::get_valid_byte_count(const char* text, s
 															 std::string::size_type charCount, text_format format) {
 	bool isOpen = !charCount;
 		//Detect empty strings or null requests
-	if ((text == nullptr) || (howMany == 0) || (!isOpen && (charCount < 1)))
+	if ((text == nullptr) || (howMany == 0) || (!isOpen && (charCount < 1))) [[unlikely]]
 		return 0;
 	const auto* endPos = text;
 	bool isLimited = howMany != string_position::npos;
 	do {
 			//Get the size of the next char
-		if (auto nextLen = string_function::get_character_byte_count(endPos, howMany, format); nextLen > 0) {
+		if (auto nextLen = string_function::get_character_byte_count(endPos, howMany, format); nextLen > 0) { [[likely]]
 			endPos += *nextLen;
 				//If the source is byte-limited, ensure the remaining count is updated
 			if (isLimited) {
@@ -87,32 +87,32 @@ std::string::size_type string_function::get_valid_byte_count(const char* text, s
 	return: The character width in bytes (nullopt on failure, i.e. bad encoding)
   --------------------------------------------------------------------*/
 std::optional<unsigned char> string_function::get_character_byte_count(const char* text, std::string::size_type howMany, text_format format) {
-	if ((howMany == 0) || (text == nullptr))
+	if ((howMany == 0) || (text == nullptr)) [[unlikely]]
 		return 0;
 	switch (format.encoding) {
 		case UTF8: {
-			if (*text == 0)
+			char target{*text};
+			if (target == 0) [[unlikely]]
 				return 0;
 			unsigned char result = 1;
 				//If the upper bit is clear, it's a 1-byte char
-			if ((*text & 0x80) != 0) {
+			if ((target & 0x80) != 0) {
 					//Check for other UTF-8 byte sizes
-				if ((*text & 0xE0) == 0xC0)
+				if ((target & 0xE0) == 0xC0)
 					result = 2;
-				else if ((*text & 0xF0) == 0xE0)
+				else if ((target & 0xF0) == 0xE0)
 					result = 3;
-				else if ((*text & 0xF8) == 0xF0)
+				else if ((target & 0xF8) == 0xF0)
 					result = 4;
-				else
+				else [[unlikely]]
 					return std::nullopt;
-				if (howMany && (result > howMany))
+				if ((howMany != string_position::npos) && (result > howMany)) [[unlikely]]
 					return std::nullopt;
 				else {
 						//Check that the additional characters in a multi-byte sequence are valid
 					for (auto i = result; --i; ) {
-						if ((*(text + i) & 0xC0) != 0x80) {
+						if ((*(text + i) & 0xC0) != 0x80) [[unlikely]]
 							return std::nullopt;
-						}
 					}
 				}
 			}
@@ -121,16 +121,16 @@ std::optional<unsigned char> string_function::get_character_byte_count(const cha
 		case ascii: case ISO8859_1:
 			return (*text == 0) ? 0 : 1;
 		case UTF16: {
-			if (howMany && (howMany < 2))
+			if ((howMany != string_position::npos) && (howMany < 2)) [[unlikely]]
 				return std::nullopt;
 			auto uniChar = *(reinterpret_cast<const char16_t*>(text));
 			if (uniChar == 0)
 				return 0;
 			unsigned char size = is_within_bmp(uniChar) ? 2 : 4;
-			return (howMany && (howMany < size)) ? std::nullopt : std::optional<unsigned char>(size);
+			return ((howMany != string_position::npos) && (howMany < size)) ? std::nullopt : std::optional<unsigned char>(size);
 		}
 		case UTF32:
-			if (howMany && (howMany < 4))
+			if ((howMany != string_position::npos) && (howMany < 4)) [[unlikely]]
 				return std::nullopt;
 			auto uniChar = *(reinterpret_cast<const char32_t*>(text));
 			if (uniChar == 0)
@@ -328,7 +328,7 @@ std::pair<char32_t, unsigned char> string_function::get_utf32_char_from_utf16(co
   --------------------------------------------------------------------*/
 std::pair<char32_t, unsigned char> string_function::get_unicode_char(const char* text, string_position howMany, text_format format) {
 	if (text == nullptr)
-		return {};
+		return {0, 0};
 	switch (format.encoding) {
 		case UTF8:
 			return get_utf32_char_from_utf8(text, howMany.value_or(possibleCharWidth));
@@ -495,9 +495,6 @@ std::optional<std::pair<std::string::size_type, std::string::size_type>> string_
 	auto startByte = (startPos == 0) ? string_position{0} : string_function::get_byte_count_char_limited(text, startPos, true);
 	if (!startByte)
 		return std::nullopt;
-		//Caller shouldn't use legacy string::npos, but this check enforces the 'optional' approach
-	if (howMany == std::string::npos)
-		howMany = std::nullopt;
 		//Now get the number of bytes or chars to the last char - if successful, return the required offsets
 	if (auto textCount = isHowManyChars ?
 			string_function::get_character_count(text + *startByte, howMany) :

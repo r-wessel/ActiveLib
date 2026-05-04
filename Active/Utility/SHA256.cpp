@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Generic/Base64Transport.h"
 #include "Active/Serialise/Generic/HexTransport.h"
 #include "Active/Utility/BufferIn.h"
-#include "Active/Utility/BufferOut.h"
+#include "Active/Utility/StackBufferOut.h"
 
 using namespace active::serialise;
 using namespace active;
@@ -37,6 +37,10 @@ namespace {
 	constexpr uint32_t scheduleSize = 64;
 		///Size of chunk populated into schedule table
 	constexpr uint32_t messageSize = chunkSize / scheduleWordSize;
+		///Size of a SHA256 hash (unencoded)
+	constexpr size_t hashBinaryLength = 32;
+		///Size of a SHA256 base64 hash
+	constexpr size_t base64HashLength = 44;
 }  // namespace
 
 /*--------------------------------------------------------------------
@@ -120,7 +124,7 @@ string SHA256::hexHash(Case inCase) const {
   --------------------------------------------------------------------*/
 string SHA256::base64Hash() const {
 	string result;
-	Base64Transport().send(BufferIn{getHash()}, result);
+	Base64Transport().send(BufferIn{getHash()}, StackBufferOut<base64HashLength>(result));
 	return result;
 } //SHA256::base64Hash
 
@@ -266,7 +270,7 @@ SHA256::HashTable SHA256::finalise() const {
 Memory SHA256::getHash() const {
 	auto finalHash = finalise();
 	Memory hash;
-	BufferOut buffer{hash};
+	StackBufferOut<hashBinaryLength> buffer{hash};
 	for (auto i = 0; i < finalHash.size(); ++i)
 		buffer.writeBinary(Memory::toBigEndian(finalHash[i]));
 	buffer.flush();

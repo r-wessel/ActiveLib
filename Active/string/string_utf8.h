@@ -25,8 +25,7 @@ namespace active {
 	/*!
 	 String position type
 	 
-	 A string positioning in the string class is an optional, offering an alternative to the 'special' value `string::npos` denoting non-existent
-	 or unspecified positions, e.g. rather than:
+	 A string position behaves like an optional, treating `string::npos` as equivalent to std::nullopt so that intead of this:
 	 
 	 	if (auto pos = text.find("."); (pos != npos) && (pos > 4))
 	 
@@ -923,6 +922,13 @@ namespace active {
 			return *this;
 		}
 		/*!
+		 Append the specified string to this
+		 @param source The string to append
+		 @param howMany The number of bytes to append (no_pos = null terminated)
+		 @return A reference to this
+		 */
+		basic_string& append(const char* source, string_position howMany = no_pos);
+		/*!
 		 Append the specified char to this (NB: don't use this casually - encoding must be assumed and converted accordingly)
 		 @param source The char to append
 		 @return A reference to this
@@ -934,9 +940,7 @@ namespace active {
 		 @return A reference to this
 		 */
 		basic_string& append(char32_t source) {
-			const char32_t* sourcePtr = &source;
-			if (auto sourceStr = from_unicode(sourcePtr, text_format::defaultEndian, 1); sourceStr)
-				m_string += *sourceStr;
+			append_unicode(source);
 			return *this;
 		}
 		/*!
@@ -1019,6 +1023,13 @@ namespace active {
 		void rfor_each(const Function& func);
 		
 	private:
+		/*!
+		 Append a unicode character (UTF32) to a utf8 string
+		 @param code The unicode char to append
+		 @return True if no errors occurred
+		 */
+		bool append_unicode(char32_t code);
+
 		/*!
 		 Get a reference to the character at a specified position
 		 @param pos The character position
@@ -1475,27 +1486,8 @@ namespace active {
 					break;
 				*howMany -= 1;
 			}
-			char32_t code = *text;
-				//Deal with 7-bit codes first
-			if (code < 0x80) {
-				result.m_string += static_cast<char>(code);
-				continue;
-			}
-				//Weed out invalid codes
-			if ((code > 0x10FFFF) || ((code >= 0x110000) && (code <= 0x1FFFFF)) || ((code >= 0xD800) && (code <= 0xDFFF)))
+			if (!result.append_unicode(*text))
 				return std::nullopt;	//Bad encoding
-			char buffer[4] = {0};
-			unsigned char mask = 0x80;
-			string::size_type offset = 3;
-			do {
-				mask >>= 1;
-				mask |= 0x80;
-				buffer[offset] = (static_cast<char>(code) & 0x3F) | 0x80;
-				--offset;
-				code >>= 6;
-			} while (code > static_cast<char32_t>((mask ^ 0xFF) >> 1));
-			buffer[offset] = static_cast<char>(code) | mask;
-			result.m_string.append(buffer + offset, 4 - offset);
 		}
 		return (isCountRequired && (howMany > 0)) ? std::nullopt : std::optional(result);
 	} //basic_string<Alloc>::from_unicode
@@ -2157,6 +2149,23 @@ namespace active {
 
 	
 	/*--------------------------------------------------------------------
+		Append the specified string to this
+	 
+		source: The string to append
+		howMany: The number of bytes to append (no_pos = null terminated)
+	 
+		return: A reference to this
+	  --------------------------------------------------------------------*/
+	template <typename Alloc>
+	basic_string<Alloc>& basic_string<Alloc>::append(const char* source, string_position howMany) {
+		auto charBytes = string_function::get_valid_byte_count(source, howMany);
+		if (charBytes)
+			m_string.append(source, charBytes);
+		return *this;
+	}
+	
+	
+	/*--------------------------------------------------------------------
 		Append the specified char to this (NB: don't use this casually - encoding must be assumed and converted accordingly)
 	 
 		source: The char to append
@@ -2389,6 +2398,40 @@ namespace active {
 		std::reverse(result.begin(), result.end());
 		*this = result;
 	} //basic_string<Alloc>::rfor_each
+	
+	
+	/*--------------------------------------------------------------------
+	 Append a unicode character (UTF32) to a utf8 string
+	 
+	 code: The unicode char to append
+	 
+	 return: True if no errors occurred
+	 --------------------------------------------------------------------*/
+	template <typename Alloc>
+	bool basic_string<Alloc>::append_unicode(char32_t code) {
+			//Deal with 7-bit codes first
+		if (code < 0x80) {
+			m_string += static_cast<char>(code);
+			return true;
+		}
+			//Weed out invalid codes
+		if ((code > 0x10FFFF) || ((code >= 0x110000) && (code <= 0x1FFFFF)) || ((code >= 0xD800) && (code <= 0xDFFF)))
+			return false;	//Bad encoding
+		char buffer[4] = {0};
+		unsigned char mask = 0x80;
+		size_type offset = 3;
+		do {
+			mask >>= 1;
+			mask |= 0x80;
+			buffer[offset] = (static_cast<char>(code) & 0x3F) | 0x80;
+			--offset;
+			code >>= 6;
+		} while (code > static_cast<char32_t>((mask ^ 0xFF) >> 1));
+		buffer[offset] = static_cast<char>(code) | mask;
+		m_string.append(buffer + offset, 4 - offset);
+		return true;
+	} //basic_string<Alloc>::append_unicode
+
 	
 }  // namespace active
 

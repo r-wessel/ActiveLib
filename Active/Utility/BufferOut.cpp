@@ -301,19 +301,18 @@ const BufferOut& BufferOut::flushBuffer() const {
 			m_bufferPos = 0;	//…and reset the buffer write position
 		}
 	} else if (m_str != nullptr) {
-			//Ensure only whole chars are appended
-		string::size_type charBytes = string_function::get_valid_byte_count(m_buffer.data(), m_bufferPos);
+			///Before and after string data size determines how many bytes for valid chars were written from the buffer
+		auto charBytes = m_str->data_size();
+		m_str->append(m_buffer.data(), m_bufferPos);
+		charBytes = m_str->data_size() - charBytes;
 		if (charBytes == 0)
 			setState(std::ios_base::failbit);	//The buffer content can't be written to a string
-		else {
-			m_str->append(string(m_buffer.data(), charBytes));
+		else if (charBytes < m_bufferPos) {
 				//If we couldn't consume the full buffer with valid characters, we need to retain any remaining
-			if (charBytes < m_bufferPos) {
-				std::copy(m_buffer.data() + charBytes, m_buffer.data() + m_bufferPos, m_buffer.data());
-				m_bufferPos -= charBytes;
-			} else
-				m_bufferPos = 0;
-		}
+			std::copy(m_buffer.data() + charBytes, m_buffer.data() + m_bufferPos, m_buffer.data());
+			m_bufferPos -= charBytes;
+		} else
+			m_bufferPos = 0;
 	}
 	return *this;
 } //BufferOut::flushBuffer
@@ -361,7 +360,7 @@ const BufferOut& BufferOut::write(const char* toWrite, Memory::size_type length)
 	if (!good())
 		return *this;
 		//Check if we need to write a BOM
-	if ((getPosition() == 0) && m_smallCache.empty() && m_format.is_bom) {
+	if (m_format.is_bom && m_smallCache.empty() && (getPosition() == 0)) {
 		if (auto bom = Memory::BOM(m_format); bom)
 			if (!performWrite(bom->data(), bom->size()))
 				return *this;
