@@ -383,8 +383,8 @@ namespace active {
 		 @param format The text data format
 		 @return The number of source bytes used in the populated string
 		 */
-		size_type make_string(base& target, const char* text, string_position howMany = no_pos,
-							  string_position charCount = no_pos, text_format format = text_format{});
+		static size_type make_string(base& target, const char* text, string_position howMany = no_pos,
+									 string_position charCount = no_pos, text_format format = text_format{});
 		/*!
 		 Split the specified text into single and multi byte chars
 		 @param source The source text
@@ -1508,7 +1508,7 @@ namespace active {
 	basic_string<Alloc>::size_type basic_string<Alloc>::make_string(base& target, const char* text, string_position howMany,
 																	string_position charCount, text_format format) {
 		target.clear();
-		if (text == nullptr)
+		if (text == nullptr) [[unlikely]]
 			return 0;
 		size_type data_size = 0;
 		switch (format.encoding) {

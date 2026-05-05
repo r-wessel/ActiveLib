@@ -92,7 +92,7 @@ std::optional<unsigned char> string_function::get_character_byte_count(const cha
 	switch (format.encoding) {
 		case UTF8: {
 			char target{*text};
-			if (target == 0) [[unlikely]]
+			if (target == 0)
 				return 0;
 			unsigned char result = 1;
 				//If the upper bit is clear, it's a 1-byte char
@@ -205,7 +205,7 @@ string_position string_function::get_character_count(const char* text, string_po
 
 
 /*--------------------------------------------------------------------
-	Calculate a required number of characters base on a specified byte count, word size and (optional) character limit
+	Calculate a required number of characters based on a specified byte count, word size and (optional) character limit
  
 	wordSize: The character word size, e.g. UTF16 = 2, UTF32 = 4
 	howMany: The number of bytes (npos = null-terminated)
