@@ -39,8 +39,10 @@ namespace {
 	constexpr uint32_t messageSize = chunkSize / scheduleWordSize;
 		///Size of a SHA256 hash (unencoded)
 	constexpr size_t hashBinaryLength = 32;
+		///Size of a SHA256 hex hash
+	constexpr size_t hashHexLength = 64;
 		///Size of a SHA256 base64 hash
-	constexpr size_t base64HashLength = 44;
+	constexpr size_t hashBase64Length = 44;
 }  // namespace
 
 /*--------------------------------------------------------------------
@@ -112,7 +114,7 @@ string SHA256::product(HashFormat format) const {
   --------------------------------------------------------------------*/
 string SHA256::hexHash(Case inCase) const {
 	string result;
-	HexTransport(inCase).send(BufferIn{getHash()}, result);
+	HexTransport(inCase).send(BufferIn{getHash()}, StackBufferOut<hashHexLength>(result));
 	return result;
 } //SHA256::hexHash
 
@@ -124,7 +126,7 @@ string SHA256::hexHash(Case inCase) const {
   --------------------------------------------------------------------*/
 string SHA256::base64Hash() const {
 	string result;
-	Base64Transport().send(BufferIn{getHash()}, StackBufferOut<base64HashLength>(result));
+	Base64Transport().send(BufferIn{getHash()}, StackBufferOut<hashBase64Length>(result));
 	return result;
 } //SHA256::base64Hash
 

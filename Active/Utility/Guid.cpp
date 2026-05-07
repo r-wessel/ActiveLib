@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/Generic/HexTransport.h"
 #include "Active/Utility/BufferIn.h"
-#include "Active/Utility/BufferOut.h"
+#include "Active/Utility/StackBufferOut.h"
 
 #include <random>
 
@@ -16,8 +16,13 @@ using namespace active::serialise;
 
 namespace {
 	
+		///Maximum numeric value for a guid
 	constexpr unsigned long long maxInt64 = std::numeric_limits<unsigned long long>::max();
-	
+		///Size of a guid as a string (without dashes)
+	constexpr size_t guidHexLength = 32;
+		///Size of a (half) guid as a string
+	constexpr size_t guidHalfHexLength = 16;
+		///Placeholder for an empty guid string
 	static const string nullHex{"0000000000000000"};
 
 	
@@ -27,7 +32,8 @@ namespace {
 		std::uniform_int_distribution<unsigned long long> dis(0, maxInt64);
 		return static_cast<uint64_t>(dis(gen));
 	}
-	
+
+
 }  // namespace
 
 /*--------------------------------------------------------------------
@@ -51,13 +57,13 @@ Guid::Guid(const string& uuidString) {
 		//Remove all dashes to create a simple hex stream
 	incoming.replace_all("-", string{});
 		//We need 16 characters for a valid guid
-	if (incoming.size() != 32)
+	if (incoming.size() != guidHexLength)
 		return;
 		//Convert the incoming hex to 64-bit integers
 	BufferIn source{incoming};
 	HexTransport transport;
-	if (!transport.receive(Memory{m_value.first}, source, 16) ||
-			!transport.receive(Memory{m_value.second}, source, 16))
+	if (!transport.receive(Memory{m_value.first}, source, guidHalfHexLength) ||
+			!transport.receive(Memory{m_value.second}, source, guidHalfHexLength))
 		return;
 	m_value.first = Memory::fromBigEndian(m_value.first);
 	m_value.second = Memory::fromBigEndian(m_value.second);
@@ -75,13 +81,13 @@ string Guid::to_string(Case inCase) const {
 	string first, second;
 		//Convert the first half to hex and format
 	auto val = Memory::toBigEndian(m_value.first);
-	if (!HexTransport(inCase).send(Memory{val}, first) || (first.length() != 16))
+	if (!HexTransport(inCase).send(Memory{val}, StackBufferOut<guidHalfHexLength>{first}) || (first.length() != guidHalfHexLength))
 		first = nullHex;
 	first.insert(8, "-");
 	first.insert(13, "-");
 		//Convert the second half to hex and format
 	val = Memory::toBigEndian(m_value.second);
-	if (!HexTransport().send(Memory{val}, second) || (second.length() != 16))
+	if (!HexTransport().send(Memory{val}, StackBufferOut<guidHalfHexLength>{second}) || (second.length() != guidHalfHexLength))
 		second = nullHex;
 	second.insert(4, "-");
 		//Join the halves for the result

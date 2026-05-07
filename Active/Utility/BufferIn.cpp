@@ -21,11 +21,11 @@ using namespace active;
 
 namespace {
 
-	constexpr  Memory::size_type defaultBufferSize = 0xF000;
+	constexpr Memory::size_type defaultBufferSize = 0xF000;
 
-	constexpr  Memory::size_type stackBufferSize = 0x0400;
+	constexpr Memory::size_type stackBufferSize = 0x0400;
 
-	constexpr  Memory::size_type possibleCharWidth = 4;
+	constexpr Memory::size_type possibleCharWidth = 4;
 	
 	using StackBuffer = StackBufferOut<stackBufferSize>;
 	using enum active::text_encoding;
@@ -44,39 +44,6 @@ namespace {
 void swap(BufferIn& v1, BufferIn& v2) {
 	v1.swap(v2);
 }
-
-
-/*--------------------------------------------------------------------
-	Constructor
-
-	sourceFile: The source data file
-	format: The source data format (nullopt = attempt to discover format from source)
-  --------------------------------------------------------------------*/
-BufferIn::BufferIn(const File& sourceFile, std::optional<text_format> format) {
-	setSource(sourceFile, format);
-} //BufferIn::BufferIn
-
-
-/*--------------------------------------------------------------------
-	Constructor
-
-	sourceMem: A source block of memory
-	format: The source data format (nullopt = attempt to discover format from source)
-  --------------------------------------------------------------------*/
-BufferIn::BufferIn(const Memory& sourceMem, std::optional<text_format> format) {
-	setSource(sourceMem, format);
-} //BufferIn::BufferIn
-
-
-/*--------------------------------------------------------------------
-	Constructor
-
-	sourceString: The source data string
-	format: The source data format (nullopt = attempt to discover format from source)
-  --------------------------------------------------------------------*/
-BufferIn::BufferIn(const string& sourceString, std::optional<text_format> format) {
-	setSource(sourceString, format);
-} //BufferIn::BufferIn
 
 
 /*--------------------------------------------------------------------
@@ -160,23 +127,6 @@ Memory::size_type BufferIn::sourceSize() const {
 
 
 /*--------------------------------------------------------------------
-	Get the current read position in the source data (not the read position in the buffer)
- 
-	return: The read position (e.g. the read position in a source file)
-  --------------------------------------------------------------------*/
-Memory::size_type BufferIn::getPosition() const {
-	if (m_file != nullptr) {
-		try {
-			return static_cast<Memory::size_type>(m_file->getPosition()) - dataSize();	//Otherwise calculate the current position in the file
-		} catch(...) {
-			setState(std::ios_base::failbit);
-		}
-	}
-	return m_readPos;
-} //BufferIn::getPosition
-
-
-/*--------------------------------------------------------------------
 	Apply a function to the buffered characters
  
 	func: The character function
@@ -212,7 +162,7 @@ bool BufferIn::findIf(const string::Filter& filter, string* pool, bool isFoundSk
 	bool isFound = false;
 	while (good()) {
 		auto uniChar = getEncodedChar(true);
-		if (uniChar.second == 0)
+		if (uniChar.second == 0) [[unlikely]]
 			break;	//End of stream
 		if (filter(uniChar.first)) {
 			if (!isFoundSkipped)
@@ -228,37 +178,6 @@ bool BufferIn::findIf(const string::Filter& filter, string* pool, bool isFoundSk
 
 
 /*--------------------------------------------------------------------
-	Find a specified character in the buffered content (skipping over all all non-matching data)
- 
-	toFind: The character to find (UTF-32)
-	pool: Optional string to collect the skipped characters (nullptr = discard)
-	isFoundSkipped: True if the buffer read position should skip over the found byte
- 
-	return: True if a match is found
-  --------------------------------------------------------------------*/
-bool BufferIn::find(char32_t toFind, string* pool, bool isFoundSkipped) const {
-	string stopString{&toFind, 1};
-	return stopString.empty() ? false : seek(stopString, pool, false, false, false, false, isFoundSkipped, false);
-} //BufferIn::find
-
-
-/*--------------------------------------------------------------------
-	Get a single char
-	
-	dest: The incoming char
-	
-	return: A reference to this
-  --------------------------------------------------------------------*/
-const BufferIn& BufferIn::get(unsigned char& dest) const {
-	if ((bufferMin(1) > 0)) {
-		dest = *(m_buffer + m_readPos);
-		bumpReadPos(1);
-	}
-	return *this;
-} //BufferIn::get
-
-
-/*--------------------------------------------------------------------
 	Get the next character from the buffer, encoding as necessary
  
 	encodedChar: The next encoded character (empty on failure)
@@ -268,14 +187,14 @@ const BufferIn& BufferIn::get(unsigned char& dest) const {
   --------------------------------------------------------------------*/
 Memory::size_type BufferIn::getEncodedChar(string& encodedChar, bool isConsumed) const {
 	encodedChar.clear();
-	if (fail())
+	if (fail()) [[unlikely]]
 		return 0;
-	if (eof()) {
+	if (eof()) { [[unlikely]]
 		setState(std::ios_base::failbit);	//Attempting to read from eof is an error
 		return 0;
 	}
 	auto maxBytes = bufferMin(possibleCharWidth);
-	if (maxBytes == 0)
+	if (maxBytes == 0) [[unlikely]]
 		return 0;
 	auto byteLen = encodedChar.assign(m_buffer + m_readPos, maxBytes, 1, m_format);
 	if (isConsumed && (byteLen > 0)) {
@@ -295,9 +214,9 @@ Memory::size_type BufferIn::getEncodedChar(string& encodedChar, bool isConsumed)
   --------------------------------------------------------------------*/
 std::pair<char32_t, Memory::size_type> BufferIn::getEncodedChar(bool isConsumed) const {
 	std::pair<char32_t, Memory::size_type> result{0, 0};
-	if (fail())
+	if (fail()) [[unlikely]]
 		return result;
-	if (eof()) {
+	if (eof()) { [[unlikely]]
 		setState(std::ios_base::failbit);	//Attempting to read from eof is an error
 		return result;
 	}
@@ -311,21 +230,6 @@ std::pair<char32_t, Memory::size_type> BufferIn::getEncodedChar(bool isConsumed)
 
 
 /*--------------------------------------------------------------------
-	Get a single char in a string (supporting multi-byte chars)
-	
-	dest: The incoming char (supporting unicode)
-	
-	return: A reference to this
-  --------------------------------------------------------------------*/
-const BufferIn& BufferIn::get(string& dest) const {
-	string incoming;
-	if (getEncodedChar(incoming) > 0)
-		dest.append(incoming);
-	return *this;
-} //BufferIn::get
-
-
-/*--------------------------------------------------------------------
 	Read a stream of bytes
 
 	dest: The data destination
@@ -334,14 +238,14 @@ const BufferIn& BufferIn::get(string& dest) const {
 	return: A reference to this
   --------------------------------------------------------------------*/
 const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
-	if ((dest == nullptr) || (howMany == 0))
+	if ((dest == nullptr) || (howMany == 0)) [[unlikely]]
 		return *this;
 	Memory::size_type toRead = howMany;
 	howMany = 0;
 	Memory::size_type batchSize = std::min(getCapacity(), toRead);
 	while ((toRead > 0) && good()) {
 		Memory::size_type thisBatch = std::min(bufferMin(batchSize), toRead);
-		if (thisBatch == 0)
+		if (thisBatch == 0) [[unlikely]]
 			break;
 		std::copy(m_buffer + m_readPos, m_buffer + m_readPos + thisBatch, dest + howMany);
 		bumpReadPos(thisBatch);
@@ -361,7 +265,7 @@ const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
   --------------------------------------------------------------------*/
 string BufferIn::readWord(const string& division) const {
 	string incoming;
-	if (find_first_not_of(division))
+	if (find_first_not_of(division)) [[likely]]
 		find_first_of(division, &incoming);
 	return incoming;
 } //BufferIn::readWord
@@ -406,20 +310,6 @@ const BufferIn& BufferIn::getString(string& dest, std::optional<string::size_typ
 		dest.append(encodedChar);
 	return *this;
 } //BufferIn::getString
-
-
-/*--------------------------------------------------------------------
-	Get a single line (terminating at any known line ending)
-	
-	line: The incoming line
-	keepStop: True to keep the line terminator(s)
- 
-	return: A reference to this
-  --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getLine(string& line, bool keepStop) const {
-	seek(string::allLineEnding, &line, true, false, false, false, true, keepStop);
-	return *this;
-} //BufferIn::getLine
 
 
 /*--------------------------------------------------------------------
@@ -561,50 +451,6 @@ void BufferIn::setSource(const string& sourceString, std::optional<text_format> 
 } //BufferIn::setSource
 
 // MARK: - Functions (private)
-
-/*--------------------------------------------------------------------
-	Bump the read position by the specified number of bytes (and checking eof)
- 
-	howMany: The number of bytes to bump the read position by
-  --------------------------------------------------------------------*/
-void BufferIn::bumpReadPos(Memory::size_type howMany) const {
-	if (eof())
-		return;
-	m_readPos += howMany;
-	checkEndOfFile();
-} //BufferIn::bumpReadPos
-
-
-/*--------------------------------------------------------------------
-	Check if the end of file has been reached (and set the eof flag accordingly)
- 
-	return: True if eof has been reached
-  --------------------------------------------------------------------*/
-bool BufferIn::checkEndOfFile() const {
-	if (eof())
-		return true;
-	if ((m_remaining > 0) || (m_readPos < m_bufferLen))
-		return false;
-	setState(std::ios_base::eofbit);
-	return true;
-} //BufferIn::checkEndOfFile
-
-
-/*--------------------------------------------------------------------
-	Attempt to ensure a minimum number of bytes is buffered (refill if lower)
- 
- 	minLength: The minimum buffer length required
- 
-	return: The number of bytes available in the buffer
-  --------------------------------------------------------------------*/
-Memory::size_type BufferIn::bufferMin(Memory::size_type minLength) const {
-	if (!good())
-		return 0;
-	if ((m_readPos + minLength) >= m_bufferLen)
-		refillBuffer();
-	return dataSize();
-} //BufferIn::bufferMin
-
 
 /*--------------------------------------------------------------------
 	Refill the buffer from the current data source
@@ -840,6 +686,23 @@ void BufferIn::updatePosition(unsigned char incoming, uint8_t size) const {
 	} else
 		m_lastColumn += size;
 } //BufferIn::updatePosition
+
+
+/*--------------------------------------------------------------------
+	Get the current read position in the source file (not the read position in the buffer)
+ 
+	file: The file to get the position from
+ 
+	return: The file read position
+  --------------------------------------------------------------------*/
+Memory::size_type BufferIn::getFilePosition(const file::File& file) const {
+	try {
+		return static_cast<Memory::size_type>(file.getPosition()) - dataSize();
+	} catch(...) {
+		setState(std::ios_base::failbit);
+	}
+	return m_readPos;
+} //BufferIn::getFilePosition
 
 
 /*--------------------------------------------------------------------
