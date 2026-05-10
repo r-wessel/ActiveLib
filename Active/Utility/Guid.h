@@ -7,9 +7,9 @@
 #define ACTIVE_UTILITY_GUID
 
 #include "Active/Utility/Case.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 		A class representing a GUID type
@@ -49,7 +49,7 @@ namespace active::utility {
 			Constructor
 			@param uuidString The guid in string form
 		*/
-		explicit Guid(const String& uuidString);
+		explicit Guid(const string& uuidString);
 		/*!
 			constexpr constructor
 			@param rawVal The guid raw value
@@ -66,12 +66,12 @@ namespace active::utility {
 			Conversion operator
 			@return The guid as a string
 		*/
-		operator String() const { return string(); }
+		operator string() const { return to_string(); }
 		/*!
 			Conversion operator
 			@return The guid as a std::string
 		*/
-		operator std::string() const { return string(); }
+		operator std::string() const { return to_string(); }
 		/*!
 			Conversion operator
 			@return True if the guid has a value (non-nil)
@@ -90,7 +90,7 @@ namespace active::utility {
 			@param inCase The digit case
 			@return A string representation
 		*/
-		String string(Case inCase = uppercase) const;
+		string to_string(Case inCase = uppercase) const;
 		/*!
 			Determine if the guid is an empty (nil) value
 			@return True if the guid is empty
@@ -117,17 +117,17 @@ namespace active::utility {
 
 	///Hashing for Guid class, e.g. to use as a key in unordered_map
 template<>
-struct std::hash<active::utility::Guid> {
-	std::size_t operator() (const active::utility::Guid& guid) const {
+struct std::hash<active::Guid> {
+	std::size_t operator() (const active::Guid& guid) const {
 		return static_cast<std::size_t>(guid.raw().first ^ guid.raw().second);
 	}
 };
 
 	///Hashing for a Guid pair, e.g. to use as a key in unordered_map
 template<>
-struct std::hash<std::pair<active::utility::Guid, active::utility::Guid>> {
-	std::size_t operator() (const std::pair<active::utility::Guid, active::utility::Guid>& pair) const {
-		return std::hash<active::utility::Guid>()(pair.first) | std::rotr(std::hash<active::utility::Guid>()(pair.second), 8 * sizeof(std::size_t));
+struct std::hash<std::pair<active::Guid, active::Guid>> {
+	std::size_t operator() (const std::pair<active::Guid, active::Guid>& pair) const {
+		return std::hash<active::Guid>()(pair.first) | std::rotr(std::hash<active::Guid>()(pair.second), 8 * sizeof(std::size_t));
 	}
 };
 

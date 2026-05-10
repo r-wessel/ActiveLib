@@ -6,12 +6,12 @@
 #include "Active/Container/MultiMap.h"
 #include "Active/Container/Vector.h"
 #include "Active/Geometry/Polygon.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 using namespace active;
 using namespace active::container;
 using namespace active::geometry;
-using namespace active::utility;
+using namespace active;
 
 TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 
@@ -55,7 +55,7 @@ TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 		const char* testKey2 = "Shape2";
 		geometry::Polygon original{PolyPoint{1.0, 2.0}, PolyPoint{3.0, 2.0}, PolyPoint{1.0, 4.0}};
 		auto other = original;
-		Map<utility::String, geometry::Polygon> first;
+		Map<string, geometry::Polygon> first;
 		first.emplace(testKey, std::move(original));
 		CHECK_MESSAGE(first.size() == 1, TEST_MESSAGE(Map insert with moved rvalue failed));
 		CHECK_MESSAGE(original.empty(), TEST_MESSAGE(Map insert with move made a copy rather than moving));
@@ -66,14 +66,14 @@ TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(third.size() == 1, TEST_MESSAGE(Map move assignment failed));
 		CHECK_MESSAGE(second.empty(), TEST_MESSAGE(Map move assignment made a copy rather than moving));
 		CHECK_MESSAGE(first[testKey]->isEqual2D(*third[testKey]), TEST_MESSAGE(Map move assignment content wrong));
-		Map<utility::String, geometry::Polygon> fourth;
-		fourth.insert(std::make_pair(String{testKey2}, other));
+		Map<string, geometry::Polygon> fourth;
+		fourth.insert(std::make_pair(string{testKey2}, other));
 		CHECK_MESSAGE(fourth.size() == 1, TEST_MESSAGE(Map clone insertion failed));
 		fourth.insert(*third.begin());
 		CHECK_MESSAGE(fourth.size() == 2, TEST_MESSAGE(Map clone insertion failed));
 		CHECK_MESSAGE((third.size() == 1 && (third.begin()->second)), TEST_MESSAGE(Map clone insertion performed move));
 		CHECK_MESSAGE(third[testKey]->isEqual2D(*fourth[testKey2]), TEST_MESSAGE(Map clone assignment content wrong));
-		Map<utility::String, geometry::Polygon> fifth;
+		Map<string, geometry::Polygon> fifth;
 		fifth.insert(third.extract(third.begin()));
 		CHECK_MESSAGE(third.empty(), TEST_MESSAGE(Map extract/insert failed to move item));
 		CHECK_MESSAGE((fifth.size() == 1 && (fifth.begin()->second)), TEST_MESSAGE(Map node handle insert failed));
@@ -85,7 +85,7 @@ TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 		const char* testKey2 = "Shape2";
 		geometry::Polygon original{PolyPoint{1.0, 2.0}, PolyPoint{3.0, 2.0}, PolyPoint{1.0, 4.0}};
 		auto other = original;
-		HashMap<utility::String, geometry::Polygon> first;
+		HashMap<string, geometry::Polygon> first;
 		first.emplace(testKey, std::move(original));
 		CHECK_MESSAGE(first.size() == 1, TEST_MESSAGE(HashMap insert with moved rvalue failed));
 		CHECK_MESSAGE(original.empty(), TEST_MESSAGE(HashMap insert with move made a copy rather than moving));
@@ -96,14 +96,14 @@ TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(third.size() == 1, TEST_MESSAGE(HashMap move assignment failed));
 		CHECK_MESSAGE(second.empty(), TEST_MESSAGE(HashMap move assignment made a copy rather than moving));
 		CHECK_MESSAGE(first[testKey]->isEqual2D(*third[testKey]), TEST_MESSAGE(HashMap move assignment content wrong));
-		HashMap<utility::String, geometry::Polygon> fourth;
-		fourth.insert(std::make_pair(String{testKey2}, other));
+		HashMap<string, geometry::Polygon> fourth;
+		fourth.insert(std::make_pair(string{testKey2}, other));
 		CHECK_MESSAGE(fourth.size() == 1, TEST_MESSAGE(HashMap clone insertion failed));
 		fourth.insert(*third.begin());
 		CHECK_MESSAGE(fourth.size() == 2, TEST_MESSAGE(HashMap clone insertion failed));
 		CHECK_MESSAGE((third.size() == 1 && (third.begin()->second)), TEST_MESSAGE(HashMap clone insertion performed move));
 		CHECK_MESSAGE(third[testKey]->isEqual2D(*fourth[testKey2]), TEST_MESSAGE(HashMap clone assignment content wrong));
-		HashMap<utility::String, geometry::Polygon> fifth;
+		HashMap<string, geometry::Polygon> fifth;
 		fifth.insert(third.extract(third.begin()));
 		CHECK_MESSAGE(third.empty(), TEST_MESSAGE(HashMap extract/insert failed to move item));
 		CHECK_MESSAGE((fifth.size() == 1 && (fifth.begin()->second)), TEST_MESSAGE(HashMap node handle insert failed));
@@ -115,7 +115,7 @@ TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 		const char* testKey2 = "Shape2";
 		geometry::Polygon original{PolyPoint{1.0, 2.0}, PolyPoint{3.0, 2.0}, PolyPoint{1.0, 4.0}};
 		auto other = original;
-		MultiMap<utility::String, geometry::Polygon> first;
+		MultiMap<string, geometry::Polygon> first;
 		first.emplace(testKey, std::move(original));
 		CHECK_MESSAGE(first.size() == 1, TEST_MESSAGE(MultiMap insert with moved rvalue failed));
 		CHECK_MESSAGE(original.empty(), TEST_MESSAGE(MultiMap insert with move made a copy rather than moving));
@@ -126,14 +126,14 @@ TEST_SUITE(TESTQ(ContainerTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(third.size() == 1, TEST_MESSAGE(MultiMap move assignment failed));
 		CHECK_MESSAGE(second.empty(), TEST_MESSAGE(MultiMap move assignment made a copy rather than moving));
 		CHECK_MESSAGE(first.begin()->second->isEqual2D(*third.begin()->second), TEST_MESSAGE(MultiMap move assignment content wrong));
-		MultiMap<utility::String, geometry::Polygon> fourth;
-		fourth.insert(std::make_pair(String{testKey2}, other));
+		MultiMap<string, geometry::Polygon> fourth;
+		fourth.insert(std::make_pair(string{testKey2}, other));
 		CHECK_MESSAGE(fourth.size() == 1, TEST_MESSAGE(MultiMap clone insertion failed));
 		fourth.insert(*third.begin());
 		CHECK_MESSAGE(fourth.size() == 2, TEST_MESSAGE(MultiMap clone insertion failed));
 		CHECK_MESSAGE((third.size() == 1 && (third.begin()->second)), TEST_MESSAGE(MultiMap clone insertion performed move));
 		CHECK_MESSAGE(third.find(testKey)->second->isEqual2D(*fourth.find(testKey2)->second), TEST_MESSAGE(MultiMap clone assignment content wrong));
-		MultiMap<utility::String, geometry::Polygon> fifth;
+		MultiMap<string, geometry::Polygon> fifth;
 		fifth.insert(third.extract(third.begin()));
 		CHECK_MESSAGE(third.empty(), TEST_MESSAGE(MultiMap extract/insert failed to move item));
 		CHECK_MESSAGE((fifth.size() == 1 && (fifth.begin()->second)), TEST_MESSAGE(MultiMap node handle insert failed));

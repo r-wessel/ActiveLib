@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include <optional>
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 		A utility class for a form of identity combining a name and guid
@@ -37,7 +37,7 @@ namespace active::utility {
 			@param str The identifying name
 			@param guid The guid
 		*/
-		NameID(const String& str, const Guid& guid = Guid{}) : name{str}, id{guid} {}
+		NameID(const string& str, const Guid& guid = Guid{}) : name{str}, id{guid} {}
 		/*!
 			Constructor
 			@param str The identifying name
@@ -49,12 +49,12 @@ namespace active::utility {
 			@param guid The guid
 			@param str The identifying name
 		*/
-		NameID(const Guid& guid, const String& str = String{}) : name{str}, id{guid} {}
+		NameID(const Guid& guid, const string& str = string{}) : name{str}, id{guid} {}
 		
 		// MARK: - Variables
 		
 			//Optional identifying name (empty = unused)
-		String name;
+		string name;
 			//Optional guid (undefined = unused)
 		Guid id;
 		
@@ -112,10 +112,10 @@ namespace active::utility {
 
 	///Hashing for NameID class, e.g. to use as a key in unordered_map
 template<>
-struct std::hash<active::utility::NameID> {
-	std::size_t operator()(const active::utility::NameID& nameID) const noexcept {
-		std::size_t h1 = std::hash<active::utility::String>{}(nameID.name);
-		std::size_t h2 = std::hash<active::utility::Guid>{}(nameID.id);
+struct std::hash<active::NameID> {
+	std::size_t operator()(const active::NameID& nameID) const noexcept {
+		std::size_t h1 = std::hash<active::string>{}(nameID.name);
+		std::size_t h2 = std::hash<active::Guid>{}(nameID.id);
 		return h1 ^ (h2 << 1);
 	}
 };

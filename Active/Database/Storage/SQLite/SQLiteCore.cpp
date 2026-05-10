@@ -5,12 +5,12 @@
 #include "Active/Setting/Values/Int64Value.h"
 #include "Active/Setting/Values/StringValue.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 #include "SQLite/sqlite3.h"
 
 using namespace active::database;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 using enum SQLiteCore::Status;
 
@@ -89,7 +89,7 @@ std::unique_ptr<SettingList> SQLiteCore::Transaction::operator++() {
 	if (m_handle == nullptr) {
 		auto dbaseHandle = m_sqlite->getHandle();
 		const char* dataTail = nullptr;
-		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), static_cast<int>(m_statement.dataSize() + 1u),
+		if (auto status = sqlite3_prepare_v2((sqlite3*) dbaseHandle, m_statement.data(), static_cast<int>(m_statement.data_size() + 1u),
 											 (sqlite3_stmt**) &m_handle, &dataTail); (status != SQLITE_OK) && (dataTail != nullptr))
 			throw std::system_error(makeError(static_cast<Status>(status)));
 		m_isDone = false;
@@ -107,7 +107,7 @@ std::unique_ptr<SettingList> SQLiteCore::Transaction::operator++() {
 				NameID identifier;
 				auto tableName = sqlite3_column_table_name((sqlite3_stmt*)m_handle, i);
 				if (tableName != nullptr)
-					identifier.name = String{tableName} + "::";
+					identifier.name = string{tableName} + "::";
 				auto columnName = sqlite3_column_origin_name((sqlite3_stmt*)m_handle, i);
 				if (columnName != nullptr)
 					identifier.name += columnName;
@@ -162,9 +162,9 @@ std::error_code SQLiteCore::makeError(SQLiteCore::Status code) {
  
 	return: An SQLite string literal
  --------------------------------------------------------------------*/
-String SQLiteCore::toSQLiteString(const String& text) {
-	String result{text};
-	result.replaceAll("'", "''");
+string SQLiteCore::toSQLiteString(const string& text) {
+	string result{text};
+	result.replace_all("'", "''");
 	return result;
 } //SQLiteCore::toSQLiteString
 
@@ -174,7 +174,7 @@ String SQLiteCore::toSQLiteString(const String& text) {
  
 	return: The type identifier, e.g. "TEXT", "INTEGER" etc
  --------------------------------------------------------------------*/
-String SQLiteCore::getTypeID(const Setting& setting) {
+string SQLiteCore::getTypeID(const Setting& setting) {
 	using enum setting::Value::Type;
 	if (auto value = dynamic_cast<const ValueSetting*>(&setting); (value != nullptr) && (value->getDefaultType() || !value->empty())) {
 		auto valueType = value->getDefaultType().value_or(value->front()->getType());
@@ -214,7 +214,7 @@ void* SQLiteCore::getHandle() const {
 	if (m_handle != nullptr)
 		return m_handle;
 	uint32_t flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-	if (auto status = sqlite3_open_v2(String{m_path}.data(), (sqlite3**) &m_handle, flags, nullptr); status != SQLITE_OK)
+	if (auto status = sqlite3_open_v2(string{m_path}.data(), (sqlite3**) &m_handle, flags, nullptr); status != SQLITE_OK)
 		throw std::system_error(makeError(static_cast<Status>(status)));
 		//TODO: Ensure dbase schema is applied to newly created files, and ensure schema field order matches file order
 	if (m_handle == nullptr)
@@ -235,7 +235,7 @@ void* SQLiteCore::getHandle() const {
 bool SQLiteCore::validateSchema() const {
 		//First confirm tables exist (and create when missing)
 	for (auto& table : m_schema) {
-		utility::String statement{"CREATE TABLE IF NOT EXISTS " + table.ID + " ("};
+		string statement{"CREATE TABLE IF NOT EXISTS " + table.ID + " ("};
 		for (auto index = 0; index < table.size(); ++index) {
 			auto& field{*table[index]};
 			statement += field.name() + " " + getTypeID(field);
@@ -255,7 +255,7 @@ bool SQLiteCore::validateSchema() const {
 			int primaryKey;
 			if (auto result = sqlite3_table_column_metadata((sqlite3*) getHandle(), nullptr, table.ID.data(), field.name().data(), &dataType,
 															nullptr, nullptr, &primaryKey, nullptr); result != SQLITE_OK) {
-				utility::String statement{"ALTER TABLE " + table.ID + " ADD COLUMN " + field.name() + " " + getTypeID(field)};
+				string statement{"ALTER TABLE " + table.ID + " ADD COLUMN " + field.name() + " " + getTypeID(field)};
 				if (index == table.globalIndex)
 					statement += " PRIMARY KEY NOT NULL";
 				statement += ";";

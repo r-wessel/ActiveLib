@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/File/Path.h"
 #include "Active/Utility/Cloner.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 #include "Active/Utility/Time.h"
 
 #include <filesystem>
@@ -16,12 +16,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::file {
 
 		/// Class to represent a file system node (directory, file etc)
-	class FSNode: public utility::Cloner {
+	class FSNode: public Cloner {
 	public:
 		// MARK: - Constants
 		
 		/// The path delimiter expression for the current platform
-		static const utility::String pathDelimiter;
+		static const string pathDelimiter;
 		
 		// MARK: - Constructors
 		
@@ -84,7 +84,7 @@ namespace active::file {
 			@throw std::bad_alloc Thrown if memory allocation fails
 			@return The node modification time
 		*/
-		utility::Time getModificationTime() const { return m_node.last_write_time(); }
+		Time getModificationTime() const { return m_node.last_write_time(); }
 		
 		// MARK: - Functions (mutating)
 		
@@ -105,7 +105,7 @@ namespace active::file {
 			@param name The new name
 			@throw std::bad_alloc Thrown if memory allocation fails
 		*/
-		virtual void rename(const utility::String& name);
+		virtual void rename(const string& name);
 		/*!
 			Remove the node path
 			@param isRecursive True if any subnodes should also be recursively removed

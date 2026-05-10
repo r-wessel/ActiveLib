@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 using namespace active;
 using namespace active::attribute;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Get a hash value for the finish
@@ -18,7 +18,7 @@ using namespace active::utility;
  
 	return: The hash formatted as specified
   --------------------------------------------------------------------*/
-String Finish::hash(HashFormat format) const {
+string Finish::hash(HashFormat format) const {
 	if (!id.empty())
 		return id;
 	SHA256 hasher;

@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::rpc {
 	
 		///Define the default binding for rpc protocal and data serialisation
-	using DefaultBinding = Binding<active::utility::String, active::serialise::json::JSONTransport>;
+	using DefaultBinding = Binding<active::string, active::serialise::json::JSONTransport>;
 	
 }
 

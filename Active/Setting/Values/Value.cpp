@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <array>
 
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -33,7 +33,7 @@ namespace {
  
 	return: The equivalent type (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<Value::Type> Value::typeFromName(const String& text) {
+std::optional<Value::Type> Value::typeFromName(const string& text) {
 	for (auto i = 0; i < typeName.size(); ++i)
 		if (text == typeName[i])
 			return static_cast<Type>(i);
@@ -48,6 +48,6 @@ std::optional<Value::Type> Value::typeFromName(const String& text) {
  
 	return: The type name as text
   --------------------------------------------------------------------*/
-String Value::nameForType(Value::Type type) {
+string Value::nameForType(Value::Type type) {
 	return typeName.at(static_cast<size_t>(type));
 } //Value::nameForType

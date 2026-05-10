@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::setting {
 	
 		///A single time value
-	using TimeValue = ValueBase<utility::Time>;
+	using TimeValue = ValueBase<Time>;
 
 	// MARK: - Operators
 	
@@ -63,8 +63,8 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& TimeValue::operator=(const utility::String& val) {
-		utility::Time time;
+	Value& TimeValue::operator=(const string& val) {
+		Time time;
 		serialise::xml::XMLDateTime xmlParser{time};
 		if (xmlParser.read(val))
 			data = time;
@@ -78,7 +78,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& TimeValue::operator=(const utility::Time& val) {
+	Value& TimeValue::operator=(const Time& val) {
 		data = val;
 		return *this;
 	}
@@ -120,9 +120,9 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	TimeValue::operator utility::String() const 	{
-		utility::String string;
-		utility::Time temp{data};
+	TimeValue::operator string() const 	{
+		string string;
+		Time temp{data};
 		serialise::xml::XMLDateTime{temp}.write(string);
 		return string;
 
@@ -132,7 +132,7 @@ namespace active::setting {
 		@return A time value
 	*/
 	template<> inline
-	TimeValue::operator utility::Time() const {
+	TimeValue::operator Time() const {
 		return data;
 	}
 	

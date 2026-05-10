@@ -54,7 +54,7 @@ namespace active::geometry {
 		
 		…where `vertex + 1` will exceed the array bounds and loop back to the first vertex (0).
 	*/
-	class Polygon : public container::Vector<PolyPoint>, public virtual utility::Cloner, public virtual utility::Mover {
+	class Polygon : public container::Vector<PolyPoint>, public virtual Cloner, public virtual Mover {
 	public:
 
 		//MARK: - Types

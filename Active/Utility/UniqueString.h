@@ -6,11 +6,11 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_UTILITY_UNIQUE_STRING
 #define ACTIVE_UTILITY_UNIQUE_STRING
 
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <set>
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 		A class representing a GUID type
@@ -21,7 +21,7 @@ namespace active::utility {
 		// MARK: - Types
 		
 			///Optional
-		using Set = std::set<String>;
+		using Set = std::set<string>;
 		
 		// MARK: - Constructors
 		
@@ -42,7 +42,7 @@ namespace active::utility {
 			@param addToExisting True to add the new string to the set of existing strings
 			@return A new unique string based on the specified string
 		*/
-		String generate(const String& seedString, bool addToExisting = true);
+		string generate(const string& seedString, bool addToExisting = true);
 		
 	private:
 			//Existing strings

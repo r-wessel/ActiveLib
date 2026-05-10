@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 using namespace active::geometry;
 using namespace active::primitive;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Constructor
@@ -19,6 +19,6 @@ using namespace active::utility;
 	styl: The text style
 	offset: An offset from the origin (in render units, added after anchor and offset have been applied)
   --------------------------------------------------------------------*/
-Text::Text(const utility::String& txt, const geometry::Point& origin, double angl,
+Text::Text(const string& txt, const geometry::Point& origin, double angl,
 							 const attribute::TextStyle styl, const geometry::Point& offset) :
 		Point{origin}, text{txt}, angle{angl}, style{styl}, renderOffset{offset} {}

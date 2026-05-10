@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active;
 using namespace active::geometry;
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 /*!
 	Serialisation test class
@@ -20,7 +20,7 @@ public:
 	// MARK: - Static variables
 	
 		///The prolog tag
-	inline static utility::String tag = "tester";
+	inline static string tag = "tester";
 		
 	// MARK: - Constructor
 
@@ -28,7 +28,7 @@ public:
 		Constructor
 		@param polygon The polygon to wrap for (de)serialisation
 	*/
-	SerialiseTester(const String& name = String{}, const geometry::Polygon& polygon = geometry::Polygon{}) : m_name{name}, m_shape{polygon}	{}
+	SerialiseTester(const string& name = string{}, const geometry::Polygon& polygon = geometry::Polygon{}) : m_name{name}, m_shape{polygon}	{}
 		
 	// MARK: - Operators
 
@@ -75,6 +75,6 @@ public:
 	}
 	
 private:
-	String m_name;
+	string m_name;
 	active::geometry::Polygon m_shape;
 };

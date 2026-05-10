@@ -25,7 +25,7 @@ namespace active::event {
 		For example, a service might need to sign out of an online account when an app quits. It will ask for notification from the app signaling
 		that (for whatever reason) the app is about to quit. The event might carry information about the reason for the quit.
 	*/
-	class Event : public utility::NameID, public setting::SettingList {
+	class Event : public NameID, public setting::SettingList {
 	public:
 		// MARK: - Constructors
 		
@@ -38,7 +38,7 @@ namespace active::event {
 			@param nameID The event identity
 			@param postBox Optional postbox for the published event author to receive messages from subscribers
 		*/
-		Event(const utility::NameID& nameID, PostBox* postBox = nullptr) : utility::NameID{nameID}, setting::SettingList{} { m_postBox = postBox; }
+		Event(const NameID& nameID, PostBox* postBox = nullptr) : NameID{nameID}, setting::SettingList{} { m_postBox = postBox; }
 		/*!
 			Constructor
 			@param nameID The event identity
@@ -46,7 +46,7 @@ namespace active::event {
 			@param postBox Optional postbox for the published event author to receive messages from subscribers
 		*/
 		Event(const NameID& nameID, setting::SettingList&& settings, PostBox* postBox = nullptr) :
-				utility::NameID{nameID}, setting::SettingList{std::move(settings)} { m_postBox = postBox; }
+				NameID{nameID}, setting::SettingList{std::move(settings)} { m_postBox = postBox; }
 		/*!
 			Destructor
 		*/
@@ -65,13 +65,13 @@ namespace active::event {
 			@param ref The object to compare with this
 			@return True if ref is equal to this
 		*/
-		bool operator== (const Event& ref) const { return utility::NameID::operator==(ref); }	//Events are matched by identity
+		bool operator== (const Event& ref) const { return NameID::operator==(ref); }	//Events are matched by identity
 		/*!
 			Equality operator
 			@param ref The object to compare with this
 			@return True if ref is equal to this
 		*/
-		bool operator== (const NameID& ref) const { return utility::NameID::operator==(ref); }
+		bool operator== (const NameID& ref) const { return NameID::operator==(ref); }
 		/*!
 			Inequality operator
 			@param ref The object to compare with this

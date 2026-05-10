@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Management/Management.h"
 #include "Active/Utility/Memory.h"
 
-namespace active::utility {
+namespace active {
 	
 	class BufferIn;
 	class BufferOut;
@@ -35,7 +35,7 @@ namespace active::serialise {
 		// MARK: - Types
 			
 		using TimeFormat = std::optional<Item::TimeFormat>;
-		using size_type = utility::Memory::size_type;
+		using size_type = Memory::size_type;
 		using enum Item::TimeFormat;
 		
 			///Policy for adherence to schema
@@ -73,7 +73,7 @@ namespace active::serialise {
 			@param isProlog True if an serialisation prolog should be written
 			@throw std::system_error Thrown on write errors, serialisation failure (e.g. invalid names, missing inventory etc)
 		*/
-		virtual void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+		virtual void send(serialise::Cargo&& cargo, const serialise::Identity& identity, BufferOut&& destination,
 						  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const = 0;
 		/*!
 			Receive cargo from a serialised data source
@@ -82,7 +82,7 @@ namespace active::serialise {
 			@param source The data source (can be a wrapper for file, memory, string)
 			@throw std::system_error Thrown on read errors, invalid encoding or parsing failure (e.g. ill-formed data)
 		*/
-		virtual void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const = 0;
+		virtual void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, BufferIn&& source) const = 0;
 		/*!
 			Set the preferred serialisation date/time format
 			@return The preferred date/time format

@@ -9,7 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <functional>
 #include <utility>
 
-namespace active::utility {
+namespace active {
 
 	///A class to hold an action to be deferred until its scope is exited
 	/*!

@@ -14,7 +14,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Package/Wrapper/PackageWrap.h"
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <functional>
 #include <type_traits>
@@ -45,7 +45,7 @@ namespace active::rpc {
 		 @param name The function name (as called remotely)
 		 @param function The C++ function bound to the name
 		 */
-		Function(const active::utility::String& name, Function function) : base{name, function} {}
+		Function(const active::string& name, Function function) : base{name, function} {}
 		/*!
 		 Copy constructor
 		 @param source The object to copy
@@ -63,7 +63,7 @@ namespace active::rpc {
 		 Get the bound function name
 		 @return The bound function name
 		 */
-		active::utility::String getName() const override { return base::getName(); }
+		active::string getName() const override { return base::getName(); }
 		/*!
 		 Execute the function
 		 @param param The input parameter

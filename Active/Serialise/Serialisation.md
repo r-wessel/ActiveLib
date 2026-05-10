@@ -71,7 +71,7 @@ Node node = Object{
 ```
 …and serialised using a `Transport` object, e.g. to JSON:
 ```cpp
-String json;
+string json;
 JSONTransport().send(node, Identity{}, json);
 ```
 …which generates:
@@ -96,7 +96,7 @@ JSONTransport().send(node, Identity{}, json);
 ```
 …or to XML:
 ```cpp
-String xml;
+string xml;
 XMLTransport().send(node, Identity{"sampleXML"}, xml);
 ```
 …which generates:
@@ -131,11 +131,11 @@ JSONTransport().receive(incoming, Identity{}, json);
 …and values can be extracted from the deserialised node:
 ```cpp
 bool val = incoming["someBool"];	//val == true
-String text = incoming["someText"];	//text == "Example"
+string text = incoming["someText"];	//text == "Example"
 double arrayVal = incoming["someArray"][0];	//arrayVal == 1.23
-String arrayText = incoming["someArray"][2];	//arrayText == "text"
+string arrayText = incoming["someArray"][2];	//arrayText == "text"
 double objectVal = incoming["someObject"]["objVal"];	//arrayVal == 5.432
-String objectText = incoming["someObject"]["objName"];	//arrayText == "Sample"
+string objectText = incoming["someObject"]["objName"];	//arrayText == "Sample"
 ```
 
 ### Node Content <a name="ahs"></a>  
@@ -143,7 +143,7 @@ String objectText = incoming["someObject"]["objName"];	//arrayText == "Sample"
 A `dom::Node` can contain be of the following:
 
 1. Object:
-An unordered map pairing a name (String) key with a `dom::Node` value, i.e. `std::unordered_map<String, dom::Node>`
+An unordered map pairing a name (string) key with a `dom::Node` value, i.e. `std::unordered_map<string, dom::Node>`
 
 2. Array:
 An array of `dom::Node`, i.e. `std::vector<dom::Node>`
@@ -172,7 +172,7 @@ A number of Node methods assert a specific content type, e.g. `Node::object()` r
 
 ### Object Nodes <a name="objNodes"></a>
 
-An object node contains any number of names paired with a Node (i.e. `unordered_map<String, Node>`). A new object node can be constructed from an initialiser list:
+An object node contains any number of names paired with a Node (i.e. `unordered_map<string, Node>`). A new object node can be constructed from an initialiser list:
 ```cpp
 Node node = Object{
 	{"firstName", "Joe"},
@@ -202,7 +202,7 @@ node["wfh"] = true;
 ```
 The node can be exported to JSON:
 ```cpp
-String json;
+string json;
 XMLTransport().send(node, Identity{}, json);
 ```
 …resulting in:
@@ -221,7 +221,7 @@ XMLTransport().send(node, Identity{}, json);
 ```
 …or exported to XML:
 ```cpp
-String xml;
+string xml;
 XMLTransport().send(node, Identity{"contact"}, xml);
 ```
 …resulting in:
@@ -242,7 +242,7 @@ XMLTransport().send(node, Identity{"contact"}, xml);
 
 Object nodes can also be constructed directly from STL associative containers, e.g.:
 ```cpp
-Node mapNode = std::map<utility::String, int32_t>{
+Node mapNode = std::map<string, int32_t>{
 	{ "first", 1 },
 	{ "second", 2 },
 	{ "third", 3 },
@@ -264,7 +264,7 @@ An exception will be thrown if the node is either not an object or the name does
 ```cpp
 double height = node["height"];
 ```
-2. Node::setting(const String& name):
+2. Node::setting(const string& name):
 The return type is a ValueSetting. If the node is not an object or the name is not found, it will be populated with NullValue{}. Otherwise it contains whatever value/type was deserialised from the source, but can be transformed to any other type.
 ```cpp
 double height = node.setting("height").value_or(DoubleValue{0.0});
@@ -305,7 +305,7 @@ testRoot.push_back(node.withItemTag("info"));
 ```
 The node can be exported to JSON:
 ```cpp
-String json;
+string json;
 JSONTransport().send(testRoot, Identity{}, json);
 ```
 …resulting in:
@@ -322,7 +322,7 @@ JSONTransport().send(testRoot, Identity{}, json);
 ```
 …or exported to XML:
 ```cpp
-String xml;
+string xml;
 XMLTransport().send(testRoot.withItemTag("contact"), Identity{"contacts"}, xml);
 ```
 …resulting in:
@@ -369,7 +369,7 @@ Node node = 1.23;
 bool boolVal = node;	//boolVal == true
 uint32 intVal = node;	//intVal == 1
 double val = node;	//val == 1.23
-String stringVal = node;	//stringVal == "1.23"
+string stringVal = node;	//stringVal == "1.23"
 ```
 
 The internal value type of a node can be validated using Value::index() if necessary.
@@ -379,7 +379,7 @@ The internal value type of a node can be validated using Value::index() if neces
 Conversions between custom objects and dom:Node can be defined, enabling direct assignment of an object instance to a node (and vice versa), by defining up to two functions in the active::serialise::dom namespace. The following examples will define the conversion functions for an example struct:  
 ```cpp
 struct Example {
-	String a;
+	string a;
 	double b = 0.0;
 	uint32_t c = 0;
 };
@@ -402,7 +402,7 @@ Define an `upack` function that extracts data from the Node to populate in insta
 ```cpp  
 	//Unpack an Example struct from a dom::Node
 const Node& unpack(const Node& node, Example& test) {
-	test.a = node["a"].operator String();
+	test.a = node["a"].operator string();
 	test.b = node["b"];
 	test.c = node["c"];
 	return node;
@@ -433,7 +433,7 @@ public:
 		//Constructor and methods omitted for clarity
 private:
 		//Member data fields
-	String m_name = defaultName;
+	string m_name = defaultName;
 	uint32_t m_index = 0;
 		//Member objects
 	std::vector<Category> m_children;
@@ -459,7 +459,7 @@ std::array fieldName{
 2. The target class should also have a unique identifying type name, e.g.:  
 
 ```cpp
-inline static const String typeName = "Category";
+inline static const string typeName = "Category";
 ```
 
 3. Add a member function to *send* the object to a serialised document `Object`, e.g.:
@@ -481,7 +481,7 @@ doc::Object send(const SettingList* spec = nullptr) const {
 ```cpp
 Category(const doc::Object& incoming, const SettingList* spec = nullptr) {
 		//Retrieve member variables
-	m_name = incoming.value(fieldName.at(name)).value_or(ValueSetting{String{defaultName}});
+	m_name = incoming.value(fieldName.at(name)).value_or(ValueSetting{string{defaultName}});
 	m_index = incoming.value(fieldName.at(index)).value_or(ValueSetting{0});
 		//Retrieve member objects
 	for (auto& member : incoming.objects) {
@@ -499,10 +499,10 @@ Category category;
 auto document = category.send();
 ```
 
-…and then serialised into a `String`, `File` or `Memory`, either as JSON:
+…and then serialised into a `string`, `File` or `Memory`, either as JSON:
 
 ```cpp
-String jsonString;
+string jsonString;
 JSONTransport().send(PackageWrap{document}, Object::defaultTag, jsonString); 
 ```
 
@@ -594,7 +594,7 @@ The following library terms are drawn from this analogy:
 ### Serialisation Overview <a name="serialover"></a>
 
 The serialisation process can be summarised as:
-1. The `send` function is called in a `Transport` object (`JSONTransport` or `XMLTransport`)  to export `Cargo` with a specified `Identity` as serialised data to a `BufferOut` destination (can target a `String`, `Memory` or `File`).
+1. The `send` function is called in a `Transport` object (`JSONTransport` or `XMLTransport`)  to export `Cargo` with a specified `Identity` as serialised data to a `BufferOut` destination (can target a `string`, `Memory` or `File`).
 2. The `Transport` object requests an `Inventory` for the `Cargo`
 3. The `Cargo` is serialised with its `Identity`, e.g. `"name": "Foo"` (JSON) or `<name>Foo</name>` (XML)
 4. Each `Entry` in the `Inventory` is processed in turn. If an entry specifies multiple instances, e.g. an array, each instance is also processed in turn. The instance `Cargo` is requested and processed by recursing into the export function.
@@ -603,7 +603,7 @@ The serialisation process can be summarised as:
 ### Deserialisation Overview <a name="deserialover"></a>
 
 The deserialisation process is very similar:
-1. The `receive` function is called in a `Transport` object (`JSONTransport` or `XMLTransport`) to import `Cargo` with a specified `Identity` from a `BufferIn` serialised source (can target a `String`, `Memory` or `File`).
+1. The `receive` function is called in a `Transport` object (`JSONTransport` or `XMLTransport`) to import `Cargo` with a specified `Identity` from a `BufferIn` serialised source (can target a `string`, `Memory` or `File`).
 2. The `Transport` object requests an `Inventory` for the `Cargo`
 3. The `Transport` import function then iterates through the source seeking `Cargo` with an `Identity` that can be registered against an `Entry` in the `Inventory`. An unmatched `Identity` indicates bad `Cargo` – this can be optionally skipped, but otherwise an exception is thrown.
 4. The `Entry` details are checked to ensure the maximum allowed instances has not been exceeded – otherwise an exception is thrown
@@ -638,22 +638,22 @@ Called during deserialisation only, after all the data relevant to the target ha
 	- `bool insert(std::unique_ptr<Cargo>&& cargo, const Inventory::Item& item)`   
 Required for deserialising arrays/dictionaries. When a new array instance is found, a `Cargo` instance is requested (using *getCargo*) to receive the deserialised data. Once the instance has been read and validated, this *insert* function is called. The *cargo* parameter is the new instance to be inserted, and *item* associates the *cargo* with an inventory entry (essential for objects that hold multiple arrays).
 3. A subclass of `Item` may also need to implement the following functions (if it isn't already using an existing `Wrapper`:
-	- `bool write(utility::String& dest) const`	
+	- `bool write(string& dest) const`	
 Convert the `Item` value into a string for serialisation. Returning `false` indicates a bad value (`Transport` will throw an exception).
-	- `bool read(const utility::String& source)`	
+	- `bool read(const string& source)`	
 Convert a serialised string back into a value. Returning `false` indicates a bad value (`Transport` will throw an exception)
 
-Any instance of a `Package` subclass, e.g. *someObject*,  can then be serialised into a `String` as JSON:
+Any instance of a `Package` subclass, e.g. *someObject*,  can then be serialised into a `string` as JSON:
 
 ```cpp
-String jsonOutput;
+string jsonOutput;
 JSONTransport().send(PackageWrap{someObject}, Identity{}, jsonOutput); 
 ```
 
 …or as XML:
 
 ```cpp
-String xmlOutput;
+string xmlOutput;
 XMLTransport().send(PackageWrap{someObject}, Identity{}, xmlOutput); 
 ```
 
@@ -734,9 +734,9 @@ std::unique_ptr<Cargo> Object::getCargo(const Inventory::Item& item) const {
 		//Then find an object to handle the requested item
 	switch (item.second.index) {
 		case typeID:
-			return std::make_unique<ValueWrap<String>>(docType);
+			return std::make_unique<ValueWrap<string>>(docType);
 		case tagID:
-			return std::make_unique<ValueWrap<String>>(tag);
+			return std::make_unique<ValueWrap<string>>(tag);
 		case val:
 			if (item.second.available < values.size())
 				return std::make_unique<XMLValueSetting>(values[item.second.available]);
@@ -744,7 +744,7 @@ std::unique_ptr<Cargo> Object::getCargo(const Inventory::Item& item) const {
 		case obj:
 			if (item.second.available < objects.size())
 				return std::make_unique<PackageWrap>(objects[item.second.available]);
-			return std::make_unique<Object>(String());
+			return std::make_unique<Object>(string());
 		default:
 			return nullptr;	//Requested an unknown index
 	}

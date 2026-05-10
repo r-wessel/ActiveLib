@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SETTING_UINT32_VALUE
 
 #include "Active/Setting/Values/ValueBase.h"
+#include "Active/Utility/MathFunctions.h"
 
 namespace active::setting {
 	
@@ -71,8 +72,8 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& UInt32Value::operator=(const utility::String& val) {
-		if (auto intValue = val.toInt32(); intValue)
+	Value& UInt32Value::operator=(const string& val) {
+		if (auto intValue = val.to_int32_t(); intValue)
 			data = *intValue;
 		else
 			status = bad;
@@ -84,7 +85,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& UInt32Value::operator=(const utility::Time& val) {
+	Value& UInt32Value::operator=(const Time& val) {
 		data = static_cast<uint32_t>(val.secondsSince1970());
 		return *this;
 	}
@@ -126,13 +127,13 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	UInt32Value::operator utility::String() const 	{ return utility::String{data}; }
+	UInt32Value::operator string() const 	{ return string{data}; }
 	/*!
 		Get a time value
 		@return A time value
 	*/
 	template<> inline
-	UInt32Value::operator utility::Time() const { return utility::Time{static_cast<int64_t>(data)}; }
+	UInt32Value::operator Time() const { return Time{static_cast<int64_t>(data)}; }
 	
 	// MARK: - Functions (const)
 	

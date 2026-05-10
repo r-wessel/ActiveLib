@@ -33,7 +33,7 @@ namespace {
 	handler: A package handler to tag outgoing packages
   --------------------------------------------------------------------*/
 Mover::Mover(const Package& package, Handler::Shared handler) : m_handler{handler}, m_package{const_cast<Package*>(&package)} {
-	m_typeName = handler->findTagFor(typeid(package)).value_or(active::utility::String{});
+	m_typeName = handler->findTagFor(typeid(package)).value_or(active::string{});
 } //Mover::Mover
 
 
@@ -46,7 +46,7 @@ Mover::Mover(const Package& package, Handler::Shared handler) : m_handler{handle
 Mover::Mover(PackageUniqueWrap&& package, Handler::Shared handler) : m_handler{handler}, m_unique{package} {
 	m_package = m_unique->get();
 	if ((m_package != nullptr) && m_handler)
-		m_typeName = handler->findTagFor(typeid(*m_package)).value_or(active::utility::String{});
+		m_typeName = handler->findTagFor(typeid(*m_package)).value_or(active::string{});
 } //Mover::Mover
 
 
@@ -220,7 +220,7 @@ bool Mover::finaliseAttributes(bool isScopeEnded) {
  
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool Mover::read(const utility::String& source) {
+bool Mover::read(const string& source) {
 	if (source.empty() || isNull())
 		return true;
 	return m_package->read(source);

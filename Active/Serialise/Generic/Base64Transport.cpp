@@ -7,10 +7,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -51,7 +51,7 @@ bool Base64Transport::send(const BufferIn& source, const BufferOut& destination,
 	written %= 4;
 	if (written > 0) {
 		if (written > 1)
-			destination.write(String{"=="}.substr(written - 2));
+			destination.write(string{"=="}.substr(written - 2));
 		else
 			return false;
 	}

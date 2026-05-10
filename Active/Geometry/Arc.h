@@ -22,7 +22,7 @@ namespace active::geometry {
 	class XList;
 
 	/// Class to represent an arc
-	class Arc : public utility::Cloner {
+	class Arc : public Cloner {
 	public:
 
 		// MARK: - Types

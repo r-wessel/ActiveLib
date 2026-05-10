@@ -12,10 +12,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <memory>
 #include <optional>
 
-namespace active::utility {
+namespace active {
+	struct text_format;
+}
+
+namespace active {
 	
 		///Class representing (and optionally allocating) memory with a specified location and size
-	class Memory: public utility::Cloner {
+	class Memory: public Cloner {
 	public:
 
 		inline static constexpr bool defaultEndian{std::endian::native == std::endian::big};
@@ -52,6 +56,11 @@ namespace active::utility {
 		*/
 		static size_type copy(char* dest, const char* source, size_type destSize, size_type sourceSize);
 		/*!
+		 Get a BOM signature for a specified text format
+		 @return The BOM signature (nullopt if none defined, e.g. for ascii)
+		 */
+		static std::optional<Memory> BOM(const text_format& format);
+		/*!
 			Make an integer value big-endian (no action if the host processor is already big-endian)
 			@param val The target value
 			@return The integer as big-endian
@@ -61,7 +70,7 @@ namespace active::utility {
 				//Return the given value unchanged if the processor is big-endian
 			if (defaultEndian)
 				return val;
-			byteSwap(val);
+			byte_swap(val);
 			return val;
 		}
 		/*!
@@ -74,7 +83,7 @@ namespace active::utility {
 				//Return the given value unchanged if the processor is big-endian
 			if (defaultEndian)
 				return val;
-			byteSwap(val);
+			byte_swap(val);
 			return val;
 		}
 		/*!
@@ -82,7 +91,7 @@ namespace active::utility {
 			@param val The target value
 		*/
 		template<typename T> requires (std::is_arithmetic_v<T>)
-		static void byteSwap(T& val) {
+		static void byte_swap(T& val) {
 			auto* data = reinterpret_cast<unsigned char*>(&val);
 			auto bytes = sizeof(T);
 			for (auto i = bytes-- / 2; i--; )
@@ -95,7 +104,7 @@ namespace active::utility {
 			@param toBigEndian True if the end result should be big-endian
 		*/
 		template<typename T> requires (std::is_arithmetic_v<T>)
-		static void byteSwap(T* val, size_type howMany, bool toBigEndian) {
+		static void byte_swap(T* val, size_type howMany, bool toBigEndian) {
 			if ((howMany < 1) || (toBigEndian == defaultEndian))
 				return;
 			for (; howMany--; ++val) {
@@ -259,6 +268,6 @@ namespace active::utility {
 		std::unique_ptr<char[]> m_store;
 	};
 	
-}  // namespace active::utility
+}  // namespace active
 
 #endif	//ACTIVE_UTILITY_MEMORY

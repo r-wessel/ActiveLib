@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_DATABASE_TRANSACTION
 
 #include "Active/Utility/Guid.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <memory>
 
@@ -35,7 +35,7 @@ namespace active::database {
 		 Constructor
 		 @param name The transaction name (for displaying undo etc)
 		 */
-		Transaction(const utility::String& name) : m_name(name)	{}
+		Transaction(const string& name) : m_name(name)	{}
 		/*!
 		 Destructor
 		 */
@@ -47,12 +47,12 @@ namespace active::database {
 		 Get the transaction name
 		 @return The transaction name
 		 */
-		const utility::String& getName() const	{ return m_name; }
+		const string& getName() const	{ return m_name; }
 		/*!
 		 Get the transaction ID
 		 @return The transaction ID
 		 */
-		utility::Guid getID() const	{ return m_ID; }
+		Guid getID() const	{ return m_ID; }
 		
 	protected:
 
@@ -78,9 +78,9 @@ namespace active::database {
 		
 	private:
 			///The transaction name (for logging and user feedback, i.e. should be easily readable)
-		utility::String m_name;
+		string m_name;
 			///The transaction guid
-		utility::Guid m_ID = utility::Guid{true};
+		Guid m_ID = Guid{true};
 	};
 	
 }

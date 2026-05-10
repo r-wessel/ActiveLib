@@ -15,21 +15,21 @@ using namespace active::geometry;
 using namespace active::math;
 using namespace active::serialise::json;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
-using enum active::utility::TextEncoding;
+using enum active::text_encoding;
 
 namespace {
 	
 		///Make a report for the specified JSON tranport status
-	String makeReportFor(const JSONTransport& transport, const String& errorMessage) {
-		return errorMessage + " at row: " +String{transport.getLastRow()} + ", column: " + String{transport.getLastColumn()};
+	string makeReportFor(const JSONTransport& transport, const string& errorMessage) {
+		return errorMessage + " at row: " +string{transport.getLastRow()} + ", column: " + string{transport.getLastColumn()};
 	}
 	
 		//A string for testing special chars in JSON transport
 	auto shapeName = u8"ਖdਖdਖdਖdabਖdefghabਖdefgh<>&\"\\/";
 	
-	String unknownJSONName =
+	string unknownJSONName =
 "{\n\
 	\"name\": \"ਖdਖdਖdਖdabਖdefghabਖdef\\u0436\",\n\
 	\"shape\": {\n\
@@ -69,7 +69,7 @@ namespace {
 		\"topID\": 6\n\
 	}\n\
 }";
-String missingQuote =
+string missingQuote =
 "{\n\
 	\"name\": \"ਖdਖdਖdਖdabਖdefghabਖdef,\n\
 	\"shape\": {\n\
@@ -109,7 +109,7 @@ String missingQuote =
 		\"topID\": 6\n\
 	}\n\
 }";
-String badNumber =
+string badNumber =
 "{\n\
 	\"name\": \"ਖdਖdਖdਖdabਖdefghabਖdef\",\n\
 	\"shape\": {\n\
@@ -149,7 +149,7 @@ String badNumber =
 		\"topID\": 6\n\
 	}\n\
 }";
-String missingBrace =
+string missingBrace =
 "{\n\
 	\"name\": \"ਖdਖdਖdਖdabਖdefghabਖdef\",\n\
 	\"shape\": {\n\
@@ -245,7 +245,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			//Send the test object as JSON (encoded as UTF16BE with BOM)
 		memCollector.clear();
 		try {
-			transporter.send(PackageWrap{shapeOut}, SerialiseTester::tag, BufferOut{memCollector, std::nullopt, DataFormat{UTF16, true, true}});
+			transporter.send(PackageWrap{shapeOut}, SerialiseTester::tag, BufferOut{memCollector, std::nullopt, text_format{UTF16, true, true}});
 			CHECK_MESSAGE(!memCollector.empty(), TEST_MESSAGE(JSON send produced no output));
 		} catch(...) {
 			FAIL_CHECK(TEST_MESSAGE(JSON (UTF16 with BOM) send failed));
@@ -279,7 +279,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(shapeOut == shapeIn, TEST_MESSAGE(Object received via JSON (UTF32) does not match the object sent));
 
 			//Initialise sample test array data
-		String collector;
+		string collector;
 		SerialiseArrayTester arrayTesterOut, arrayTesterIn;
 		arrayTesterOut.emplace_back(BarA{Guid{true}, "Something"});
 		arrayTesterOut.emplace_back(BarB{Guid{true}, 1.234});
@@ -302,7 +302,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 			//Negative tests (handle bad data)
 
 		SerialiseTester testObject;
-		String report;
+		string report;
 			//Read JSON with an unknown name - use policy that rejects unknown names
 		JSONTransport checkedTransport(Transport::Policy::moderate);
 		try {
@@ -342,11 +342,11 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 		///Tests for sending and receiving items via JSON
 	TEST_CASE(TESTQ(testJSONItem)) {
 		JSONTransport transport;
-		String importedText, inputText{"Some sample text"};
-		transport.receive(ValueWrap<String>{importedText}, Identity{}, "\"" + inputText + "\"");
+		string importedText, inputText{"Some sample text"};
+		transport.receive(ValueWrap<string>{importedText}, Identity{}, "\"" + inputText + "\"");
 		CHECK_MESSAGE(importedText == inputText, TEST_MESSAGE(Text import from JSON does not match input));
 		double importedNum = 0.0, inputNum = 1.234;
-		transport.receive(ValueWrap<double>{importedNum}, Identity{}, String{inputNum});
+		transport.receive(ValueWrap<double>{importedNum}, Identity{}, string{inputNum});
 		CHECK_MESSAGE(isEqual(importedNum, inputNum), TEST_MESSAGE(Double-precision import from JSON does not match input));
 	} //testJSONItem
 
@@ -355,20 +355,20 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
    TEST_CASE(TESTQ(testContainer)) {
 	   JSONTransport transport;
 	   	//Test string array
-	   std::vector<String> test1{"Something", "Whatever", "more", "Testing"};
-	   String json;
+	   std::vector<string> test1{"Something", "Whatever", "more", "Testing"};
+	   string json;
 	   try {
 		   transport.send(ContainerWrap{test1}, Identity{}, json);
 	   } catch(std::system_error& error) {
-		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<String>));
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON export of std::vector<string>));
 	   }
-	   std::vector<String> test1In;
+	   std::vector<string> test1In;
 	   try {
 		   transport.receive(ContainerWrap{test1In}, Identity{}, json);
 	   } catch(std::system_error& error) {
-		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<String>));
+		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<string>));
 	   }
-	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(String array JSON send/receive strings failed));
+	   CHECK_MESSAGE(test1 == test1In, TEST_MESSAGE(string array JSON send/receive strings failed));
 		   //Test guid array
 	   std::vector<Guid> testg1{Guid{true}, Guid{true}, Guid{true}, Guid{true}};
 	   json.clear();
@@ -383,7 +383,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	   } catch(std::system_error& error) {
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<Guid>));
 	   }
-	   CHECK_MESSAGE(testg1 == test1gIn, TEST_MESSAGE(String array JSON send/receive guids failed));
+	   CHECK_MESSAGE(testg1 == test1gIn, TEST_MESSAGE(string array JSON send/receive guids failed));
 		   //Test double array
 	   json.clear();
 	   std::vector<double> test2{1.0, 2.0, 3.14};
@@ -398,7 +398,7 @@ TEST_SUITE(TESTQ(JSONTest)) TEST_SUITE_OPEN
 	   } catch(std::system_error& error) {
 		   FAIL_CHECK(TEST_MESSAGE(ContainerWrap failed JSON import to std::vector<double>));
 	   }
-	   CHECK_MESSAGE(test2 == test2In, TEST_MESSAGE(String array JSON send/receive doubles failed));
+	   CHECK_MESSAGE(test2 == test2In, TEST_MESSAGE(string array JSON send/receive doubles failed));
    } //testContainer
 
 TEST_SUITE_CLOSE //JSONTest

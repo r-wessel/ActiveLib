@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Transport.h"
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Default constructor

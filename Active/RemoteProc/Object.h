@@ -34,14 +34,14 @@ namespace active::rpc {
 		 @param name The object name
 		 @param toReserve The number of items to reserve space for in the vector
 		 */
-		Object(const active::utility::String& name, size_type toReserve = 0) : base{toReserve}, m_name{name} {}
+		Object(const active::string& name, size_type toReserve = 0) : base{toReserve}, m_name{name} {}
 		/*!
 		 Constructor
 		 @param name The object name
 		 @param items The items to insert in the array
 		*/
 		template<class Derived>
-		explicit Object(const active::utility::String& name, const std::initializer_list<Derived>& items) : base{items}, m_name{name} {}
+		explicit Object(const active::string& name, const std::initializer_list<Derived>& items) : base{items}, m_name{name} {}
 		virtual ~Object() {}
 		// MARK: - Functions (const)
 		
@@ -65,7 +65,7 @@ namespace active::rpc {
 		
 	private:
 			///The object name
-		active::utility::String m_name;
+		active::string m_name;
 	};
 	
 }

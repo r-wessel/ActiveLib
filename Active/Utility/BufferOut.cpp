@@ -10,10 +10,11 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include <utility>
 
+using namespace active;
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
-using enum TextEncoding;
+using enum text_encoding;
 
 namespace {
 	
@@ -21,75 +22,114 @@ namespace {
 	const size_t smallCacheBounds = 0x200;
 		///Max size of data to be written to the small cache
 	const size_t smallDataBounds = 0x80;
+	
+	/*!
+	 Write this string to a buffer (as internally encoded)
+	 @param string The string to write
+	 @param buffer The destination buffer
+	 @param isNullAdded True to add a terminating null
+	 @param howMany The number of characters to write (nullopt for all)
+	 @param maxBytes The maximum number of bytes the destination can hold (including terminating null - nullopt for full length)
+	 @return A reference to the destination
+	 */
+	const BufferOut& writeUTF8(const string& string, const BufferOut& buffer, bool isNullAdded = true,
+							   string_position howMany = {},
+							   string_position maxBytes = {}) {
+		if ((howMany == 0) || (maxBytes == 0))
+			return buffer;
+		if (!string.empty()) {
+			if (howMany) {
+				if (auto charBytes = string_function::get_byte_count_char_limited(string.data(), howMany); charBytes && (!maxBytes || (maxBytes > *charBytes)))
+					maxBytes = *charBytes;
+			}
+				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
+			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+				maxBytes = *bufferMax;
+			string::size_type byteCount = maxBytes ? string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? 1 : 0)) : string.data_size();
+			buffer.write(string.data(), byteCount);
+		}
+		if (isNullAdded)
+			buffer.write(0);
+		return buffer;
+	} //writeUTF8
+
+	/*!
+	 Write this string as UTF-16 to a buffer
+	 @param string The string to write
+	 @param buffer The destination buffer
+	 @param isNullAdded True to add a terminating null
+	 @param is_big_endian True if byte ordering is big-endian
+	 @param howMany The number of characters to write (nullopt for all)
+	 @param maxBytes The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
+	 @return A reference to the destination
+	 */
+	const BufferOut& writeUTF16(const string& string, const BufferOut& buffer, bool isNullAdded = true,
+								bool is_big_endian = text_format::defaultEndian,
+								string_position howMany = std::nullopt,
+								string_position maxBytes = std::nullopt) {
+		if ((howMany == 0) || (maxBytes == 0))
+			return buffer;
+		const auto* text = string.data();
+		if (auto uniString = string_function::to_unicode(text, howMany); uniString) {
+			const char32_t* text32 = uniString->data();
+			if (auto uniString16 = string_function::to_utf16(text32); uniString16) {
+					//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
+				if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+					maxBytes = *bufferMax;
+					//NB: When a terminating null is required, deduct this when a max size for the destination is specified
+				string::size_type byteCount = maxBytes ?
+				string_function::get_valid_byte_count(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0),
+										  string_position::npos, UTF16) :
+				(uniString->size() * sizeof(char16_t));
+					//Byte-swap the data as required (no action if platform endianess matches requirement)
+				Memory::byte_swap(uniString16->data(), byteCount / sizeof(char16_t), is_big_endian);
+				buffer.write(reinterpret_cast<const char*>(uniString16->data()), byteCount);
+			}
+		}
+		if (isNullAdded)
+			buffer.writeBinary(char16_t());
+		return buffer;
+	} //writeUTF16
+	
+	
+	/*!
+	 Write this string as UTF-32 to a buffer
+	 @param string The string to write
+	 @param buffer The destination buffer
+	 @param isNullAdded True to add a terminating null
+	 @param is_big_endian True if byte ordering is big-endian
+	 @param howMany The number of characters to write (nullopt for all)
+	 @param maxBytes The maximum number of chars the destination can hold (including terminating null - nullopt for full length)
+	 @return A reference to the destination
+	 */
+	const BufferOut& writeUTF32(const string& string, const BufferOut& buffer, bool isNullAdded = true,
+								bool is_big_endian = text_format::defaultEndian,
+								string_position howMany = std::nullopt,
+								string_position maxBytes = std::nullopt) {
+		if ((howMany == 0) || (maxBytes == 0))
+			return buffer;
+		const auto* text = string.data();
+		auto uniString = string_function::to_unicode(text);
+		if (uniString) {
+				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
+			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+				maxBytes = *bufferMax;
+				//NB: When a terminating null is required, deduct this when a max size for the destination is specified
+			string::size_type byteCount = maxBytes ?
+			string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), string_position::npos, UTF32) :
+			(uniString->size() * sizeof(char32_t));
+				//Byte-swap the data as required (no action if platform endianess matches requirement)
+			Memory::byte_swap(uniString->data(), byteCount / sizeof(char32_t), is_big_endian);
+			buffer.write(reinterpret_cast<const char*>(uniString->data()), byteCount);
+		}
+		if (isNullAdded)
+			buffer.writeBinary(char32_t());
+		return buffer;
+	} //writeUTF32
 
 }
 
 // MARK: - Constructors
-
-/*--------------------------------------------------------------------
-	Default constructor
-  --------------------------------------------------------------------*/
-BufferOut::BufferOut() {
-	initialise();
-} //BufferOut::BufferOut
-
-
-/*--------------------------------------------------------------------
-	Constructor
- 
-	destFile: The destination data file
-	bufferSize: Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
-	format: The destination data format
-  --------------------------------------------------------------------*/
-BufferOut::BufferOut(File& destFile, Memory::sizeOption bufferSize, DataFormat format) {
-	m_bufferSizeTip = bufferSize.value_or(defaultBufferSize);
-	m_format = format;
-	initialise(nullptr, &destFile);
-} //BufferOut::BufferOut
-
-
-/*--------------------------------------------------------------------
-	Constructor
- 
-	memory: The destination memory block
-	bufferSize: Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
-	format: The destination data format
-  --------------------------------------------------------------------*/
-BufferOut::BufferOut(Memory& memory, Memory::sizeOption bufferSize, DataFormat format) {
-	m_bufferSizeTip = bufferSize.value_or(defaultBufferSize);
-	m_format = format;
-	initialise(&memory);
-} //BufferOut::BufferOut
-
-
-/*--------------------------------------------------------------------
-	Constructor
- 
-	memory: The destination memory block
-	bufferSize: Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
-	format: The destination data format
-  --------------------------------------------------------------------*/
-BufferOut::BufferOut(Memory&& memory, Memory::sizeOption bufferSize, DataFormat format) {
-	m_bufferSizeTip = bufferSize.value_or(defaultBufferSize);
-	m_cache = std::make_unique<Memory>(std::move(memory));
-	m_format = format;
-	initialise(m_cache.get());
-} //BufferOut::BufferOut
-
-
-/*--------------------------------------------------------------------
-	Constructor
- 
-	destString: The destination string
-	bufferSize: Suggested buffer size (can minimise overheads if a small number is suggested - large values will be ignored)
-	format: The destination data format
-  --------------------------------------------------------------------*/
-BufferOut::BufferOut(String& destString, Memory::sizeOption bufferSize, DataFormat format) {
-	m_bufferSizeTip = bufferSize.value_or(defaultBufferSize);
-	m_format = format;
-	initialise(nullptr, nullptr, &destString);
-} //BufferOut::BufferOut
-
 
 /*--------------------------------------------------------------------
 	Move constructor
@@ -105,14 +145,6 @@ BufferOut::BufferOut(BufferOut&& source) noexcept :
 	m_format = source.m_format;
 	m_bufferSizeTip = source.m_bufferSizeTip;
 } //BufferOut::BufferOut
-
-
-/*--------------------------------------------------------------------
-	Destructor
-  --------------------------------------------------------------------*/
-BufferOut::~BufferOut() {
-	flushBuffer();
-} //BufferOut::~BufferOut
 
 // MARK: - Operators
 
@@ -137,29 +169,19 @@ BufferOut& BufferOut::operator= (BufferOut&& source) noexcept {
 // MARK: - Functions (const)
 
 /*--------------------------------------------------------------------
-	Get the maximum size of the output buffer (when a fixed-sized memory buffer is used)
- 
-	return: The maximum number of bytes the buffer can hold (null-opt for any dynamic buffer target)
-  --------------------------------------------------------------------*/
-Memory::sizeOption BufferOut::maxSize() const {
-	return ((m_memory == nullptr) || m_memory->owned()) ? std::nullopt : Memory::sizeOption(m_memory->size());
-} //BufferOut::maxSize
-
-
-/*--------------------------------------------------------------------
 	Get the current write position in the destination (not the write position in the buffer)
  
 	return: The write position (e.g. the write position in a destination file, nullopt on error)
   --------------------------------------------------------------------*/
 Memory::sizeOption BufferOut::getPosition() const {
-	if (!good() || !confirmBuffer())
+	if (!good() || !confirmBuffer()) [[unlikely]]
 		return std::nullopt;
 	if (m_file != nullptr)
 		return m_file->size() + m_bufferPos;
 	else if (m_memory != nullptr)
 		return m_memory->size() + m_bufferPos;
 	else if (m_str != nullptr)
-		return m_str->dataSize() + m_bufferPos;
+		return m_str->data_size() + m_bufferPos;
 	return std::nullopt;
 } //BufferOut::getPosition
 
@@ -170,7 +192,7 @@ Memory::sizeOption BufferOut::getPosition() const {
 	return: True if no errors were encountered
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::flushBuffer() const {
-	if (!good())
+	if (!good()) [[unlikely]]
 		return *this;
 	validateSmallCache(true);
 	if (m_bufferPos == 0)
@@ -183,7 +205,7 @@ const BufferOut& BufferOut::flushBuffer() const {
 		}
 		m_bufferPos = 0;
 	} else if (m_memory != nullptr) {
-		if (!m_memory->owned())
+		if (!m_memory->owned()) [[unlikely]]
 			setState(std::ios_base::eofbit);	//If the destination memory is not owned, we can't move or resize it
 		else {
 			if (isMyBuffer())
@@ -196,19 +218,18 @@ const BufferOut& BufferOut::flushBuffer() const {
 			m_bufferPos = 0;	//…and reset the buffer write position
 		}
 	} else if (m_str != nullptr) {
-			//Ensure only whole chars are appended
-		String::size_type charBytes = String::getValidByteCount(m_buffer.data(), m_bufferPos);
-		if (charBytes == 0)
+			///Before and after string data size determines how many bytes for valid chars were written from the buffer
+		auto charBytes = m_str->data_size();
+		m_str->append(m_buffer.data(), m_bufferPos);
+		charBytes = m_str->data_size() - charBytes;
+		if (charBytes == 0) [[unlikely]]
 			setState(std::ios_base::failbit);	//The buffer content can't be written to a string
-		else {
-			m_str->append(String(m_buffer.data(), charBytes));
+		else if (charBytes < m_bufferPos) {
 				//If we couldn't consume the full buffer with valid characters, we need to retain any remaining
-			if (charBytes < m_bufferPos) {
-				std::copy(m_buffer.data() + charBytes, m_buffer.data() + m_bufferPos, m_buffer.data());
-				m_bufferPos -= charBytes;
-			} else
-				m_bufferPos = 0;
-		}
+			std::copy(m_buffer.data() + charBytes, m_buffer.data() + m_bufferPos, m_buffer.data());
+			m_bufferPos -= charBytes;
+		} else
+			m_bufferPos = 0;
 	}
 	return *this;
 } //BufferOut::flushBuffer
@@ -219,15 +240,28 @@ const BufferOut& BufferOut::flushBuffer() const {
 	
 	toWrite: The string to write
 	format: The data format
+	isNullAdded: True to add a terminating null
+	howMany: The number of characters to write (nullopt for all)
+	maxBytes: The maximum number of bytes to write
 	
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
-const BufferOut& BufferOut::write(const String& toWrite, DataFormat format) const {
+const BufferOut& BufferOut::write(const string& toWrite, text_format format, bool isNullAdded,
+								  string_position howMany,
+								  string_position maxBytes) const {
 	if (m_str != nullptr)
 		format.encoding = UTF8;	//Data written to a string must be UTF8
 	if ((format.encoding == UTF8) || (format.encoding == ascii) || (format.encoding == ISO8859_1))
-		return write(toWrite.data(), toWrite.dataSize());	//NB: This isn't necessarily correct for ascii or ISO8859.1 - update when required
-	return toWrite.writeTo(*this, format, false);
+		return write(toWrite.data(), toWrite.data_size());	//NB: This isn't necessarily correct for ascii or ISO8859.1 - update when required
+	switch (format.encoding) {
+		case UTF8: case ascii: case ISO8859_1: [[likely]]
+			return writeUTF8(toWrite, *this, isNullAdded, howMany, maxBytes);
+		case UTF16:
+			return writeUTF16(toWrite, *this, isNullAdded, format.is_big_endian, howMany, maxBytes);
+		case UTF32: [[unlikely]]
+			return writeUTF32(toWrite, *this, isNullAdded, format.is_big_endian, howMany, maxBytes);
+	}
+	return *this;
 } //BufferOut::write
 
 
@@ -240,29 +274,15 @@ const BufferOut& BufferOut::write(const String& toWrite, DataFormat format) cons
 	return: A reference to this
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::write(const char* toWrite, Memory::size_type length) const {
-	if (!good())
+	if (!good()) [[unlikely]]
 		return *this;
 		//Check if we need to write a BOM
-	if ((getPosition() == 0) && m_smallCache.empty() && m_format.isBOM) {
-		if (auto bom = m_format.toBOM(); bom)
+	if (m_format.is_bom && m_smallCache.empty() && (getPosition() == 0)) { [[unlikely]]
+		if (auto bom = Memory::BOM(m_format); bom)
 			if (!performWrite(bom->data(), bom->size()))
 				return *this;
 	}
 	return (length < smallDataBounds) ? writeToSmallCache(toWrite, length) : performWrite(toWrite, length);
-} //BufferOut::write
-
-
-/*--------------------------------------------------------------------
-	Write a single byte
-	
-	toPut: The byte to write
-	
-	return: True if no errors occurred
-  --------------------------------------------------------------------*/
-const BufferOut& BufferOut::write(unsigned char toWrite) const {
-	if (good())
-		m_smallCache.push_back(toWrite);
-	return validateSmallCache();
 } //BufferOut::write
 
 
@@ -289,12 +309,12 @@ Memory BufferOut::getOutput() const {
 			setState(std::ios_base::failbit);
 		}
 	} else {
-			//String and memory buffers hold all the written data in memory, so return a wrapper to this data
+			//string and memory buffers hold all the written data in memory, so return a wrapper to this data
 		flushBuffer();
 		if (m_memory != nullptr)
 			return Memory(const_cast<char*>(m_memory->data()), m_memory->size());
 		else if (m_str != nullptr)
-			return Memory(const_cast<char*>(m_str->data()), m_str->dataSize());
+			return Memory(const_cast<char*>(m_str->data()), m_str->data_size());
 	}
 	return Memory{};
 } //BufferOut::getOutput
@@ -328,7 +348,7 @@ void BufferOut::setDestination(Memory* memory) {
  
 	sourceString: The destination string
   --------------------------------------------------------------------*/
-void BufferOut::setDestination(String* destString) {
+void BufferOut::setDestination(string* destString) {
 	flushBuffer();
 	initialise(nullptr, nullptr, destString);
 } //BufferOut::setDestination
@@ -400,7 +420,7 @@ const BufferOut& BufferOut::performWrite(const char* toWrite, Memory::size_type 
 	fileSrc: A file to write the data to
 	stringDest:A string to write the data to
   --------------------------------------------------------------------*/
-void BufferOut::initialise(Memory* memory, File* fileDest, String* stringDest) {
+void BufferOut::initialise(Memory* memory, File* fileDest, string* stringDest) {
 	IOBase::clear();
 	m_smallCache.reserve(smallCacheBounds);
 	m_bufferPos = 0;

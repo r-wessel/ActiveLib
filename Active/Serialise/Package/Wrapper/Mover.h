@@ -138,7 +138,7 @@ namespace active::serialise {
 		 @param source The string to read
 		 @return True if the data was successfully read
 		 */
-		bool read(const utility::String& source) override;
+		bool read(const string& source) override;
 		/*!
 		 Insert specified cargo into the package - used for cargo with many instances sharing the same ID (e.g. from an array/map)
 		 @param cargo The cargo to insert
@@ -150,7 +150,7 @@ namespace active::serialise {
 			///Handler for package identification and unboxing
 		Handler::Shared m_handler;
 			///The type name extracted from an incoming attribute (used during deserialisation)
-		utility::String m_typeName;
+		string m_typeName;
 			///Wrapper for creating a new object during deserialisation
 		mutable std::unique_ptr<Package> m_wrapper;
 			///Pointer to to the target object (can be to an external object or one of the internal members above)

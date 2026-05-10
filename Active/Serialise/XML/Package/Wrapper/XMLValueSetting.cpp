@@ -13,7 +13,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::serialise;
 using namespace active::serialise::xml;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 		
@@ -36,7 +36,7 @@ namespace {
 	isTyped: True if the value is serialised as a specific type
 	className: Optional class name for the value container
   --------------------------------------------------------------------*/
-XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, bool isTyped, std::optional<utility::String> className) : base(setting) {
+XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, bool isTyped, std::optional<string> className) : base(setting) {
 	if (setting.identity) {
 		m_name = (*setting.identity).name;
 		if ((*setting.identity).id)
@@ -59,8 +59,8 @@ XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, bool isTyped, s
 	isTyped: True if the value is serialised as a specific type
 	className: Optional class name for the value container
   --------------------------------------------------------------------*/
-XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, const utility::String& customTag,
-								 bool isTyped, std::optional<utility::String> className) : XMLValueSetting{setting} {
+XMLValueSetting::XMLValueSetting(setting::ValueSetting& setting, const string& customTag,
+								 bool isTyped, std::optional<string> className) : XMLValueSetting{setting} {
 	m_tag = customTag;
 	m_columns = static_cast<int32_t>(setting.getColumnSize());
 	m_isTyped = isTyped;

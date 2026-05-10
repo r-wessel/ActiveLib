@@ -7805,7 +7805,7 @@ static void re_sql_func(
 ){
   ReCompiled *pRe;          /* Compiled regular expression */
   const char *zPattern;     /* The regular expression */
-  const unsigned char *zStr;/* String being searched */
+  const unsigned char *zStr;/* string being searched */
   const char *zErr;         /* Compile error message */
   int setAux = 0;           /* True to invoke sqlite3_set_auxdata() */
 

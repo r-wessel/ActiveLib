@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <mutex>
 
 using namespace active::environment;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -29,7 +29,7 @@ namespace {
 	identity: Optional name/ID for the subscriber
 	isActiveInstance: True if this object is the active instance (the primary application)
  --------------------------------------------------------------------*/
-App::App(const utility::NameID& identity, bool isActiveInstance) : Publisher{identity} {
+App::App(const NameID& identity, bool isActiveInstance) : Publisher{identity} {
 	if (isActiveInstance) {
 		if (m_appInstance != nullptr)
 			throw;	//There can't be multiple active instances

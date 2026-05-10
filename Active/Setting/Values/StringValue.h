@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::setting {
 	
 		///A single string value
-	using StringValue = ValueBase<utility::String>;
+	using StringValue = ValueBase<string>;
 
 	// MARK: - Operators
 	
@@ -33,7 +33,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(int32_t val) {
-		data = utility::String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -43,7 +43,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(uint32_t val) {
-		data = utility::String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -53,7 +53,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(int64_t val) {
-		data = utility::String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -63,7 +63,7 @@ namespace active::setting {
 	*/
 	template<> inline
 	Value& StringValue::operator=(double val) {
-		data = utility::String{val};
+		data = string{val};
 		return *this;
 	}
 	/*!
@@ -72,7 +72,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& StringValue::operator=(const utility::String& val) {
+	Value& StringValue::operator=(const string& val) {
 		data = val;
 		return *this;
 	}
@@ -82,7 +82,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& StringValue::operator=(const utility::Guid& val) {
+	Value& StringValue::operator=(const Guid& val) {
 		data = val;
 		return *this;
 	}
@@ -92,9 +92,9 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& StringValue::operator=(const utility::Time& val) {
+	Value& StringValue::operator=(const Time& val) {
 		data.clear();
-		utility::Time temp{val};
+		Time temp{val};
 		serialise::xml::XMLDateTime{temp}.write(data);
 		return *this;
 	}
@@ -136,28 +136,28 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	StringValue::operator utility::String() const 	{ return data; }
+	StringValue::operator string() const 	{ return data; }
 	/*!
 		Get a guid value
 		@return A guid value
 	*/
 	template<> inline
-	StringValue::operator utility::Guid() const { return utility::Guid{data}; }
+	StringValue::operator Guid() const { return Guid{data}; }
 	/*!
 		Get a time value
 		@return A time value
 	*/
 	template<> inline
-	StringValue::operator utility::Time() const {
+	StringValue::operator Time() const {
 			//First attempt to read the time as xs:dateTime format
-		utility::Time time;
+		Time time;
 		serialise::xml::XMLDateTime xmlParser{time};
 		if (xmlParser.read(data))
 			return time;
 			//Otherwise attempt to convert as seconds from 1970
-		if (auto seconds = data.toInt64(); seconds)
-			return utility::Time{*seconds};
-		return utility::Time{};
+		if (auto seconds = data.to_int64_t(); seconds)
+			return Time{*seconds};
+		return Time{};
 	}
 	
 	// MARK: - Functions (const)

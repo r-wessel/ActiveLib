@@ -7,7 +7,7 @@
 
 using namespace active;
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 	///Tests for base64 encoding
 TEST_SUITE(TESTQ(base64Test)) TEST_SUITE_OPEN
@@ -24,7 +24,7 @@ TEST_SUITE(TESTQ(base64Test)) TEST_SUITE_OPEN
 		for (auto i = 0; i < bufferLen; ++i)
 			dataOut[i] = rand() % 256;
 			//Allocate a string to hold the outgoing base64
-		String collector;
+		string collector;
 		Base64Transport transporter;
 		for (auto i = 0; i < 5; ++i) {
 				//Send the test data as base64 (into the collection string)
@@ -41,9 +41,9 @@ TEST_SUITE(TESTQ(base64Test)) TEST_SUITE_OPEN
 			//Negative tests (bad data)
 		
 			//Invalid base64 numeral
-		CHECK_MESSAGE(!transporter.receive(dataIn, String{"ABC~"}), TEST_MESSAGE(Bad base64 numerals accepted by Base64Transport));
+		CHECK_MESSAGE(!transporter.receive(dataIn, string{"ABC~"}), TEST_MESSAGE(Bad base64 numerals accepted by Base64Transport));
 			//Short data
-		CHECK_MESSAGE(!transporter.receive(dataIn, String{"A"}), TEST_MESSAGE(Insufficient base64 data accepted by Base64Transport));
+		CHECK_MESSAGE(!transporter.receive(dataIn, string{"A"}), TEST_MESSAGE(Insufficient base64 data accepted by Base64Transport));
 	}
 
 TEST_SUITE_CLOSE

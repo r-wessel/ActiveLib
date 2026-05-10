@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Primitives/2D/PrimPoint.h"
 
 using namespace active::primitive;
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Add point coordinates

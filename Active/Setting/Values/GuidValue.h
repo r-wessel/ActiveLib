@@ -11,7 +11,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::setting {
 	
 		///A unique ID (guid) value
-	using GuidValue = ValueBase<utility::Guid>;
+	using GuidValue = ValueBase<Guid>;
 
 	// MARK: - Operators
 	
@@ -21,8 +21,8 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& GuidValue::operator=(const utility::Guid& val) {
-		utility::Guid temp{val};
+	Value& GuidValue::operator=(const Guid& val) {
+		Guid temp{val};
 		if (temp)
 			data = temp;
 		else
@@ -43,13 +43,13 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	GuidValue::operator utility::String() const 	{ return data; }
+	GuidValue::operator string() const 	{ return data; }
 	/*!
 		Get a guid value
 		@return A guid value
 	*/
 	template<> inline
-	GuidValue::operator utility::Guid() const { return data; }
+	GuidValue::operator Guid() const { return data; }
 	
 	// MARK: - Functions (const)
 	

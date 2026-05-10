@@ -5,7 +5,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/UniqueString.h"
 
-using namespace active::utility;
+using namespace active;
 
 /*--------------------------------------------------------------------
 	Make a new unique string from a specified string
@@ -15,26 +15,26 @@ using namespace active::utility;
  
 	return: A new unique string based on the specified string
   --------------------------------------------------------------------*/
-String UniqueString::generate(const String& seedString, bool addToExisting) {
-		String uniqueString{seedString};
+string UniqueString::generate(const string& seedString, bool addToExisting) {
+		string uniqueString{seedString};
 		if (m_existingSet.contains(uniqueString)) {
-			String textOnly{seedString};
+			string textOnly{seedString};
 			uint32_t suffixLen = 0;
-			if (auto lastLetter = textOnly.findLastNotOf(String::allDigit); lastLetter) {
+			if (auto lastLetter = textOnly.find_last_not_of(string::allDigit); lastLetter) {
 				textOnly = textOnly.substr(0, *lastLetter + 1);
 				suffixLen = static_cast<uint32_t>(uniqueString.length() - *lastLetter - 1);
 			}
 			uint32_t topSuffix = 0;
 			for (const auto& item : m_existingSet) {
-				String text(item);
+				string text(item);
 				if (textOnly.empty() || (text.find(textOnly) == 0)) {
 					text = text.substr(textOnly.length());
-					if (!text.empty() && !text.findFirstNotOf(String::allDigit))
-						topSuffix = math::maxVal(topSuffix, text.operator uint32_t());
+					if (!text.empty() && !text.find_first_not_of(string::allDigit))
+						topSuffix = std::max(topSuffix, text.operator uint32_t());
 				}
 			}
-			String suffix(String{++topSuffix});
-			suffix.padRight(suffixLen, "0");
+			string suffix(string{++topSuffix});
+			suffix.pad_right(suffixLen, "0");
 			uniqueString = textOnly + suffix;
 		}
 		m_existingSet.insert(uniqueString);

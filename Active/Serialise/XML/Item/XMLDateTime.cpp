@@ -5,12 +5,14 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Serialise/XML/Item/XMLDateTime.h"
 
+#include "Active/Utility/MathFunctions.h"
+
 #include <ctime>
 
 using namespace active::math;
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 using enum XMLDateTime::Content;
 using enum Item::TimeFormat;
@@ -20,7 +22,7 @@ using enum Item::TimeFormat;
 namespace {
 	
 		//Regular expressions for parsing xs:dateTime etc
-	const String dateRegex{"(-?[0-9]{4})-([0-9]{2})-([0-9]{2})"},
+	const string dateRegex{"(-?[0-9]{4})-([0-9]{2})-([0-9]{2})"},
 				timeRegex{"([0-9]{2}):([0-9]{2}):([0-9]{2}(?:\\.[0-9]+)?)"},
 				zoneRegex{"(Z|[+-]{1}[0-9]{2}:[0-9]{2})?"},
 				dateTimeRegex = dateRegex + "T" + timeRegex;
@@ -49,37 +51,37 @@ XMLDateTime::XMLDateTime(Time& time, Content content, double prec) : Item(), m_t
 	
 	return: True if the data was successfully written
   --------------------------------------------------------------------*/
-bool XMLDateTime::write(String& dest) const {
+bool XMLDateTime::write(string& dest) const {
 		//If the preferred format is the Unix epoch, write the seconds since 1970
 	if (m_format == secondsSince1970) {
-		dest += String{m_time.secondsSince1970()};
+		dest += string{m_time.secondsSince1970()};
 		return true;
 	}
 		//Write the date as required
 	if ((m_content != timeOnly) && (m_content != timeOnlyWithOffset)) {
 			//Year
-		dest += String{static_cast<int32_t>(m_time.year())}.padRight(4, "0");
+		dest += string{static_cast<int32_t>(m_time.year())}.pad_right(4, "0");
 			//Month
 		dest += "-";
-		dest += String{static_cast<int32_t>(m_time.month().operator unsigned())}.padRight(2, "0");
+		dest += string{static_cast<int32_t>(m_time.month().operator unsigned())}.pad_right(2, "0");
 			//Day
 		dest += "-";
-		dest += String{static_cast<int32_t>(m_time.day())}.padRight(2, "0");
+		dest += string{static_cast<int32_t>(m_time.day())}.pad_right(2, "0");
 	}
 		//Write the time as required
 	if (m_content != dateOnly) {
 		if (m_content == dateTime || m_content == dateTimeWithOffset)
 			dest += "T";
 			//Hour
-		dest += String{static_cast<int32_t>(m_time.hour())}.padRight(2, "0");
+		dest += string{static_cast<int32_t>(m_time.hour())}.pad_right(2, "0");
 			//Minute
 		dest += ":";
-		dest += String{static_cast<int32_t>(m_time.minute())}.padRight(2, "0");
+		dest += string{static_cast<int32_t>(m_time.minute())}.pad_right(2, "0");
 			//Second
 		dest += ":";
-		dest += String{static_cast<int32_t>(m_time.second())}.padRight(2, "0");
+		dest += string{static_cast<int32_t>(m_time.second())}.pad_right(2, "0");
 		if (isBetween(m_secsPrecision, 0.0, 1.0, 1e-7) && (m_time.microsecond() != 0)) {
-			auto secs = String{static_cast<double>(m_time.microsecond()) / 1e6, m_secsPrecision};
+			auto secs = string{static_cast<double>(m_time.microsecond()) / 1e6, m_secsPrecision};
 			if (auto pointPos = secs.find("."); pointPos)
 				dest += secs.substr(*pointPos, 7);
 		}
@@ -91,9 +93,9 @@ bool XMLDateTime::write(String& dest) const {
 			dest += "Z";
 		else {
 			dest += offset.second < 0 ? "-" : "+";
-			dest += String{abs(offset.first)}.padRight(2, "0");
+			dest += string{abs(offset.first)}.pad_right(2, "0");
 			dest += ":";
-			dest += String{offset.second}.padRight(2, "0");
+			dest += string{offset.second}.pad_right(2, "0");
 		}
 	}
 	return true;
@@ -121,16 +123,16 @@ void XMLDateTime::setDefault() {
 	
 	return: True if the data was successfully read
   --------------------------------------------------------------------*/
-bool XMLDateTime::read(const String& source) {
+bool XMLDateTime::read(const string& source) {
 	bool hasDate = ((m_content != timeOnly) && (m_content != timeOnlyWithOffset)),
 			hasTime = (m_content != dateOnly);
 	std::string subject(source);
 	std::smatch match;
 	std::regex pattern{(((hasDate) ? ((hasTime) ? dateTimeRegex : dateRegex) : timeRegex) + zoneRegex).data()};
 	if (!std::regex_search(subject, match, pattern) || (match.size() < 2)) {
-		if (source.findFirstNotOf(String::allFloat))
+		if (source.find_first_not_of(string::allFloat))
 			return false;
-		if (auto seconds = source.toDouble(); seconds) {
+		if (auto seconds = source.to_double(); seconds) {
 			m_time = Time{*seconds};
 			return true;
 		}
@@ -142,34 +144,34 @@ bool XMLDateTime::read(const String& source) {
 	auto incoming = ++match.begin();
 	if (hasDate) {
 			//Year
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val != 0))
+		if (auto val = string{*(incoming++)}.to_int16_t(); val && (val != 0))
 			year = *val;
 		else
 			return false;
 			//Month
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val > 0) && (val < 13))
+		if (auto val = string{*(incoming++)}.to_int16_t(); val && (val > 0) && (val < 13))
 			month = static_cast<uint8_t>(*val);
 		else
 			return false;
 			//Day
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val > 0) && (val < 32))
+		if (auto val = string{*(incoming++)}.to_int16_t(); val && (val > 0) && (val < 32))
 			day = static_cast<uint8_t>(*val);
 		else
 			return false;
 	}
 	if (hasTime) {
 			//Hours
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val >= 0) && (val < 24))
+		if (auto val = string{*(incoming++)}.to_int16_t(); val && (val >= 0) && (val < 24))
 			hour = static_cast<uint8_t>(*val);
 		else
 			return false;
 			//Minutes
-		if (auto val = String{*(incoming++)}.toInt16(); val && (val >= 0) && (val < 60))
+		if (auto val = string{*(incoming++)}.to_int16_t(); val && (val >= 0) && (val < 60))
 			minute = static_cast<uint8_t>(*val);
 		else
 			return false;
 			//Seconds (NB: Double to allow for microseconds)
-		if (auto val = String{*(incoming++)}.toDouble(); val && (val >= 0.0) && (val < 60.0))
+		if (auto val = string{*(incoming++)}.to_double(); val && (val >= 0.0) && (val < 60.0))
 			second = *val;
 		else
 			return false;
@@ -177,13 +179,13 @@ bool XMLDateTime::read(const String& source) {
 		//UTC offset
 	int32_t utcOffset = 0;
 	if (incoming != match.end() && incoming->matched) {
-		if (String zone{*incoming}; !zone.empty() && (zone != "Z")) {
+		if (string zone{*incoming}; !zone.empty() && (zone != "Z")) {
 			int32_t sign = (zone[0] == U'-') ? -1 : 1;
-			if (auto val = zone.substr(1, 2).toInt16(); val && ((*val * sign) > -13) && ((*val * sign) < 15))
+			if (auto val = zone.substr(1, 2).to_int16_t(); val && ((*val * sign) > -13) && ((*val * sign) < 15))
 				utcOffset += (*val * sign * 60);
 			else
 				return false;
-			if (auto val = zone.substr(4, 2).toInt16(); val && (val >= 0) && (val < 60))
+			if (auto val = zone.substr(4, 2).to_int16_t(); val && (val >= 0) && (val < 60))
 				utcOffset += *val;
 			else
 				return false;

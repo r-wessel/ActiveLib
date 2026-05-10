@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define BIM_INTERFACE_FUNCTIONAL
 
 #include "Active/Serialise/Cargo.h"
-#include "BIMLib/Utility/String.h"
+#include "BIMLib/Utility/string.h"
 
 namespace active::rpc {
 	
@@ -29,7 +29,7 @@ namespace active::rpc {
 		 Get the function name
 		 @return The function name
 		 */
-		virtual active::utility::String getName() const = 0;
+		virtual active::string getName() const = 0;
 		/*!
 		 Execute the function
 		 @param param The transported input parameter

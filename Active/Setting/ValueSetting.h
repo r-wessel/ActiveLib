@@ -35,7 +35,7 @@ namespace active::setting {
 			Constructor
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(const utility::NameID& nameID) : Setting{nameID} {}
+		explicit ValueSetting(const NameID& nameID) : Setting{nameID} {}
 		/*!
 			Constructor
 			@param value A value to populate into the setting
@@ -48,14 +48,14 @@ namespace active::setting {
 			@param value A value to populate into the setting
 			@param nameID The setting identifier
 		*/
-		ValueSetting(Value&& value, const utility::NameID::Option nameID = std::nullopt);
+		ValueSetting(Value&& value, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param values An array of values to populate into the setting
 			@param nameID The setting identifier
 		*/
 		template<typename T> requires std::copyable<T>
-		ValueSetting(const std::vector<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
+		ValueSetting(const std::vector<T>& values, const NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
 			for (auto& value: values)
 				emplace_back(ValueBase<T>(value));
 		}
@@ -65,7 +65,7 @@ namespace active::setting {
 			@param nameID The setting identifier
 		*/
 		template<typename T> requires std::copyable<T>
-		ValueSetting(const std::set<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
+		ValueSetting(const std::set<T>& values, const NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
 			for (auto& value: values)
 				emplace_back(ValueBase<T>(value));
 		}
@@ -75,7 +75,7 @@ namespace active::setting {
 			@param nameID The setting identifier
 		*/
 		template<typename T> requires std::copyable<T>
-		ValueSetting(const std::unordered_set<T>& values, const utility::NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
+		ValueSetting(const std::unordered_set<T>& values, const NameID::Option nameID = std::nullopt) : setting::Setting(nameID) {
 			for (auto& value : values)
 				emplace_back(ValueBase<T>{value});
 		}
@@ -84,49 +84,49 @@ namespace active::setting {
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(bool val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(bool val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(int32_t val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(int32_t val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(uint32_t val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(uint32_t val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(int64_t val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(int64_t val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(double val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(double val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(const utility::Guid& val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(const Guid& val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(const utility::String& val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(const string& val, const NameID::Option nameID = std::nullopt);
 		/*!
 			Constructor
 			@param val The value
 			@param nameID The setting identifier
 		*/
-		explicit ValueSetting(const utility::Time& val, const utility::NameID::Option nameID = std::nullopt);
+		explicit ValueSetting(const Time& val, const NameID::Option nameID = std::nullopt);
 
 			///Use default copy constructor
 		ValueSetting(const ValueSetting& source) = default;
@@ -214,17 +214,17 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator active::utility::String() const { return getValue<utility::String>(); }
+		operator active::string() const { return getValue<string>(); }
 		/*!
 			Get a guid value
 			@return A guid value
 		*/
-		operator active::utility::Guid() const { return getValue<utility::Guid>(); }
+		operator active::Guid() const { return getValue<Guid>(); }
 		/*!
 			Get a time value
 			@return A time value
 		*/
-		operator active::utility::Time() const { return getValue<utility::Time>(); }
+		operator active::Time() const { return getValue<Time>(); }
 		
 		/*!
 			Get an array of values
@@ -296,17 +296,17 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		active::utility::String stringVal(size_t row = 0, size_t col = 0) const { return getValue<utility::String>(row, col); }
+		active::string stringVal(size_t row = 0, size_t col = 0) const { return getValue<string>(row, col); }
 		/*!
 			Get a guid value
 			@return A guid value
 		*/
-		active::utility::Guid guidVal(size_t row = 0, size_t col = 0) const { return getValue<utility::Guid>(row, col); }
+		active::Guid guidVal(size_t row = 0, size_t col = 0) const { return getValue<Guid>(row, col); }
 		/*!
 			Get a time value
 			@return A time value
 		*/
-		active::utility::Time timeVal(size_t row = 0, size_t col = 0) const { return getValue<utility::Time>(row, col); }
+		active::Time timeVal(size_t row = 0, size_t col = 0) const { return getValue<Time>(row, col); }
 
 		// MARK: - Functions (mutating)
 		

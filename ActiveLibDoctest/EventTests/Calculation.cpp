@@ -9,7 +9,7 @@ using namespace active;
 using namespace active::event;
 using namespace active::math;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 	///Receive a subscribed event - return true if event request is handled by this tool
 bool Calculation::receive(const Event& event) {

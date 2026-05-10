@@ -47,7 +47,7 @@ namespace active::serialise {
 						}
 					}
 				} {
-					if constexpr (!utility::DefaultConstructable<T>) {
+					if constexpr (!DefaultConstructable<T>) {
 						m_maker = [&](){ return std::make_unique<T>(); };
 					}
 				}

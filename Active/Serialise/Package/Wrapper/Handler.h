@@ -54,7 +54,7 @@ namespace active::serialise {
 		using Reconstruction = std::function<Package*(const setting::SettingList*)>;
 
 			//Filter for picking reconstruction method based on an object tag/type name and optional settings
-		using Filter = std::function<bool(const active::utility::String&, const setting::SettingList*)>;
+		using Filter = std::function<bool(const active::string&, const setting::SettingList*)>;
 	
 		// MARK: Constructors
 		
@@ -63,7 +63,7 @@ namespace active::serialise {
 		 @param attributeTag The tag identifying a package type
 		 @param parameter Any tags for optional parameter attributes required for instantiating a package
 		*/
-		Handler(const utility::String& attributeTag, std::initializer_list<active::utility::String> const& parameter = {}) :
+		Handler(const string& attributeTag, std::initializer_list<active::string> const& parameter = {}) :
 				m_attributeTag{attributeTag}, m_parameterTags{parameter} {}
 
 		/*!
@@ -74,7 +74,7 @@ namespace active::serialise {
 		 @return A new handler
 		*/
 		template<typename T> requires std::is_base_of_v<Package, T>
-		static Handler makeHandler(const utility::String& attributeTag, const utility::String& tag, std::initializer_list<active::utility::String> const& parameter = {}) {
+		static Handler makeHandler(const string& attributeTag, const string& tag, std::initializer_list<active::string> const& parameter = {}) {
 			Handler result{attributeTag, parameter};
 			result.add<T>(tag);
 			return result;
@@ -93,7 +93,7 @@ namespace active::serialise {
 			@param parameters Any parameters supplied for the package construction (nullptr = none)
 			@return A new package (nullptr on failure)
 		*/
-		Package* reconstruct(const utility::String& tag, const setting::SettingList* parameters = nullptr) const {
+		Package* reconstruct(const string& tag, const setting::SettingList* parameters = nullptr) const {
 				//Exact tag/type name matches are searched first
 			if (auto maker = reconstruction.find(tag); (maker != reconstruction.end()))
 				return maker->second.second(parameters);
@@ -122,7 +122,7 @@ namespace active::serialise {
 			@param info The object type info
 			@return The serialisation tag associated with this type (unknown type = nullopt)
 		*/
-		std::optional<utility::String> findTagFor(const std::type_info& info) const {
+		std::optional<string> findTagFor(const std::type_info& info) const {
 			if (auto maker = std::find_if(reconstruction.begin(), reconstruction.end(),
 										  [&info](const auto& entry){ return entry.second.first == &info; }); maker != reconstruction.end())
 				return maker->first;
@@ -139,7 +139,7 @@ namespace active::serialise {
 			@param tags Tag(s) that may be used to identify a package of this type
 		*/
 		template<typename T> requires std::is_base_of_v<Package, T>
-		void add(std::initializer_list<active::utility::String> const& tags) {
+		void add(std::initializer_list<active::string> const& tags) {
 			for (const auto& tag : tags)
 				add<T>(tag);
 		}
@@ -148,7 +148,7 @@ namespace active::serialise {
 			@param tag A tag/type name used to identify the object type
 		*/
 		template<typename T> requires std::is_base_of_v<Package, T>
-		void add(const active::utility::String& tag) {
+		void add(const active::string& tag) {
 			reconstruction[tag] = std::make_pair(&typeid(T), makeFunc<T>);
 		}
 		/*!
@@ -171,24 +171,24 @@ namespace active::serialise {
 	private:
 			///A reconstructor pairing package identification with a reconstruction method
 		struct Reconstructor {
-			Reconstructor(active::utility::String tg, const std::type_info* info, const Reconstruction& construction) :
+			Reconstructor(active::string tg, const std::type_info* info, const Reconstruction& construction) :
 					tag{tg}, typeInfo{info}, reconstruction{construction} {}
 			Reconstructor(const Filter& filt, const std::type_info* info, const Reconstruction& construction) :
 					filter{filt}, typeInfo{info}, reconstruction{construction} {}
-			active::utility::String tag;
+			active::string tag;
 			const std::type_info* typeInfo;
 			Filter filter;
 			Reconstruction reconstruction;
 		};
 		
 			///Factory functions to construct packages from serialisation tags paired with the original type info and reconstruction function
-		std::unordered_map<active::utility::String, std::pair<const std::type_info*, Reconstruction>> reconstruction;
+		std::unordered_map<active::string, std::pair<const std::type_info*, Reconstruction>> reconstruction;
 			///Factory functions to construct packages from a filter utilising type names and/or object settings
 		std::vector<Reconstructor> filteredReconstruction;
 			///The tag of the attribute identifying package type
-		utility::String m_attributeTag;
+		string m_attributeTag;
 			///Secondary tags required to instantiate a package type
-		std::vector<utility::String> m_parameterTags;
+		std::vector<string> m_parameterTags;
 	};
 
 }

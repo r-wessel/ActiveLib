@@ -18,12 +18,12 @@ using namespace active::serialise::dom;
 using namespace active::serialise::json;
 using namespace active::serialise::xml;
 using namespace active::setting;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
 	struct TestNode {
-		String a;
+		string a;
 		double b = 0.0;
 		uint32_t c = 0;
 	};
@@ -43,7 +43,7 @@ namespace active::serialise::dom {
 
 		//Unpack a TestNode from a dom::Node
 	const Node& unpack(const Node& node, TestNode& test) {
-		test.a = node["a"].operator String();
+		test.a = node["a"].operator string();
 		test.b = node["b"];
 		test.c = node["c"];
 		return node;
@@ -62,7 +62,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		node["double"] = 1.23;
 		node["string"] = "Test";
 		(node["array"] = std::vector{ 1, 2, 3, 4, 5, 6 }).withItemTag("val");
-		node["map"] = std::map<utility::String, int32_t>{
+		node["map"] = std::map<string, int32_t>{
 			{ "first", 1},
 			{ "second", 2},
 			{ "third", 3},
@@ -77,7 +77,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 			bool boolValue = node["boolean"];
 			int64_t intValue = node["integer"];
 			double doubleValue = node["double"];
-			utility::String stringValue = node["string"];
+			string stringValue = node["string"];
 			auto doubleSetting = node.setting("double");
 			auto missingSetting = node.setting("nonexistent");
 			CHECK_MESSAGE(node.object().size() == childSize, TEST_MESSAGE(DOM node import has wrong number of items));
@@ -117,7 +117,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		};
 		root["assign"] = TestNode{"something", 1.23, 25};
 			//Test DOM i/o via JSON
-		String json;
+		string json;
 		JSONTransport().send(root, Identity{}, json);
 		CHECK_MESSAGE(json.contains("\"boolean\":true"), TEST_MESSAGE(DOM node export to JSON failed with boolean value));
 		CHECK_MESSAGE(json.contains("\"integer\":5"), TEST_MESSAGE(DOM node export to JSON failed with integer value));
@@ -135,7 +135,7 @@ TEST_SUITE(TESTQ(DOMTest)) TEST_SUITE_OPEN
 		validateNode(fromJSON);
 		validateNode(fromJSON["object"], 6);
 			//Test DOM i/o via XML
-		String xml;
+		string xml;
 		XMLTransport().send(root, Identity{"testing"}, xml);
 		CHECK_MESSAGE(xml.contains("<boolean>true</boolean>"), TEST_MESSAGE(DOM node export to XML failed with boolean value));
 		CHECK_MESSAGE(xml.contains("<integer>5</integer>"), TEST_MESSAGE(DOM node export to XML failed with integer value));

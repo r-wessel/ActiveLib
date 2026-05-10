@@ -10,12 +10,12 @@
 
 using namespace active::file;
 using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 namespace {
-	String testBufferPath{"BufferTesting"};
-	String testBufferName{"BufferExample.txt"};
-	String sampleBufferData{u8"<tag>ਖdਖdਖdਖda</tag><tag>bਖdefghabਖdefgh</tag>"};
+	string testBufferPath{"BufferTesting"};
+	string testBufferName{"BufferExample.txt"};
+	string sampleBufferData{u8"<tag>ਖdਖdਖdਖda</tag><tag>bਖdefghabਖdefgh</tag>"};
 } // namespace
 
 TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
@@ -48,7 +48,7 @@ TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
 			FAIL_CHECK(TEST_MESSAGE(File flush failed));
 		}
 		try {
-			CHECK_MESSAGE(testFile.size() == sampleBufferData.dataSize(), TEST_MESSAGE(File write contents size incorrect));
+			CHECK_MESSAGE(testFile.size() == sampleBufferData.data_size(), TEST_MESSAGE(File write contents size incorrect));
 		} catch(std::system_error& error) {
 			FAIL_CHECK(TEST_MESSAGE(File size failed));
 		}
@@ -58,28 +58,28 @@ TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
 			FAIL_CHECK(TEST_MESSAGE(Set file position failed));
 		}
 			//The following test finds the tags and data from sample XML
-		std::vector<String> data;
+		std::vector<string> data;
 		BufferIn bufferIn{testFile};
 		while (bufferIn) {
 			if (!bufferIn.find('<', nullptr, true))
 				break;
-			String openTag;
+			string openTag;
 			if (!bufferIn.find('>', &openTag, true))
 				break;
 			CHECK_MESSAGE(openTag == "tag", TEST_MESSAGE(BufferIn.find failed to read opening tag correctly));
-			String content;
+			string content;
 			if (!bufferIn.find('<', &content, true))
 				break;
 			data.push_back(content);
-			String closeTag;
+			string closeTag;
 			if (!bufferIn.find('>', &closeTag, true))
 				break;
 			CHECK_MESSAGE(closeTag == "/tag", TEST_MESSAGE(BufferIn.find failed to read closing tag correctly));
 		}
 		CHECK_MESSAGE(data.size() == 2, TEST_MESSAGE(BufferIn failed to read all content));
 		if (data.size() >= 2) {
-			CHECK_MESSAGE(data[0] == String{u8"ਖdਖdਖdਖda"}, TEST_MESSAGE(BufferIn failed to read first data item));
-			CHECK_MESSAGE(data[1] == String{u8"bਖdefghabਖdefgh"}, TEST_MESSAGE(BufferIn failed to read second data item));
+			CHECK_MESSAGE(data[0] == string{u8"ਖdਖdਖdਖda"}, TEST_MESSAGE(BufferIn failed to read first data item));
+			CHECK_MESSAGE(data[1] == string{u8"bਖdefghabਖdefgh"}, TEST_MESSAGE(BufferIn failed to read second data item));
 		}
 		try {
 			testFile.close();
@@ -100,14 +100,14 @@ TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
 
 		/// Tests for buffering numeric i/o
 	TEST_CASE(TESTQ(testBufferIO)) {
-		String startWord{"Something"};
+		string startWord{"Something"};
 		double startVal = 654321.12345678;
 		int16_t start16 = -7654;
 		int32_t start32 = -1073741824;
 		uint32_t startu32 = 2147483648;
 		int64_t start64 = -9007199254740992;
 		uint64_t startu64 = 9223372036854775808u;
-		String buffer;
+		string buffer;
 		{
 			BufferOut bufferOut{buffer};
 			bufferOut << startWord << '\t' << startVal << '\t' << start16 << '\t' << start32 << '\t' << startu32 << '\t' << start64;
@@ -115,7 +115,7 @@ TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
 			bufferOut << '\t' << startu64;
 #endif
 		}
-		String endWord;
+		string endWord;
 		double endVal = 0.0;
 		int16_t end16 = 0;
 		int32_t end32 = 0;
@@ -129,7 +129,7 @@ TEST_SUITE(TESTQ(BufferInTests)) TEST_SUITE_OPEN
 			bufferIn >> endu64;
 #endif
 		}
-		CHECK_MESSAGE(startWord == endWord, TEST_MESSAGE(String (word) buffered i/o failed));
+		CHECK_MESSAGE(startWord == endWord, TEST_MESSAGE(string (word) buffered i/o failed));
 		CHECK_MESSAGE(isEqual(startVal, endVal), TEST_MESSAGE(Double buffered i/o failed));
 		CHECK_MESSAGE(start16 == end16, TEST_MESSAGE(int16_t buffered i/o failed));
 		CHECK_MESSAGE(start32 == end32, TEST_MESSAGE(int32_t buffered i/o failed));

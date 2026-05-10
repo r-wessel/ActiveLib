@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_XML_XML_TRANSPORT
 
 #include "Active/Serialise/Transport.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::serialise::xml {
 	
@@ -61,9 +61,9 @@ namespace active::serialise::xml {
 			@param isProlog True if an serialisation prolog should be written
 			@throw std::system_error Thrown on write errors, serialisation failure (e.g. invalid XML names, missing inventory etc)
 		*/
-		void send(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+		void send(serialise::Cargo&& cargo, const serialise::Identity& identity, BufferOut&& destination,
 				  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const override;
-		void send(serialise::Cargo& cargo, const serialise::Identity& identity, utility::BufferOut&& destination,
+		void send(serialise::Cargo& cargo, const serialise::Identity& identity, BufferOut&& destination,
 				  bool isTabbed = false, bool isLineFeeds = false, bool isNameSpaces = true, bool isProlog = true) const {
 			send(std::forward<Cargo&&>(cargo), identity, std::move(destination));
 		}
@@ -74,8 +74,8 @@ namespace active::serialise::xml {
 			@param source The XML source (can be a wrapper for file, memory, string)
 			@throw std::system_error Thrown on read errors, invalid encoding or parsing failure (e.g. ill-formed XML)
 		*/
-		void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const override;
-		void receive(serialise::Cargo& cargo, const serialise::Identity& identity, utility::BufferIn&& source) const {
+		void receive(serialise::Cargo&& cargo, const serialise::Identity& identity, BufferIn&& source) const override;
+		void receive(serialise::Cargo& cargo, const serialise::Identity& identity, BufferIn&& source) const {
 			receive(std::forward<Cargo&&>(cargo), identity, std::move(source));
 		}
 		/*!

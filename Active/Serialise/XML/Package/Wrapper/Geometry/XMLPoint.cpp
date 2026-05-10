@@ -13,7 +13,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::geometry;
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 using enum Identity::Role;
 
@@ -60,7 +60,7 @@ XMLPoint::XMLPoint(Point& point) : base(point) {}
 	point: The point to wrap for (de)serialisation
 	customTag: A custom tag (overrides the default tag)
   --------------------------------------------------------------------*/
-XMLPoint::XMLPoint(Point& point, const utility::String& customTag) : base(point), m_tag(customTag) {}
+XMLPoint::XMLPoint(Point& point, const string& customTag) : base(point), m_tag(customTag) {}
 
 // MARK: - Functions (const)
 

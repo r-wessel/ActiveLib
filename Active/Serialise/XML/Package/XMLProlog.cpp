@@ -12,7 +12,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 using enum Identity::Role;
 
@@ -45,7 +45,7 @@ namespace {
   --------------------------------------------------------------------*/
 void XMLProlog::setDefault() {
 	version = "1.0";
-	encoding = TextEncoding::UTF8;
+	encoding = text_encoding::UTF8;
 } //XMLProlog::setDefault
 
 
@@ -74,7 +74,7 @@ std::unique_ptr<Cargo> XMLProlog::getCargo(const Inventory::Item& item) const {
 		case FieldIndex::version:
 			return std::make_unique<StringWrap>(version);
 		case FieldIndex::encoding:
-			return std::make_unique<ValueWrap<TextEncoding>>(encoding);
+			return std::make_unique<ValueWrap<text_encoding>>(encoding);
 		default:
 			return nullptr;	//Requested an unknown index
 	}

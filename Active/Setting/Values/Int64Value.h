@@ -71,8 +71,8 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& Int64Value::operator=(const utility::String& val) {
-		if (auto intValue = val.toInt64(); intValue)
+	Value& Int64Value::operator=(const string& val) {
+		if (auto intValue = val.to_int64_t(); intValue)
 			data = *intValue;
 		else
 			status = bad;
@@ -84,7 +84,7 @@ namespace active::setting {
 		@return A reference to this
 	*/
 	template<> inline
-	Value& Int64Value::operator=(const utility::Time& val) {
+	Value& Int64Value::operator=(const Time& val) {
 		data = static_cast<int64_t>(val.secondsSince1970());
 		return *this;
 	}
@@ -126,13 +126,13 @@ namespace active::setting {
 		@return A string value
 	*/
 	template<> inline
-	Int64Value::operator utility::String() const 	{ return utility::String{data}; }
+	Int64Value::operator string() const 	{ return string{data}; }
 	/*!
 		Get a time value
 		@return A time value
 	*/
 	template<> inline
-	Int64Value::operator utility::Time() const { return utility::Time{data}; }
+	Int64Value::operator Time() const { return Time{data}; }
 	
 	// MARK: - Functions (const)
 	

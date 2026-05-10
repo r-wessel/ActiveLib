@@ -19,7 +19,7 @@ namespace active::geometry {
 	class Vector4;
 
 	/// Base class for rotation classes
-	class Rotater : public utility::Cloner {
+	class Rotater : public Cloner {
 	public:
 		// MARK: - Constructors
 		

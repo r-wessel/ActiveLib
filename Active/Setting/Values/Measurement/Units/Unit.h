@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_MEASURE_UNIT
 
 #include "Active/Utility/MathFunctions.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <array>
 #include <optional>
@@ -150,7 +150,7 @@ namespace active::measure {
 			@param type The target unit type
 			@return The unit type abbreviated suffix
 		*/
-		utility::String suffix(Type type) const {
+		string suffix(Type type) const {
 			return T::abbreviations.at(static_cast<size_t>(type));
 		}
 		/*!
@@ -158,7 +158,7 @@ namespace active::measure {
 			@param text The incoming tag
 			@return The equivalent unit type
 		*/
-		std::optional<Type> fromTag(const utility::String& text) const {
+		std::optional<Type> fromTag(const string& text) const {
 			for (auto i = 0; i < T::tags.size(); ++i)
 				if (text == T::tags[i])
 					return static_cast<Type>(i);
@@ -169,7 +169,7 @@ namespace active::measure {
 			@param type The incoming unit type
 			@return The unit type tag
 		*/
-		utility::String toTag(Type type) const {
+		string toTag(Type type) const {
 			return T::tags.at(static_cast<size_t>(type));
 		}
 		/*!
@@ -178,9 +178,9 @@ namespace active::measure {
 			@param startPos The character to start searching the text from
 			@return A unit type paired with the start position in the string (nullopt if no suffix is found)
 		*/
-		std::optional<std::pair<Type, utility::String::size_type>> findSuffix(const utility::String& text,
-																			  utility::String::size_type startPos = 0) const {
-			std::optional<std::pair<Type, utility::String::size_type>> result;
+		std::optional<std::pair<Type, string::size_type>> findSuffix(const string& text,
+																			  string::size_type startPos = 0) const {
+			std::optional<std::pair<Type, string::size_type>> result;
 			for (auto i = 0; i < T::abbreviations.size(); ++i) {
 				if (auto pos = text.find(T::abbreviations.at(i), startPos); pos && (!result || (*pos < result->second)))
 					result = std::make_pair(static_cast<Type>(i), *pos);

@@ -100,7 +100,7 @@ void LinEquation::calculate(const Point& start, double dx, double dy) {
 		m_b = -sign;
 		m_c = sign * start.y;
 	} else {
-		double ratio = maxVal(fabs(1 / dx), fabs(1 / dy));
+		double ratio = std::max(fabs(1 / dx), fabs(1 / dy));
 		m_a = dy * ratio;
 		m_b = -dx * ratio;
 		m_c = -start.x * m_a - start.y * m_b;

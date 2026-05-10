@@ -37,7 +37,7 @@ namespace active::setting {
 		
 		A string can be extracted from the value:
 		
-			String output{width};	//output becomes 3m
+			string output{width};	//output becomes 3m
 		
 		The measurement unit can be changed to suit user requirements:
 	 
@@ -47,7 +47,7 @@ namespace active::setting {
 		A custom unit can also be used to retrieve a value without knowing or changing the formatting it contains:
 	
 			LengthValue width{3.1234};	//Default unit is metres to 4 decimal places
-			String output = width;	//…which produces: 3.1234m
+			string output = width;	//…which produces: 3.1234m
 			output = width({foot, inch, 6, true});	//But with a custom unit: 10' 2 31/32"
 			output = width({mm, 1});	//Or alternately: 3123.4mm
 		
@@ -56,13 +56,13 @@ namespace active::setting {
 
 			LengthValue width{{foot, 4}};	//Length unit is decimal feet
 			width = "3";	//Text has no unit, so assumed to be decimal feet
-			String output{width({metre, 4})};	//But can then be output as metres (or any other unit); output is 0.9144m (= 3 feet)
+			string output{width({metre, 4})};	//But can then be output as metres (or any other unit); output is 0.9144m (= 3 feet)
 	 	
 		However, the member unit is ignored if the text has explicit units:
 		
 			LengthValue width{{metre, 4}};	//Length unit is metres
 			width = "3' 6 1/2\"";	//This text is formatted as feet and fractional inches, and is interpreted as such
-			String output{width};	//So the resulting output is 1.0795m (= 3' 6 1/2")
+			string output{width};	//So the resulting output is 1.0795m (= 3' 6 1/2")
 		
 		Units (of the same type, e.g. length) can be freely mixed in input, e.g. 3m 4" will be intrepreted as "3 metres + 4 inches" = 3.1016m. Any
 		series of numbers (separated by white space) will be interpeted as being the same unit type and added together, so 4 6" will be read
@@ -125,7 +125,7 @@ namespace active::setting {
 			@param val A string value to assign
 			@return A reference to this
 		*/
-		Value& operator=(const utility::String& val) override {
+		Value& operator=(const string& val) override {
 			return assign(val, getUnit());
 		}
 
@@ -133,14 +133,14 @@ namespace active::setting {
 			Get a string value
 			@return A string value
 		*/
-		operator utility::String() const override {
+		operator string() const override {
 			return (*this)(getUnit());
 		}
 		/*!
 			Get a string value
 			@return A string value
 		*/
-		virtual utility::String operator()(const T& unit) const {
+		virtual string operator()(const T& unit) const {
 				//Pair a value with a unit type
 			using UnitValue = std::pair<double, Type>;
 				//Collect the string from a value (as an integer) before replacing it with the remaining fraction of a specified type
@@ -149,16 +149,16 @@ namespace active::setting {
 				auto total = value.first;
 				value.first = math::roundDown(total, 1.0);
 				otherValue.first = unit.conversion(otherValue.second, unit.conversion(value.second, total - value.first, true));
-				utility::String result;
+				string result;
 				if (unit.isLeadingZero || !math::isZero(value.first, 1.0))
-					result = utility::String{value.first, 1.0} + unit.suffix(value.second);
+					result = string{value.first, 1.0} + unit.suffix(value.second);
 				value = otherValue;
 				return result;
 			};
 
 			bool isSuffix = unit.isUnitSuffix || unit.secondary;
 			UnitValue value{unit.conversion(unit.primary, data), unit.primary};
-			utility::String result;
+			string result;
 				//Split primary and second value when a second unit is specified
 			if (unit.secondary) {
 				result = collect(value, unit, *unit.secondary);
@@ -170,7 +170,7 @@ namespace active::setting {
 			if (unit.isDecimal()) {
 				if (!result.empty())
 					result += " ";
-				result += utility::String{value.first, unit.eps()};
+				result += string{value.first, unit.eps()};
 			} else {
 					//Fractional output
 				auto wholePart = math::roundDown(value.first, 1.0);
@@ -178,7 +178,7 @@ namespace active::setting {
 					value.first -= wholePart;
 					if (!result.empty())
 						result += " ";
-					result += utility::String{wholePart, 1.0};
+					result += string{wholePart, 1.0};
 				}
 				auto dividend = static_cast<uint64_t>(math::round(fabs(value.first) / unit.eps(), 1.0));
 				if (dividend != 0) {
@@ -189,7 +189,7 @@ namespace active::setting {
 					}
 					if (!result.empty())
 						result += " ";
-					result += utility::String{dividend} + "/" + utility::String{divisor};
+					result += string{dividend} + "/" + string{divisor};
 				}
 				if (result.empty())
 					result = "0";
@@ -225,14 +225,14 @@ namespace active::setting {
 			@param unit The input unit
 			@return A reference to this
 		*/
-		virtual Value& assign(const utility::String& val, const T& unit) {
+		virtual Value& assign(const string& val, const T& unit) {
 				//Mark the value as bad until we establish a valid measurement from the text
 			data = 0.0;
 			status = bad;
 				//Find any explicit units in the words to create a list of measurement expressions
-			using UnitExpression = std::pair<utility::String, Type>;
+			using UnitExpression = std::pair<string, Type>;
 			std::vector<UnitExpression> measureExpressions;
-			utility::String::size_type start = 0;
+			string::size_type start = 0;
 			while (start < val.size()) {
 				if (auto match = unit.findSuffix(val, start); match) {
 					if (match->second == 0)
@@ -246,16 +246,16 @@ namespace active::setting {
 			}
 				//Get the localised thousands separator
 			const auto& numPunct{std::use_facet<std::numpunct<char>>(std::locale{})};
-			utility::String thousandsSep{numPunct.thousands_sep()};
+			string thousandsSep{numPunct.thousands_sep()};
 				//Extract measurement values from each expression
 			for (auto& expression : measureExpressions) {
 					//Break the expression into whitespace separated words
-				auto words = utility::BufferIn{expression.first}.readWords();
+				auto words = BufferIn{expression.first}.readWords();
 				if (words.empty())
 					continue;
 				for (auto& word : words) {
 						//Strip out the thousands separator
-					word.replaceAll(thousandsSep, utility::String{});
+					word.replace_all(thousandsSep, string{});
 						//Values can be expressed as a fraction - allow for dividend/divisor
 					auto dividend = 0.0, divisor = 1.0;
 					DoubleValue number;

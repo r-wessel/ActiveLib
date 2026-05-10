@@ -6,36 +6,37 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/BufferIn.h"
 
 #include "Active/File/File.h"
-#include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/BufferOut.h"
 #include "Active/Utility/StackBufferOut.h"
 #include "Active/Utility/Defer.h"
+#include "Active/Utility/MathFunctions.h"
 #include "Active/Utility/Memory.h"
 
 #include <array>
 
+using namespace active;
 using namespace active::file;
 using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 
-	constexpr  Memory::size_type defaultBufferSize = 0xF000;
+	constexpr Memory::size_type defaultBufferSize = 0xF000;
 
-	constexpr  Memory::size_type stackBufferSize = 0x0400;
+	constexpr Memory::size_type stackBufferSize = 0x0400;
 
-	constexpr  Memory::size_type possibleCharWidth = 4;
+	constexpr Memory::size_type possibleCharWidth = 4;
 	
 	using StackBuffer = StackBufferOut<stackBufferSize>;
-	using enum TextEncoding;
+	using enum active::text_encoding;
 	
 		///Text formats that can be detected (in order of priority)
 	std::array supportedFormats = {
-		DataFormat{UTF8},
-		DataFormat{UTF32, false, false},
-		DataFormat{UTF32, false, true},
-		DataFormat{UTF16, false, Memory::defaultEndian},
-		DataFormat{UTF16, false, !Memory::defaultEndian},
+		active::text_format{UTF8},
+		active::text_format{UTF32, false, false},
+		active::text_format{UTF32, false, true},
+		active::text_format{UTF16, false, Memory::defaultEndian},
+		active::text_format{UTF16, false, !Memory::defaultEndian},
 	};
 	
 }  // namespace
@@ -43,39 +44,6 @@ namespace {
 void swap(BufferIn& v1, BufferIn& v2) {
 	v1.swap(v2);
 }
-
-
-/*--------------------------------------------------------------------
-	Constructor
-
-	sourceFile: The source data file
-	format: The source data format (nullopt = attempt to discover format from source)
-  --------------------------------------------------------------------*/
-BufferIn::BufferIn(const File& sourceFile, DataFormat::Option format) {
-	setSource(sourceFile, format);
-} //BufferIn::BufferIn
-
-
-/*--------------------------------------------------------------------
-	Constructor
-
-	sourceMem: A source block of memory
-	format: The source data format (nullopt = attempt to discover format from source)
-  --------------------------------------------------------------------*/
-BufferIn::BufferIn(const Memory& sourceMem, DataFormat::Option format) {
-	setSource(sourceMem, format);
-} //BufferIn::BufferIn
-
-
-/*--------------------------------------------------------------------
-	Constructor
-
-	sourceString: The source data string
-	format: The source data format (nullopt = attempt to discover format from source)
-  --------------------------------------------------------------------*/
-BufferIn::BufferIn(const String& sourceString, DataFormat::Option format) {
-	setSource(sourceString, format);
-} //BufferIn::BufferIn
 
 
 /*--------------------------------------------------------------------
@@ -105,7 +73,7 @@ BufferIn::BufferIn(BufferIn&& source) noexcept :
 	return: A reference to this
   --------------------------------------------------------------------*/
 const BufferIn& BufferIn::operator>>(double& val) const {
-	if (auto temp = readWord().toDouble(); temp)
+	if (auto temp = readWord().to_double(); temp)
 		val = *temp;
 	else {
 		setState(std::ios_base::failbit);
@@ -159,28 +127,11 @@ Memory::size_type BufferIn::sourceSize() const {
 
 
 /*--------------------------------------------------------------------
-	Get the current read position in the source data (not the read position in the buffer)
- 
-	return: The read position (e.g. the read position in a source file)
-  --------------------------------------------------------------------*/
-Memory::size_type BufferIn::getPosition() const {
-	if (m_file != nullptr) {
-		try {
-			return static_cast<Memory::size_type>(m_file->getPosition()) - dataSize();	//Otherwise calculate the current position in the file
-		} catch(...) {
-			setState(std::ios_base::failbit);
-		}
-	}
-	return m_readPos;
-} //BufferIn::getPosition
-
-
-/*--------------------------------------------------------------------
 	Apply a function to the buffered characters
  
 	func: The character function
   --------------------------------------------------------------------*/
-void BufferIn::forEach(const String::Function& func, String* pool) const {
+void BufferIn::forEach(const string::Function& func, string* pool) const {
 		//Allocate a buffer for pooling data as required
 	std::optional<std::u32string> dataBuffer;
 	if (pool != nullptr)
@@ -207,15 +158,11 @@ void BufferIn::forEach(const String::Function& func, String* pool) const {
  
 	return: True if a match is found
   --------------------------------------------------------------------*/
-bool BufferIn::findIf(const String::Filter& filter, String* pool, bool isFoundSkipped) const {
-		//Allocate a buffer for pooling data as required
-	std::optional<std::u32string> dataBuffer;
-	if (pool != nullptr)
-		dataBuffer = std::u32string{};
+bool BufferIn::findIf(const string::Filter& filter, string* pool, bool isFoundSkipped) const {
 	bool isFound = false;
 	while (good()) {
 		auto uniChar = getEncodedChar(true);
-		if (uniChar.second == 0)
+		if (uniChar.second == 0) [[unlikely]]
 			break;	//End of stream
 		if (filter(uniChar.first)) {
 			if (!isFoundSkipped)
@@ -223,45 +170,11 @@ bool BufferIn::findIf(const String::Filter& filter, String* pool, bool isFoundSk
 			isFound = true;
 			break;
 		}
-		if (dataBuffer)
-			dataBuffer->push_back(uniChar.first);
+		if (pool != nullptr)
+			pool->append(uniChar.first);
 	}
-		//Write the pooled data as required
-	if (dataBuffer)
-		pool->append(*dataBuffer);
 	return isFound;
 } //BufferIn::findIf
-
-
-/*--------------------------------------------------------------------
-	Find a specified character in the buffered content (skipping over all all non-matching data)
- 
-	toFind: The character to find (UTF-32)
-	pool: Optional string to collect the skipped characters (nullptr = discard)
-	isFoundSkipped: True if the buffer read position should skip over the found byte
- 
-	return: True if a match is found
-  --------------------------------------------------------------------*/
-bool BufferIn::find(char32_t toFind, String* pool, bool isFoundSkipped) const {
-	String stopString{&toFind, 1};
-	return stopString.empty() ? false : seek(stopString, pool, false, false, false, false, isFoundSkipped, false);
-} //BufferIn::find
-
-
-/*--------------------------------------------------------------------
-	Get a single char
-	
-	dest: The incoming char
-	
-	return: A reference to this
-  --------------------------------------------------------------------*/
-const BufferIn& BufferIn::get(unsigned char& dest) const {
-	if ((bufferMin(1) > 0)) {
-		dest = *(m_buffer + m_readPos);
-		bumpReadPos(1);
-	}
-	return *this;
-} //BufferIn::get
 
 
 /*--------------------------------------------------------------------
@@ -272,16 +185,16 @@ const BufferIn& BufferIn::get(unsigned char& dest) const {
  
 	return: The number of bytes consumed by the next character
   --------------------------------------------------------------------*/
-Memory::size_type BufferIn::getEncodedChar(String& encodedChar, bool isConsumed) const {
+Memory::size_type BufferIn::getEncodedChar(string& encodedChar, bool isConsumed) const {
 	encodedChar.clear();
-	if (fail())
+	if (fail()) [[unlikely]]
 		return 0;
-	if (eof()) {
+	if (eof()) { [[unlikely]]
 		setState(std::ios_base::failbit);	//Attempting to read from eof is an error
 		return 0;
 	}
 	auto maxBytes = bufferMin(possibleCharWidth);
-	if (maxBytes == 0)
+	if (maxBytes == 0) [[unlikely]]
 		return 0;
 	auto byteLen = encodedChar.assign(m_buffer + m_readPos, maxBytes, 1, m_format);
 	if (isConsumed && (byteLen > 0)) {
@@ -301,34 +214,19 @@ Memory::size_type BufferIn::getEncodedChar(String& encodedChar, bool isConsumed)
   --------------------------------------------------------------------*/
 std::pair<char32_t, Memory::size_type> BufferIn::getEncodedChar(bool isConsumed) const {
 	std::pair<char32_t, Memory::size_type> result{0, 0};
-	if (fail())
+	if (fail()) [[unlikely]]
 		return result;
-	if (eof()) {
+	if (eof()) { [[unlikely]]
 		setState(std::ios_base::failbit);	//Attempting to read from eof is an error
 		return result;
 	}
-	auto uniChar = String::getUnicodeChar(m_buffer + m_readPos, bufferMin(possibleCharWidth), m_format);
+	auto uniChar = string_function::get_unicode_char(m_buffer + m_readPos, bufferMin(possibleCharWidth), m_format);
 	if (isConsumed) {
 		updatePosition(m_buffer[m_readPos], static_cast<uint8_t>(uniChar.second));
 		bumpReadPos(uniChar.second);
 	}
 	return uniChar;
 } //BufferIn::getEncodedChar
-
-
-/*--------------------------------------------------------------------
-	Get a single char in a string (supporting multi-byte chars)
-	
-	dest: The incoming char (supporting unicode)
-	
-	return: A reference to this
-  --------------------------------------------------------------------*/
-const BufferIn& BufferIn::get(String& dest) const {
-	String incoming;
-	if (getEncodedChar(incoming) > 0)
-		dest.append(incoming);
-	return *this;
-} //BufferIn::get
 
 
 /*--------------------------------------------------------------------
@@ -340,14 +238,14 @@ const BufferIn& BufferIn::get(String& dest) const {
 	return: A reference to this
   --------------------------------------------------------------------*/
 const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
-	if ((dest == nullptr) || (howMany == 0))
+	if ((dest == nullptr) || (howMany == 0)) [[unlikely]]
 		return *this;
 	Memory::size_type toRead = howMany;
 	howMany = 0;
-	Memory::size_type batchSize = minVal(getCapacity(), toRead);
+	Memory::size_type batchSize = std::min(getCapacity(), toRead);
 	while ((toRead > 0) && good()) {
 		Memory::size_type thisBatch = std::min(bufferMin(batchSize), toRead);
-		if (thisBatch == 0)
+		if (thisBatch == 0) [[unlikely]]
 			break;
 		std::copy(m_buffer + m_readPos, m_buffer + m_readPos + thisBatch, dest + howMany);
 		bumpReadPos(thisBatch);
@@ -365,10 +263,10 @@ const BufferIn& BufferIn::read(char* dest, Memory::size_type& howMany) const {
  
 	return: The word read (empty if not found)
   --------------------------------------------------------------------*/
-String BufferIn::readWord(const String& division) const {
-	String incoming;
-	if (findFirstNotOf(division))
-		findFirstOf(division, &incoming);
+string BufferIn::readWord(const string& division) const {
+	string incoming;
+	if (find_first_not_of(division)) [[likely]]
+		find_first_of(division, &incoming);
 	return incoming;
 } //BufferIn::readWord
 
@@ -381,8 +279,8 @@ String BufferIn::readWord(const String& division) const {
  
 	return: The found words
   --------------------------------------------------------------------*/
-std::vector<String> BufferIn::readWords(Memory::sizeOption howMany, const String& division) const {
-	std::vector<String> result;
+std::vector<string> BufferIn::readWords(Memory::sizeOption howMany, const string& division) const {
+	std::vector<string> result;
 	bool isOpen = !howMany;
 	while (good() && (isOpen || (result.size() < *howMany))) {
 		if (auto nextWord = readWord(division); !nextWord.empty())
@@ -402,30 +300,16 @@ std::vector<String> BufferIn::readWords(Memory::sizeOption howMany, const String
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getString(String& dest, String::sizeOption howMany) const {
-	String encodedChar;
+const BufferIn& BufferIn::getString(string& dest, std::optional<string::size_type> howMany) const {
+	string encodedChar;
 	auto toRead = howMany.value_or(0);
 	bool isOpen = !howMany;
 		//Minimise reallocations of string
-	dest.reserve(dest.dataSize() + (howMany ? *howMany : getSupplyCount()));
+	dest.reserve(dest.data_size() + (howMany ? *howMany : getSupplyCount()));
 	while ((isOpen || toRead--) && getEncodedChar(encodedChar))
 		dest.append(encodedChar);
 	return *this;
 } //BufferIn::getString
-
-
-/*--------------------------------------------------------------------
-	Get a single line (terminating at any known line ending)
-	
-	line: The incoming line
-	keepStop: True to keep the line terminator(s)
- 
-	return: A reference to this
-  --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getLine(String& line, bool keepStop) const {
-	seek(String::allLineEnding, &line, true, false, false, false, true, keepStop);
-	return *this;
-} //BufferIn::getLine
 
 
 /*--------------------------------------------------------------------
@@ -438,7 +322,7 @@ const BufferIn& BufferIn::getLine(String& line, bool keepStop) const {
 const BufferIn& BufferIn::skip(Memory::size_type howMany) const {
 		//In case 'len' is bigger than the buffer size, we may need to bufferMin the buffer multiple times and skip the buffer size each time
 	while (good() && (howMany > 0)) {
-		auto batchSize = minVal(howMany, bufferMin(minVal(howMany, getCapacity())));
+		auto batchSize = std::min(howMany, bufferMin(std::min(howMany, getCapacity())));
 		bumpReadPos(batchSize);
 		howMany -= batchSize;
 	}
@@ -530,7 +414,7 @@ void BufferIn::swap(BufferIn& other) {
 	sourceFile: The source data file
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const File& sourceFile, DataFormat::Option format) {
+void BufferIn::setSource(const File& sourceFile, std::optional<text_format> format) {
 	initialise(nullptr, &sourceFile, 0);
 	m_format = format ? *format : discoverFormat();
 } //BufferIn::setSource
@@ -542,7 +426,7 @@ void BufferIn::setSource(const File& sourceFile, DataFormat::Option format) {
 	sourceMem: A source block of memory
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const Memory& sourceMem, DataFormat::Option format) {
+void BufferIn::setSource(const Memory& sourceMem, std::optional<text_format> format) {
 	if (sourceMem)
 		initialise(sourceMem.data(), nullptr, sourceMem.size());
 	else
@@ -557,60 +441,16 @@ void BufferIn::setSource(const Memory& sourceMem, DataFormat::Option format) {
 	sourceString: The source data string
 	format: The source data format (nullopt = discover format from source)
   --------------------------------------------------------------------*/
-void BufferIn::setSource(const String& sourceString, DataFormat::Option format) {
+void BufferIn::setSource(const string& sourceString, std::optional<text_format> format) {
 	if (!sourceString.empty())
 			//NB: Source is never mutated by BufferIn so const discard is safe
-		initialise(const_cast<char*>(sourceString.data()), nullptr, sourceString.dataSize());
+		initialise(const_cast<char*>(sourceString.data()), nullptr, sourceString.data_size());
 	else
 		initialise(nullptr, nullptr, 0);
 	m_format = format ? *format : discoverFormat();
 } //BufferIn::setSource
 
 // MARK: - Functions (private)
-
-/*--------------------------------------------------------------------
-	Bump the read position by the specified number of bytes (and checking eof)
- 
-	howMany: The number of bytes to bump the read position by
-  --------------------------------------------------------------------*/
-void BufferIn::bumpReadPos(Memory::size_type howMany) const {
-	if (eof())
-		return;
-	m_readPos += howMany;
-	checkEndOfFile();
-} //BufferIn::bumpReadPos
-
-
-/*--------------------------------------------------------------------
-	Check if the end of file has been reached (and set the eof flag accordingly)
- 
-	return: True if eof has been reached
-  --------------------------------------------------------------------*/
-bool BufferIn::checkEndOfFile() const {
-	if (eof())
-		return true;
-	if ((m_remaining > 0) || (m_readPos < m_bufferLen))
-		return false;
-	setState(std::ios_base::eofbit);
-	return true;
-} //BufferIn::checkEndOfFile
-
-
-/*--------------------------------------------------------------------
-	Attempt to ensure a minimum number of bytes is buffered (refill if lower)
- 
- 	minLength: The minimum buffer length required
- 
-	return: The number of bytes available in the buffer
-  --------------------------------------------------------------------*/
-Memory::size_type BufferIn::bufferMin(Memory::size_type minLength) const {
-	if (!good())
-		return 0;
-	if ((m_readPos + minLength) >= m_bufferLen)
-		refillBuffer();
-	return dataSize();
-} //BufferIn::bufferMin
-
 
 /*--------------------------------------------------------------------
 	Refill the buffer from the current data source
@@ -633,7 +473,7 @@ bool BufferIn::refillBuffer() const {
 	Memory::size_type unused = (m_readPos >= m_bufferLen) ? 0 : m_bufferLen - m_readPos;
 	if (unused > 0)
 		std::copy(m_buffer + m_readPos, m_buffer + m_bufferLen, m_buffer);
-	Memory::size_type toRead = minVal(m_fileCache->size() - unused, m_remaining);
+	Memory::size_type toRead = std::min(m_fileCache->size() - unused, m_remaining);
 	if ((toRead > 0) && (m_file != nullptr)) {
 		File::size_type incoming = toRead;
 		Memory readBuffer(m_buffer + unused, incoming);
@@ -672,9 +512,9 @@ bool BufferIn::refillBuffer() const {
  
 	return: True if a match was found
   --------------------------------------------------------------------*/
-bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, bool isAllMatched, bool isOrderedMatch,
+bool BufferIn::seek(const string& toFind, string* pool, bool isContiguousMatch, bool isAllMatched, bool isOrderedMatch,
 					bool isRepeatMatch, bool isFoundSkipped, bool isFoundPooled, std::optional<char32_t> escapeChar) const {
-	if (toFind.empty())
+	if (toFind.empty()) [[unlikely]]
 		return false;
 		//Ensure passed parameters are mutually coherent
 	if (!isContiguousMatch)
@@ -687,7 +527,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 	auto base = matches.begin(),
 				top = isOrderedMatch ? ++matches.begin() : matches.end();
 		//Allocate a buffer for data pooling as required
-	std::optional<std::u32string> dataBuffer, foundBuffer;
+	std::optional<string> dataBuffer, foundBuffer;
 	if (pool != nullptr)
 		dataBuffer = std::u32string{};
 	if (!isFoundSkipped || isFoundPooled || isOrderedMatch)
@@ -703,10 +543,10 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 			setPosition(*foundStart);
 			//Ensure pooled data is collected when requested
 		if (dataBuffer) {
+			pool->append(*dataBuffer);
 				//If the found expression is pooled, write it
 			if (isFoundPooled)
-				dataBuffer->append(*foundBuffer);
-			pool->append(*dataBuffer);
+				pool->append(*foundBuffer);
 		}
 	});
 	for (;;) {
@@ -718,7 +558,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 			//Once a char is read, the following code must be executed for any exit from this scope
 		auto loopScope = defer([&dataBuffer, &uniChar]{
 			if (dataBuffer && (uniChar.second > 0))
-				dataBuffer->push_back(uniChar.first);
+				dataBuffer->append(uniChar.first);
 		});
 		if (isEscaped) {
 			isEscaped = false;
@@ -757,15 +597,15 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
 					if (!isOrderedMatch)
 						continue;
 						//See if the expression to be matched can resume from any of the chars found so far
-					dataBuffer->push_back(uniChar.first);
+					dataBuffer->append(uniChar.first);
 					uniChar.second = 0;
 					for (auto index = 1; index < dataBuffer->size(); ++index) {
-						if (toFind.startsWith(dataBuffer->substr(index))) {
+						if (toFind.starts_with(dataBuffer->substr(index))) {
 								//If we can resume, write any non-matching chars to the data pool (remember - buffers are still swapped at this point)
 							if (foundBuffer)
 								foundBuffer->append(dataBuffer->substr(0, index));
 							dataBuffer->erase(0, index);
-							continue;
+							continue; 
 						}
 					}
 						//If none of the chars found so far can be used for a continuous sequence, we need to resume the search from scratch
@@ -796,7 +636,7 @@ bool BufferIn::seek(const String& toFind, String* pool, bool isContiguousMatch, 
  
 	return: True if a match was found
   --------------------------------------------------------------------*/
-bool BufferIn::seekNot(const String& toFind, String* pool, std::optional<char32_t> escapeChar) const {
+bool BufferIn::seekNot(const string& toFind, string* pool, std::optional<char32_t> escapeChar) const {
 	if (toFind.empty())
 		return false;
 	std::u32string matches{toFind};
@@ -849,13 +689,30 @@ void BufferIn::updatePosition(unsigned char incoming, uint8_t size) const {
 
 
 /*--------------------------------------------------------------------
+	Get the current read position in the source file (not the read position in the buffer)
+ 
+	file: The file to get the position from
+ 
+	return: The file read position
+  --------------------------------------------------------------------*/
+Memory::size_type BufferIn::getFilePosition(const file::File& file) const {
+	try {
+		return static_cast<Memory::size_type>(file.getPosition()) - dataSize();
+	} catch(...) {
+		setState(std::ios_base::failbit);
+	}
+	return m_readPos;
+} //BufferIn::getFilePosition
+
+
+/*--------------------------------------------------------------------
 	Get the buffer capacity, i.e. the largest number of bytes it can hold
  
 	return: The buffer capacity
   --------------------------------------------------------------------*/
 Memory::size_type BufferIn::getCapacity() const {
 		///For file buffer, the buffer capacity is the default allocation. In all other cases it's the existing buffer length
-	return maxVal(m_bufferLen, defaultBufferSize);
+	return std::max(m_bufferLen, defaultBufferSize);
 } //BufferIn::getCapacity
 
 
@@ -864,14 +721,14 @@ Memory::size_type BufferIn::getCapacity() const {
  
 	return: The source format
   --------------------------------------------------------------------*/
-DataFormat BufferIn::discoverFormat() {
+text_format BufferIn::discoverFormat() {
 	auto position = getPosition();
 	auto row = m_lastRow, column = m_lastColumn;
 	char bom[4];
 	Memory::size_type len = 4;
 	if (!read(bom, len))
-		return DataFormat{};	//No valid content, so result inconsequential
-	if (auto format = DataFormat::fromBOM(bom, len); format) {
+		return text_format{};	//No valid content, so result inconsequential
+	if (auto format = text_format::from_bom(bom, len); format) {
 		setPosition(position + format->second);	//Move to the first byte beyond the BOM
 		m_lastColumn = column + format->second;
 		return format->first;
@@ -879,7 +736,7 @@ DataFormat BufferIn::discoverFormat() {
 	constexpr Memory::size_type sampleSize = 0x400;
 	len = std::min(sampleSize, getSupplyCount());
 		//Try reading a batch of data as a specific coding type
-	DataFormat result{ISO8859_1, false, false};	//Fallback if other encodings fail
+	text_format result{ISO8859_1, false, false};	//Fallback if other encodings fail
 	for (auto format : supportedFormats) {
 		setPosition(position);
 					setFormat(format);

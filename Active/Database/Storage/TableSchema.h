@@ -9,7 +9,7 @@ namespace active::database {
 	/*!
 	 Class describing the schema of a database table including fields and primary indices
 	 */
-	template<typename TableID = active::utility::String>
+	template<typename TableID = active::string>
 	class TableSchema : public active::setting::SettingList {
 	public:
 		

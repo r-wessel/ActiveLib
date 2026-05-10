@@ -11,7 +11,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Setting/Values/Value.h"
 #include "Active/Utility/Concepts.h"
 #include "Active/Utility/Guid.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <functional>
 
@@ -52,7 +52,7 @@ namespace active::serialise {
 			@param dest The string to write the data to
 			@return True if the data was successfully written
 		*/
-		bool write(utility::String& dest) const override {
+		bool write(string& dest) const override {
 			return dest.assign(get(), 5);
 		}
 		
@@ -63,7 +63,7 @@ namespace active::serialise {
 			@param source The string to read
 			@return True if the data was successfully read
 		*/
-		bool read(const utility::String& source) override {
+		bool read(const string& source) override {
 			base::get() = double{source};
 			return true;
 		}
@@ -73,7 +73,7 @@ namespace active::serialise {
 			@return True if the data was successfully read
 		*/
 		bool readSetting(const setting::Value& source) override {
-			utility::String text = source;
+			string text = source;
 			return read(text);	//Otherwise use a string as an intermediate value
 		}
 		/*!

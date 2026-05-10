@@ -14,7 +14,7 @@ namespace active::file {
 
 }
 
-namespace active::utility {
+namespace active {
 	
 		//Class to buffer data to a specified destination using stack-based storage (no heap allocation)
 	template<size_t S>
@@ -38,7 +38,7 @@ namespace active::utility {
 			Constructor
 			@param destString The destination string
 		*/
-		StackBufferOut(String& destString) : BufferOut(destString) {}
+		StackBufferOut(string& destString) : BufferOut(destString) {}
 		 //No move constructor
 		StackBufferOut(BufferOut&& source) noexcept = delete;
 			//No copy constructor

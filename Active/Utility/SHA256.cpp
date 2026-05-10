@@ -8,10 +8,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Generic/Base64Transport.h"
 #include "Active/Serialise/Generic/HexTransport.h"
 #include "Active/Utility/BufferIn.h"
-#include "Active/Utility/BufferOut.h"
+#include "Active/Utility/StackBufferOut.h"
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -37,6 +37,12 @@ namespace {
 	constexpr uint32_t scheduleSize = 64;
 		///Size of chunk populated into schedule table
 	constexpr uint32_t messageSize = chunkSize / scheduleWordSize;
+		///Size of a SHA256 hash (unencoded)
+	constexpr size_t hashBinaryLength = 32;
+		///Size of a SHA256 hex hash
+	constexpr size_t hashHexLength = 64;
+		///Size of a SHA256 base64 hash
+	constexpr size_t hashBase64Length = 44;
 }  // namespace
 
 /*--------------------------------------------------------------------
@@ -86,7 +92,7 @@ SHA256& SHA256::operator<<(BufferIn&& source) {
  
 	return: The hash product formatted as specified
   --------------------------------------------------------------------*/
-String SHA256::product(HashFormat format) const {
+string SHA256::product(HashFormat format) const {
 	switch (format.type) {
 		case HashFormat::asHex:
 			return hexHash(format.inCase);
@@ -95,7 +101,7 @@ String SHA256::product(HashFormat format) const {
 		default:
 			break;
 	}
-	return guid().string(format.inCase);
+	return guid().to_string(format.inCase);
 } //SHA256::product
 
 
@@ -106,9 +112,9 @@ String SHA256::product(HashFormat format) const {
  
 	return: The hash (as hex digits)
   --------------------------------------------------------------------*/
-String SHA256::hexHash(Case inCase) const {
-	String result;
-	HexTransport(inCase).send(BufferIn{getHash()}, result);
+string SHA256::hexHash(Case inCase) const {
+	string result;
+	HexTransport(inCase).send(BufferIn{getHash()}, StackBufferOut<hashHexLength>(result));
 	return result;
 } //SHA256::hexHash
 
@@ -118,9 +124,9 @@ String SHA256::hexHash(Case inCase) const {
  
 	return: The hash (as hex digits)
   --------------------------------------------------------------------*/
-String SHA256::base64Hash() const {
-	String result;
-	Base64Transport().send(BufferIn{getHash()}, result);
+string SHA256::base64Hash() const {
+	string result;
+	Base64Transport().send(BufferIn{getHash()}, StackBufferOut<hashBase64Length>(result));
 	return result;
 } //SHA256::base64Hash
 
@@ -266,7 +272,7 @@ SHA256::HashTable SHA256::finalise() const {
 Memory SHA256::getHash() const {
 	auto finalHash = finalise();
 	Memory hash;
-	BufferOut buffer{hash};
+	StackBufferOut<hashBinaryLength> buffer{hash};
 	for (auto i = 0; i < finalHash.size(); ++i)
 		buffer.writeBinary(Memory::toBigEndian(finalHash[i]));
 	buffer.flush();

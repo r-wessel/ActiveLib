@@ -8,7 +8,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/Cloner.h"
 #include "Active/Utility/Guid.h"
 #include "Active/Utility/MathFunctions.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 /*!
 	Classes for testing serialisation of an array of different classes subclassed from a common base
@@ -92,17 +92,17 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 */
 
 	///The base class for the test objects
-class Foo : public active::utility::Cloner {
+class Foo : public active::Cloner {
 public:
-	Foo(const active::utility::Guid& guid) : m_id{guid} {}
+	Foo(const active::Guid& guid) : m_id{guid} {}
 	Foo* clonePtr() const override	{ return new Foo(*this); }
 
 	virtual bool operator==(const Foo& ref) const { return m_id == ref.m_id; }
-	const active::utility::Guid& id() const { return m_id; }
+	const active::Guid& id() const { return m_id; }
 
 private:
 		///The base class holds an immmutable guid
-	active::utility::Guid m_id = active::utility::Guid{true};
+	active::Guid m_id = active::Guid{true};
 };
 
 
@@ -110,7 +110,7 @@ private:
 	///This class has only a single member variable, but this concept can be easily extended (including child objects)
 class BarA : public Foo {
 public:
-	BarA(const active::utility::Guid& guid, const active::utility::String& str = active::utility::String{}) : Foo{guid}, m_text{str} {}
+	BarA(const active::Guid& guid, const active::string& str = active::string{}) : Foo{guid}, m_text{str} {}
 	BarA* clonePtr() const override	{ return new BarA(*this); }
 
 	bool operator==(const Foo& ref) const override {
@@ -118,18 +118,18 @@ public:
 			return Foo::operator==(ref) && (m_text == refA->m_text);
 		return false;
 	}
-	const active::utility::String& getText() const { return m_text; }
-	void setText(const active::utility::String& text) { m_text = text; }
+	const active::string& getText() const { return m_text; }
+	void setText(const active::string& text) { m_text = text; }
 
 private:
-	active::utility::String m_text;
+	active::string m_text;
 };
 
 
 	///The second test class (to be serialised). Same as the previous, but with a different member variable to illustrate the method
 class BarB : public Foo {
 public:
-	BarB(const active::utility::Guid& guid, double val = 0.0) : Foo{guid}, m_val{val} {}
+	BarB(const active::Guid& guid, double val = 0.0) : Foo{guid}, m_val{val} {}
 	BarB* clonePtr() const override	{ return new BarB(*this); }
 
 	bool operator==(const Foo& ref) const override {
@@ -164,7 +164,7 @@ public:
 class SerialiseArrayWrapper : public active::serialise::Package {
 public:
 		///NB: This name is not exported in JSON if the object is at the outermost (root) level
-	inline static active::utility::String tag = "arrayTester";
+	inline static active::string tag = "arrayTester";
 
 		///Wrapper is constructed with a reference to the object to be imported/exported (the target array in this case)
 	SerialiseArrayWrapper(const SerialiseArrayTester& test) : m_test{const_cast<SerialiseArrayTester&>(test)}	{}

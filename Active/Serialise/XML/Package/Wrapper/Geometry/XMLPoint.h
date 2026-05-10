@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_XML_XML_POINT
 
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::geometry {
 	
@@ -33,7 +33,7 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The element tag
-		static inline utility::String tag = "point";
+		static inline string tag = "point";
 			
 		// MARK: - Constructor
 
@@ -47,7 +47,7 @@ namespace active::serialise::xml {
 			@param point The point to wrap for (de)serialisation
 			@param customTag A custom tag (overrides the default tag)
 		*/
-		XMLPoint(geometry::Point& point, const utility::String& customTag);
+		XMLPoint(geometry::Point& point, const string& customTag);
 		
 		// MARK: - Functions (const)
 		
@@ -73,7 +73,7 @@ namespace active::serialise::xml {
 		
 	private:
 			//Optional explicit tag (overrides default)
-		std::optional<utility::String> m_tag;
+		std::optional<string> m_tag;
 	};
 	
 }

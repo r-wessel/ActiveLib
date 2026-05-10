@@ -13,7 +13,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active;
 using namespace active::attribute;
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 
@@ -30,7 +30,7 @@ namespace {
  
 	hex: A colour in hex digits
   --------------------------------------------------------------------*/
-Colour::Colour(const String& hex) {
+Colour::Colour(const string& hex) {
 	if (hex.length() < 2)
 		return;
 	if (auto colourCode = HexTransport().receive(hex); colourCode) {
@@ -48,19 +48,19 @@ Colour::Colour(const String& hex) {
 /*--------------------------------------------------------------------
 	Get the colour in hex digits
  
-	isAlpha: True to include the alpha value
+	is_alpha: True to include the alpha value
  
 	return: The colour as hex
   --------------------------------------------------------------------*/
-String Colour::hex(bool isAlpha) const {
+string Colour::hex(bool is_alpha) const {
 	Memory colourOut;
 	{
 		BufferOut buffer{colourOut};
 		buffer << static_cast<char>(r) << static_cast<char>(g) << static_cast<char>(b);
-		if (isAlpha)
+		if (is_alpha)
 			buffer << static_cast<char>(a * 255);
 	}
-	String result;
+	string result;
 	HexTransport().send(BufferIn{colourOut}, BufferOut{result});
 	return result;
 } //Colour::hex
@@ -73,7 +73,7 @@ String Colour::hex(bool isAlpha) const {
  
 	return: The hash formatted as specified
   --------------------------------------------------------------------*/
-String Colour::hash(HashFormat format) const {
+string Colour::hash(HashFormat format) const {
 	SHA256 hasher;
 	hasher << r << g << b << a;
 	return hasher.product(format);

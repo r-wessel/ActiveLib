@@ -7,7 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #define ACTIVE_SERIALISE_XML_XML_PROLOG
 
 #include "Active/Serialise/Package/Package.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 namespace active::serialise::xml {
 
@@ -22,14 +22,14 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The prolog tag
-		inline static utility::String tag = "xml";
+		inline static string tag = "xml";
 			
 		// MARK: - Public variables
 		
 			///XML version
-		utility::String version = "1.0";
+		string version = "1.0";
 			///Text encoding type
-		utility::TextEncoding encoding = utility::TextEncoding::UTF8;
+		text_encoding encoding = text_encoding::UTF8;
 		
 		// MARK: - Functions (const)
 		

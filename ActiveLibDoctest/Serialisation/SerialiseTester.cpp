@@ -12,7 +12,7 @@ using namespace active;
 using namespace active::geometry;
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 using enum Identity::Role;
 

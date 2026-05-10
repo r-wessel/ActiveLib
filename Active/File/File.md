@@ -8,7 +8,7 @@
 
 ## Purpose <a name="purpose"></a>
 
-This module is a simple wrapper to combine several STL components into a simple interface, including `std::filesystem::directory_entry`, `std::fstream`, `std::filesystem::path` and some `std::filesystem` functionality. Use of `String` for all names ensures Unicode compliance.
+This module is a simple wrapper to combine several STL components into a simple interface, including `std::filesystem::directory_entry`, `std::fstream`, `std::filesystem::path` and some `std::filesystem` functionality. Use of `string` for all names ensures Unicode compliance.
 
 The primary objects of any file system, `File` and `Directory`, are represented as concrete classes that are both nodes in a file system (derived from `FSNode`), meaning that both can collected in a single container and treated abstractly if required.
 

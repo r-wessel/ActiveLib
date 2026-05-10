@@ -7,10 +7,10 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 #include "Active/Utility/BufferIn.h"
 #include "Active/Utility/BufferOut.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 using namespace active::serialise;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
@@ -18,7 +18,7 @@ namespace {
 	const char* upperHexNumerals = "0123456789ABCDEF";
 	const char* lowerHexNumerals = "0123456789abcdef";
 		///The number of hex numerals required for a 32-bit integer
-	const String::size_type hexIntLength = 8;
+	const string::size_type hexIntLength = 8;
 
 	/*!
 		Get the next value from a hex numeral stream
@@ -105,13 +105,13 @@ bool HexTransport::receive(const BufferOut&& destination, const BufferIn& source
  
 	return: The received integer (nullopt on failure)
   --------------------------------------------------------------------*/
-std::optional<uint32_t> HexTransport::receive(const utility::String& source) const {
+std::optional<uint32_t> HexTransport::receive(const string& source) const {
 	const auto* target = &source;
-	String cache;
+	string cache;
 		//The incoming hex stream is padded out to 8 numerals (if required) to be interpreted as a 32-bit integer
 	if (source.size() < hexIntLength) {
 		cache = source;
-		cache.padRight(hexIntLength, "0");
+		cache.pad_right(hexIntLength, "0");
 		target = &cache;
 	}
 		//Read the hex stream directly into the memory for the int result

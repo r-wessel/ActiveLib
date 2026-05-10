@@ -3,30 +3,29 @@
 #include "Active/Utility/SHA256.h"
 #include "Active/Utility/BufferIn.h"
 
-using namespace active::math;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 	
 		///Short test message
-	const String shortMessage{"hello world"};
+	const string shortMessage{"hello world"};
 		///Chunk-size test message
-	const String chunkMessage{"It was the best of times, it was the worst of times, it was the "};
+	const string chunkMessage{"It was the best of times, it was the worst of times, it was the "};
 		///Chunk-size + 1 test message
-	const String chunkPlusMessage{"It was the best of times, it was the worst of times, it was the a"};
+	const string chunkPlusMessage{"It was the best of times, it was the worst of times, it was the a"};
 		///Longer test message
-	const String longMessage{"It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way – in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only."};
+	const string longMessage{"It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way – in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only."};
 		///Strings for intermittent hashing
-	const String firstValue{"First"};
-	const String secondValue{"Second"};
+	const string firstValue{"First"};
+	const string secondValue{"Second"};
 
 	struct TestHash {
 	public:
 		double v1 = 1.234;
 		int v2 = 1234;
-		String v3{"4321"};
+		string v3{"4321"};
 		
-		String hash() const { return (SHA256() << v1 << v2 << v3).hexHash();}
+		string hash() const { return (SHA256() << v1 << v2 << v3).hexHash();}
 	};
 	
 }

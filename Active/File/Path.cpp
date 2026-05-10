@@ -6,12 +6,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/File/Path.h"
 
 using namespace active::file;
-using namespace active::utility;
+using namespace active;
 
 #ifdef WINDOWS
-const String Path::delimiter = "\\";
+const string Path::delimiter = "\\";
 #else
-const String Path::delimiter = "/";
+const string Path::delimiter = "/";
 #endif
 
 
@@ -30,7 +30,7 @@ Path::Path() {
 	path: The path (typically plaform-specific)
 	isRelative: True if the path is relative to the current path
   --------------------------------------------------------------------*/
-Path::Path(const String& path, bool isRelative) {
+Path::Path(const string& path, bool isRelative) {
 	m_path = isRelative ? (Path::current() + path).m_path : std::filesystem::path{path.data()};
 }
 
@@ -95,7 +95,7 @@ bool Path::operator== (const Path& ref) const {
  
 	return: The new path
   --------------------------------------------------------------------*/
-Path Path::operator+ (const String& toAppend) const {
+Path Path::operator+ (const string& toAppend) const {
 	return std::filesystem::path(m_path) /= toAppend.data();
 } //Path::operator+
 
@@ -105,10 +105,10 @@ Path Path::operator+ (const String& toAppend) const {
  
 	return: The path as a string
   --------------------------------------------------------------------*/
-Path::operator String() const {
+Path::operator string() const {
 	std::u8string pathString = m_path.u8string();
-	return String(pathString);
-} //Path::operator String
+	return string(pathString);
+} //Path::operator string
 
 
 /*--------------------------------------------------------------------
@@ -118,8 +118,8 @@ Path::operator String() const {
  
 	return: The name of the node
   --------------------------------------------------------------------*/
-String Path::getNodeName(bool isExtensionDeleted) const {
-	return String(m_path.filename().string());
+string Path::getNodeName(bool isExtensionDeleted) const {
+	return string(m_path.filename().string());
 } //Path::getNodeName
 
 
@@ -128,8 +128,8 @@ String Path::getNodeName(bool isExtensionDeleted) const {
  
 	return: The node name extension
   --------------------------------------------------------------------*/
-String Path::getExtension() const {
-	return String(m_path.filename().extension().string());
+string Path::getExtension() const {
+	return string(m_path.filename().extension().string());
 } //Path::getExtension
 
 
@@ -138,8 +138,8 @@ String Path::getExtension() const {
  
 	return: The path as a platform-specific string
   --------------------------------------------------------------------*/
-String Path::platformSpecific() const {
-	return String(m_path.filename().make_preferred().string());
+string Path::platformSpecific() const {
+	return string(m_path.filename().make_preferred().string());
 } //Path::getPath
 
 
@@ -170,7 +170,7 @@ bool Path::exists() const {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Path& Path::append(const utility::String& toAppend) {
+Path& Path::append(const string& toAppend) {
 	m_path /= toAppend.string();
 	return *this;
 } //Path::append
@@ -183,7 +183,7 @@ Path& Path::append(const utility::String& toAppend) {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Path& Path::concat(const utility::String& toConcat) {
+Path& Path::concat(const string& toConcat) {
 	m_path += toConcat.string();
 	return *this;
 } //Path::concat
@@ -207,7 +207,7 @@ Path& Path::removeFileName() {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Path& Path::replaceFileName(const String& replacement) {
+Path& Path::replaceFileName(const string& replacement) {
 	m_path.replace_filename(replacement.string());
 	return *this;
 } //Path::replaceFileName
@@ -220,7 +220,7 @@ Path& Path::replaceFileName(const String& replacement) {
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-Path& Path::replaceExtension(const String& replacement) {
+Path& Path::replaceExtension(const string& replacement) {
 	m_path.replace_extension(replacement.string());
 	return *this;
 } //Path::replaceExtension

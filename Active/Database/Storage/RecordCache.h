@@ -42,7 +42,7 @@ namespace active::database {
 	 @tparam Obj Interface for the stored record
 	 @tparam ObjID The record identifier type (the primary index key)
 	 */
-	template<typename Obj, typename ObjWrapper, typename ObjID = utility::Guid, typename DBaseID = active::utility::Guid, typename TableID = active::utility::Guid>
+	template<typename Obj, typename ObjWrapper, typename ObjID = Guid, typename DBaseID = active::Guid, typename TableID = active::Guid>
 	requires IsRecordType<Obj, ObjWrapper, ObjID>
 	class RecordCache : public Record<ObjID>, private container::HashMap<ObjID, Obj> {
 	public:
@@ -261,7 +261,7 @@ namespace active::database {
 			if (mine->getCreated() < this->getEdited())
 				this->erase(key);
 			else
-				mine->setEdited(active::utility::Time{});	//Mark the time this record has merged
+				mine->setEdited(active::Time{});	//Mark the time this record has merged
 		});
 		return *this;
 	} //RecordCache<Obj, ObjWrapper, ObjID, DBaseID, TableID>::merge

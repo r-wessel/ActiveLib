@@ -10,7 +10,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Serialise/Package/Package.h"
 #include "Active/Serialise/Item/Wrapper/ValueWrap.h"
 #include "Active/Serialise/XML/Package/Wrapper/Geometry/XMLPolyPoint.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <type_traits>
 
@@ -47,7 +47,7 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The default element tag
-		static inline utility::String tag = "polygon";
+		static inline string tag = "polygon";
 		
 			///Serialisation field IDs
 		static inline std::array fieldID = {
@@ -69,7 +69,7 @@ namespace active::serialise::xml {
 			@param customTag A custom tag (overrides the default tag)
 		*/
 			//NB: Value is only mutated within import processes, in which case the object must be mutable (i.e. const discard is safe)
-		XMLSolidPolygon(const geometry::Polygon& polygon, const utility::String& customTag) : base(const_cast<geometry::Polygon&>(polygon)), m_tag(customTag) {
+		XMLSolidPolygon(const geometry::Polygon& polygon, const string& customTag) : base(const_cast<geometry::Polygon&>(polygon)), m_tag(customTag) {
 			m_topID = polygon.getTopID();
 		}
 		
@@ -146,7 +146,7 @@ namespace active::serialise::xml {
 		
 	private:
 			///Optional explicit tag (overrides default)
-		std::optional<utility::String> m_tag;
+		std::optional<string> m_tag;
 			///Temporary mutable storage for incoming vertices
 		mutable Vert m_vertex;
 			///Temporary mutable storage of the polygon top ID for i/o
@@ -187,7 +187,7 @@ namespace active::serialise::xml {
 		// MARK: - Static variables
 		
 			///The default element tag
-		static inline utility::String tag = "polygon";
+		static inline string tag = "polygon";
 		
 			///Serialisation field IDs
 		static inline std::array fieldID = {
@@ -206,7 +206,7 @@ namespace active::serialise::xml {
 			@param polygon The polygon to wrap for (de)serialisation
 			@param customTag A custom tag (overrides the default tag)
 		*/
-		XMLPolygon(const geometry::Polygon& polygon, const utility::String& customTag) : base{polygon, customTag}	{}
+		XMLPolygon(const geometry::Polygon& polygon, const string& customTag) : base{polygon, customTag}	{}
 		
 		// MARK: - Functions (const)
 		

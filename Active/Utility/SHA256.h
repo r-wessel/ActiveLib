@@ -10,11 +10,11 @@
 #include "Active/Utility/Guid.h"
 #include "Active/Utility/Hash.h"
 #include "Active/Utility/Memory.h"
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <array>
 
-namespace active::utility {
+namespace active {
 		
 	/*!
 	 A utility class providing SHA256 hashing
@@ -66,18 +66,18 @@ namespace active::utility {
 		 @param format The required hash format
 		 @return The hash product formatted as specified
 		 */
-		String product(HashFormat format) const;
+		string product(HashFormat format) const;
 		/*!
 		 Get the data hash
 		 @param inCase The hex digit case
 		 @return The hash (as hex digits)
 		 */
-		String hexHash(Case inCase = uppercase) const;
+		string hexHash(Case inCase = uppercase) const;
 		/*!
 		 Get the data hash
 		 @return The hash (as base64 digits)
 		 */
-		String base64Hash() const;
+		string base64Hash() const;
 		/*!
 		 Get a guid from the hash
 		 @return A guid (NB: significantly reduces complexity)

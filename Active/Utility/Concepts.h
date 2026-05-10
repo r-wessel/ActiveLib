@@ -6,12 +6,12 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_UTILITY_CONCEPTS
 #define ACTIVE_UTILITY_CONCEPTS
 
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <type_traits>
 #include <memory>
 
-namespace active::utility {
+namespace active {
 		
 		///Type has a default constructor
 	template<typename T>
@@ -25,10 +25,10 @@ namespace active::utility {
 		*t;
 	};
 
-		///String can be constructed from type
+		///string can be constructed from type
 	template<typename T>
-	concept StringConstructable = requires(T t, String test) {
-		test = String{t};
+	concept StringConstructable = requires(T t, string test) {
+		test = string{t};
 	};
 
 		///Object contains 3D coordinates (lower-case)
@@ -47,6 +47,6 @@ namespace active::utility {
 	template<typename T>
 	concept IsCoord3D = IsCoordLower3D<T> || IsCoordUpper3D<T>;
 
-}  // namespace active::utility
+}  // namespace active
 
 #endif	//ACTIVE_UTILITY_CONCEPTS

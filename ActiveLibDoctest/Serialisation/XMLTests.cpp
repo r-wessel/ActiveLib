@@ -13,19 +13,19 @@ using namespace active::geometry;
 using namespace active::math;
 using namespace active::serialise;
 using namespace active::serialise::xml;
-using namespace active::utility;
+using namespace active;
 
 namespace {
 
 		///Make a report for the specified XML transport status
-	String makeReportFor(const XMLTransport& transport, const String& errorMessage) {
-		return errorMessage + " at row: " +String{transport.getLastRow()} + ", column: " + String{transport.getLastColumn()};
+	string makeReportFor(const XMLTransport& transport, const string& errorMessage) {
+		return errorMessage + " at row: " +string{transport.getLastRow()} + ", column: " + string{transport.getLastColumn()};
 	}
 
 		//A string for testing special chars in XML transport
 	auto shapeName = u8"\u0A16d\u0A16d\u0A16d\u0A16dab\u0A16defghab\u0A16defgh<>&\"";
 	
-	String badXMLTag =
+	string badXMLTag =
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
 <tester name=\"ਖdਖdਖdਖdabਖdefghabਖdefgh&lt;&gt;&amp;&quot;\">\n\
 	<shape topID=\"6\">\n\
@@ -40,7 +40,7 @@ namespace {
 	</shap>\n\
  </tester>";
 
-	String missingQuote =
+	string missingQuote =
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
 <tester name=\"ਖdਖdਖdਖdabਖdefghabਖdefgh&lt;&gt;&amp;&quot;\">\n\
 	<shape topID=\"6\">\n\
@@ -54,7 +54,7 @@ namespace {
 		<vertex x=\"1.876\" y=\"4.765 />\n\
 	</shape>\n\
  </tester>";
-	String badCharacter =
+	string badCharacter =
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
 <tester name=\"ਖdਖdਖdਖdabਖdefghabਖdefgh&lt;&xx;&amp;&quot;\">\n\
 	<shape topID=\"6\">\n\
@@ -96,7 +96,7 @@ namespace {
 		<vertex x=\"1.876\" y=\"4.765\" />\n\
 	</shape>\n\
  </tester>", 0};
-	String badNameChar =
+	string badNameChar =
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n\
 <tester name=\"ਖdਖdਖdਖdabਖdefghabਖdefgh&lt;&gt;&amp;&quot;\">\n\
 	<shape topID=\"6\">\n\
@@ -126,7 +126,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 			//Initialise the object that will be transported via XML
 		SerialiseTester shapeOut{shapeName, polyOut}, shapeIn;
 			//Allocate a string to hold the outgoing XML
-		String collector;
+		string collector;
 			//Send the test object as XML (into the collection string)
 		try {
 			transporter.send(PackageWrap{shapeOut}, SerialiseTester::tag, collector);
@@ -166,7 +166,7 @@ TEST_SUITE(TESTQ(XMLTest)) TEST_SUITE_OPEN
 			//Negative tests (handle bad data)
 
 		SerialiseTester testObject;
-		String report;
+		string report;
 			//Read XML with mismatching tag
 		try {
 			transporter.receive(PackageWrap{testObject}, SerialiseTester::tag, badXMLTag);

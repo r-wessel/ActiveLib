@@ -6,7 +6,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #ifndef ACTIVE_SERIALISE_DOC_TRANSPORTABLE
 #define ACTIVE_SERIALISE_DOC_TRANSPORTABLE
 
-#include "Active/Utility/String.h"
+#include "Active/string/string_utf8.h"
 
 #include <concepts>
 
@@ -37,7 +37,7 @@ namespace active::serialise::doc {
 		///Concept for classes that specify a document type name to reconstruct objects from serialised data
 	template <typename T>
 	concept Typed = requires(T t) {
-		{ t.docType } -> std::same_as<active::utility::String&>;
+		{ t.docType } -> std::same_as<active::string&>;
 	};
 	
 }
