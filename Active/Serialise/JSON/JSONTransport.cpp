@@ -24,8 +24,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/Utility/Defer.h"
 #include "Active/string/text_encoding.h"
 
-#include <iostream>
-
 #include <unordered_map>
 
 using namespace active::serialise;
