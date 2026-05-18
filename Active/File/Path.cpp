@@ -8,13 +8,6 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 using namespace active::file;
 using namespace active;
 
-#ifdef WINDOWS
-const string Path::delimiter = "\\";
-#else
-const string Path::delimiter = "/";
-#endif
-
-
 /*--------------------------------------------------------------------
 	Constructor
 

@@ -201,7 +201,7 @@ namespace active {
 			char_t& operator=(char32_t source) {
 				if (m_string == nullptr)
 					throw std::out_of_range("");
-				m_string->replace(m_position, 1, basic_string{source});
+				m_string->replace(m_position, 1, basic_string{&source, 1});
 				return *this;
 			}
 			char_t& operator=(const char_t& source) {

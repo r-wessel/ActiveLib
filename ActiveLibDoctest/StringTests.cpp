@@ -109,6 +109,14 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		auto lower = upper.to_lower();
 		CHECK_MESSAGE(test == lower, TEST_MESSAGE(string case transformations incorrect content));
 		
+		string copyrightStr{u8"½Pint Solutions® Inc Copyright © 2024"};
+		auto pos = copyrightStr.find_first_of(u8"®©");	//pos becomes 15
+		copyrightStr.erase(pos, 1); //exampleStr becomes "½Pint Solutions Inc Copyright © 2024"
+		CHECK_MESSAGE(copyrightStr == u8"½Pint Solutions Inc Copyright © 2024", TEST_MESSAGE(string find replace failed for copyright symbol));
+		string subscripted{"Word"};
+		subscripted[3] = 'k';
+		CHECK_MESSAGE(subscripted == "Work", TEST_MESSAGE(mutable subscript failed));
+
 			//Negative tests - these are invalid operations on the target string, attempting to provoke errors
 		
 			//Bad length bounds
@@ -131,8 +139,8 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(test.length() == 24, TEST_MESSAGE(string erase out of bounds changed string length));
 			//Test find and erase in multibyte chars
 		string exampleStr{u8"½Pint Solutions® Inc Copyright © 2024"};
-		auto pos = exampleStr.find_first_of(u8"®©");
-		exampleStr.erase(*pos, 1);
+		pos = exampleStr.find_first_of(u8"®©");
+		exampleStr.erase(pos, 1);
 			//Test interoperability with std::string types
 		string example1{u8"ようこそ 日本 へ"};
 		string example2{u"ようこそ 日本 へ"};
