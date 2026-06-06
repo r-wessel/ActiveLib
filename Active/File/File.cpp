@@ -276,7 +276,7 @@ File::size_type File::read(string& text, sizeOption howMany, text_encoding encod
 	bytesRead = m_file->gcount();
 	auto charBytes = string_function::get_valid_byte_count(buffer.data(), bytesRead, string::no_pos, encoding);
 		///Move the read position if not all the bytes can be consumed by the string as valid chars
-	if (charBytes < static_cast<string::size_type>(bytesRead))
+	if (charBytes < bytesRead)
 		setPosition(charBytes - bytesRead, current);
 	text = string{buffer.data(), charBytes, encoding};
 	return charBytes;

@@ -556,21 +556,21 @@ namespace {
 		if (auto section = m_section.search(identity.name); section) {
 			if (!section->second.empty()) {
 				if (auto sectionEnd = identity.name.rfind(section->second); sectionEnd)
-					identity.name.erase(*sectionEnd);
+					identity.name.erase(sectionEnd);
 				else
 					throw std::system_error(makeXMLError(unknownSection));		//Failure to find the section terminator is a fatal error
 			}
 			identity.type = section->first;
 		} else {
-			if (auto tagEnd = identity.name.find_last_not_of(string::allWhiteSpace); tagEnd && (*tagEnd < (identity.name.length() - 1)))
-				identity.name.erase(*tagEnd + 1);
+			if (auto tagEnd = identity.name.find_last_not_of(string::allWhiteSpace); tagEnd && (tagEnd < (identity.name.length() - 1)))
+				identity.name.erase(tagEnd + 1);
 			if (identity.name.empty())
 				throw std::system_error(makeXMLError(missingTagName));	//A tag with no content is a fatal error
 				//Search for a tag closure
 			if (auto closingPos = identity.name.rfind("/"); closingPos) {
 					//If the tag closure is at the end, this is an empty tag
 				if (closingPos == (identity.name.length() - 1)) {
-					identity.name.erase(*closingPos, 1);
+					identity.name.erase(closingPos, 1);
 					if (identity.name.empty())
 						throw std::system_error(makeXMLError(missingTagName));
 					return identity.withType(emptyTag);
@@ -587,8 +587,8 @@ namespace {
 				//Check if the tag includes a namespace
 			if (auto spacePosition = identity.name.find_first_of(string::allWhiteSpace), dividerPos = identity.name.rfind(":");
 					dividerPos && spacePosition && (dividerPos < spacePosition)) {
-				identity.group = identity.name.substr(0, *dividerPos);
-				identity.name.erase(0, *dividerPos + 1);
+				identity.group = identity.name.substr(0, dividerPos);
+				identity.name.erase(0, dividerPos + 1);
 			}
 		}
 		return identity;
@@ -628,7 +628,7 @@ namespace {
 		toWrite: The string to write
 	  --------------------------------------------------------------------*/
 	void XMLExporter::write(const string& toWrite) {
-		string::size_type exportLength = toWrite.size();
+		auto exportLength = static_cast<string::size_type>(toWrite.size());
 		if (exportLength == 0)
 			return;
 		if (!m_buffer.write(toWrite))

@@ -639,8 +639,8 @@ namespace {
 				fromJSONString(identity.name, m_glossary);
 					//Check if the tag includes a namespace
 				if (auto dividerPos = identity.name.rfind(":"); dividerPos) {
-					identity.group = identity.name.substr(0, *dividerPos);
-					identity.name.erase(0, *dividerPos + 1);
+					identity.group = identity.name.substr(0, dividerPos);
+					identity.name.erase(0, dividerPos + 1);
 				}
 				auto valueIdentity = getIdentity(root);
 				identity.type = valueIdentity.type;
@@ -689,7 +689,7 @@ namespace {
 			}, &text);
 			if (text.empty())
 				throw std::system_error(makeJSONError(valueMissing));
-			std::optional<string::size_type> lastChar;
+			std::optional<string_size> lastChar;
 			if (allWhiteSpace32.find(endChar) != std::u32string::npos) {
 					//Trim trailing white-space chars
 				lastChar = text.find_last_not_of(string::allWhiteSpace);

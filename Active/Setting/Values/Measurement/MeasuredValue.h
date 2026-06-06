@@ -232,7 +232,7 @@ namespace active::setting {
 				//Find any explicit units in the words to create a list of measurement expressions
 			using UnitExpression = std::pair<string, Type>;
 			std::vector<UnitExpression> measureExpressions;
-			string::size_type start = 0;
+			string_size start = 0;
 			while (start < val.size()) {
 				if (auto match = unit.findSuffix(val, start); match) {
 					if (match->second == 0)
@@ -261,7 +261,7 @@ namespace active::setting {
 					DoubleValue number;
 						//Attempt to extract a divisor
 					if (auto divisionPos = word.find("/"); divisionPos) {
-						if (number = word.substr(*divisionPos + 1); (number.status == good) && !math::isZero(number.data))
+						if (number = word.substr(divisionPos + 1); (number.status == good) && !math::isZero(number.data))
 							divisor = number;
 						else
 							return *this;	//invalid divisor value

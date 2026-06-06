@@ -118,6 +118,7 @@
 		218953B12C0F2FE00078F182 /* CalculatorRPN.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218953B02C0F2FE00078F182 /* CalculatorRPN.cpp */; };
 		218953B82C0F35E60078F182 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218953B72C0F35E60078F182 /* Button.cpp */; };
 		218953BA2C0F3FDD0078F182 /* CalcApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 218953B92C0F3FDD0078F182 /* CalcApp.cpp */; };
+		218E95832FD4BE79007B36AD /* string_size.h in Headers */ = {isa = PBXBuildFile; fileRef = 218E95822FD4BE79007B36AD /* string_size.h */; };
 		21932D3F2BE13F4D005DB06E /* AreaValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 21932D3E2BE13F4D005DB06E /* AreaValue.h */; };
 		21932D412BE13FD8005DB06E /* MassValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 21932D402BE13FD8005DB06E /* MassValue.h */; };
 		21932D4E2BE29C69005DB06E /* SerialiseArrayTester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 21932D4C2BE29C69005DB06E /* SerialiseArrayTester.cpp */; };
@@ -417,6 +418,7 @@
 		218953B62C0F35E60078F182 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Button.h; path = EventTests/Button.h; sourceTree = "<group>"; };
 		218953B72C0F35E60078F182 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Button.cpp; path = EventTests/Button.cpp; sourceTree = "<group>"; };
 		218953B92C0F3FDD0078F182 /* CalcApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CalcApp.cpp; path = EventTests/CalcApp.cpp; sourceTree = "<group>"; };
+		218E95822FD4BE79007B36AD /* string_size.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = string_size.h; sourceTree = "<group>"; };
 		219245F92CA2C9CE00CF5703 /* UnboxedTransport.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnboxedTransport.h; sourceTree = "<group>"; };
 		21932D3E2BE13F4D005DB06E /* AreaValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AreaValue.h; sourceTree = "<group>"; };
 		21932D402BE13FD8005DB06E /* MassValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MassValue.h; sourceTree = "<group>"; };
@@ -914,6 +916,7 @@
 		212D178F2F6B407C00DB8A39 /* string */ = {
 			isa = PBXGroup;
 			children = (
+				218E95822FD4BE79007B36AD /* string_size.h */,
 				212D178B2F6B407C00DB8A39 /* string_utf8.cpp */,
 				212D178A2F6B407C00DB8A39 /* string_utf8.h */,
 				212D178C2F6B407C00DB8A39 /* text_encoding.h */,
@@ -1255,6 +1258,7 @@
 				21EF178C2E4D2B07005DC5A3 /* Case.h in Headers */,
 				2102A3832BA1F0C9002C93C8 /* AnyValueWrap.h in Headers */,
 				214EA4EE2BAAF8D7008E5358 /* XMLLength.h in Headers */,
+				218E95832FD4BE79007B36AD /* string_size.h in Headers */,
 				218484C62AF92D7300280FEF /* UniqueString.h in Headers */,
 				21F93AD82B2C6BFD009A2C5B /* Message.h in Headers */,
 				2146619E2C263C550048BBA7 /* TextStyle.h in Headers */,

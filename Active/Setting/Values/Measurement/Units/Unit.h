@@ -178,12 +178,11 @@ namespace active::measure {
 			@param startPos The character to start searching the text from
 			@return A unit type paired with the start position in the string (nullopt if no suffix is found)
 		*/
-		std::optional<std::pair<Type, string::size_type>> findSuffix(const string& text,
-																			  string::size_type startPos = 0) const {
-			std::optional<std::pair<Type, string::size_type>> result;
+		std::optional<std::pair<Type, string_size>> findSuffix(const string& text, string_size startPos = 0) const {
+			std::optional<std::pair<Type, string_size>> result;
 			for (auto i = 0; i < T::abbreviations.size(); ++i) {
-				if (auto pos = text.find(T::abbreviations.at(i), startPos); pos && (!result || (*pos < result->second)))
-					result = std::make_pair(static_cast<Type>(i), *pos);
+				if (auto pos = text.find(T::abbreviations.at(i), startPos); pos && (!result || (pos < result->second)))
+					result = std::make_pair(static_cast<Type>(i), pos);
 			}
 			return result;
 		}

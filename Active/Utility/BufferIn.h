@@ -282,7 +282,7 @@ namespace active {
 		 @param howMany The number of whole characters to get (nullopt to read all)
 		 @return A reference to this
 		 */
-		const BufferIn& getString(string& dest, std::optional<string::size_type> howMany = std::nullopt) const;
+		const BufferIn& getString(string& dest, string_size howMany = std::nullopt) const;
 		/*!
 		 Get a single line (terminating at any known line ending)
 		 @param line The incoming line

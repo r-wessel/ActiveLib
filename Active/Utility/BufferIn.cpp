@@ -300,13 +300,12 @@ std::vector<string> BufferIn::readWords(Memory::sizeOption howMany, const string
  
 	return: A reference to this
   --------------------------------------------------------------------*/
-const BufferIn& BufferIn::getString(string& dest, std::optional<string::size_type> howMany) const {
+const BufferIn& BufferIn::getString(string& dest, string_size howMany) const {
 	string encodedChar;
-	auto toRead = howMany.value_or(0);
 	bool isOpen = !howMany;
 		//Minimise reallocations of string
-	dest.reserve(dest.data_size() + (howMany ? *howMany : getSupplyCount()));
-	while ((isOpen || toRead--) && getEncodedChar(encodedChar))
+	dest.reserve(dest.data_size() + (howMany ? static_cast<Memory::size_type>(howMany) : getSupplyCount()));
+	while ((isOpen || --howMany) && getEncodedChar(encodedChar))
 		dest.append(encodedChar);
 	return *this;
 } //BufferIn::getString

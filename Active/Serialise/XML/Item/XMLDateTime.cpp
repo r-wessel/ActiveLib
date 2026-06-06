@@ -83,7 +83,7 @@ bool XMLDateTime::write(string& dest) const {
 		if (isBetween(m_secsPrecision, 0.0, 1.0, 1e-7) && (m_time.microsecond() != 0)) {
 			auto secs = string{static_cast<double>(m_time.microsecond()) / 1e6, m_secsPrecision};
 			if (auto pointPos = secs.find("."); pointPos)
-				dest += secs.substr(*pointPos, 7);
+				dest += secs.substr(pointPos, 7);
 		}
 	}
 		//Write a UTC offset as required

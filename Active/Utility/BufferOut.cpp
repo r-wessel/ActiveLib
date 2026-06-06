@@ -33,19 +33,19 @@ namespace {
 	 @return A reference to the destination
 	 */
 	const BufferOut& writeUTF8(const string& string, const BufferOut& buffer, bool isNullAdded = true,
-							   string_position howMany = {},
-							   string_position maxBytes = {}) {
+							   string_size howMany = {},
+							   string_size maxBytes = {}) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		if (!string.empty()) {
 			if (howMany) {
-				if (auto charBytes = string_function::get_byte_count_char_limited(string.data(), howMany); charBytes && (!maxBytes || (maxBytes > *charBytes)))
-					maxBytes = *charBytes;
+				if (auto charBytes = string_function::get_byte_count_char_limited(string.data(), howMany); charBytes && (!maxBytes || (maxBytes > charBytes)))
+					maxBytes = charBytes;
 			}
 				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
-			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (static_cast<string_size>(*bufferMax) < maxBytes)))
 				maxBytes = *bufferMax;
-			string::size_type byteCount = maxBytes ? string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? 1 : 0)) : string.data_size();
+			auto byteCount = maxBytes ? string_function::get_valid_byte_count(string.data(), maxBytes - (isNullAdded ? 1 : 0)) : string.data_size();
 			buffer.write(string.data(), byteCount);
 		}
 		if (isNullAdded)
@@ -65,8 +65,8 @@ namespace {
 	 */
 	const BufferOut& writeUTF16(const string& string, const BufferOut& buffer, bool isNullAdded = true,
 								bool is_big_endian = text_format::defaultEndian,
-								string_position howMany = std::nullopt,
-								string_position maxBytes = std::nullopt) {
+								string_size howMany = std::nullopt,
+								string_size maxBytes = std::nullopt) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		const auto* text = string.data();
@@ -74,13 +74,11 @@ namespace {
 			const char32_t* text32 = uniString->data();
 			if (auto uniString16 = string_function::to_utf16(text32); uniString16) {
 					//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
-				if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+				if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < static_cast<Memory::size_type>(maxBytes))))
 					maxBytes = *bufferMax;
 					//NB: When a terminating null is required, deduct this when a max size for the destination is specified
 				string::size_type byteCount = maxBytes ?
-				string_function::get_valid_byte_count(reinterpret_cast<char*>(uniString16->data()), *maxBytes - (isNullAdded ? sizeof(char16_t) : 0),
-										  string_position::npos, UTF16) :
-				(uniString->size() * sizeof(char16_t));
+						static_cast<string::size_type>(string_function::get_valid_byte_count(reinterpret_cast<char*>(uniString16->data()), maxBytes - (isNullAdded ? sizeof(char16_t) : 0), string_size::npos, UTF16)) : (uniString->size() * sizeof(char16_t));
 					//Byte-swap the data as required (no action if platform endianess matches requirement)
 				Memory::byte_swap(uniString16->data(), byteCount / sizeof(char16_t), is_big_endian);
 				buffer.write(reinterpret_cast<const char*>(uniString16->data()), byteCount);
@@ -104,20 +102,20 @@ namespace {
 	 */
 	const BufferOut& writeUTF32(const string& string, const BufferOut& buffer, bool isNullAdded = true,
 								bool is_big_endian = text_format::defaultEndian,
-								string_position howMany = std::nullopt,
-								string_position maxBytes = std::nullopt) {
+								string_size howMany = std::nullopt,
+								string_size maxBytes = std::nullopt) {
 		if ((howMany == 0) || (maxBytes == 0))
 			return buffer;
 		const auto* text = string.data();
 		auto uniString = string_function::to_unicode(text);
 		if (uniString) {
 				//If the buffer has a byte limit, use it if a maximum has not been specified or is too large
-			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < *maxBytes)))
+			if (auto bufferMax = buffer.maxSize(); bufferMax && (!maxBytes || (*bufferMax < static_cast<Memory::size_type>(maxBytes))))
 				maxBytes = *bufferMax;
 				//NB: When a terminating null is required, deduct this when a max size for the destination is specified
 			string::size_type byteCount = maxBytes ?
-			string_function::get_valid_byte_count(string.data(), *maxBytes - (isNullAdded ? sizeof(char32_t) : 0), string_position::npos, UTF32) :
-			(uniString->size() * sizeof(char32_t));
+					static_cast<string::size_type>(string_function::get_valid_byte_count(string.data(), maxBytes - (isNullAdded ?
+					sizeof(char32_t) : 0), string_size::npos, UTF32)) : (uniString->size() * sizeof(char32_t));
 				//Byte-swap the data as required (no action if platform endianess matches requirement)
 			Memory::byte_swap(uniString->data(), byteCount / sizeof(char32_t), is_big_endian);
 			buffer.write(reinterpret_cast<const char*>(uniString->data()), byteCount);
@@ -181,7 +179,7 @@ Memory::sizeOption BufferOut::getPosition() const {
 	else if (m_memory != nullptr)
 		return m_memory->size() + m_bufferPos;
 	else if (m_str != nullptr)
-		return m_str->data_size() + m_bufferPos;
+		return static_cast<Memory::size_type>(m_str->data_size()) + m_bufferPos;
 	return std::nullopt;
 } //BufferOut::getPosition
 
@@ -247,8 +245,8 @@ const BufferOut& BufferOut::flushBuffer() const {
 	return: True if no errors occurred
   --------------------------------------------------------------------*/
 const BufferOut& BufferOut::write(const string& toWrite, text_format format, bool isNullAdded,
-								  string_position howMany,
-								  string_position maxBytes) const {
+								  string_size howMany,
+								  string_size maxBytes) const {
 	if (m_str != nullptr)
 		format.encoding = UTF8;	//Data written to a string must be UTF8
 	if ((format.encoding == UTF8) || (format.encoding == ascii) || (format.encoding == ISO8859_1))

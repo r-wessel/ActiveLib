@@ -113,6 +113,13 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		auto pos = copyrightStr.find_first_of(u8"®©");	//pos becomes 15
 		copyrightStr.erase(pos, 1); //exampleStr becomes "½Pint Solutions Inc Copyright © 2024"
 		CHECK_MESSAGE(copyrightStr == u8"½Pint Solutions Inc Copyright © 2024", TEST_MESSAGE(string find replace failed for copyright symbol));
+		char32_t injected = U'@';
+		for (auto i : copyrightStr) {
+			char32_t temp = i;
+			i = injected;
+			injected = temp;
+		}
+		CHECK_MESSAGE(copyrightStr == u8"@½Pint Solutions Inc Copyright © 202", TEST_MESSAGE(string find replace failed for copyright symbol));
 		string subscripted{"Word"};
 		subscripted[3] = 'k';
 		CHECK_MESSAGE(subscripted == "Work", TEST_MESSAGE(mutable subscript failed));
@@ -293,6 +300,60 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(string{"A"} != string{"B"}, TEST_MESSAGE(string inequality check failed));
 		CHECK_MESSAGE(string{"A"} < string{"B"}, TEST_MESSAGE(string less-than check failed));
 		CHECK_MESSAGE(string{"B"} > string{"A"}, TEST_MESSAGE(string greater-than check failed));
+	}
+
+		///Tests for string position
+	TEST_CASE(TESTQ(testStringPosition)) {
+		string_size testPos;
+		CHECK_MESSAGE(!testPos, TEST_MESSAGE(string_size default failed));
+		testPos = 1;
+		CHECK_MESSAGE(testPos && (testPos == 1), TEST_MESSAGE(string_size assignment));
+		testPos = testPos - 1;
+		CHECK_MESSAGE(testPos && (testPos == 0), TEST_MESSAGE(string_size subtract failed));
+		testPos -= 1;
+		CHECK_MESSAGE(!testPos, TEST_MESSAGE(string_size subtract with assign failed));
+		bool isCaught = false;
+		try { ++testPos; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { testPos += 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { [[maybe_unused]] auto test = testPos + 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { --testPos; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { testPos -= 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { [[maybe_unused]] auto test = testPos - 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { testPos *= 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { [[maybe_unused]] auto test = testPos / 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { testPos /= 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		isCaught = false;
+		try { [[maybe_unused]] auto test = testPos * 2; } catch (...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(movement from npos uncaught));
+		CHECK_MESSAGE(!((testPos < 2) || (testPos <= 2) || (testPos > 2) || (testPos >= 2) || (testPos == 2) || (testPos != 2)),
+					  TEST_MESSAGE(comparison with npos returning true));
+		testPos = 2;
+		CHECK_MESSAGE((testPos == 2) && (2 == testPos), TEST_MESSAGE(string_size equality failed));
+		CHECK_MESSAGE((testPos != 3) && (3 != testPos), TEST_MESSAGE(string_size inequality failed));
+		CHECK_MESSAGE(testPos * 4 == 8, TEST_MESSAGE(string_size multiplication failed));
+		testPos = 8;
+		CHECK_MESSAGE(testPos / 2 == 4, TEST_MESSAGE(string_size division failed));
+		testPos = 1000;
+		isCaught = false;
+		try { [[maybe_unused]] char testChar = testPos; } catch(...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(loss of precision uncaught));
 	}
 
 TEST_SUITE_CLOSE
