@@ -289,7 +289,7 @@ std::string::size_type string_function::get_string_length(const char* text, stri
 	Get a UTF-32 char from a UTF-8 source
  
 	text: The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
-	howMany: The number of available bytes in the source (no_pos = null-terminated)
+	howMany: The number of available bytes in the source (default = null-terminated)
  
 	return: A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
   --------------------------------------------------------------------*/

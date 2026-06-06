@@ -354,6 +354,9 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		isCaught = false;
 		try { [[maybe_unused]] char testChar = testPos; } catch(...) { isCaught = true; }
 		CHECK_MESSAGE(isCaught, TEST_MESSAGE(loss of precision uncaught));
+		isCaught = false;
+		try { testPos = -1; } catch(...) { isCaught = true; }
+		CHECK_MESSAGE(isCaught, TEST_MESSAGE(assigning negative to string_size uncaught));
 	}
 
 TEST_SUITE_CLOSE

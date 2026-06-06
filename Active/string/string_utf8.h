@@ -232,8 +232,6 @@ namespace active {
 			///Constant to indicate an unspecified or non-existant position in std::string
 		static constexpr size_type npos = base::npos;
 		
-		static inline const string_size no_pos{};
-		
 			///Default length precision (0.01mm)
 		static constexpr double eps = 1e-5;
 			///The line terminating char(s) for the current platform
@@ -257,27 +255,27 @@ namespace active {
 		 Get a UTF-8 string from a UTF-32 source
 		 @param text The source text (when valid, points to the next byte beyond the found character on return)
 		 @param is_big_endian True if byte ordering is big-endian
-		 @param howMany The number of 32-bit code points in the text (no_pos = null-terminated)
-		 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = no_pos)
+		 @param howMany The number of 32-bit code points in the text (default = null-terminated)
+		 @param isCountRequired True if the specified number of code points must be valid (default = ignore)
 		 @return The UTF-8 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
 		 */
 		static std::optional<basic_string> from_unicode(const char32_t*& text, bool is_big_endian,
-														string_size howMany = no_pos, bool isCountRequired = false);
+				string_size howMany = {}, bool isCountRequired = false);
 		/*!
 		 Make an STL string from a char array. NB: always returns a result, but result will only include valid chars
 		 @param target An STL string to be populated with valid characters found
 		 @param text The source text
-		 @param howMany The number of bytes in the text (no_pos = null-terminated)
-		 @param charCount The maximum number of (encoded) chars to read (npos = no limit)
+		 @param howMany The number of bytes in the text (defaulg = null-terminated)
+		 @param charCount The maximum number of (encoded) chars to read (default = no limit)
 		 @param format The text data format
 		 @return The number of source bytes used in the populated string
 		 */
-		static size_type make_string(base& target, const char* text, string_size howMany = no_pos,
-									 string_size charCount = no_pos, text_format format = text_format{});
+		static size_type make_string(base& target, const char* text, string_size howMany = {},
+									 string_size charCount = {}, text_format format = {});
 		/*!
 		 Split the specified text into single and multi byte chars
 		 @param source The source text
-		 @return An array of single and multi-byte chars from the source string (no_pos on failure)
+		 @return An array of single and multi-byte chars from the source string (empty on failure)
 		*/
 		static std::vector<basic_string> split_single_chars(const basic_string& source);
 
@@ -290,62 +288,62 @@ namespace active {
 		/*!
 		 Constructor from an input char array
 		 @param source The character array to be copied
-		 @param howMany The number of bytes to copy (no_pos for null-terminated)
+		 @param howMany The number of bytes to copy (default = null-terminated)
 		 @param format The source text data format
 		 */
-		basic_string(const char* source, string_size howMany = no_pos, text_format format = text_format{}) {
-			make_string(m_string, source, howMany, no_pos, format);
+		basic_string(const char* source, string_size howMany = {}, text_format format = {}) {
+			make_string(m_string, source, howMany, {}, format);
 		}
 #ifndef __CLR_VER
 		/*!
 		 Constructor from an input UTF8 char array
 		 @param source The character array to be copied
-		 @param howMany The number of bytes to copy (no_pos for null-terminated)
+		 @param howMany The number of bytes to copy (default = null-terminated)
 		 */
-		basic_string(const char8_t* source, string_size howMany = no_pos) : basic_string{reinterpret_cast<const char*>(source), howMany, text_format{}} {}
+		basic_string(const char8_t* source, string_size howMany = {}) : basic_string{reinterpret_cast<const char*>(source), howMany, text_format{}} {}
 #endif // !__CLR_VER
 		/*!
 		 Constructor from an input UTF16 char array
 		 @param source The character array to be copied
-		 @param howMany The number of 16-bit chars to copy (no_pos for null-terminated)
+		 @param howMany The number of 16-bit chars to copy (default = null-terminated)
 		 */
-		basic_string(const char16_t* source, string_size howMany = no_pos, bool is_big_endian = text_format::defaultEndian) : basic_string{reinterpret_cast<const char*>(source),
-			howMany ? string_size{howMany * sizeof(char16_t)} : no_pos, text_format{UTF16, is_big_endian}} {}
+		basic_string(const char16_t* source, string_size howMany = {}, bool is_big_endian = text_format::defaultEndian) : basic_string{reinterpret_cast<const char*>(source),
+			howMany ? string_size{howMany * sizeof(char16_t)} : string_size{}, text_format{UTF16, is_big_endian}} {}
 		/*!
 		 Constructor from an input UTF32 char array
 		 @param source The character array to be copied
-		 @param howMany The number of 32-bit chars to copy (no_pos for null-terminated)
+		 @param howMany The number of 32-bit chars to copy (default = null-terminated)
 		 */
-		basic_string(const char32_t* source, string_size howMany = no_pos, bool is_big_endian = text_format::defaultEndian) : basic_string{reinterpret_cast<const char*>(source),
-			howMany ? string_size{howMany * sizeof(char32_t)} : no_pos, text_format{UTF32, is_big_endian}} {}
+		basic_string(const char32_t* source, string_size howMany = {}, bool is_big_endian = text_format::defaultEndian) : basic_string{reinterpret_cast<const char*>(source),
+			howMany ? string_size{howMany * sizeof(char32_t)} : string_size{}, text_format{UTF32, is_big_endian}} {}
 		/*!
 		 Constructor from an input string
 		 @param source The string to be copied
-		 @param howMany The number of chars to copy (no_pos for full length)
+		 @param howMany The number of chars to copy (default = full length)
 		 @param format The source text data format
 		 */
-		basic_string(const base& source, string_size howMany = no_pos, text_format format = text_format{}) :
+		basic_string(const base& source, string_size howMany = {}, text_format format = text_format{}) :
 		basic_string{source.data(), howMany, format} {}
 #ifndef __CLR_VER
 		/*!
 		 Constructor from an input string
 		 @param source The UTF-8 string to be copied
-		 @param howMany The number of chars to copy (no_pos for full length)
+		 @param howMany The number of chars to copy (default = full length)
 		 */
-		basic_string(const std::u8string& source, string_size howMany = no_pos) : basic_string(source.data(), howMany) {}
+		basic_string(const std::u8string& source, string_size howMany = {}) : basic_string(source.data(), howMany) {}
 #endif // !__CLR_VER
 		/*!
 		 Constructor from an input string
 		 @param source The UTF-16 string to be copied
-		 @param howMany The number of chars to copy (no_pos for full length)
+		 @param howMany The number of chars to copy (default = full length)
 		 */
-		basic_string(const std::u16string& source, string_size howMany = no_pos);
+		basic_string(const std::u16string& source, string_size howMany = {});
 		/*!
 		 Constructor from an input string
 		 @param source The UTF-32 string to be copied
-		 @param howMany The number of chars to copy (no_pos for full length)
+		 @param howMany The number of chars to copy (default = full length)
 		 */
-		basic_string(const std::u32string& source, string_size howMany = no_pos);
+		basic_string(const std::u32string& source, string_size howMany = {});
 		/*!
 		 Constructor with optional text fill expression and number of repeats
 		 @param newSize The required number of expression repeats
@@ -553,10 +551,10 @@ namespace active {
 		string_size length() const { return size(); }
 		/*!
 		 Return the number of bytes consumed by this string
-		 @param howMany The number of chars to count (no_pos = for full length)
+		 @param howMany The number of chars to count (default = full length)
 		 @return The number of bytes consumed by the string (NB: basic_string is null terminated, but this is not included in the data length)
 		 */
-		size_type data_size(string_size howMany = no_pos) const;
+		size_type data_size(string_size howMany = {}) const;
 		/*!
 		 Determine if the string is empty
 		 @return True is the string is empty
@@ -581,15 +579,15 @@ namespace active {
 		/*!
 		 Get a specified substring of this string
 		 @param startPos The position of the first character
-		 @param howMany The number of characters to get (no_pos for full length)
+		 @param howMany The number of characters to get (default = full length)
 		 @return The requested string segment
 		 */
-		basic_string substr(string_size startPos = 0, string_size howMany = no_pos) const;
+		basic_string substr(string_size startPos = 0, string_size howMany = {}) const;
 		/*!
 		 Find the specified string within this
 		 @param toFind The string to find
 		 @param startPos The character to start searching from
-		 @return The index where a match is found (no_pos = not found)
+		 @return The index where a match is found (npos = not found)
 		 */
 		string_size find(const basic_string& toFind, string_size startPos = 0) const;
 		/*!
@@ -614,37 +612,37 @@ namespace active {
 		 Find the first character which is in a specified string
 		 @param toFind A string of characters to find
 		 @param startPos The character to begin searching from
-		 @return The index of the first matching character (no_pos = not found)
+		 @return The index of the first matching character (npos = not found)
 		 */
 		string_size find_first_of(const basic_string& toFind, string_size startPos = 0) const;
 		/*!
 		 Find the first character not in a specified string
 		 @param toFind A string of characters to not find
 		 @param startPos The character to begin searching from
-		 @return The index of the first non-matching character (no_pos = not found)
+		 @return The index of the first non-matching character (npos = not found)
 		 */
 		string_size find_first_not_of(const basic_string& toFind, string_size startPos = 0) const;
 		/*!
 		 Find the last character in this string which is in the specified string
 		 @param toFind A string of characters to find
-		 @param lastPos The position of the last character to be compared
-		 @return The index of the last matching character (no_pos = not found)
+		 @param lastPos The position of the last character to be compared (default = full length)
+		 @return The index of the last matching character (npos = not found)
 		 */
-		string_size find_last_of(const basic_string& toFind, string_size lastPos = no_pos) const;
+		string_size find_last_of(const basic_string& toFind, string_size lastPos = {}) const;
 		/*!
 		 Find the last character in this string which is not in the specified string
 		 @param toFind A string of characters not to find
-		 @param lastPos The position of the last character to be compared
-		 @return The index of the last non-matching character (no_pos = not found)
+		 @param lastPos The position of the last character to be compared (default = full length)
+		 @return The index of the last non-matching character (npos = not found)
 		 */
-		string_size find_last_not_of(const basic_string& toFind, string_size lastPos = no_pos) const;
+		string_size find_last_not_of(const basic_string& toFind, string_size lastPos = {}) const;
 		/*!
 		 Find the specified string searching backwards
 		 @param toFind The string to find
-		 @param lastPos The position of the last character to be compared
-		 @return The index of a matching string (no_pos = not found)
+		 @param lastPos The position of the last character to be compared (default = full length)
+		 @return The index of a matching string (npos = not found)
 		 */
-		string_size rfind(const basic_string& toFind, string_size lastPos = no_pos) const;
+		string_size rfind(const basic_string& toFind, string_size lastPos = {}) const;
 		/*!
 		 Create an uppercase version of the string
 		 @return An uppercase version of the string
@@ -672,24 +670,24 @@ namespace active {
 		/*!
 		 Determine if the string is entirely alphanumeric
 		 @param startPos The position to checking from
-		 @param howMany The number of characters to check (no_pos = to end)
+		 @param howMany The number of characters to check (default = to end)
 		 @return True is the string is alphanumeric
 		 */
-		bool isAlphaNumeric(size_type startPos = 0, string_size howMany = no_pos) const;
+		bool isAlphaNumeric(size_type startPos = 0, string_size howMany = {}) const;
 		/*!
 		 Determine if the string is entirely letters
 		 @param startPos The position to checking from
-		 @param howMany The number of characters to check (no_pos = to end)
+		 @param howMany The number of characters to check (default = to end)
 		 @return True is the string is letters
 		 */
-		bool is_alpha(size_type startPos = 0, string_size howMany = no_pos) const;
+		bool is_alpha(size_type startPos = 0, string_size howMany = {}) const;
 		/*!
 		 Determine if the string is entirely numeric
 		 @param startPos The position to checking from
-		 @param howMany The number of characters to check (no_pos = to end)
+		 @param howMany The number of characters to check (default = to end)
 		 @return True is the string is numbers
 		 */
-		bool is_numeric(size_type startPos = 0, string_size howMany = no_pos) const;
+		bool is_numeric(size_type startPos = 0, string_size howMany = {}) const;
 		/*!
 		 Three-way comparison to a reference string
 		 @param ref The string to compare this to
@@ -702,7 +700,7 @@ namespace active {
 		/*!
 		 Find the specified string within this using a filter
 		 @param filter The string filter
-		 @return The index where a match is found (no_pos = not found)
+		 @return The index where a match is found (npos = not found)
 		 */
 		string_size find_if(const Filter& filter) const;
 		/*!
@@ -710,9 +708,9 @@ namespace active {
 		 @param filter The string filter
 		 @param lastPos The position to begin filtering from
 		 @param howMany The number of chars to filter
-		 @return The index where a match is found (no_pos = not found)
+		 @return The index where a match is found (npos = not found)
 		 */
-		string_size rfind_if(const Filter& filter, string_size lastPos = no_pos, string_size howMany = no_pos) const;
+		string_size rfind_if(const Filter& filter, string_size lastPos = {}, string_size howMany = {}) const;
 		/*!
 		 Apply a function to specified characters in the string
 		 @param func The character function (the returned value is ignored)
@@ -783,13 +781,13 @@ namespace active {
 		/*!
 		 Assign a specified string to this
 		 @param source The character array to be copied
-		 @param byteCount The maximum number of bytes in the array (no_pos = null-terminated)
-		 @param charCount The maximum number of (encoded) characters to read (no_pos = as byteCount limit)
+		 @param byteCount The maximum number of bytes in the array (default = null-terminated)
+		 @param charCount The maximum number of (encoded) characters to read (default = as byteCount limit)
 		 @param format The source text data format
 		 @return The number of bytes assigned from the source
 		 */
-		size_type assign(const char* source, string_size byteCount = no_pos,
-						 string_size charCount = no_pos, text_format format = text_format{}) {
+		size_type assign(const char* source, string_size byteCount = {},
+						 string_size charCount = {}, text_format format = {}) {
 			m_string.clear();
 			return make_string(m_string, source, byteCount, charCount, format);
 		}
@@ -812,10 +810,10 @@ namespace active {
 		/*!
 		 Append the specified string to this
 		 @param source The string to append
-		 @param howMany The number of bytes to append (no_pos = null terminated)
+		 @param howMany The number of bytes to append (default = null terminated)
 		 @return A reference to this
 		 */
-		basic_string& append(const char* source, string_size howMany = no_pos);
+		basic_string& append(const char* source, string_size howMany = {});
 		/*!
 		 Append the specified char to this (NB: don't use this casually - encoding must be assumed and converted accordingly)
 		 @param source The char to append
@@ -836,30 +834,30 @@ namespace active {
 		 @param pos The insertion point
 		 @param source The string to insert
 		 @param start The start point in the source string
-		 @param howMany The number of chars to insert (no_pos inserts all)
+		 @param howMany The number of chars to insert (default inserts all)
 		 @return A reference to this
 		 */
-		basic_string& insert(string_size pos, const basic_string& source, string_size start = 0, string_size howMany = no_pos) {
+		basic_string& insert(string_size pos, const basic_string& source, string_size start = 0, string_size howMany = {}) {
 			return replace(pos, 0, source, start, howMany);
 		}
 		/*!
 		 Replace a specified string segment with another string
-		 @param pos The position to begin replacing (no_pos = append to end)
-		 @param num The number of chars to replace (no_pos = to the string end)
+		 @param pos The position to begin replacing (npos = append to end)
+		 @param num The number of chars to replace (npos = to the string end)
 		 @param source The replacement string
 		 @param start The start point in the replacement string
-		 @param howMany The number of chars to extract from the replacement string (no_pos inserts all)
+		 @param howMany The number of chars to extract from the replacement string (default inserts all)
 		 @return A reference to this
 		 */
 		basic_string& replace(string_size pos, string_size num, const basic_string& source,
-							  string_size start = 0, string_size howMany = no_pos);
+							  string_size start = 0, string_size howMany = {});
 		/*!
 		 Erase a specified range of characters from a string
 		 @param pos The position to erasing from
-		 @param howMany The number of characters to erase (no_pos to erase to end)
+		 @param howMany The number of characters to erase (default = to erase to end)
 		 @return A reference to this
 		 */
-		basic_string& erase(string_size pos = 0, string_size howMany = no_pos) { return replace(pos, howMany, basic_string{}); }
+		basic_string& erase(string_size pos = 0, string_size howMany = {}) { return replace(pos, howMany, basic_string{}); }
 		/*!
 		 Remove the last character from the string
 		 */
@@ -950,24 +948,23 @@ namespace active::string_function {
 	 @param format The text data format
 	 @return The number of bytes in the text containing valid UTF8 characters
 	 */
-	std::string::size_type get_valid_byte_count(const char* text, string_size howMany = string::no_pos,
-												string_size charCount = string::no_pos, text_format format = text_format{});
+	std::string::size_type get_valid_byte_count(const char* text, string_size howMany = {},
+												string_size charCount = {}, text_format format = {});
 	/*!
 	 Get the width of a specified UTF8 character in bytes
 	 @param text The source text
 	 @param howMany The maximum extent in bytes
-	 @return The character width in bytes (no_pos for bad encoding)
+	 @return The character width in bytes (npos for bad encoding)
 	 */
-	std::optional<unsigned char> get_UTF8_character_byte_count(const char* text, string_size howMany = string::no_pos);
+	std::optional<unsigned char> get_UTF8_character_byte_count(const char* text, string_size howMany = {});
 	/*!
 	 Get the width of a specified character in bytes
 	 @param text The source text
 	 @param howMany The maximum extent in bytes
 	 @param format The text data format
-	 @return The character width in bytes (no_pos for bad encoding)
+	 @return The character width in bytes (npos for bad encoding)
 	 */
-	std::optional<unsigned char> get_character_byte_count(const char* text, string_size howMany = string::no_pos,
-														  text_format format = text_format{});
+	std::optional<unsigned char> get_character_byte_count(const char* text, string_size howMany = {}, text_format format = {});
 	/*!
 	 Get the width of the previous character in bytes
 	 @param text The source text (pointing to the current character)
@@ -975,45 +972,42 @@ namespace active::string_function {
 	 @param format The text data format
 	 @return The width of the previous character in bytes
 	 */
-	std::optional<unsigned char> get_prev_char_byte_count(const char* text, string_size howMany = string::no_pos,
-														  text_format format = text_format{});
+	std::optional<unsigned char> get_prev_char_byte_count(const char* text, string_size howMany = {}, text_format format = {});
 	/*!
 	 Return the length of a string in bytes, limited by a character count
 	 @param text The source text
-	 @param howMany The number of characters to count (no_pos = null-terminated)
-	 @param isCountRequired True if the number of characters must exist in the text (unless howMany = no_pos)
+	 @param howMany The number of characters to count (default = null-terminated)
+	 @param isCountRequired True if the number of characters must exist in the text (unless howMany = npos)
 	 @param format The text data format
-	 @return The number of bytes in the char array (no_pos if isCountRequired and howMany not reached)
+	 @return The number of bytes in the char array (npos if isCountRequired and howMany not reached)
 	 */
-	string_size get_byte_count_char_limited(const char* text, string_size howMany = string::no_pos,
-												bool isCountRequired = false, text_format format = text_format{});
+	string_size get_byte_count_char_limited(const char* text, string_size howMany = {},
+												bool isCountRequired = false, text_format format = {});
 	/*!
 	 Get the number of valid characters found at a specified address
 	 @param text The source text
 	 @param format The text data format
-	 @param howMany The number of bytes in the array (no_pos = null-terminated)
-	 @return The nummber of characters found (no_pos if bad encoding found)
+	 @param howMany The number of bytes in the array (default = null-terminated)
+	 @return The nummber of characters found (npos if bad encoding found)
 	 */
-	string_size get_character_count(const char* text, string_size howMany = string::no_pos,
-										text_format format = text_format{});
+	string_size get_character_count(const char* text, string_size howMany = {}, text_format format = {});
 	/*!
 	 Calculate a required number of characters base on a specified byte count, word size and (optional) character limit
 	 @param wordSize The character word size, e.g. UTF16 = 2, UTF32 = 4
-	 @param howMany The number of bytes (no_pos = null-terminated)
+	 @param howMany The number of bytes (default = null-terminated)
 	 @param charCount The maximum number of (encoded) chars to read (npos = no limit)
 	 @return The required number of characters
 	 */
-	string_size get_char_count(unsigned char wordSize, string_size howMany = string::no_pos,
-								   string_size charCount = string::no_pos);
+	string_size get_char_count(unsigned char wordSize, string_size howMany = {}, string_size charCount = {});
 	/*!
 	 Determine the the number of characters in a char array
 	 @param text The source text
-	 @param howMany The number of bytes in the text (no_pos = null-terminated)
+	 @param howMany The number of bytes in the text (default = null-terminated)
 	 @param format The text data format
 	 @return The number of characters in the array
 	 */
-	std::string::size_type get_string_length(const char* text, string_size howMany = string::no_pos,
-											 text_format format = text_format{});
+	std::string::size_type get_string_length(const char* text, string_size howMany = {},
+											 text_format format = {});
 	/*!
 	 Determine if a 16-bit (UTF16) character code is within the BMP
 	 @param code The character code
@@ -1029,10 +1023,10 @@ namespace active::string_function {
 	/*!
 	 Get a UTF-32 char from a UTF-8 source
 	 @param text The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
-	 @param howMany The number of available bytes in the source (no_pos = null-terminated)
+	 @param howMany The number of available bytes in the source (default = null-terminated)
 	 @return A UTF-32 char paired with the number of bytes consumed from the source (0 = no valid char found)
 	 */
-	std::pair<char32_t, unsigned char> get_utf32_char_from_utf8(const char*& text, string_size howMany = string::no_pos);
+	std::pair<char32_t, unsigned char> get_utf32_char_from_utf8(const char*& text, string_size howMany = {});
 	/*!
 	 Get a UTF-32 char from a UTF-16 source
 	 @param text The UTF-8 source text (when valid, points to the next byte beyond the found character on return)
@@ -1048,53 +1042,51 @@ namespace active::string_function {
 	 @param format The source data format
 	 @return The unicode char paired with the number of bytes consumed from the source (0 = no valid char found)
 	 */
-	std::pair<char32_t, unsigned char> get_unicode_char(const char* text, string_size howMany = string::no_pos,
-														text_format format = text_format{});
+	std::pair<char32_t, unsigned char> get_unicode_char(const char* text, string_size howMany = {}, text_format format = {});
 	/*!
 	 Get a UTF-32 string from a UTF-8 source
 	 @param text The source UTF-8 text (advances to the byte beyond the last counted character)
-	 @param howMany The number of bytes in the text (no_pos = null-terminated)
-	 @param isCountRequired True if the specified number of bytes must be valid (ignored if howMany = no_pos)
-	 @return The unicode code point for the specified chars (no_pos on failure)
+	 @param howMany The number of bytes in the text (default = null-terminated)
+	 @param isCountRequired True if the specified number of bytes must be valid (ignored if howMany = npos)
+	 @return The unicode code point for the specified chars (npos on failure)
 	 */
-	std::optional<std::u32string> to_unicode(const char*& text, string_size howMany = string::no_pos, bool isCountRequired = false);
+	std::optional<std::u32string> to_unicode(const char*& text, string_size howMany = {}, bool isCountRequired = false);
 	/*!
 	 Get a UTF-32 string from a UTF-16 (16-bit) source
 	 @param text The source text (when valid, points to the next byte beyond the found character on return)
 	 @param is_big_endian True if byte ordering is big-endian
-	 @param howMany The number of words (16-bit values) in the text (no_pos = null-terminated)
-	 @param isCountRequired True if the specified number of words must be valid (ignored if howMany = no_pos)
-	 @return The UTF-32 string read from the UTF-16 source (no_pos on error, including failure to meet isCountRequired condition)
+	 @param howMany The number of words (16-bit values) in the text (default = null-terminated)
+	 @param isCountRequired True if the specified number of words must be valid (ignored if howMany = npos)
+	 @return The UTF-32 string read from the UTF-16 source (npos on error, including failure to meet isCountRequired condition)
 	 */
 	std::optional<std::u32string> from_utf16(const char16_t*& text, bool is_big_endian,
-											string_size howMany = string::no_pos, bool isCountRequired = false);
+											string_size howMany = {}, bool isCountRequired = false);
 	/*!
 	 Get a UTF-16 string from a UTF-32 source
 	 @param text The source text (when valid, points to the next byte beyond the found character on return)
-	 @param howMany The number of code points in the text (no_pos = null-terminated)
-	 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = no_pos)
-	 @return The UTF-16 string read from the UTF-32 source (no_pos on error, including failure to meet isCountRequired condition)
+	 @param howMany The number of code points in the text (default = null-terminated)
+	 @param isCountRequired True if the specified number of code points must be valid (ignored if howMany = npos)
+	 @return The UTF-16 string read from the UTF-32 source (npos on error, including failure to meet isCountRequired condition)
 	 */
-	std::optional<std::u16string> to_utf16(const char32_t*& text, string_size howMany = string::no_pos, bool isCountRequired = false);
+	std::optional<std::u16string> to_utf16(const char32_t*& text, string_size howMany = {}, bool isCountRequired = false);
 	/*!
 	 Collect the byte size of each (valid) character from a string into an array
 	 @param text The source text
-	 @param howMany The number of characters to collect, taken as a maximum rather than a requirement (no_pos = null-terminated)
+	 @param howMany The number of characters to collect, taken as a maximum rather than a requirement (default = null-terminated)
 	 @param format The text data format (collection will stop if a character not matching the encoding is found)
-	 @return An array containing the byte size of each character found (no_pos if no valid chars found)
+	 @return An array containing the byte size of each character found (npos if no valid chars found)
 	 */
-	std::vector<unsigned char> collect_char_byte_count(const char* text, string_size howMany = string::no_pos,
-													   text_format format = text_format{});
+	std::vector<unsigned char> collect_char_byte_count(const char* text, string_size howMany = {}, text_format format = {});
 	/*!
 	 Calculate the byte offsets for a start and number of chars within a string
 	 @param text The source text
 	 @param startPos The start character
-	 @param howMany The number of characters to measure (no_pos = null-terminated)
+	 @param howMany The number of characters to measure (default = null-terminated)
 	 @param isHowManyChars True if the returned second value should be the char count rather than the byte count
-	 @return Byte offset to the start character paired with byte/char offset from the start to the end of the last character (no_pos on failure)
+	 @return Byte offset to the start character paired with byte/char offset from the start to the end of the last character (npos on failure)
 	 */
 	std::optional<std::pair<string::size_type, string::size_type>> get_byte_offsets(const char* text, string_size startPos = 0,
-																					string_size howMany = string::no_pos,
+																					string_size howMany = {},
 																					bool isHowManyChars = false);
 	
 }
@@ -1306,7 +1298,7 @@ namespace active {
 		Constructor from an input string
 	 
 		source: The UTF-16 string to be copied
-		howMany: The number of chars to copy (no_pos for full length)
+		howMany: The number of chars to copy (default = full length)
 	 --------------------------------------------------------------------*/
 	template <typename Alloc>
 	basic_string<Alloc>::basic_string(const std::u16string& source, string_size howMany) {
@@ -1326,7 +1318,7 @@ namespace active {
 		Constructor from an input string
 	 
 		source: The UTF-32 string to be copied
-		howMany: The number of chars to copy (no_pos for full length)
+		howMany: The number of chars to copy (default = full length)
 	 --------------------------------------------------------------------*/
 	template <typename Alloc>
 	basic_string<Alloc>::basic_string(const std::u32string& source, string_size howMany) {
@@ -1373,8 +1365,8 @@ namespace active {
 	 
 		text: The source text
 		is_big_endian: True if byte ordering is big-endian
-		howMany: The number of 32-bit code points in the text (no_pos = null-terminated)
-		isCountRequired: True if the specified number of  code points must be valid (ignored if howMany = no_pos)
+		howMany: The number of 32-bit code points in the text (default = null-terminated)
+		isCountRequired: True if the specified number of  code points must be valid (ignored if howMany = npos)
 	 
 		return: The UTF-8 string read from the UTF-32 source (nullopt on error, including failure to meet isCountRequired condition)
 	  --------------------------------------------------------------------*/
@@ -1382,7 +1374,7 @@ namespace active {
 	std::optional<basic_string<Alloc>> basic_string<Alloc>::from_unicode(const char32_t*& text, bool is_big_endian,
 																		 string_size howMany, bool isCountRequired) {
 		if (howMany == 0)
-			return std::optional(basic_string{});	//An empty string is not an error, so we don't return no_pos
+			return std::optional(basic_string{});	//An empty string is not an error, so we don't return npos
 		basic_string result;
 		for ( ; *text != 0; ++text) {
 			if (howMany) {
@@ -1402,7 +1394,7 @@ namespace active {
 		
 		target: An STL string to be populated with valid characters found
 		text: The source text
-		howMany: The number of bytes in the text (no_pos = null-terminated)
+		howMany: The number of bytes in the text (default = null-terminated)
 		charCount: The maximum number of (encoded) chars to read (npos = no limit)
 		format: The text data format
 		
@@ -1472,7 +1464,7 @@ namespace active {
 	 
 		source: The source text
 	 
-		return: An array of single and multi-byte chars from the source string (no_pos on failure)
+		return: An array of single and multi-byte chars from the source string (npos on failure)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	std::vector<basic_string<Alloc>> basic_string<Alloc>::split_single_chars(const basic_string& source) {
@@ -1566,7 +1558,7 @@ namespace active {
 	/*--------------------------------------------------------------------
 		Return the number of bytes consumed by this string
 
-		howMany: The number of chars to count (no_pos = for full length)
+		howMany: The number of chars to count (default = for full length)
 	 
 		return: The number of bytes consumed by the string (NB: Strings are null terminated, but this is not included in the data length)
 	  --------------------------------------------------------------------*/
@@ -1601,7 +1593,7 @@ namespace active {
 		Get a specified segment of this string
 
 		startPos: The first character of the segment
-		howMany: The number of characters in the segment (no_pos for full length)
+		howMany: The number of characters in the segment (default = full length)
 
 		return: The requested string segment
 	  --------------------------------------------------------------------*/
@@ -1620,16 +1612,16 @@ namespace active {
 		toFind: The string to find
 		startPos: The character to start searching from
 
-		return: The index where a match is found (no_pos = not found)
+		return: The index where a match is found (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find(const basic_string& toFind, string_size startPos) const {
 		auto startByte = (startPos == 0) ? string_size{0} : string_function::get_byte_count_char_limited(m_string.data(), startPos, true);
 		if (!startByte)
-			return no_pos;
+			return {};
 		auto foundPos = m_string.find(toFind.m_string, startByte);
 		if (foundPos == npos)
-			return no_pos;
+			return {};
 		return string_function::get_character_count(m_string.data(), foundPos);
 	} //basic_string<Alloc>::find
 	
@@ -1640,17 +1632,17 @@ namespace active {
 		toFind: A string of characters to find
 		startPos: The character to begin searching from
 
-		return: The index of the first matching character (no_pos = not found)
+		return: The index of the first matching character (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_first_of(const basic_string& toFind, string_size startPos) const {
 		auto splitString = split_single_chars(toFind);
 		if (splitString.empty())
-			return no_pos;
+			return {};
 		auto firstPos = npos;
 		auto startByte = (startPos == 0) ? string_size{0} : string_function::get_byte_count_char_limited(m_string.data(), startPos, true);
 		if (!startByte)
-			return no_pos;
+			return {};
 		bool isFirst = true;
 		for (auto& iter : splitString) {
 			auto nextPos = isFirst ? m_string.find_first_of(iter.m_string, startByte) :
@@ -1662,7 +1654,7 @@ namespace active {
 					return 0;
 			}
 		}
-		return (firstPos == npos) ? no_pos : string_function::get_character_count(data(), firstPos);
+		return (firstPos == npos) ? string_size{} : string_function::get_character_count(data(), firstPos);
 	} //basic_string<Alloc>::find_first_of
 
 
@@ -1672,16 +1664,16 @@ namespace active {
 		toFind: A string of characters to not find
 		startPos: The character to begin searching from
 
-		return: The index of the first non-matching character (no_pos = not found)
+		return: The index of the first non-matching character (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_first_not_of(const basic_string& toFind, string_size startPos) const {
 		auto splitString = split_single_chars(toFind);
 		if (splitString.empty())
-			return no_pos;
+			return {};
 		auto charBytes = string_function::collect_char_byte_count(data());
 		if (charBytes.empty())
-			return no_pos;
+			return {};
 		std::vector<size_type> minPos(splitString.size());
 		size_type startByte = 0;
 		for (int sizeIndex = 0; sizeIndex < charBytes.size(); ++sizeIndex) {
@@ -1705,7 +1697,7 @@ namespace active {
 			startByte += size;
 			++startPos;
 		}
-		return startPos < length() ? string_size{startPos} : no_pos;
+		return startPos < length() ? string_size{startPos} : string_size{};
 	} //basic_string<Alloc>::find_first_not_of
 
 
@@ -1715,7 +1707,7 @@ namespace active {
 		toFind: A string of characters to find
 		lastPos: The position of the last character to be compared
 
-		return: The index of the last matching character (no_pos = not found)
+		return: The index of the last matching character (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_last_of(const basic_string& toFind, string_size lastPos) const {
@@ -1730,9 +1722,9 @@ namespace active {
 		Find the last character in this string which is not in the specified string
 
 		toFind: A string of characters not to find
-		lastPos: The character to begin searching from (no_pos for string end)
+		lastPos: The character to begin searching from (npos for string end)
 
-		return: The index of the last non-matching character (no_pos = not found)
+		return: The index of the last non-matching character (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_last_not_of(const basic_string& toFind, string_size lastPos) const {
@@ -1749,15 +1741,15 @@ namespace active {
 		toFind: The string to find
 		lastPos: The position of the last character to be compared
 
-		return: The index of a matching string (no_pos = not found)
+		return: The index of a matching string (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::rfind(const basic_string& toFind, string_size lastPos) const {
 		auto endChar = string_function::get_byte_count_char_limited(data(), lastPos, true);
 		if (!endChar)
-			return no_pos;
+			return {};
 		auto foundPos = m_string.rfind(toFind.m_string, endChar);
-		return (foundPos == npos) ? no_pos : string_function::get_character_count(data(), foundPos);
+		return (foundPos == npos) ? string_size{} : string_function::get_character_count(data(), foundPos);
 	} //basic_string<Alloc>::rfind
 
 
@@ -1821,7 +1813,7 @@ namespace active {
 		Determine if the string is entirely alphanumeric
 	 
 		startPos: The position to checking from
-		howMany: The number of characters to check (no_pos = to end)
+		howMany: The number of characters to check (default = to end)
 
 		return: True if the string is alphanumeric
 	  --------------------------------------------------------------------*/
@@ -1851,7 +1843,7 @@ namespace active {
 		Determine if the string is entirely letters
 	  
 		startPos: The position to checking from
-		howMany: The number of characters to check (no_pos = to end)
+		howMany: The number of characters to check (default = to end)
 
 		return: True if the string is letters
 	  --------------------------------------------------------------------*/
@@ -1881,7 +1873,7 @@ namespace active {
 		Determine if the string is entirely numbers
 	 
 		startPos: The position to checking from
-		howMany: The number of characters to check (no_pos = to end)
+		howMany: The number of characters to check (default = to end)
 	 
 		return: True if the string is numbers
 	  --------------------------------------------------------------------*/
@@ -1912,7 +1904,7 @@ namespace active {
 	 
 		filter: The string filter
 	 
-		return: The index where a match is found (no_pos = not found)
+		return: The index where a match is found (default = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_if(const Filter& filter) const {
@@ -1926,7 +1918,7 @@ namespace active {
 			} else
 				break;
 		}
-		return no_pos;
+		return {};
 	} // basic_string<Alloc>::find_if
 
 	
@@ -1937,13 +1929,13 @@ namespace active {
 		lastPos: The position to begin filtering from
 		howMany: The number of chars to filter
 	 
-		return: The index where a match is found (no_pos = not found)
+		return: The index where a match is found (npos = not found)
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	string_size basic_string<Alloc>::rfind_if(const Filter& filter, string_size lastPos, string_size howMany) const {
 		auto charBytes = string_function::collect_char_byte_count(data(), lastPos);
 		if (charBytes.empty())
-			return no_pos;
+			return {};
 			//Add up all the bytes in the string (total number of bytes used by the string)
 		auto lastByte = std::reduce(charBytes.begin(), charBytes.end());
 		string_size index = charBytes.size();
@@ -1957,7 +1949,7 @@ namespace active {
 			} else
 				break;
 		}
-		return no_pos;
+		return {};
 	} //basic_string<Alloc>::rfind_if
 
 
@@ -2057,7 +2049,7 @@ namespace active {
 		Append the specified string to this
 	 
 		source: The string to append
-		howMany: The number of bytes to append (no_pos = null terminated)
+		howMany: The number of bytes to append (default = null terminated)
 	 
 		return: A reference to this
 	  --------------------------------------------------------------------*/
@@ -2092,7 +2084,7 @@ namespace active {
 		num: The number of chars to replace
 		source: The replacement string
 		start: The start point in the replacement string
-		howMany: The number of chars to extract from the replacement string (no_pos inserts all)
+		howMany: The number of chars to extract from the replacement string (npos inserts all)
 		
 		return: A reference to this
 	  --------------------------------------------------------------------*/

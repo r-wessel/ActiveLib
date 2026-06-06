@@ -16,12 +16,13 @@ namespace active {
 	 String size type
 	 
 	 Provides numeric safety to prevent common overflow problems converting to/from a string size/position. An exception is thrown if converting
-	 to another numeric type will lose data, e.g. assigning a string position of 300 to a char. Also throws if any attempt is made to use or modify
-	 a variable set to npos that would offset from npos (or to move a value below zero or above npos)
+	 to another numeric type will lose data, e.g. assigning a string position of 300 to a `char`. Also throws if any attempt is made to use or modify
+	 a variable set to `npos` that would offset from `npos` (or to move a value below zero or above `npos`). Note that the default value for
+	 `string_size` is npos.
 	 
 	 A string size also adopts some behaviours of an optional, treating `string::npos` as equivalent to `std::nullopt`. An explicit bool conversion
-	 operator returns false for a value of npos and true for any other value. An comparison to a value of npos returns false. Rather then writing
-	 the:
+	 operator returns false for a value of npos and true for any other value. An comparison to a value of `npos` returns `false`. Rather then writing
+	 this:
 	 
 	 	if (auto pos = text.find("."); (pos != npos) && (pos > 4))
 	 
@@ -77,7 +78,16 @@ namespace active {
 			m_position = source;
 			return *this;
 		}
-		
+		template<typename T> requires std::is_arithmetic_v<T>
+		constexpr string_size& operator= (const T source) {
+			if constexpr (std::numeric_limits<T>::is_signed) {
+				if (source < 0)
+					throw std::out_of_range("");
+			}
+			m_position = source;
+			return *this;
+		}
+
 		/*!
 		 Equality operator
 		 @param ref The object to compare
