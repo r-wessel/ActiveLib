@@ -83,7 +83,7 @@ namespace active {
 				///The target string
 			basic_string* m_string = nullptr;
 				///The char position in the string
-			string_size m_position = 0;
+			string_size m_position;
 		};
 		
 		/*!
@@ -212,9 +212,9 @@ namespace active {
 				///The target string
 			Str* m_string = nullptr;
 				///The iterator position in the string
-			string_size m_pos = 0;
+			string_size m_pos;
 				///The string size (chars, not bytes)
-			string_size m_size = 0;
+			string_size m_size;
 				///The character currently pointed to
 			mutable char_t m_char;
 		};
@@ -927,10 +927,10 @@ namespace active {
 			return m_char;
 		}
 		
-			///A placeholder for referencing characters within the string
-		mutable char_t m_char;
 			///The string content - NB: The STL representation works for many UTF-8 functions, and this class manages the remainder
 		base m_string;
+			///A placeholder for referencing characters within the string
+		mutable char_t m_char;
 	};
 
 	using string = basic_string<>;
@@ -1374,7 +1374,7 @@ namespace active {
 	template <typename Alloc>
 	std::optional<basic_string<Alloc>> basic_string<Alloc>::from_unicode(const char32_t*& text, bool is_big_endian,
 																		 string_size howMany, bool isCountRequired) {
-		if (howMany == 0)
+		if (howMany == 0) [[unlikely]]
 			return std::optional(basic_string{});	//An empty string is not an error, so we don't return npos
 		basic_string result;
 		for ( ; *text != 0; ++text) {
@@ -1383,7 +1383,7 @@ namespace active {
 					break;
 				howMany -= 1;
 			}
-			if (!result.append_unicode(*text))
+			if (!result.append_unicode(*text)) [[unlikely]]
 				return std::nullopt;	//Bad encoding
 		}
 		return (isCountRequired && (howMany > 0)) ? std::nullopt : std::optional(result);
@@ -1409,7 +1409,7 @@ namespace active {
 			return 0;
 		size_type data_size = 0;
 		switch (format.encoding) {
-			case UTF8: case ascii: {
+			case UTF8: [[likely]] case ascii: {
 				data_size = string_function::get_valid_byte_count(text, howMany, charCount, format.encoding);
 				if (data_size < 1)
 					break;
@@ -1429,7 +1429,7 @@ namespace active {
 				}
 				break;
 			}
-			case UTF32: {
+			case UTF32: [[unlikely]] {
 				const auto* source = reinterpret_cast<const char32_t*>(text);
 				if (auto uniString = from_unicode(source, format.is_big_endian,
 												  string_function::get_char_count(sizeof(char32_t),howMany, charCount)); uniString) {
@@ -1438,7 +1438,7 @@ namespace active {
 				}
 				break;
 			}
-			case ISO8859_1:
+			case ISO8859_1: [[unlikely]]
 				data_size = string_function::get_valid_byte_count(text, howMany, charCount, format);
 				if (data_size < 1)
 					break;
@@ -1471,7 +1471,7 @@ namespace active {
 	std::vector<basic_string<Alloc>> basic_string<Alloc>::split_single_chars(const basic_string& source) {
 		std::vector<basic_string> result;
 		auto charBytes = string_function::collect_char_byte_count(source.data());
-		if (charBytes.empty())
+		if (charBytes.empty()) [[unlikely]]
 			return result;
 			//The first string in the result is reserved for single-byte chars
 		std::string singleChars;
@@ -1565,7 +1565,7 @@ namespace active {
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	basic_string<Alloc>::size_type basic_string<Alloc>::data_size(string_size howMany) const {
-		if (!howMany)
+		if (!howMany) [[unlikely]]
 			return static_cast<basic_string<Alloc>::size_type>(m_string.size());
 		if (auto byteCount = string_function::get_byte_count_char_limited(m_string.data(), howMany); byteCount)
 			return static_cast<size_type>(byteCount);
@@ -1583,7 +1583,7 @@ namespace active {
 	template <typename Alloc>
 	char32_t basic_string<Alloc>::at(string_size index) const {
 		auto offsets = string_function::get_byte_offsets(data(), index, 1);
-		if (!offsets)
+		if (!offsets) [[unlikely]]
 			throw std::out_of_range("");
 		auto source = data() + offsets->first;
 		return string_function::get_utf32_char_from_utf8(source, offsets->second).first;
@@ -1601,7 +1601,7 @@ namespace active {
 	template <typename Alloc>
 	basic_string<Alloc> basic_string<Alloc>::substr(string_size startPos, string_size howMany) const {
 		auto offsets = string_function::get_byte_offsets(data(), startPos, howMany);
-		if (!offsets)
+		if (!offsets) [[unlikely]]
 			return {};
 		return m_string.substr(offsets->first, offsets->second);
 	} //basic_string<Alloc>::substr
@@ -1618,7 +1618,7 @@ namespace active {
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find(const basic_string& toFind, string_size startPos) const {
 		auto startByte = (startPos == 0) ? string_size{0} : string_function::get_byte_count_char_limited(m_string.data(), startPos, true);
-		if (!startByte)
+		if (!startByte) [[unlikely]]
 			return {};
 		auto foundPos = m_string.find(toFind.m_string, startByte);
 		if (foundPos == npos)
@@ -1638,11 +1638,11 @@ namespace active {
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_first_of(const basic_string& toFind, string_size startPos) const {
 		auto splitString = split_single_chars(toFind);
-		if (splitString.empty())
+		if (splitString.empty()) [[unlikely]]
 			return {};
 		auto firstPos = npos;
 		auto startByte = (startPos == 0) ? string_size{0} : string_function::get_byte_count_char_limited(m_string.data(), startPos, true);
-		if (!startByte)
+		if (!startByte) [[unlikely]]
 			return {};
 		bool isFirst = true;
 		for (auto& iter : splitString) {
@@ -1670,10 +1670,10 @@ namespace active {
 	template <typename Alloc>
 	string_size basic_string<Alloc>::find_first_not_of(const basic_string& toFind, string_size startPos) const {
 		auto splitString = split_single_chars(toFind);
-		if (splitString.empty())
+		if (splitString.empty()) [[unlikely]]
 			return {};
 		auto charBytes = string_function::collect_char_byte_count(data());
-		if (charBytes.empty())
+		if (charBytes.empty()) [[unlikely]]
 			return {};
 		std::vector<size_type> minPos(splitString.size());
 		size_type startByte = 0;
@@ -1747,7 +1747,7 @@ namespace active {
 	template <typename Alloc>
 	string_size basic_string<Alloc>::rfind(const basic_string& toFind, string_size lastPos) const {
 		auto endChar = string_function::get_byte_count_char_limited(data(), lastPos, true);
-		if (!endChar)
+		if (!endChar) [[unlikely]]
 			return {};
 		auto foundPos = m_string.rfind(toFind.m_string, endChar);
 		return (foundPos == npos) ? string_size{} : string_function::get_character_count(data(), foundPos);
@@ -1766,7 +1766,7 @@ namespace active {
 #else
 		std::u32string uniString{*this};
 #endif
-		if (uniString.empty())
+		if (uniString.empty()) [[unlikely]]
 			return *this;
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
@@ -1794,7 +1794,7 @@ namespace active {
 #else
 		std::u32string uniString{*this};
 #endif
-		if (uniString.empty())
+		if (uniString.empty()) [[unlikely]]
 			return *this;
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
@@ -1825,7 +1825,7 @@ namespace active {
 #else
 		std::u32string uniString{*this};
 #endif
-		if (uniString.empty())
+		if (uniString.empty()) [[unlikely]]
 			return false;
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
@@ -1855,7 +1855,7 @@ namespace active {
 #else
 		std::u32string uniString{*this};
 #endif
-		if (uniString.empty())
+		if (uniString.empty()) [[unlikely]]
 			return false;
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
@@ -1885,7 +1885,7 @@ namespace active {
 #else
 		std::u32string uniString{*this};
 #endif
-		if (uniString.empty())
+		if (uniString.empty()) [[unlikely]]
 			return false;
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
@@ -1935,7 +1935,7 @@ namespace active {
 	template <typename Alloc>
 	string_size basic_string<Alloc>::rfind_if(const Filter& filter, string_size lastPos, string_size howMany) const {
 		auto charBytes = string_function::collect_char_byte_count(data(), lastPos);
-		if (charBytes.empty())
+		if (charBytes.empty()) [[unlikely]]
 			return {};
 			//Add up all the bytes in the string (total number of bytes used by the string)
 		auto lastByte = std::reduce(charBytes.begin(), charBytes.end());
@@ -1981,7 +1981,7 @@ namespace active {
 	template <typename Alloc>
 	void basic_string<Alloc>::rfor_each(const Function& func) const {
 		auto charBytes = string_function::collect_char_byte_count(data());
-		if (charBytes.empty())
+		if (charBytes.empty()) [[unlikely]]
 			return;
 			//Add up all the bytes in the string (total number of bytes used by the string)
 		auto lastByte = std::reduce(charBytes.begin(), charBytes.end());
@@ -2006,7 +2006,7 @@ namespace active {
 	  --------------------------------------------------------------------*/
 	template <typename Alloc>
 	void basic_string<Alloc>::resize(string_size newSize, const basic_string& padding) {
-		if (newSize == 0) {
+		if (newSize == 0) { [[unlikely]]
 			clear();
 			return;
 		}
@@ -2037,7 +2037,7 @@ namespace active {
 		constexpr size_type bufferLen = 40;
 		m_string.resize(bufferLen);
 		auto result = std::to_chars(m_string.data(), m_string.data() + bufferLen, value, std::chars_format::fixed, decPlaces);
-		if (result.ec != std::errc())
+		if (result.ec != std::errc()) [[unlikely]]
 			return false;
 		*result.ptr = '\0';
 		m_string.resize(result.ptr - m_string.data());
@@ -2057,7 +2057,7 @@ namespace active {
 	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::append(const char* source, string_size howMany) {
 		auto charBytes = string_function::get_valid_byte_count(source, howMany);
-		if (charBytes)
+		if (charBytes) [[likely]]
 			m_string.append(source, charBytes);
 		return *this;
 	}
@@ -2113,12 +2113,12 @@ namespace active {
 	 --------------------------------------------------------------------*/
 	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::pad_right(string_size length, const basic_string& repeat) {
-		if ((length <= size()) || repeat.empty())
+		if ((length <= size()) || repeat.empty()) [[unlikely]]
 			return *this;
 		auto required = length - size(),
 				fillSize = repeat.size();
 		auto toInsert = static_cast<size_type>(required / fillSize);
-		if (toInsert > 0)
+		if (toInsert > 0) [[likely]]
 			insert(0, basic_string(toInsert, repeat.m_string));
 		return *this;
 	} //basic_string<Alloc>::pad_right
@@ -2134,12 +2134,12 @@ namespace active {
 	 --------------------------------------------------------------------*/
 	template <typename Alloc>
 	basic_string<Alloc>& basic_string<Alloc>::pad_left(string_size length, const basic_string& repeat) {
-		if ((length <= size()) || repeat.empty())
+		if ((length <= size()) || repeat.empty()) [[unlikely]]
 			return *this;
 		auto required = size() - length,
 				fillSize = repeat.size();
 		auto toAppend = required / fillSize;
-		if (toAppend > 0)
+		if (toAppend > 0) [[likely]]
 			append(basic_string(toAppend, repeat.m_string));
 		return *this;
 	} //basic_string<Alloc>::pad_left
@@ -2278,7 +2278,7 @@ namespace active {
 	template <typename Alloc>
 	void basic_string<Alloc>::rfor_each(const Function& func) {
 		auto charBytes = string_function::collect_char_byte_count(data());
-		if (charBytes.empty())
+		if (charBytes.empty()) [[unlikely]]
 			return;
 			//Add up all the bytes in the string (total number of bytes used by the string)
 		std::u32string result;
@@ -2308,12 +2308,12 @@ namespace active {
 	template <typename Alloc>
 	bool basic_string<Alloc>::append_unicode(char32_t code) {
 			//Deal with 7-bit codes first
-		if (code < 0x80) {
+		if (code < 0x80) { [[likely]]
 			m_string += static_cast<char>(code);
 			return true;
 		}
 			//Weed out invalid codes
-		if ((code > 0x10FFFF) || ((code >= 0x110000) && (code <= 0x1FFFFF)) || ((code >= 0xD800) && (code <= 0xDFFF)))
+		if ((code > 0x10FFFF) || ((code >= 0x110000) && (code <= 0x1FFFFF)) || ((code >= 0xD800) && (code <= 0xDFFF))) [[unlikely]]
 			return false;	//Bad encoding
 		char buffer[4] = {0};
 		unsigned char mask = 0x80;
