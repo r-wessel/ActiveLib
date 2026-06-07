@@ -1,7 +1,7 @@
 /*!
-Copyright 2024 Ralph Wessel and Hugh Wessel
-Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
-*/
+ Copyright 2024 Ralph Wessel and Hugh Wessel
+ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at https://opensource.org/license/mit/)
+ */
 
 #ifndef ACTIVE_SERIALISE_IDENTITY
 #define ACTIVE_SERIALISE_IDENTITY
@@ -12,49 +12,53 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 namespace active::serialise {
 	
 	/*!
-		Cargo identification class
-		
-		The primary forms of identifying cargo - a name and group. Used in an inventory to uniquely identify cargo during import/export
-	*/
+	 Cargo identification class
+	 
+	 The primary forms of identifying cargo - a name and group. Used in an inventory to uniquely identify cargo during import/export
+	 */
 	struct Identity {
-
-		// MARK: - Types
-
+		
+			// MARK: - Types
+		
 		enum class Role {
 			attribute,
 			element,
 			array,
 		};
-
-		// MARK: - Constructors
+		
+			// MARK: - Constructors
 		
 		/*!
-			Default constructor
-			@param nameIn An identifying name
-		*/
-		Identity(const string& nameIn = string{}) {
+		 Default constructor
+		 */
+		Identity() {}
+		/*!
+		 Constructor
+		 @param nameIn An identifying name
+		 */
+		Identity(const string& nameIn) {
 			name = nameIn;
 		}
 		/*!
-			Default constructor
-			@param nameIn An identifying name
-			@param groupIn An optional identifying group
-		*/
+		 Default constructor
+		 @param nameIn An identifying name
+		 @param groupIn An optional identifying group
+		 */
 		Identity(const string& nameIn, const std::optional<string> groupIn) {
 			name = nameIn;
 			group = groupIn;
 		}
 		/*!
-			Default constructor
-			@param nameIn An identifying name
-			@param valType An optional value type
-		*/
+		 Default constructor
+		 @param nameIn An identifying name
+		 @param valType An optional value type
+		 */
 		Identity(const string& nameIn, std::optional<setting::Value::Type> valType) {
 			name = nameIn;
 			valueType = valType;
 		}
 		
-		// MARK: - Variables
+			// MARK: - Variables
 		
 			///An identifying name
 		string name;
@@ -65,19 +69,19 @@ namespace active::serialise {
 			///The value type (applicable when a new value has been parsed)
 		std::optional<setting::Value::Type> valueType;
 	};
-		
-	// MARK: - Operators
+	
+		// MARK: - Operators
 	
 		///Less-than operator
 	inline bool operator< (const Identity& lhs, const Identity& rhs) {
 		return (lhs.group == rhs.group) ? lhs.name < rhs.name : lhs.group < rhs.group;
 	}
-
+	
 		///Equality operator
 	inline bool operator== (const Identity& lhs, const Identity& rhs) {
 		return (lhs.name == rhs.name) && (lhs.group == rhs.group);
 	}
-
+	
 		///Equality operator
 	inline bool operator!= (const Identity& lhs, const Identity& rhs) {
 		return !(lhs == rhs);
@@ -98,3 +102,4 @@ struct std::hash<active::serialise::Identity> {
 };
 
 #endif	//ACTIVE_SERIALISE_IDENTITY
+

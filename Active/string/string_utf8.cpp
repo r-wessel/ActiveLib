@@ -22,11 +22,11 @@ namespace {
 	constexpr std::string::size_type possibleCharWidth = 4;
 	
 	/*!
-		Byte-swap an array of integer values (in the native byte-order)
-		@param val A pointer to the array start
-		@param howMany How many values are in the array
-		@param toBigEndian True if the end result should be big-endian
-	*/
+	 Byte-swap an array of integer values (in the native byte-order)
+	 @param val A pointer to the array start
+	 @param howMany How many values are in the array
+	 @param toBigEndian True if the end result should be big-endian
+	 */
 	template<typename T> requires (std::is_arithmetic_v<T>)
 	static void byte_swap(T* val, std::string::size_type howMany, bool toBigEndian) {
 		if ((howMany < 1) || (toBigEndian == text_format::defaultEndian))

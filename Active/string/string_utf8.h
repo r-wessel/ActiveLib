@@ -20,20 +20,21 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 
 namespace active {
 		
-	/// A Unicode-aware string class
 	/*!
-		The `active::basic_string` template class is a wrapper for `std::string` and leans heavily on existing functionality it provides, extending
-		it with awareness of Unicode encodings for character positioning. This also provides easy access to the underlying `std::string`
-		for easy interoperability with any code working with that type.
-		
-		String content is internally encoded/validated as UTF-8, but it can encode/decode to/from UTF16, UTF32, ASCII and ISO8859.
-		All content must be valid UTF-8, i.e. you cannot embed arbitrary binary data or null characters in a `string` (use `Memory` instead).
-		Character positions are calculated to allow indexing, but the time to find a position averages O(n)
-		It is recommended to use classes like `BufferIn` to analyse by-character content on large blocks of text efficiently
+	 A Unicode-aware string class
 	 
-		The `basic_string` class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
-		Conversion operators and constructors provide interoperability with a range of common types, e.g. `std::string`, `std::u32string` etc
-	*/
+	 The `active::basic_string` template class is a wrapper for `std::string` and leans heavily on existing functionality it provides, extending
+	 it with awareness of Unicode encodings for character positioning. This also provides easy access to the underlying `std::string`
+	 for easy interoperability with any code working with that type.
+	 
+	 String content is internally encoded/validated as UTF-8, but it can encode/decode to/from UTF16, UTF32, ASCII and ISO8859.
+	 All content must be valid UTF-8, i.e. you cannot embed arbitrary binary data or null characters in a `string`.
+	 Character positions are calculated to allow indexing, but the time to find a position is O(n)
+	 It is recommended to use classes like `BufferIn` to analyse by-character content on large blocks of text efficiently
+	 
+	 The `basic_string` class also provides a range of static functions for validating or converting blocks of text for all supported encoding.
+	 Conversion operators and constructors provide interoperability with a range of common types, e.g. `std::string`, `std::u32string` etc
+	 */
 	template <class Alloc = std::allocator<char>>
 	class basic_string {
 	public:
