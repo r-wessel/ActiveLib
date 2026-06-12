@@ -62,7 +62,7 @@ namespace active {
 		template<typename T> requires std::is_arithmetic_v<T>
 		constexpr string_size(const T pos) : m_position{static_cast<size_type>(pos)} {
 			if constexpr (std::numeric_limits<T>::is_signed) {
-				if (pos < 0)
+				if (pos < 0) [[unlikely]]
 					throw std::out_of_range("");
 			}
 		}
@@ -81,7 +81,7 @@ namespace active {
 		template<typename T> requires std::is_arithmetic_v<T>
 		constexpr string_size& operator= (const T source) {
 			if constexpr (std::numeric_limits<T>::is_signed) {
-				if (source < 0)
+				if (source < 0) [[unlikely]]
 					throw std::out_of_range("");
 			}
 			m_position = source;
@@ -129,13 +129,13 @@ namespace active {
 		 @return A reference to this
 		 */
 		constexpr string_size& operator++() {
-			if (!has_value())
+			if (!has_value()) [[unlikely]]
 				throw std::out_of_range("");
 			++m_position;
 			return *this;
 		}
 		constexpr string_size operator++(int) {
-			if (!has_value())
+			if (!has_value()) [[unlikely]]
 				throw std::out_of_range("");
 			auto temp = *this;
 			++m_position;
@@ -146,13 +146,13 @@ namespace active {
 		 @return A reference to this
 		 */
 		constexpr string_size& operator--() {
-			if (!has_value())
+			if (!has_value()) [[unlikely]]
 				throw std::out_of_range("");
 			--m_position;
 			return *this;
 		}
 		constexpr string_size operator--(int) {
-			if (!has_value())
+			if (!has_value()) [[unlikely]]
 				throw std::out_of_range("");
 			auto temp = *this;
 			--m_position;
@@ -164,15 +164,12 @@ namespace active {
 		 @return A reference to this
 		 */
 		string_size& operator+=(string_size addend) {
-			if (!has_value() || !addend.has_value())
+			if (!has_value() || !addend.has_value()) [[unlikely]]
 				throw std::out_of_range("");
-			string_size diff = npos - m_position;
-			if (diff < addend)
+			auto temp = m_position;
+			m_position += addend.m_position;
+			if (m_position < temp) [[unlikely]]
 				throw std::out_of_range("");
-			else if (diff.m_position == 0)
-				m_position = npos;
-			else
-				m_position += addend.m_position;
 			return *this;
 		}
 		/*!
@@ -181,15 +178,12 @@ namespace active {
 		 @return A reference to this
 		 */
 		string_size& operator-=(string_size subtrahend) {
-			if (!has_value() || !subtrahend.has_value())
+			if (!has_value() || !subtrahend.has_value()) [[unlikely]]
 				throw std::out_of_range("");
-			if (m_position < subtrahend.m_position) {
-				if (subtrahend.m_position - m_position > 1)
-					throw std::out_of_range("");
-				else
-					m_position = npos;
-			} else
-				m_position -= subtrahend.m_position;
+			auto temp = m_position;
+			m_position -= subtrahend.m_position;
+			if ((m_position > temp) && (m_position != npos)) [[unlikely]]
+				throw std::out_of_range("");
 			return *this;
 		}
 		/*!
@@ -198,7 +192,7 @@ namespace active {
 		 @return This multiplied by multiplier
 		 */
 		string_size& operator*=(string_size multiplier) {
-			if (!has_value() || !multiplier.has_value() || ((npos / multiplier.m_position) < m_position))
+			if (!has_value() || !multiplier.has_value() || ((npos / multiplier.m_position) < m_position)) [[unlikely]]
 				throw std::out_of_range("");
 			m_position *= multiplier.m_position;
 			return *this;
@@ -209,7 +203,7 @@ namespace active {
 		 @return This divided by divisor
 		 */
 		string_size& operator/=(string_size divisor) {
-			if (!has_value() || !divisor.has_value() || (divisor.m_position == 0))
+			if (!has_value() || !divisor.has_value() || (divisor.m_position == 0)) [[unlikely]]
 				throw std::out_of_range("");
 			m_position /= divisor.m_position;
 			return *this;

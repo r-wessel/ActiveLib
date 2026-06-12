@@ -142,6 +142,10 @@ namespace active {
 					return ref.is_end();
 				return (ref.is_end()) ? false : ((m_string == ref.m_string) && (m_pos == ref.m_pos));
 			}
+				///Equality operator
+			bool operator!=(const iter_t& ref) const {
+				return !(*this == ref);
+			}
 				///Addition with assignment operator
 			iter_t& operator+=(difference_type n) {
 				m_pos += (n * Offset);
@@ -207,7 +211,7 @@ namespace active {
 				return m_char;
 			}
 				///Determine if the iterator is at end()
-			bool is_end() const { return m_pos >= m_size; }
+			bool is_end() const { return !m_pos || (m_pos >= m_size); }
 
 				///The target string
 			Str* m_string = nullptr;

@@ -9,6 +9,10 @@
 
 #include <map>
 
+#include <format>
+#include <iostream>
+#include <string_view>
+
 using namespace active;
 using namespace active::math;
 using namespace active;
@@ -300,6 +304,8 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 		CHECK_MESSAGE(string{"A"} != string{"B"}, TEST_MESSAGE(string inequality check failed));
 		CHECK_MESSAGE(string{"A"} < string{"B"}, TEST_MESSAGE(string less-than check failed));
 		CHECK_MESSAGE(string{"B"} > string{"A"}, TEST_MESSAGE(string greater-than check failed));
+		
+		
 	}
 
 		///Tests for string position
