@@ -108,7 +108,7 @@ std::optional<unsigned char> string_function::get_UTF8_character_byte_count(cons
 		else {
 				//Check that the additional characters in a multi-byte sequence are valid
 			for (auto i = result; --i; ) {
-				if ((*(text + i) & 0xC0) != 0x80) [[unlikely]]
+				if ((*(++text) & 0xC0) != 0x80) [[unlikely]]
 					return std::nullopt;
 			}
 		}
@@ -128,7 +128,7 @@ std::optional<unsigned char> string_function::get_UTF8_character_byte_count(cons
   --------------------------------------------------------------------*/
 std::optional<unsigned char> string_function::get_character_byte_count(const char* text, string_size howMany, text_format format) {
 	switch (format.encoding) {
-		case UTF8:
+		case UTF8: [[likely]]
 			return get_UTF8_character_byte_count(text, howMany);
 		case ascii: case ISO8859_1:
 			return (*text == 0) ? 0 : 1;
@@ -143,7 +143,7 @@ std::optional<unsigned char> string_function::get_character_byte_count(const cha
 			unsigned char size = is_within_bmp(uniChar) ? 2 : 4;
 			return ((howMany != string_size::npos) && (howMany < size)) ? std::nullopt : std::optional<unsigned char>(size);
 		}
-		case UTF32:
+		case UTF32: [[unlikely]]
 			if (text == nullptr) [[unlikely]]
 				return 0;
 			if ((howMany != string_size::npos) && (howMany < 4)) [[unlikely]]

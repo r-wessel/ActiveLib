@@ -54,23 +54,23 @@ namespace active {
 			///Character referencing type
 		struct char_t {
 				///Constructors
-			char_t() {}
-			char_t(const char_t& source) : m_string{source.m_string}, m_position{source.m_position} {}
+			constexpr char_t() {}
+			constexpr char_t(const char_t& source) : m_string{source.m_string}, m_position{source.m_position} {}
 				///Conversion operator
-			operator char32_t() const {
-				if (m_string == nullptr)
+			constexpr operator char32_t() const {
+				if (m_string == nullptr) [[unlikely]]
 					throw std::out_of_range("");
 				return m_string->at(m_position);
 			}
 				///Assignment operators
-			char_t& operator=(char32_t source) {
-				if (m_string == nullptr)
+			constexpr char_t& operator=(char32_t source) {
+				if (m_string == nullptr) [[unlikely]]
 					throw std::out_of_range("");
 				m_string->replace(m_position, 1, basic_string{&source, 1});
 				return *this;
 			}
-			char_t& operator=(const char_t& source) {
-				if (this != &source) {
+			constexpr char_t& operator=(const char_t& source) {
+				if (this != &source) { [[likely]]
 					m_string = source.m_string;
 					m_position = source.m_position;
 				}
@@ -100,12 +100,12 @@ namespace active {
 			using value_type = Char;
 			
 				///Constructors
-			iter_t() {}
-			iter_t(const iter_t& source) : m_string{source.m_string}, m_pos{source.m_pos}, m_size{source.m_size} {}
+			constexpr iter_t() {}
+			constexpr iter_t(const iter_t& source) : m_string{source.m_string}, m_pos{source.m_pos}, m_size{source.m_size} {}
 			
 				///Assignment operator
-			iter_t& operator=(const iter_t& other) {
-				if (this != &other) {
+			constexpr iter_t& operator=(const iter_t& other) {
+				if (this != &other) [[likely]] {
 					m_string = other.m_string;
 					m_pos = other.m_pos;
 					m_size = other.m_size;
@@ -113,65 +113,65 @@ namespace active {
 				return *this;
 			}
 				///Dereference operator
-			value_type& operator*() const { return get_char(); }
+			constexpr value_type& operator*() const { return get_char(); }
 				///Increment operator
-			iter_t& operator++() {
+			constexpr iter_t& operator++() {
 				m_pos += Offset;
 				return *this;
 			}
 				///Post-increment operator
-			iter_t operator++(int) {
+			constexpr iter_t operator++(int) {
 				auto tmp = *this;
 				++*this;
 				return tmp;
 			}
 				///Decrement operator
-			iter_t& operator--() {
+			constexpr iter_t& operator--() {
 				m_pos -= Offset;
 				return *this;
 			}
 				///Post-decrement operator
-			iter_t operator--(int) {
+			constexpr iter_t operator--(int) {
 				auto tmp = *this;
 				--*this;
 				return tmp;
 			}
 				///Equality operator
-			bool operator==(const iter_t& ref) const {
+			constexpr bool operator==(const iter_t& ref) const {
 				if (is_end())
 					return ref.is_end();
 				return (ref.is_end()) ? false : ((m_string == ref.m_string) && (m_pos == ref.m_pos));
 			}
 				///Equality operator
-			bool operator!=(const iter_t& ref) const {
+			constexpr bool operator!=(const iter_t& ref) const {
 				return !(*this == ref);
 			}
 				///Addition with assignment operator
-			iter_t& operator+=(difference_type n) {
+			constexpr iter_t& operator+=(difference_type n) {
 				m_pos += (n * Offset);
 				return *this;
 			}
 				///Addition operator
-			iter_t operator+(difference_type n) const {
+			constexpr iter_t operator+(difference_type n) const {
 				auto result = *this;
 				result += n;
 				return result;
 			}
 				///Subtraction with assignment operator
-			iter_t& operator-=(difference_type n) {
+			constexpr iter_t& operator-=(difference_type n) {
 				m_pos -= (n * Offset);
 				return *this;
 			}
 				///Subtraction operator
-			iter_t operator-(difference_type n) const {
+			constexpr iter_t operator-(difference_type n) const {
 				auto result = *this;
 				result -= n;
 				return result;
 			}
 				///Subtraction operator
-			difference_type operator-(const iter_t& other) const { return m_pos - other.m_pos; }
+			constexpr difference_type operator-(const iter_t& other) const { return m_pos - other.m_pos; }
 				///Subscript operator
-			value_type& operator[](difference_type n) const {
+			constexpr value_type& operator[](difference_type n) const {
 				auto offset = n * Offset;
 				m_pos += offset;
 				get_char();
@@ -179,39 +179,39 @@ namespace active {
 				return m_char;
 			}
 				///Less-than operator
-			bool operator<(const iter_t& other) const {
+			constexpr bool operator<(const iter_t& other) const {
 				if (is_end())
 					return false;
 				return other.is_end() ? true : m_pos < other.m_pos;
 			}
 				///Less-than-or-equal operator
-			bool operator<=(const iter_t& other) const { return !(*this > other) ; }
+			constexpr bool operator<=(const iter_t& other) const { return !(*this > other) ; }
 				///Greater-than operator
-			bool operator>(const iter_t& other) const {
+			constexpr bool operator>(const iter_t& other) const {
 				if (other.is_end())
 					return false;
 				return is_end() ? true : m_pos > other.m_pos;
 			}
 				///Greater-than-or-equal operator
-			bool operator>=(const iter_t& other) const { return !(*this < other); }
+			constexpr bool operator>=(const iter_t& other) const { return !(*this < other); }
 			
 		private:
 			friend basic_string;
 			
 				///Constructor
-			iter_t(Str* source, difference_type pos = 0) : m_string{source}, m_pos(pos) {
+			constexpr iter_t(Str* source, difference_type pos = 0) : m_string{source}, m_pos(pos) {
 				if (source != nullptr)
 					m_size = source->size();
 			}
 				///Get the referenced character
-			Char& get_char() const {
+			constexpr Char& get_char() const {
 				if (is_end())
 					throw std::out_of_range("");
 				m_char = char_t{const_cast<Str*>(m_string), m_pos};
 				return m_char;
 			}
 				///Determine if the iterator is at end()
-			bool is_end() const { return !m_pos || (m_pos >= m_size); }
+			constexpr bool is_end() const { return !m_pos || (m_pos >= m_size); }
 
 				///The target string
 			Str* m_string = nullptr;
