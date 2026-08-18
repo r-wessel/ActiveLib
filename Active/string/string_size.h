@@ -9,6 +9,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include <numeric>
 #include <optional>
 #include <string>
+#include <ostream>
 
 namespace active {
 		
@@ -31,7 +32,7 @@ namespace active {
 	 	if (auto pos = text.find("."); pos > 4)
 	 
 	 A string size can be assigned std::nullopt (meaning npos). It also provides functions like `value_or`. Note that `string_size` is directly
-	 interoperable with `std::string::siez_type`.
+	 interoperable with `std::string::size_type`.
 	 */
 	struct string_size {
 	public:
@@ -299,6 +300,12 @@ namespace active {
 	template<typename T> requires std::is_arithmetic_v<T>
 	constexpr bool operator>= (const T left, const string_size& right) { return string_size{left} >= right; }
 	
+	template<typename T> requires (std::is_same_v<string_size, T> && !std::is_arithmetic_v<T>)
+	std::ostream& operator<<(std::ostream& left, const T& right) {
+		left << static_cast<std::string::size_type>(right);
+		return left;
+	}
+
 }  // namespace active
 
 #endif	//ACTIVE_STRING_SIZE

@@ -8,6 +8,7 @@
 #include "Active/Utility/Time.h"
 
 #include <map>
+#include <iostream>
 
 using namespace active;
 using namespace active::math;
@@ -71,6 +72,25 @@ TEST_SUITE(TESTQ(StringTests)) TEST_SUITE_OPEN
 	TEST_CASE(TESTQ(testStringContent)) {
 		
 			//Positive tests - these are well-formed statements that have a valid impact on the test string
+		
+	//Initialise a variety of std string values
+std::string stdStr = "Café-🂱";
+std::u8string std8 = u8"Café-🂱";
+std::u16string std16= u"Café-🂱";
+std::u32string std32= U"Café-🂱";
+	//Assign to active::string
+active::string activeStr = stdStr;
+active::string active8 = std8;
+active::string active16 = std16;
+active::string active32 = std32;
+	//Compare contents to test validity
+std::cout << ((activeStr == active8) && (activeStr == active16) && (activeStr == active32) ? "good" : "fail") << "\n"; //-> "good"
+std::cout << ((activeStr == stdStr) && (activeStr == std8) && (activeStr == std16) && (activeStr == std32) ? "good" : "fail") << "\n"; //-> "good"
+active::string heart{"❤️"};
+std::cout << heart.size();
+std::cout << heart.substr(0, 1).data() << "\t" << heart.substr(1, 1).data() ;
+std::u32string heart32= U"❤️";
+std::cout << "\n" << heart32.size();
 		
 			//Initialisation
 		string test{sampleText};

@@ -66,7 +66,10 @@ namespace active {
 			constexpr char_t& operator=(char32_t source) {
 				if (m_string == nullptr) [[unlikely]]
 					throw std::out_of_range("");
-				m_string->replace(m_position, 1, basic_string{&source, 1});
+				if (basic_string replacement{&source, 1}; !replacement.empty()) [[likely]]
+					m_string->replace(m_position, 1, basic_string{&source, 1});
+				else
+					throw std::out_of_range("");
 				return *this;
 			}
 			constexpr char_t& operator=(const char_t& source) {
@@ -76,9 +79,15 @@ namespace active {
 				}
 				return *this;
 			}
+			constexpr basic_string string() const {
+				if (m_string == nullptr) [[unlikely]]
+					throw std::out_of_range("");
+				return m_string->substr(m_position, 1);
+			}
 
 		private:
 			friend class basic_string;
+			
 			char_t(basic_string* string, string_size pos = 0) : m_string{string}, m_position{pos} {}
 				///The target string
 			basic_string* m_string = nullptr;
@@ -113,7 +122,10 @@ namespace active {
 				return *this;
 			}
 				///Dereference operator
-			constexpr value_type& operator*() const { return get_char(); }
+			constexpr const value_type& operator*() const { return get_char(); }
+			constexpr value_type& operator*() { return get_char(); }
+			constexpr const value_type* operator->() const { return &get_char(); }
+			constexpr value_type* operator->() { return &get_char(); }
 				///Increment operator
 			constexpr iter_t& operator++() {
 				m_pos += Offset;
@@ -456,13 +468,21 @@ namespace active {
 		 @param index The required character position
 		 @return The character at the specified index
 		 */
+#ifdef ACTIVE_STRING_CHAR_REF
 		const char_t& operator[](size_type index) const { return get_char(index); }
+#else
+		const char_t operator[](size_type index) const { return char_t{const_cast<basic_string*>(this), index}; }
+#endif
 		/*!
 		 Subscript operator
 		 @param index The required character position
 		 @return The character at the specified index
 		 */
+#ifdef ACTIVE_STRING_CHAR_REF
 		char_t& operator[](size_type index) { return get_char(index); }
+#else
+		char_t operator[](size_type index) { return char_t{this, index}; }
+#endif
 		/*!
 		 Assignment operator
 		 @param source The object to copy
@@ -506,6 +526,12 @@ namespace active {
 		 @return A reference to this
 		 */
 		basic_string& operator+=(char source) { return append(source); }
+		/*!
+		 Addition with assignment operator
+		 @param source The char to append
+		 @return A reference to this
+		 */
+		basic_string& operator+=(char32_t source) { return append(source); }
 		
 			//MARK: - Functions (const)
 		
@@ -921,6 +947,7 @@ namespace active {
 		 */
 		bool append_unicode(char32_t code);
 
+#ifdef ACTIVE_STRING_CHAR_REF
 		/*!
 		 Get a reference to the character at a specified position
 		 @param pos The character position
@@ -930,11 +957,14 @@ namespace active {
 			m_char = char_t{const_cast<basic_string*>(this), pos};
 			return m_char;
 		}
+#endif // ACTIVE_STRING_CHAR_REF
 		
 			///The string content - NB: The STL representation works for many UTF-8 functions, and this class manages the remainder
 		base m_string;
+#ifdef ACTIVE_STRING_CHAR_REF
 			///A placeholder for referencing characters within the string
 		mutable char_t m_char;
+#endif
 	};
 
 	using string = basic_string<>;
@@ -1118,6 +1148,11 @@ namespace active {
 	}
 
 	template <typename Alloc>
+	inline bool operator== (const basic_string<Alloc>& str1, const std::string& str2) {
+		return str1 == basic_string{str2};
+	}
+
+	template <typename Alloc>
 	inline bool operator== (const basic_string<Alloc>& str1, const std::u8string& str2) {
 		return str1 == basic_string{str2};
 	}
@@ -1152,6 +1187,11 @@ namespace active {
 	template <typename Alloc>
 	inline bool operator!= (const basic_string<Alloc>& str1, const basic_string<Alloc>& str2) {
 		return !(str1 == str2);
+	}
+
+	template <typename Alloc>
+	inline bool operator!= (const basic_string<Alloc>& str1, const std::string& str2) {
+		return !(str1 == basic_string{str2});
 	}
 
 	template <typename Alloc>
@@ -1192,6 +1232,11 @@ namespace active {
 	}
 
 	template <typename Alloc>
+	inline bool operator+ (const basic_string<Alloc>& str1, const std::string& str2) {
+		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
+	}
+
+	template <typename Alloc>
 	inline bool operator+ (const basic_string<Alloc>& str1, const std::u8string& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
@@ -1203,6 +1248,11 @@ namespace active {
 
 	template <typename Alloc>
 	inline bool operator+ (const basic_string<Alloc>& str1, const std::u32string& str2) {
+		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
+	}
+
+	template <typename Alloc>
+	inline bool operator+ (const std::string& str1, const basic_string<Alloc>& str2) {
 		return basic_string<Alloc>{str1}.append(basic_string<Alloc>{str2});
 	}
 
@@ -1241,6 +1291,17 @@ namespace active {
 		return basic_string<Alloc>{str1}.append(str2);
 	}
 	
+	template <typename Alloc>
+	inline std::ostream& operator<<(std::ostream& left, const basic_string<Alloc>& right) {
+		left << right.data();
+		return left;
+	}
+	
+	template <typename Alloc = std::allocator<char>>
+	inline std::ostream& operator<<(std::ostream& left, const typename basic_string<Alloc>::char_t& right) {
+		left << right.string().data();
+		return left;
+	}
 	
 	/*!
 		Determine if a specified char is white-space
@@ -2333,7 +2394,6 @@ namespace active {
 		m_string.append(buffer + offset, 4 - offset);
 		return true;
 	} //basic_string<Alloc>::append_unicode
-
 	
 }  // namespace active
 
