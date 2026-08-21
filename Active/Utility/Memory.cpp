@@ -7,6 +7,7 @@ Distributed under the MIT License (See accompanying file LICENSE.txt or copy at 
 #include "Active/string/string_utf8.h"
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <stdexcept>
 #include <utility>

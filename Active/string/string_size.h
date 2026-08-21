@@ -164,7 +164,7 @@ namespace active {
 		 @param addend The amount to add
 		 @return A reference to this
 		 */
-		string_size& operator+=(string_size addend) {
+		constexpr string_size& operator+=(string_size addend) {
 			if (!has_value() || !addend.has_value()) [[unlikely]]
 				throw std::out_of_range("");
 			auto temp = m_position;
@@ -178,7 +178,7 @@ namespace active {
 		 @param subtrahend The amount to subtract
 		 @return A reference to this
 		 */
-		string_size& operator-=(string_size subtrahend) {
+		constexpr string_size& operator-=(string_size subtrahend) {
 			if (!has_value() || !subtrahend.has_value()) [[unlikely]]
 				throw std::out_of_range("");
 			auto temp = m_position;
@@ -192,7 +192,7 @@ namespace active {
 		 @param multiplier The amount to multiply by
 		 @return This multiplied by multiplier
 		 */
-		string_size& operator*=(string_size multiplier) {
+		constexpr string_size& operator*=(string_size multiplier) {
 			if (!has_value() || !multiplier.has_value() || ((npos / multiplier.m_position) < m_position)) [[unlikely]]
 				throw std::out_of_range("");
 			m_position *= multiplier.m_position;
@@ -203,7 +203,7 @@ namespace active {
 		 @param divisor The amount to divide by
 		 @return This divided by divisor
 		 */
-		string_size& operator/=(string_size divisor) {
+		constexpr string_size& operator/=(string_size divisor) {
 			if (!has_value() || !divisor.has_value() || (divisor.m_position == 0)) [[unlikely]]
 				throw std::out_of_range("");
 			m_position /= divisor.m_position;

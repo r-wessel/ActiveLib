@@ -119,6 +119,9 @@
     <Filter Include="Active\Serialise\Management">
       <UniqueIdentifier>{772542ee-3299-435c-b39c-5521e3716510}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Active\string">
+      <UniqueIdentifier>{8d4315b4-daf5-4254-adba-39264df80d02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Active\Container\HashMap.h">
@@ -227,12 +230,6 @@
       <Filter>Active\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Active\Utility\Memory.h">
-      <Filter>Active\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Active\Utility\String.h">
-      <Filter>Active\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Active\Utility\TextEncoding.h">
       <Filter>Active\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Active\Utility\Time.h">
@@ -580,6 +577,18 @@
     <ClInclude Include="Active\Primitives\3D\MeshBuilder.h">
       <Filter>Active\Primitives\3D</Filter>
     </ClInclude>
+    <ClInclude Include="Active\string\string_size.h">
+      <Filter>Active\string</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\string\string_utf8.h">
+      <Filter>Active\string</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\string\text_encoding.h">
+      <Filter>Active\string</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\string\text_format.h">
+      <Filter>Active\string</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -654,12 +663,6 @@
     <ClCompile Include="Active\Utility\Memory.cpp">
       <Filter>Active\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Active\Utility\String.cpp">
-      <Filter>Active\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Active\Utility\TextEncoding.cpp">
-      <Filter>Active\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Active\Utility\Time.cpp">
       <Filter>Active\Utility</Filter>
     </ClCompile>
@@ -731,9 +734,6 @@
     </ClCompile>
     <ClCompile Include="Active\Serialise\Generic\Base64Transport.cpp">
       <Filter>Active\Serialise\Generic</Filter>
-    </ClCompile>
-    <ClCompile Include="Active\Utility\DataFormat.cpp">
-      <Filter>Active\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Active\Geometry\XList.cpp">
       <Filter>Active\Geometry</Filter>
@@ -815,6 +815,12 @@
     </ClCompile>
     <ClCompile Include="Active\Primitives\3D\Mesh.cpp">
       <Filter>Active\Primitives\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\string\string_utf8.cpp">
+      <Filter>Active\string</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\string\text_format.cpp">
+      <Filter>Active\string</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

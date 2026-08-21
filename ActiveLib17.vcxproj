@@ -180,6 +180,10 @@
     <ClInclude Include="Active\Setting\Values\UInt32Value.h" />
     <ClInclude Include="Active\Setting\Values\Value.h" />
     <ClInclude Include="Active\Setting\Values\ValueBase.h" />
+    <ClInclude Include="Active\string\string_size.h" />
+    <ClInclude Include="Active\string\string_utf8.h" />
+    <ClInclude Include="Active\string\text_encoding.h" />
+    <ClInclude Include="Active\string\text_format.h" />
     <ClInclude Include="Active\Utility\BufferIn.h" />
     <ClInclude Include="Active\Utility\BufferOut.h" />
     <ClInclude Include="Active\Utility\Cloner.h" />
@@ -190,8 +194,6 @@
     <ClInclude Include="Active\Utility\Memory.h" />
     <ClInclude Include="Active\Utility\NameID.h" />
     <ClInclude Include="Active\Utility\SHA256.h" />
-    <ClInclude Include="Active\Utility\String.h" />
-    <ClInclude Include="Active\Utility\TextEncoding.h" />
     <ClInclude Include="Active\Utility\Time.h" />
     <ClInclude Include="Active\Utility\UniqueString.h" />
     <ClInclude Include="SQLite\sqlite3.h" />
@@ -263,15 +265,14 @@
     <ClCompile Include="Active\Setting\Values\Measurement\Units\MassUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Measurement\Units\VolumeUnit.cpp" />
     <ClCompile Include="Active\Setting\Values\Value.cpp" />
+    <ClCompile Include="Active\string\string_utf8.cpp" />
+    <ClCompile Include="Active\string\text_format.cpp" />
     <ClCompile Include="Active\Utility\BufferIn.cpp" />
     <ClCompile Include="Active\Utility\BufferOut.cpp" />
-    <ClCompile Include="Active\Utility\DataFormat.cpp" />
     <ClCompile Include="Active\Utility\Guid.cpp" />
     <ClCompile Include="Active\Utility\Memory.cpp" />
     <ClCompile Include="Active\Utility\NameID.cpp" />
     <ClCompile Include="Active\Utility\SHA256.cpp" />
-    <ClCompile Include="Active\Utility\String.cpp" />
-    <ClCompile Include="Active\Utility\TextEncoding.cpp" />
     <ClCompile Include="Active\Utility\Time.cpp" />
     <ClCompile Include="Active\Utility\UniqueString.cpp" />
     <ClCompile Include="SQLite\shell.c">

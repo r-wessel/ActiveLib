@@ -253,20 +253,20 @@ namespace active {
 		static constexpr double eps = 1e-5;
 			///The line terminating char(s) for the current platform
 #ifdef WINDOWS
-		static inline const basic_string lineTerminator{"\r\n"};
+		static inline const char* lineTerminator{"\r\n"};
 #else
-		static inline const basic_string lineTerminator{"\n"};
+		static inline const char* lineTerminator{"\n"};
 #endif
-			///All white space characters
-		static inline const basic_string allWhiteSpace{" \t\r\n"};
-			///All line ending characters
-		static inline const basic_string allLineEnding{"\r\n"};
-			///All digit characters (0-9)
-		static inline const basic_string allDigit{"0123456789"};
-			///All numeric characters (floating and integer)
-		static inline const basic_string allNumeric{"0123456789-"};
-			///All numeric characters (floating and integer)
-		static inline const basic_string allFloat{"0123456789.-"};
+		///All white space characters
+		static inline const char* allWhiteSpace{" \t\r\n"};
+		///All line ending characters
+		static inline const char* allLineEnding{"\r\n"};
+		///All digit characters (0-9)
+		static inline const char* allDigit{"0123456789"};
+		///All numeric characters (floating and integer)
+		static inline const char* allNumeric{"0123456789-"};
+		///All numeric characters (floating and integer)
+		static inline const char* allFloat{"0123456789.-"};
 
 		/*!
 		 Get a UTF-8 string from a UTF-32 source
@@ -1836,7 +1836,7 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!is_within_bmp(*i)) {
+			if (!string_function::is_within_bmp(*i)) {
 				++i;
 				continue;
 			}
@@ -1864,7 +1864,7 @@ namespace active {
 			//NB: This algorithm is simplistic. Might use ICU lib in future. Behaviour on Windows might be wrong due to wchar_t size
 		for (auto i = uniString.begin(); i != uniString.end(); ++i) {
 #ifdef WINDOWS
-			if (!is_within_bmp(*i)) {
+			if (!string_function::is_within_bmp(*i)) {
 				++i;
 				continue;
 			}
@@ -1958,8 +1958,13 @@ namespace active {
 			if (!is_within_bmp(*i))
 				return false;
 #endif
+#ifdef WINDOWS
+			if (!iswdigit(static_cast<wchar_t>(*i)))
+				return false;
+#else
 			if (!std::iswdigit(static_cast<wchar_t>(*i)))
 				return false;
+#endif
 		}
 		return true;
 	} //basic_string<Alloc>::is_numeric
