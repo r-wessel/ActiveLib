@@ -489,11 +489,6 @@ namespace {
 		*/
 		JSONIdentity getIdentity(JSONIdentity::Stage stage);
 		/*!
-			Get a value from the data source, e.g. the data between quotes
-			@return The JSON value
-		*/
-		string getValue();
-		/*!
 			Get item content from the data source
 			@param cargo The cargo to receive the content
 		*/
@@ -763,10 +758,10 @@ namespace {
 			if (!tag.empty()) {
 				jsonStr.append("\"");
 				if (nameSpace && !nameSpace->empty()) {
-					auto namespaceOut = *nameSpace;
+					string namespaceOut{*nameSpace};
 					jsonStr.append(toJSONString(namespaceOut, m_glossary)).append(":");
 				}
-				auto tagOut = tag;
+				string tagOut{tag};
 				jsonStr.append(toJSONString(tagOut, m_glossary)).append("\":");
 			}
 		}
@@ -1081,7 +1076,7 @@ namespace {
 			throw std::system_error(makeJSONError(badValue));
 			//Determine if this element acts as an object/array wrapper for values
 			//The package will have an outer object wrapper (even if an array) if the outer element has a name that differs from the inner item
-		auto itemIdentity = inventory.front().identity();
+		Identity itemIdentity{inventory.front().identity()};
 		bool isWrapper = (inventory.size() > 1) || (identity.stage == root) ||
 				(!identity.name.empty() && !itemIdentity.name.empty() && (itemIdentity != identity));
 			//An array package will have a single item within more than one possible value
@@ -1097,7 +1092,7 @@ namespace {
 			exporter.writeTag(tag, nameSpace, objectStart, depth++);
 		auto sequence = inventory.sequence();
 		for (auto& entry : sequence) {
-			auto entryItem = *entry.second;
+			Entry entryItem{*entry.second};
 			if (!exporter.isEveryEntryRequired && (!entryItem.required || (entryItem.available == 0)))
 				continue;
 			auto entryNameSpace{entryItem.identity().group.value_or(string())};

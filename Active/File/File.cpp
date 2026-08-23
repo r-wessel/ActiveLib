@@ -271,13 +271,12 @@ File::size_type File::read(string& text, sizeOption howMany, text_encoding encod
 	}
 	Memory buffer;
 	buffer.resize(static_cast<Memory::size_type>(*howMany));
-	size_type bytesRead = 0;
 	m_file->read(buffer.data(), *howMany);
-	bytesRead = m_file->gcount();
+	size_type bytesRead = m_file->gcount();
 	auto charBytes = string_function::get_valid_byte_count(buffer.data(), bytesRead, {}, encoding);
 		///Move the read position if not all the bytes can be consumed by the string as valid chars
-	if (charBytes < bytesRead)
-		setPosition(charBytes - bytesRead, current);
+	if (charBytes < static_cast<std::string::size_type>(bytesRead))
+		setPosition(charBytes - static_cast<std::string::size_type>(bytesRead), current);
 	text = string{buffer.data(), charBytes, encoding};
 	return charBytes;
 } //File::read

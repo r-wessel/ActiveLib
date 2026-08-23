@@ -220,7 +220,7 @@ namespace active {
 			///Conversion to other arithmetic types
 		template<typename T> requires(std::is_arithmetic_v<T> && !std::is_same_v<bool, T> && !std::is_same_v<size_type, T>)
 		constexpr operator T() const {
-			if (m_position > std::numeric_limits<T>::max())
+			if (m_position > static_cast<size_type>(std::numeric_limits<T>::max()))
 				throw std::out_of_range("");
 			return m_position;
 		}
