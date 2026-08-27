@@ -589,6 +589,12 @@
     <ClInclude Include="Active\string\text_format.h">
       <Filter>Active\string</Filter>
     </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\NullItem.h">
+      <Filter>Active\Serialise\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="Active\Serialise\Item\UnknownItem.h">
+      <Filter>Active\Serialise\Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Active\File\Directory.cpp">
@@ -821,6 +827,9 @@
     </ClCompile>
     <ClCompile Include="Active\string\text_format.cpp">
       <Filter>Active\string</Filter>
+    </ClCompile>
+    <ClCompile Include="Active\Serialise\Item\Encoding.cpp">
+      <Filter>Active\Serialise\Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

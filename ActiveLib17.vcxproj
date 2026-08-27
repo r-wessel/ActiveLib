@@ -122,6 +122,8 @@
     <ClInclude Include="Active\Serialise\Inventory\Inventory.h" />
     <ClInclude Include="Active\Serialise\Item\Encoding.h" />
     <ClInclude Include="Active\Serialise\Item\Item.h" />
+    <ClInclude Include="Active\Serialise\Item\NullItem.h" />
+    <ClInclude Include="Active\Serialise\Item\UnknownItem.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\AnyValueWrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\BoolWrap.h" />
     <ClInclude Include="Active\Serialise\Item\Wrapper\DoubleWrap.h" />
@@ -243,6 +245,7 @@
     <ClCompile Include="Active\Serialise\Generic\HexTransport.cpp" />
     <ClCompile Include="Active\Serialise\Inventory\Entry.cpp" />
     <ClCompile Include="Active\Serialise\Inventory\Inventory.cpp" />
+    <ClCompile Include="Active\Serialise\Item\Encoding.cpp" />
     <ClCompile Include="Active\Serialise\Item\Item.cpp" />
     <ClCompile Include="Active\Serialise\Item\Wrapper\AnyValueWrap.cpp" />
     <ClCompile Include="Active\Serialise\JSON\JSONTransport.cpp" />

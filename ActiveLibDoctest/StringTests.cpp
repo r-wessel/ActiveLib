@@ -121,10 +121,10 @@ std::cout << "\n" << heart32.size();
 			//Copy to buffer
 		Memory charBuffer;
 		BufferOut{charBuffer}.write(test);
-		CHECK_MESSAGE(test == string{charBuffer.data()}, TEST_MESSAGE(string.copyTo(char) incorrect content));
+		CHECK_MESSAGE(test == string{charBuffer.data(), charBuffer.size()}, TEST_MESSAGE(string.copyTo(char) incorrect content));
 		charBuffer.clear();
 		BufferOut{charBuffer}.write(test, string::UTF32);
-		CHECK_MESSAGE(test == string(charBuffer.data(), std::nullopt, string::UTF32), TEST_MESSAGE(string.copyTo(char32_t) incorrect content));
+		CHECK_MESSAGE(test == string(charBuffer.data(), charBuffer.size(), string::UTF32), TEST_MESSAGE(string.copyTo(char32_t) incorrect content));
 		auto upper = test.to_upper();
 		auto lower = upper.to_lower();
 		CHECK_MESSAGE(test == lower, TEST_MESSAGE(string case transformations incorrect content));
